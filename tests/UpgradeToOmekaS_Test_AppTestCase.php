@@ -141,7 +141,7 @@ PLUGIN;
         $processor = new UpgradeToOmekaS_Processor_Base();
         // $target = $processor->getTarget();
         // $result = $target->removeTables();
-        $omekasTables = $processor->getMerged('_tables_omekas');
+        $omekasTables = $processor->getMerged('tables');
         $sql = 'SET foreign_key_checks = 0;';
         $result = get_db()->query($sql);
         $sql = 'DROP TABLE IF EXISTS `' . implode('`, `', $omekasTables) . '`;';

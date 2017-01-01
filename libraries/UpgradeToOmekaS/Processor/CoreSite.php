@@ -31,14 +31,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         '_upgradeSite',
     );
 
-    /**
-     * Initialized during init via libraries/data/mapping_roles.php.
-     *
-     * @var array
-     */
-    // public $mapping_roles = array();
-
-    protected $_tables_omekas = array(
+    public $tables = array(
         'api_key', 'asset', 'item', 'item_item_set', 'item_set', 'job', 'media',
         'migration', 'module', 'password_creation', 'property', 'resource',
         'resource_class', 'resource_template', 'resource_template_property',
@@ -46,6 +39,13 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         'site_page', 'site_page_block', 'site_permission', 'site_setting',
         'user', 'value', 'vocabulary',
     );
+
+    /**
+     * Initialized during init via libraries/data/mapping_roles.php.
+     *
+     * @var array
+     */
+    // public $mapping_roles = array();
 
     /**
      * The target default local config.

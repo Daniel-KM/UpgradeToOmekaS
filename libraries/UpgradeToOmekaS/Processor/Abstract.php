@@ -39,6 +39,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $module = array();
 
     /**
+     * List of tables of Omeka S, mergeable with those from modules.
+     *
+     * @var array
+     */
+    public $tables = array();
+
+    /**
      * List of methods to process for the upgrade.
      *
      * @var array
@@ -72,13 +79,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @var array
      */
     public $mapping_elements = array();
-
-    /**
-     * List of tables of Omeka S, mergeable with those from modules.
-     *
-     * @var array
-     */
-    protected $_tables_omekas = array();
 
     /**
      * Maximum rows to process by loop.
@@ -786,7 +786,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         $databaseParams = $this->getParam('database');
         $target->setDatabaseParams($databaseParams);
 
-        $omekasTables = $this->getMerged('_tables_omekas');
+        $omekasTables = $this->getMerged('tables');
         $target->setTables($omekasTables);
 
         $target->setIsProcessing($this->isProcessing());
