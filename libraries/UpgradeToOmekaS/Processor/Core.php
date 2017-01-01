@@ -1550,11 +1550,42 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $result = $targetDb->insert('site_page_block', $toInsert);
         }
 
+        // Give all users access right to view the site.
+        $siteId = $this->_siteId;
+
+        // Attach all the users to the site.
+        $mapping = array(
+            'global_admin' => 'admin',
+            'site_admin' => 'admin',
+            'editor' => 'editor',
+            'reviewer' => 'editor',
+            'author' => 'editor',
+            'researcher' => 'viewer',
+        );
+
+        $select = $targetDb->select()
+            ->from('user', array('id', 'role'));
+        $users = $targetDb->fetchAll($select);
+
+        $toInserts = array();
+        foreach ($users as $user) {
+            $toInsert = array();
+            $toInsert['id'] = null;
+            $toInsert['site_id'] = $siteId;
+            $toInsert['user_id'] = $this->_mappingIds['User'][$user['id']];
+            $toInsert['role'] = isset($mapping[$user['role']])
+                ? $mapping[$user['role']]
+                : 'viewer';
+            $toInserts[] = $this->_dbQuote($toInsert);
+        }
+        $this->_insertRows('site_permission', $toInserts);
+
         $this->_log('[' . __FUNCTION__ . ']: '
                 . __('The "author", the "description" and the "copyright" of the site have been moved to the collection created for the site.'),
             Zend_Log::INFO);
 
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('The first site has been created.'),
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The first site has been created.')
+                . ' ' . __('Each user has a specific role in it.'),
             Zend_Log::INFO);
     }
 
@@ -1676,7 +1707,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $toInsert['owner_id'] = $this->_mappingIds['User'][$user->id];
         $toInsert['resource_class_id'] = null;
         $toInsert['resource_template_id'] = $defaultResourceTemplateId;
-        $toInsert['is_public'] = 1;
+        $toInsert['is_public'] = 0;
         $toInsert['created'] = $this->getDatetime();
         $toInsert['modified'] = $this->getDatetime();
         $toInsert['resource_type'] = $this->_mappingRecordClasses[$recordType];
@@ -1726,7 +1757,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $toInserts[] = $this->_dbQuote($toInsert);
         $this->_insertRows('site_item_set', $toInserts);
 
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('An item set has been set for the site.'),
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('A private item set has been set for the site.'),
             Zend_Log::INFO);
     }
 
@@ -1734,7 +1765,33 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     {
         $this->_upgradeRecords('Collection');
 
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('The status "Is Open" has been added to item sets.'),
+        $siteId = $this->_siteId;
+        $itemSetSiteId = $this->_itemSetSiteId;
+
+        // Attach all the collections to the site.
+        $targetDb = $this->getTargetDb();
+
+        $select = $targetDb->select()
+            ->from('item_set', array('id'));
+        if ($itemSetSiteId) {
+            $select
+                ->where('id != ?', $itemSetSiteId);
+        }
+        $itemSets = $targetDb->fetchCol($select);
+
+        $toInserts = array();
+        $position = 1;
+        foreach ($itemSets as $i => $id) {
+            $toInsert = array();
+            $toInsert['id'] = null;
+            $toInsert['site_id'] = $siteId;
+            $toInsert['item_set_id'] = (integer) $id;
+            $toInsert['position'] = ++$position;
+            $toInserts[] = $this->_dbQuote($toInsert);
+        }
+        $this->_insertRows('site_item_set', $toInserts);
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The status "Is Open" has been added to collections.'),
             Zend_Log::INFO);
     }
 

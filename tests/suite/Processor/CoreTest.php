@@ -642,7 +642,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals(1, $result);
         $sql = 'SELECT * FROM item_set;';
         $result = $targetDb->fetchRow($sql);
-        $itemSetId = $result['id'];
+        $itemSetId = (integer) $result['id'];
 
         $result = $processor->countTargetTable('resource');
         $this->assertEquals(1, $result);
@@ -651,9 +651,9 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
         $itemSet = array(
             'id' => $itemSetId,
-            'owner_id' => $this->user->id,
+            'owner_id' => (integer) $this->user->id,
             'resource_template_id' => null,
-            'is_public' => 1,
+            'is_public' => 0,
             'resource_type' => 'Omeka\Entity\ItemSet',
         );
         $result = array_intersect_key($result, $itemSet);
