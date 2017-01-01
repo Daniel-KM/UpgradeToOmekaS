@@ -44,11 +44,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $processMethods = array();
 
     /**
-     * List of roles mapped from Omeka C to Omeka S.
+     * Mapping of roles mapped from Omeka C to Omeka S.
      *
      * @var array
      */
-    public $mappingRoles = array();
+    public $mapping_roles = array();
 
     /**
      * Maximum rows to process by loop.
@@ -145,11 +145,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_siteSlug;
 
     /**
-     * List of merged roles mapped from Omeka C to Omeka S.
+     * List of merged values from all plugins.
      *
      * @var array
      */
-    protected $_mergedMappingRoles;
+    protected $_merged = array();
 
     /**
      * Constructor of the class.
@@ -306,22 +306,29 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Get the mapping of roles of all plugins.
+     * Get a specific array of values from all processors.
      *
+     * @param string $name The name of the values to fetch.
      * @return array
      */
-    public function getMappingRoles()
+    public function getMerged($name)
     {
-        if (is_null($this->_mergedMappingRoles)) {
-            $this->_mergedMappingRoles = array();
+        if (empty($name)) {
+            return;
+        }
+        if (!isset($this->_merged[$name])) {
+            $this->_merged[$name] = array();
             $processors = $this->getProcessors();
             foreach ($processors as $processor) {
-                $this->_mergedMappingRoles = array_merge(
-                    $this->_mergedMappingRoles,
-                    $processor->mappingRoles);
+                if (!isset($processor->$name) || empty($processor->$name)) {
+                    continue;
+                }
+                $this->_merged[$name] = array_merge(
+                    $this->_merged[$name],
+                    $processor->$name);
             }
         }
-        return $this->_mergedMappingRoles;
+        return $this->_merged[$name];
     }
 
     /**

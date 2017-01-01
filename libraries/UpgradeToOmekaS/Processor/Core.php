@@ -81,7 +81,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         '_installCompatibiltyModule',
     );
 
-    public $mappingRoles = array(
+    public $mapping_roles = array(
         // Default roles of Omeka C.
         // Only the current super user will be the "global_admin".
         'super' => 'site_admin',
@@ -425,7 +425,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _precheckIntegrityUsers()
     {
         $db = $this->_db;
-        $mappingRoles = $this->getMappingRoles();
+        $mappingRoles = $this->getMerged('mapping_roles');
         $roles = array_keys($mappingRoles);
         $table = $db->getTable('User');
         $totalRecords = total_records('User');
@@ -1306,7 +1306,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
         // There is one or more users, at least the current one.
         else {
-            $roles = $this->getMappingRoles();
+            $mappingRoles = $this->getMerged('mapping_roles');
             $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
             $totalSupers = 0;
             $totalAdmins = 0;
@@ -1324,13 +1324,13 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     } elseif ($record->role == 'admin') {
                         $totalAdmins++;
                     }
-                    if (!isset($roles[$record->role])) {
+                    if (!isset($mappingRoles[$record->role])) {
                         $unmanagedRoles[$record->role] = isset($unmanagedRoles[$record->role])
                             ? ++$unmanagedRoles[$record->role]
                             : 1;
                         continue;
                     }
-                    $role = $record->id == $user->id ? 'global_admin' : $roles[$record->role];
+                    $role = $record->id == $user->id ? 'global_admin' : $mappingRoles[$record->role];
                     $toInsert = array();
                     $toInsert['id'] = (integer) $record->id;
                     $toInsert['email'] = $targetDb->quote(substr($record->email, 0, 190));

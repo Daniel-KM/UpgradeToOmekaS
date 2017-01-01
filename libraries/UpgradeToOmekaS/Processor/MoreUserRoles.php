@@ -15,7 +15,7 @@ class UpgradeToOmekaS_Processor_MoreUserRoles extends UpgradeToOmekaS_Processor_
         'type' => 'integrated',
     );
 
-    public $mappingRoles = array(
+    public $mapping_roles = array(
         'editor' => 'editor',
         'reviewer' => 'reviewer',
         'author' => 'author',
