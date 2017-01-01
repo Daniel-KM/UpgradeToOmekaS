@@ -20,10 +20,16 @@ unset($prechecksPlugins['Core']);
 $checksPlugins = $checks;
 unset($checksPlugins['Core']);
 if ($prechecksPlugins or $checksPlugins):
-    $totalErrorsPlugins = count($prechecksPlugins) + count($checksPlugins);
-    echo '<p class="check-error">' . __(plural('%d plugin can’t be upgraded.', '%d plugins can’t be upgraded.', $totalErrorsPlugins), $totalErrorsPlugins) . '</p>';
-    echo '<p>' . __(plural('Fix it before upgrade.', 'Fix them before upgrade.', $totalErrorsPlugins), $totalErrorsPlugins) . '</p>';
-else:
+    $totalErrorsPlugins = count($prechecksPlugins) + count($checksPlugins); ?>
+<p class="check-error"><?php echo function_exists('plural')
+    ? __(plural('%d plugin can’t be upgraded.', '%d plugins can’t be upgraded.', $totalErrorsPlugins), $totalErrorsPlugins)
+    :  __('%d plugins can’t be upgraded.', $totalErrorsPlugins); ?>
+</p>
+<p><?php echo function_exists('plural')
+    ? __(plural('Fix it before upgrade.', 'Fix them before upgrade.', $totalErrorsPlugins), $totalErrorsPlugins)
+    : __('Fix them before upgrade.', $totalErrorsPlugins);
+?></p>
+<?php else:
     echo '<p>' . __('The precheck processor deems that all installed plugins with an available processor can be upgraded.') . '</p>';
 endif;
 ?>

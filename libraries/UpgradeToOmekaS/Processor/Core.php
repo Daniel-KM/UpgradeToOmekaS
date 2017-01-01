@@ -391,8 +391,11 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $totalRunningJobs = $this->_db->getTable('Process')
             ->count(array('status' => array(Process::STATUS_STARTING, Process::STATUS_IN_PROGRESS)));
         if ($totalRunningJobs) {
-            $this->_prechecks[] = __(plural('%d job is running.', '%d jobs are running.',
-                $totalRunningJobs), $totalRunningJobs);
+            // Plural needs v2.3.1.
+            $this->_prechecks[] = function_exists('plural')
+                ? __(plural('%d job is running.', '%d jobs are running.',
+                    $totalRunningJobs), $totalRunningJobs)
+                : __('%d jobs are running.', $totalRunningJobs);
         }
     }
 
