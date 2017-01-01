@@ -37,6 +37,29 @@ jQuery(document).ready(function () {
         });
     }
 
+    // Display the mapped roles.
+    hideshowMappedRoles();
+    $('#display-mapped-roles').click(function () {
+        hideshowMappedRoles();
+    });
+    function hideshowMappedRoles() {
+        var button = $('#display-mapped-roles');
+        if (button.val() == 'show') {
+            $('#fieldset-roles .field').each(function() {
+                $(this).show(300);
+            });
+            button.val('hide');
+            button.text('Hide mapped roles');
+        } else {
+            $($('#fieldset-roles .field')).each(function() {
+                if ($(this).find('select').val())
+                    $(this).hide(300);
+            });
+            button.val('show');
+            button.text('Show all roles');
+        }
+    }
+
     // Display the mapped item types.
     hideshowMappedItemTypes();
     $('#display-mapped-item-types').click(function () {

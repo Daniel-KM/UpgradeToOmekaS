@@ -205,6 +205,40 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'class' => 'offset two columns',
         ));
 
+        $usedRoles = $this->_getUsedRoles();
+        $roles = $this->_getTargetRoles();
+        $roles = label_table_options($roles, '');
+        $mapping = $this->_getDefaultMappingRoles();
+        $roleNames = array();
+        $i = 0;
+        foreach ($usedRoles as $usedRole) {
+            $roleName = 'mapping_role_' . $usedRole['role'];
+            $roleNames[] = $roleName;
+
+            $description = $usedRole['total_users'] == 0
+                ?__('No user has this role.')
+                : ($usedRole['total_users'] == 1
+                    ? __('%d user has this role.', $usedRole['total_users'])
+                    :  __('%d users have this role.', $usedRole['total_users']));
+
+            $this->addElement('select', $roleName, array(
+                'label' => __($usedRole['role']),
+                'multiOptions' => $roles,
+                'value' => isset($mapping[$usedRole['role']])
+                    ? $mapping[$usedRole['role']]
+                    : '',
+                'description' => $description,
+            ));
+        }
+        // Add a note for empty used roles. It simplifies the display group.
+        if (empty($usedRoles)) {
+            $roleName = 'item_types_note';
+            $this->addElement('note', $roleName, array(
+                'description' => __('This site doesn’t use roles.'),
+            ));
+            $roleNames[] = $roleName;
+        }
+
         $usedItemTypes = $this->_getUsedItemTypes();
         $classes = $this->_getClassesByVocabulary();
         $mapping = $this->_getDefaultMappingItemTypesToClasses();
@@ -230,12 +264,13 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             $this->addElement('select', $itemTypeName, array(
                 'label' => __($usedItemType['item_type_name']),
                 'multiOptions' => $classes,
-                'value' => isset($mapping[$usedItemType['item_type_id']]) ? $mapping[$usedItemType['item_type_id']]: '',
+                'value' => isset($mapping[$usedItemType['item_type_id']])
+                    ? $mapping[$usedItemType['item_type_id']]
+                    : '',
                 'description' => $description,
             ));
         }
-        // Add a note for empty used item types. It simplifies the display group too
-        // and is required for testing purpose.
+        // Add a note for empty used item types. It simplifies the display group too.
         if (empty($usedItemTypes)) {
             $itemTypeName = 'item_types_note';
             $this->addElement('note', $itemTypeName, array(
@@ -342,7 +377,9 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             $this->addElement('select', $elementName, array(
                 'label' => __($usedElement['element_name']),
                 'multiOptions' => $properties,
-                'value' => isset($mapping[$usedElement['element_id']]) ? $mapping[$usedElement['element_id']]: '',
+                'value' => isset($mapping[$usedElement['element_id']])
+                    ? $mapping[$usedElement['element_id']]
+                    : '',
                 'description' => $description,
             ));
             $previousElementSetName = $usedElement['element_set_name'];
@@ -443,6 +480,21 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'files',
             array(
                 'legend' => __('Files for Omeka Semantic'),
+        ));
+
+        $description = '';
+        if (count($usedRoles)) {
+            $description = __('By default, Omeka S uses six roles from researcher (the lowest person) to the global administrator.')
+                . ' ' . __('The current user will be the global admin.')
+                . ' ' . __('The users with  role that is not mapped won’t be upgraded.')
+                . '<br /><br /><button id="display-mapped-roles" class="green button" name="display-mapped-roles" type="button" value="show">' . __('Hide/show mapped roles') . '</button>';
+        }
+        $this->addDisplayGroup(
+            $roleNames,
+            'roles',
+            array(
+                'legend' => __('Mapping of roles'),
+                'description' => $description,
         ));
 
         $description = '';
@@ -664,6 +716,49 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             $this->_processorCore = new UpgradeToOmekaS_Processor_Core();
         }
         return $this->_processorCore;
+    }
+
+    /**
+     * Get an array containing all used roles with total.
+     *
+     * @return array.
+     */
+    protected function _getUsedRoles()
+    {
+        $processor = $this->_getProcessorCore();
+        $result = $processor->getUsedRoles();
+        return $result;
+    }
+
+    /**
+     * Get the list of roles of Omeka S.
+     *
+     * @internal To use Omeka S is not possible, since it's not installed yet.
+     *
+     * @return array Array of values suitable for a dropdown menu.
+     */
+    protected function _getTargetRoles()
+    {
+        $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'libraries'
+            . DIRECTORY_SEPARATOR . 'data';
+
+        $script = $dataDir
+            . DIRECTORY_SEPARATOR . 'roles.php';
+        $roles = require $script;
+        return $roles;
+    }
+
+    /**
+     * Get the mapping of roles from Omeka C to Omeka S.
+     *
+     * @return array
+     */
+    protected function _getDefaultMappingRoles()
+    {
+        $processor = $this->_getProcessorCore();
+        $result = $processor->getDefaultMappingRoles();
+        return $result;
     }
 
     /**

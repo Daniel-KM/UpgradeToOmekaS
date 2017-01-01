@@ -763,6 +763,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         // Create an array for some data.
         foreach (array(
                 'database_' => 'database',
+                'mapping_role_' => 'mapping_roles',
                 'mapping_item_type_' => 'mapping_item_types',
                 'mapping_element_' => 'mapping_elements',
             ) as $name => $set) {

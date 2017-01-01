@@ -685,6 +685,36 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Get the default mapping of roles from Omeka C to Omeka S.
+     *
+     * The name of each role is its id. The label is not used here.
+     *
+     * @return array
+     */
+    public function getDefaultMappingRoles()
+    {
+        static $mapping;
+
+        if (empty($mapping)) {
+            $mapping = $this->getMerged('mapping_roles');
+        }
+
+        return $mapping;
+    }
+
+    /**
+     * Get the user mapping of roles from Omeka C to Omeka S.
+     *
+     * @return array
+     */
+    public function getMappingRoles()
+    {
+        $defaultMapping = $this->getDefaultMappingRoles();
+        $mapping = $this->getParam('mapping_roles') ?: array();
+        return $defaultMapping + $mapping;
+    }
+
+    /**
      * Get the default mapping from Omeka C item types to Omeka S classes.
      *
      * This method doesn't use the database of Omeka S, but the file "classes.php".

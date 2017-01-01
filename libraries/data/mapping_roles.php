@@ -18,7 +18,7 @@ return array(
     'reviewer'          => 'reviewer',
     'author'            => 'author',
     'researcher'        => 'researcher',
-    // TODO Currently not managed
+    // TODO Currently not managed automatically.
     // Plugin Guest User.
     // 'guest'                     => 'guest',
     // Plugin Contribution.

@@ -468,9 +468,10 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _precheckIntegrity()
     {
         $settings = $this->getSecurityIni();
-        if ($settings->precheck->integrity->users) {
-            $this->_precheckIntegrityUsers();
-        }
+        // TODO To be removed since it's included in the form.
+        // if ($settings->precheck->integrity->users) {
+        //    $this->_precheckIntegrityUsers();
+        // }
         if ($settings->precheck->integrity->files) {
             $this->_precheckIntegrityFiles();
         }
@@ -1368,7 +1369,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
         // There is one or more users, at least the current one.
         else {
-            $mappingRoles = $this->getMerged('mapping_roles');
+            $mappingRoles = $this->getMappingRoles();
 
             // The process uses the regular queries of Omeka in order to keep
             // only good records.
@@ -1384,17 +1385,19 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
                 $toInserts = array();
                 foreach ($records as $record) {
-                    if ($record->role == 'super') {
-                        $totalSupers++;
-                    } elseif ($record->role == 'admin') {
-                        $totalAdmins++;
-                    }
-                    if (!isset($mappingRoles[$record->role])) {
+                    if (empty($mappingRoles[$record->role])) {
                         $unmanagedRoles[$record->role] = isset($unmanagedRoles[$record->role])
                             ? ++$unmanagedRoles[$record->role]
                             : 1;
                         continue;
                     }
+
+                    if ($record->role == 'super') {
+                        $totalSupers++;
+                    } elseif ($record->role == 'admin') {
+                        $totalAdmins++;
+                    }
+
                     $id = (integer) $record->id;
                     $role = $record->id == $user->id
                         ? 'global_admin'
@@ -2732,6 +2735,25 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $nav->addPagesFromFilter(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_FILTER_NAME);
         $total = $nav->findAllBy('visible', $visible);
         return count($total);
+    }
+
+    /**
+     * Get an array containing all used roles with total.
+     *
+     * @return array.
+     */
+    public function getUsedRoles()
+    {
+        $db = $this->_db;
+        $sql = "
+        SELECT users.`role` AS role,
+            COUNT(users.`id`) AS total_users
+        FROM {$db->User} users
+        GROUP BY users.`role`
+        ORDER BY users.`role`
+        ;";
+        $roles = $db->fetchAll($sql);
+        return $roles;
     }
 
     /**
