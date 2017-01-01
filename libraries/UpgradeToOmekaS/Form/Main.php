@@ -137,6 +137,8 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         ));
         $this->addElement('password', 'database_password', array(
             'label' => __('Password'),
+            // TODO Clean the form for separate database.
+            // 'errorMessages' => array(__('The password is asked twice.')),
         ));
         // Currently, Omeka S doesn't allow a table prefix.
         /*

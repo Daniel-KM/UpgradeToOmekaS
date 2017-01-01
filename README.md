@@ -33,6 +33,8 @@ TODO
 * Import, conversion and copy
 * Compatibility layer
 
+* Fix the bug on the password, asked twice with a separate database in the form.
+
 
 Installation
 ------------
