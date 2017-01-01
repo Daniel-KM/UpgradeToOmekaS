@@ -115,7 +115,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         ));
         $this->addElement('note', 'database_type_note_separate', array(
             'description' => __('When the database is separated, it should be created before process, then the parameters should be set below.')
-                . ' ' . __('"Port", "charset" and "prefix" are optional.'),
+                . ' ' . __('"Port" and "prefix" are optional.'),
         ));
         $this->addElement('text', 'database_host', array(
             'label' => __('Host'),
@@ -123,10 +123,6 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         ));
         $this->addElement('text', 'database_port', array(
             'label' => __('Port'),
-            'filters' => array(array('StringTrim', '/\\\s')),
-        ));
-        $this->addElement('text', 'database_charset', array(
-            'label' => __('Charset'),
             'filters' => array(array('StringTrim', '/\\\s')),
         ));
         $this->addElement('text', 'database_name', array(
@@ -206,7 +202,6 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 'database_type_note_separate',
                 'database_host',
                 'database_port',
-                'database_charset',
                 'database_name',
                 'database_username',
                 'database_password',

@@ -619,7 +619,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             case 'separate':
                 $host = $this->getParam('database_host');
                 $port = $this->getParam('database_port');
-                $charset = $this->getParam('database_charset');
                 $dbname = $this->getParam('database_name');
                 $username = $this->getParam('database_username');
                 $password = $this->getParam('database_password');
@@ -631,7 +630,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 $config = $db->getAdapter()->getConfig();
                 $host = isset($config['host']) ? $config['host'] : '';
                 $port = isset($config['port']) ? $config['port'] : '';
-                $charset = isset($config['charset']) ? $config['charset'] : '';
                 $dbname = isset($config['dbname']) ? $config['dbname'] : '';
                 $username = isset($config['username']) ? $config['username'] : '';
                 $password = isset($config['password']) ? $config['password'] : '';
@@ -654,9 +652,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $databaseConfig .= empty($port)
             ? ';port     = '. PHP_EOL
             : 'port     = "' . $port . '"'. PHP_EOL;
-        $databaseConfig .= empty($charset) || $charset == 'utf8'
-            ? ';charset   = '. PHP_EOL
-            : 'charset   = "' . $charset . '"'. PHP_EOL;
         $databaseConfig .= ';unix_socket = "' . '' . '"'. PHP_EOL;
         $databaseConfig .= ';log_path = "' . '' . '"'. PHP_EOL;
 

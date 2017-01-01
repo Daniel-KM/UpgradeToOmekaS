@@ -40,7 +40,6 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
         if ($params['database_type'] == 'separate') {
             $startMessage .= __('Database host: %s', $params['database_host']) . PHP_EOL;
             $startMessage .= __('Database port: %s', $params['database_port']) . PHP_EOL;
-            $startMessage .= __('Database charset: %s', $params['database_charset']) . PHP_EOL;
             $startMessage .= __('Database prefix: %s', $params['database_prefix']) . PHP_EOL;
             $startMessage .= __('Database name: %s', $params['database_name']) . PHP_EOL;
             $startMessage .= __('Database username: %s', $params['database_username']) . PHP_EOL;
