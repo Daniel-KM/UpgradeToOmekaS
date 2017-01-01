@@ -43,7 +43,7 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
     {
         $this->_removeStubPlugin();
         $this->_removeBaseDir();
-        $this->_removeTableVocabulary();
+        $this->_removeTableOmekaS();
         $this->_removeJobs();
 
         parent::tearDown();
@@ -105,10 +105,14 @@ PLUGIN;
         }
     }
 
-    protected function _removeTableVocabulary()
+    protected function _removeTableOmekaS()
     {
-        $sql = 'DROP TABLE IF EXISTS `vocabulary`;';
-        $result = get_db()->prepare($sql)->execute();
+        $sql = 'SET foreign_key_checks = 0;';
+        $result = get_db()->query($sql);
+        $processor = new UpgradeToOmekaS_Processor_Core();
+        $tables = $processor->getOmekaSDefaultTables();
+        $sql = 'DROP TABLE IF EXISTS `' . implode('`, `', $tables) . '`;';
+        $result = get_db()->query($sql);
     }
 
     protected function _removeJobs()

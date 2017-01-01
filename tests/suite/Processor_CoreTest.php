@@ -94,7 +94,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals('The type of database "foo" is not supported.', $result[0]);
     }
 
-    public function testCheckConfigBadDatabaseSeparate()
+    public function testCheckConfigDatabaseSeparateBadUsername()
     {
         $params = array(
             'database_type' => 'separate',
@@ -109,7 +109,10 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $result = $processor->checkConfig();
         $this->assertEquals(3, count($result));
         $this->assertContains('Cannot access to the database "bar"', $result[0]);
+    }
 
+    public function testCheckConfigDatabaseSeparateBadDbname()
+    {
         $config = get_db()->getAdapter()->getConfig();
         $dbName = $config['dbname'];
         $dbHost = $config['host'];
@@ -125,9 +128,12 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $processor = new UpgradeToOmekaS_Processor_Core();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(4, count($result));
+        $this->assertEquals(3, count($result));
         $this->assertContains('The database name should be different from the Omeka Classic one when the databases are separate, but on the same server.', $result[0]);
+    }
 
+    public function testCheckConfigDatabaseSeparateBadEmptyDbname()
+    {
         $params = array(
             'database_type' => 'separate',
             'database_prefix' => '',
@@ -135,7 +141,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $processor = new UpgradeToOmekaS_Processor_Core();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(6, count($result));
+        $this->assertEquals(3, count($result));
         $this->assertEquals('The param "name" should be set when the databases are separate.', $result[2]);
     }
 
@@ -164,7 +170,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
     public function testCheckConfigBadDatabaseShareTableExists()
     {
-        $sql = 'CREATE TABLE IF NOT EXISTS `vocabulary` (
+        $sql = 'CREATE TABLE `vocabulary` (
             `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY
         );';
         $result = get_db()->prepare($sql)->execute();
@@ -355,7 +361,10 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $path = $this->_zippath;
         $exists = file_exists($path);
         if ($exists) {
-            if (filesize($path) != $processor->omekaSemantic['size']
+            if (filesize($path) == 0) {
+                $this->markTestSkipped(__('An empty file "%s" exists: replace it by the true omeka-s.zip.', $path));
+            }
+            elseif (filesize($path) != $processor->omekaSemantic['size']
                     || md5_file($path) != $processor->omekaSemantic['md5']
                 ) {
                 $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));

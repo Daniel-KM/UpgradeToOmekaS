@@ -118,6 +118,14 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected $_destinationFreeSize;
 
     /**
+     * Return the default Omeka S tables.
+     */
+    public function getOmekaSDefaultTables()
+    {
+        return $this->_omekaSTables;
+    }
+
+    /**
      * @todo Load all the config checks from Omeka Semantic.
      *
      * {@inheritDoc}
@@ -339,14 +347,19 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 if ($port) {
                     $params['port'] = $port;
                 }
+
                 try {
-                    $newDb = Zend_Db::Factory('PDO_MYSQL', $params);
-                    $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "' . $name . '";';
-                    $result = $newDb->fetchOne($sql);
+                    $targetDb = Zend_Db::Factory('PDO_MYSQL', $params);
+                    if (empty($targetDb)) {
+                        $this->_checks[] = __('Can’t get access to the database "%s": %s', $name, $e->getMessage());
+                    }
                 } catch (Exception $e) {
                     $this->_checks[] = __('Cannot access to the database "%s": %s', $name, $e->getMessage());
                     return;
                 }
+
+                $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "' . $name . '";';
+                $result = $targetDb->fetchOne($sql);
                 if ($result) {
                     $this->_checks[] = __('The database "%s" should be empty.', $name);
                     return;
@@ -381,7 +394,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 }
 
                 // Check conflicts of table names.
-                if (array_intersect($result, $this->_omekaSTables)) {
+                if (array_intersect($result, $this->getOmekaSDefaultTables())) {
                     $this->_checks[] = __('Some names of tables of Omeka S are existing in the database of Omeka Classic.');
                 }
                 break;
@@ -642,8 +655,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 return __('The type "%s" is not possible for the database.', $type);
         }
 
-        $path = $this->getParam('base_dir');
-        $databaseIni = $path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.ini';
+        $databaseIni = $this->_getFullPath('config/database.ini');
         $databaseConfig = 'user     = "' . $username . '"'. PHP_EOL;
         $databaseConfig .= 'password = "' . $password . '"'. PHP_EOL;
         $databaseConfig .= 'dbname   = "' . $dbname . '"'. PHP_EOL;
@@ -683,10 +695,44 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         } catch (Exception $e) {
             return __('Cannot access to the database "%s": %s', $dbname, $e->getMessage());
         }
+
+        // Another check.
+        switch ($type) {
+            case 'separate':
+                $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "' . $dbname . '";';
+                $result = $targetDb->fetchOne($sql);
+                if ($result) {
+                    return __('The target database "%s" should be empty when using a separate database.', $dbname);
+                }
+                break;
+            case 'share':
+                $sql = 'SHOW TABLES;';
+                $result = $targetDb->fetchCol($sql);
+                if (array_intersect($result, $this->getOmekaSDefaultTables())) {
+                    return __('Some names of tables of Omeka S are existing in the database of Omeka Classic.');
+                }
+                break;
+        }
+
+        $this->_targetDb = $targetDb;
     }
 
     protected function _installOmekaS()
     {
+        $targetDb = $this->getTargetDb();
+
+        // The Omeka S schema is an optimized sql script, so use it.
+        $script = $this->_getFullPath('application/data/install/schema.sql');
+        $sql = file_get_contents($script);
+        $result = $targetDb->prepare($sql)->execute();
+        if (!$result) {
+            return __('Unable to execute install queries.');
+        }
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The main tables are installed.'), Zend_Log::INFO);
+
+        // Other tasks.
+        // Vocabulary.
 
     }
 

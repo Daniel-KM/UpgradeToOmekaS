@@ -58,6 +58,16 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_db;
 
     /**
+     * Short to the database of Omeka Semantic.
+     *
+     * Even if the database is shared, this is not an alias of $_db since it has
+     * a direct access to the database without the Zend layers of Omeka Classic.
+     *
+     * @var object
+     */
+    protected $_targetDb;
+
+    /**
      * Short to the ini reader.
      *
      * @var object
@@ -290,6 +300,85 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         }
 
         $this->_log(__('End processing.'), Zend_Log::INFO);
+    }
+
+    /**
+     * Helper to get the Omeka S database object.
+     *
+     * @return Db|null
+     */
+    public function getTargetDb()
+    {
+        if (!empty($this->_targetDb)) {
+            return $this->_targetDb;
+        }
+
+        $params = $this->getParams();
+        if (empty($params)) {
+            throw new UpgradeToOmekaS_Exception(__('The params of are not defined.'));
+        }
+
+        $type = $this->getParam('database_type');
+        switch ($type) {
+            case 'separate':
+                $host = $this->getParam('database_host');
+                $port = $this->getParam('database_port');
+                $dbname = $this->getParam('database_name');
+                $username = $this->getParam('database_username');
+                $password = $this->getParam('database_password');
+                break;
+            // The default connection can't be reused, because there are the
+            // application layers.
+            case 'share':
+                $db = $this->_db;
+                $config = $db->getAdapter()->getConfig();
+                $host = isset($config['host']) ? $config['host'] : '';
+                $port = isset($config['port']) ? $config['port'] : '';
+                $dbname = isset($config['dbname']) ? $config['dbname'] : '';
+                $username = isset($config['username']) ? $config['username'] : '';
+                $password = isset($config['password']) ? $config['password'] : '';
+                break;
+            default:
+                throw new UpgradeToOmekaS_Exception(__('The type "%s" is not possible for the database.', $type));
+        }
+
+        // Check the connection.
+        $params = array(
+            'host' => $host,
+            'username' => $username,
+            'password' => $password,
+            'dbname' => $dbname,
+        );
+        if ($port) {
+            $params['port'] = $port;
+        }
+
+        try {
+            $targetDb = Zend_Db::Factory('PDO_MYSQL', $params);
+            if (empty($targetDb)) {
+                throw new UpgradeToOmekaS_Exception();
+            }
+        } catch (Exception $e) {
+            throw new UpgradeToOmekaS_Exception(__('Cannot access to the database "%s".', $dbname));
+        }
+
+        $this->_targetDb = $targetDb;
+        return $this->_targetDb;
+    }
+
+    /**
+     * Helper to get an absolute path to a file inside Omeka S.
+     *
+     * @param string $path A relative path.
+     * @param
+     */
+    protected function _getFullPath($path)
+    {
+        $baseDir = $this->getParam('base_dir');
+        if (empty($baseDir)) {
+            throw new UpgradeToOmekaS_Exception(__('Base dir undefined.'));
+        }
+        return $baseDir . DIRECTORY_SEPARATOR . ltrim($path, '/');
     }
 
     /**
