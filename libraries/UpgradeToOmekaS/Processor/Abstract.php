@@ -98,6 +98,20 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $mapping_theme_files = array();
 
     /**
+     * Mapping of each functions used by themes between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    public $mapping_functions = array();
+
+    /**
+     * Mapping of each variables used by themes between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    public $mapping_variables = array();
+
+    /**
      * Maximum rows to process by loop.
      *
      * @var integer

@@ -21,11 +21,11 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
      * @var array
      */
     protected $_module = array(
-        'name' => 'Compatibility Layer For Omeka',
-        'version' => '3.0.1',
-        'url' => 'https://github.com/Daniel-KM/CompatibilityLayer4Omeka/releases/download/v%s/CompatibilityLayer4Omeka.zip',
-        'size' => 10000,
-        'md5' => '2b1919eabef364f14cbe9cdc71eb4467',
+        'name' => 'Upgrade from Omeka Classic',
+        'version' => '3.1',
+        'url' => 'https://github.com/Daniel-KM/UpgradeFromOmekaClassic/archive/%s.zip',
+        'size' => 0,
+        'md5' => '',
         'type' => 'upgrade',
         'partial' => true,
         'install' => array(),
@@ -42,7 +42,7 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         '_copyThemes',
         '_upgradeThemesParams',
         '_upgradeThemes',
-        // TODO Remove empty folders (simple-pages...).
+        '_upgradeFunctionsAndVariables',
     );
 
     /**
@@ -59,6 +59,27 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
      */
     // public $mapping_theme_files = array();
 
+    /**
+     * Initialized during init via libraries/data/mapping_functions.php.
+     *
+     * @var array
+     */
+    // public $mapping_functions = array();
+
+    /**
+     * Initialized during init via libraries/data/mapping_functions.php.
+     *
+     * @var array
+     */
+    // public $mapping_variables = array();
+
+    /**
+     * Store the translated files from Omeka C to Omeka S.
+     *
+     * @var array
+     */
+    protected $_checkedFiles = array();
+
     protected function _init()
     {
         $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
@@ -72,6 +93,14 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             $script = $dataDir
                 . DIRECTORY_SEPARATOR . 'mapping_theme_files.php';
             $this->mapping_theme_files = require $script;
+
+            $script = $dataDir
+                . DIRECTORY_SEPARATOR . 'mapping_functions.php';
+            $this->mapping_functions = require $script;
+
+            $script = $dataDir
+                . DIRECTORY_SEPARATOR . 'mapping_variables.php';
+            $this->mapping_variables = require $script;
         }
 
     /**
@@ -231,6 +260,8 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         }
 
         $this->_progress(0, count($themes));
+
+        // TODO Add a check to not rename files inside assets (theme "the-audio").
 
         $processors = $this->getProcessors();
         $i = 0;
@@ -393,7 +424,12 @@ OUTPUT;
         $destination = $this->getParam('base_dir')
             . DIRECTORY_SEPARATOR . 'themes';
 
+        // This is the list in the destination, not from the source.
         $themes = UpgradeToOmekaS_Common::listDirsInDir($destination);
+        $defaultKey = array_search('default', $themes);
+        if ($defaultKey !== false) {
+            unset($themes[$defaultKey]);
+        }
         if (empty($themes)) {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('No theme to upgrade.'),
                 Zend_Log::INFO);
@@ -409,6 +445,8 @@ OUTPUT;
                 Zend_Log::DEBUG);
             $this->_upgradeTheme($destination . DIRECTORY_SEPARATOR . $theme);
         }
+
+        // TODO Remove empty folders (simple-pages...).
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All files have been moved and renamed according to Omeka S views.')
             . ' ' . __('There is now a main file, "layout.phtml".'),
@@ -465,7 +503,9 @@ OUTPUT;
 
 ;;;;;;;
 ; Upgraded from the theme "{$name}" of Omeka Classic on {$this->getDatetime()}.
+;
 ; See https://github.com/Daniel-KM/UpgradeToOmekaS
+; See https://github.com/Daniel-KM/UpgradeFromOmekaClassic
 ;;;;;;;
 
 [info]
@@ -846,5 +886,114 @@ OUTPUT;
         $content = file_get_contents($file);
         $content = str_replace('/images/', '/img/', $content);
         $result = file_put_contents($file, $content);
+    }
+
+    protected function _upgradeFunctionsAndVariables()
+    {
+        $path = $this->getParam('base_dir')
+            . DIRECTORY_SEPARATOR . 'themes';
+
+        $mappingFunctions = $this->getMerged('mapping_functions');
+        $fromFunctions = array_keys($mappingFunctions);
+        $toFunctions = array_values($mappingFunctions);
+
+        $mappingVariables = $this->getMerged('mapping_variables');
+        $fromVariables = array_keys($mappingVariables);
+        $toVariables = array_values($mappingVariables);
+
+        $files = UpgradeToOmekaS_Common::listFilesInFolder($path, array('php', 'phtml'));
+        $this->_progress(0, count($files));
+
+        $toExclude = 'default'
+            . DIRECTORY_SEPARATOR . 'view'
+            . DIRECTORY_SEPARATOR . 'layout'
+            . DIRECTORY_SEPARATOR . 'layout.phtml';
+        $toExcludeMatch = '~^' . preg_quote($path, '~') . '/(\w|\-)+/asset/~';
+
+        $totalCalls = 0;
+        $this->_checkedFiles = array();
+        $errors = 0;
+        $i = 0;
+        $flag = false;
+        foreach ($files as $file) {
+            $this->_progress(++$i);
+            // Exclude some files from Omeka S.
+            if (strpos($file, $toExclude)) {
+                continue;
+            }
+            // Don't process files that are in assets.
+            if (preg_match($toExcludeMatch, $file)) {
+                continue;
+            }
+
+            $input = file_get_contents($file);
+
+            $output = preg_replace($fromFunctions, $toFunctions, $input, -1, $count);
+            $countF = $count;
+
+            $output = str_replace($fromVariables, $toVariables, $output, $count);
+            $countV = $count;
+            $totalCalls += $countF + $countV;
+
+            if (!$flag && !empty($input) && empty($output)) {
+                $flag = true;
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('There is probably an error in mapping functions regex, because there is no output.'),
+                    Zend_Log::WARN);
+            }
+
+            $result = file_put_contents($file, $output);
+
+            // Check the syntax for info, but no throw error, because any file
+            // should be manually reviewed.
+            $result = $this->_checkPhp($file);
+            $this->_checkedFiles[$file] = $result;
+            if (!empty($result)) {
+                ++$errors;
+            }
+        }
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('A total of %d calls to functions have been converted.',
+            $totalCalls), Zend_Log::INFO);
+
+        if ($errors) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The files (%d) of the themes below have errors.',
+                $errors), Zend_Log::ERR);
+            $this->_log('[' . __FUNCTION__ . ']: ' . implode(PHP_EOL, array_filter($this->_checkedFiles)),
+                Zend_Log::INFO);
+        }
+    }
+
+    /**
+     * Helper to check the syntax of a php file.
+     *
+     * @param string $file
+     * @return null|string Null if cli is disabled, empty string if no error,
+     * else the error.
+     */
+    protected function _checkPhp($file)
+    {
+        static $cliPath;
+
+        if (is_null($cliPath)) {
+            $cliPath = (string) Omeka_Job_Process_Dispatcher::getPHPCliPath();
+        }
+
+        if (empty($cliPath)) {
+            return null;
+        }
+
+        $command = $cliPath . ' --syntax-check ' . escapeshellarg($file);
+
+        try {
+            UpgradeToOmekaS_Common::executeCommand($command, $status, $output, $errors);
+            // A return value of 0 indicates the convert binary is working correctly.
+            $result = $status == 0;
+        } catch (Exception $e) {
+            return false;
+        }
+        if ($result) {
+            return '';
+        }
+        return $output;
     }
 }

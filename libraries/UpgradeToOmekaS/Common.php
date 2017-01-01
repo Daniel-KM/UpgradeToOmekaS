@@ -109,6 +109,75 @@ class UpgradeToOmekaS_Common
     }
 
     /**
+     * Get full path of files filtered by extensions recursively in a directory.
+     *
+     * @param string $dir
+     * @param string $extensions
+     * @return array
+     */
+    public static function listFilesInFolder($dirpath, $extensions = array())
+    {
+        if (!file_exists($dirpath)) {
+            return array();
+        }
+        $regex = empty($extensions)
+            ? '/^.+$/i'
+            : '/^.+\.(' . implode('|', $extensions) . ')$/i';
+
+        $Directory = new RecursiveDirectoryIterator($dirpath);
+        $Iterator = new RecursiveIteratorIterator($Directory);
+        $Regex = new RegexIterator($Iterator, $regex, RecursiveRegexIterator::GET_MATCH);
+        $files = array();
+        foreach ($Regex as $file) {
+            $files[] = reset($file);
+        }
+        sort($files);
+        return $files;
+    }
+
+    /**
+     * Chmod of all files recursively in a directory.
+     *
+     * @param string $dir
+     * @param numeric $modFile
+     * @param numeric $modDir
+     * @return boolean
+     */
+    public static function chmodFolder($dirpath, $modFile = 0644, $modDIr = 0755)
+    {
+        if (empty($dirpath)) {
+            return false;
+        }
+        if (!file_exists($dirpath) || !is_dir($dirpath) || !is_readable($dirpath)) {
+            return false;
+        }
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dirpath, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST);
+
+        foreach ($iterator as $item) {
+            // This may be a dir.
+            if ($item->isDir()) {
+                $result = chmod($item, $modDir);
+            }
+            // This may be a file.
+            elseif ($item->isFile()) {
+                $result = chmod($item, $modFile);
+            }
+            // This may be a symbolic link or something else.
+            else {
+                continue;
+            }
+            if (!$result) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Determine if the uri of a file is a remote url or a local path.
      *
      * @param string $uri
