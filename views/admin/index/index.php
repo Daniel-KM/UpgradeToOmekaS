@@ -75,12 +75,14 @@ echo head(array(
             echo common('upgrade-to-omeka-s-running-jobs', array(
                 'type' => 'living',
                 'runningJobs' => $livingRunningJobs,
+                'isStopped' => $isStopped,
             ));
         endif;
         if ($deadRunningJobs):
             echo common('upgrade-to-omeka-s-running-jobs', array(
                 'type' => 'dead',
                 'runningJobs' => $deadRunningJobs,
+                'isStopped' => $isStopped,
             ));
         endif;
     ?>

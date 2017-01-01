@@ -38,6 +38,9 @@
 <?php switch ($type):
 case 'living': ?>
 <p><?php echo __('The upgrade process can’t be launch while jobs are processing.'); ?></p>
+<?php if ($isStopped): ?>
+<p><?php echo __('The last upgrade process was stopped, so wait for the last task to finish.'); ?></p>
+<?php endif; ?>
 <?php
     break;
 case 'dead': ?>

@@ -68,6 +68,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $isProcessing = $this->_isProcessing();
         $isCompleted = $this->_isCompleted();
         $isError = $this->_isError();
+        $isStopped = $this->_isStopped();
         $isSiteDown = $this->_isSiteDown();
         $deadRunningJobs = $this->_getDeadRunningJobs();
         $livingRunningJobs = $this->_getLivingRunningJobs();
@@ -77,6 +78,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->isProcessing = $isProcessing;
         $this->view->isCompleted = $isCompleted;
         $this->view->isError = $isError;
+        $this->view->isStopped = $isStopped;
         $this->view->isSiteDown = $isSiteDown;
         $this->view->deadRunningJobs = $deadRunningJobs;
         $this->view->livingRunningJobs = $livingRunningJobs;
@@ -213,12 +215,15 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $isProcessing = $this->_isProcessing();
         $isCompleted = $this->_isCompleted();
         $isError = $this->_isError();
+        $isStopped = $this->_isStopped();
+
         $isLogEnabled = $this->_isLogEnabled();
         $isSiteDown = $this->_isSiteDown();
 
         $this->view->isProcessing = $isProcessing;
         $this->view->isCompleted = $isCompleted;
         $this->view->isError = $isError;
+        $this->view->isStopped = $isStopped;
         $this->view->isLogEnabled = $isLogEnabled;
         $this->view->isSiteDown = $isSiteDown;
 
@@ -407,6 +412,18 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     protected function _isCompleted()
     {
         return get_option('upgrade_to_omeka_s_process_status') == Process::STATUS_COMPLETED;
+    }
+
+    /**
+     * Check if the process is stopped.
+     *
+     * @todo Uses the status of the process object.
+     *
+     * @return boolean
+     */
+    protected function _isStopped()
+    {
+        return get_option('upgrade_to_omeka_s_process_status') == Process::STATUS_STOPPED;
     }
 
     /**

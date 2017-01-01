@@ -74,6 +74,9 @@ echo head(array(
             <?php endforeach; ?>
         </tbody>
     </table>
+    <?php if ($isStopped): ?>
+    <p><?php echo __('The upgrade process has been stopped, so this will be the last task.')?></p>
+    <?php endif; ?>
     <?php else: ?>
     <p><?php echo __('No log yet.'); ?></p>
     <?php endif; ?>
