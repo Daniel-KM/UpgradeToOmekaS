@@ -1,7 +1,9 @@
 <?php if ($isCompleted): ?>
 <h2><?php echo __('Completed!'); ?></h2>
 <p><?php echo __('The previous upgrade finished successfully!'); ?></p>
-<p><?php echo __('Go to your %snew site%s built on Omeka Semantic.', '<a href="' . get_option('upgrade_to_omeka_s_process_url') . '" target="_blank">', '</a>'); ?></p>
+<p><?php echo __('Go to your %snew site%s built on Omeka Semantic and %slogin%s to see the new world.',
+    '<a href="' . get_option('upgrade_to_omeka_s_process_url') . '" target="_blank">', '</a>',
+    '<a href="' . get_option('upgrade_to_omeka_s_process_url') . '/login" target="_blank">', '</a>'); ?> </p>
 <p class="explanation note"><?php echo __('Note') . ': ' . __('The url may be wrong if the config of the server is hardly customized.'); ?></p>
 <?php endif; ?>
 

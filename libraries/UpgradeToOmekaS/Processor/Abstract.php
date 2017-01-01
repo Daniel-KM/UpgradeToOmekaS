@@ -124,6 +124,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_datetime;
 
     /**
+     * The slug of the first site on Omeka S.
+     *
+     * @var string
+     */
+    protected $_siteSlug;
+
+    /**
      * Constructor of the class.
      *
      * @return void
@@ -167,6 +174,18 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public function getParams()
     {
         return $this->_params;
+    }
+
+    /**
+     * Get a param.
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
+     */
+    public function setParam($name, $value)
+    {
+        $this->_params[$name] = $value;
     }
 
     /**
@@ -559,6 +578,34 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Helper to get the site slug.
+     *
+     * @return string
+     */
+    public function getSiteSlug()
+    {
+        if (empty($this->_siteSlug)) {
+            $title = get_option('site_title') ?: __('Site %s', WEB_ROOT);
+            $slug = substr($this->_slugify($title), 0, 190);
+            $this->_siteSlug = $slug;
+            $this->setParam('siteSlug', $slug);
+        }
+        return $this->_siteSlug;
+    }
+
+    /**
+     * Helper to convert a navigation link from the Omeka 2 to Omeka S.
+     *
+     * @param array $page The page to convert.
+     * @param array $args The url and parsed elements.
+     * @param array $site Some data for the url of the site.
+     * @return array|null The Omeka S formatted nav link, or null.
+     */
+    public function convertNavigationPageToLink($page, $args, $site)
+    {
+    }
+
+    /**
      * Return the status of the process.
      *
      * @todo Uses the status of the process object.
@@ -626,5 +673,22 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
         $message = '[UpgradeToOmekaS][' . $this->pluginName . ']' . $message;
         _log($message, $priority);
+    }
+
+    /**
+     * Transform the given string into a valid URL slug
+     *
+     * @see SiteSlugTrait::slugify()
+     *
+     * @param string $input
+     * @return string
+     */
+    protected function _slugify($input)
+    {
+        $slug = mb_strtolower($input, 'UTF-8');
+        $slug = preg_replace('/[^a-z0-9-]+/u', '-', $slug);
+        $slug = preg_replace('/-{2,}/', '-', $slug);
+        $slug = preg_replace('/-*$/', '', $slug);
+        return $slug;
     }
 }

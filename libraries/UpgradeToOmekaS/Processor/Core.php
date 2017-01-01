@@ -61,7 +61,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         // Database.
         '_importUsers',
-        '_importSettings',
+        '_importSite',
         '_importItemTypes',
         '_importCollections',
         '_importItems',
@@ -1476,9 +1476,60 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::NOTICE);
     }
 
-    protected function _importSettings()
+    protected function _importSite()
     {
         // Settings of Omeka Classic: create the first site.
+        $db = $this->_db;
+        $targetDb = $this->getTargetDb();
+        $user = $this->getParam('user');
+
+        $title = get_option('site_title') ?: __('Site %s', WEB_ROOT);
+        $slug = $this->getSiteSlug();
+        $toInsert = array();
+        $toInsert['id'] = 1;
+        $toInsert['owner_id'] = $user->id;
+        $toInsert['slug'] = $slug;
+        $toInsert['theme'] = substr(get_option('public_theme') ?: 'default', 0,190);
+        $toInsert['title'] = substr($title, 0, 190);
+        $toInsert['navigation'] = json_encode($this->_convertNavigation());
+        $toInsert['item_pool'] = json_encode(array());
+        $toInsert['created'] = $this->getDatetime();
+        $toInsert['is_public'] = 1;
+        $result = $targetDb->insert('site', $toInsert);
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to create the first site.'));
+        }
+
+        // An item set for the site will be created later to keep original ids.
+
+        $totalVisibleLinks = $this->_countNavigationPages(true);
+        if ($totalVisibleLinks) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('%d navigation links have been imported.',
+                $totalVisibleLinks), Zend_Log::INFO);
+        }
+        $totalInvisibleLinks = $this->_countNavigationPages(false);
+        if ($totalInvisibleLinks) {
+            // Plural needs v2.3.1.
+            $message = function_exists('plural')
+                ? __(plural(
+                    'Omeka S doesn’t allow to hide/show navigation links, so %d link has not been imported.',
+                    'Omeka S doesn’t allow to hide/show navigation links, so %d links have not been imported.',
+                    $totalInvisibleLinks), $totalInvisibleLinks)
+                : __('Omeka S doesn’t allow to hide/show navigation links, so %d links have not been imported.',
+                    $totalInvisibleLinks);
+            $this->_log('[' . __FUNCTION__ . ']: ' . $message,
+                Zend_Log::NOTICE);
+        }
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The conversion of the navigation is currently partial and some false links may exist.',
+            $totalInvisibleLinks), Zend_Log::INFO);
+
+        // TODO Keep these values inside a block of a page?
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The "author", the "description" and the "copyright" of the site are not managed by Omeka S.'),
+            Zend_Log::NOTICE);
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The first site has been created.'),
+            Zend_Log::INFO);
     }
 
     protected function _importItemTypes()
@@ -1589,5 +1640,243 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $output[] = '];';
         $result = implode(PHP_EOL, $output) . PHP_EOL;
         return $result;
+    }
+
+    protected function _convertNavigation()
+    {
+        // From public_nav_main()
+        $nav = new Omeka_Navigation;
+        $nav->loadAsOption(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_OPTION_NAME);
+        $nav->addPagesFromFilter(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_FILTER_NAME);
+        // Process nav directly.
+        $nav = $nav->toArray();
+        foreach ($nav as &$page) {
+            $page['visible'] ? $this->_convertNavigationPage($page) : $page = null;
+        }
+
+        $nav = array_filter($nav);
+        return $nav;
+    }
+
+    protected function _convertNavigationPage(&$page)
+    {
+        if (is_array($page)) {
+            $result = $this->_convertNavigationPageValues($page);
+            if (isset($page['pages'])) {
+                foreach ($page['pages'] as &$subpage) {
+                    $subpage['visible'] ? $this->_convertNavigationPage($subpage) : $subpage = null;
+                }
+                $result['links'] = array_filter($page['pages']);
+            } else {
+                $result['links'] = array();
+            }
+            $page = $result;
+        }
+        // Else single value: no change and no return.
+    }
+
+    protected function _convertNavigationPageValues($page)
+    {
+        static $baseRoot;
+        static $omekaPath;
+        static $omekaSPath;
+        static $omekaSSitePath;
+
+        if (is_null($baseRoot)) {
+            $parsed = parse_url(WEB_ROOT);
+            $baseRoot = $parsed['scheme'] . '://' . $parsed['host'] . (!empty($parsed['port']) ? ':' . $parsed['port'] : '');
+            $omekaPath = substr(WEB_ROOT, strlen($baseRoot));
+            $omekaSPath = substr($this->getParam('url'), strlen($baseRoot));
+            $omekaSSitePath = $omekaSPath . '/s/' . $this->getSiteSlug();
+        }
+
+        // The uri doesn't keep the fragment?
+        $url = isset($page['uri']) ? $page['uri'] : $page['uid'];
+
+        if ($url == WEB_ROOT) {
+            return array(
+                'type' => 'url',
+                'data' => array(
+                    'label' => $page['label'],
+                    'url' => $this->getParam('url'),
+            ));
+        }
+
+        $parsed = parse_url($url);
+        $isRemote = isset($parsed['scheme']) && in_array($parsed['scheme'], array('http', 'https'));
+        // Check if this is an external url.
+        if ($isRemote && strpos($url, WEB_ROOT) !== 0) {
+            return array(
+                'type' => 'url',
+                'data' => array(
+                    'label' => $page['label'],
+                    'url' => $url,
+            ));
+        }
+
+        // Get the path without the Omeka 2 path, if any.
+        $path = substr($parsed['path'], strlen($omekaPath));
+        $parsed['url'] = $url;
+        $parsed['fullpath'] = $parsed['path'];
+        $parsed['path'] = $path;
+
+        $processors = $this->getProcessors();
+        foreach ($processors as $processor) {
+            $result = $processor->convertNavigationPageToLink(
+                $page,
+                $parsed,
+                array(
+                    'baseRoot' => $baseRoot,
+                    'omekaPath' => $omekaPath,
+                    'omekaSPath' => $omekaSPath,
+                    'omekaSSitePath' => $omekaSSitePath,
+            ));
+            if ($result) {
+                return $result;
+            }
+        }
+
+        // Not found: return the full url.
+        return array(
+            'type' => 'url',
+            'data' => array(
+                'label' => $page['label'],
+                'url' => $url,
+        ));
+    }
+
+    public function convertNavigationPageToLink($page, $parsed, $site)
+    {
+        $omekaSPath = $site['omekaSPath'];
+        $omekaSSitePath = $site['omekaSSitePath'];
+        $path = $parsed['path'];
+        switch ($path) {
+            case '/search':
+            case '/items/search':
+                return array(
+                    'type' => 'url',
+                    'data' => array(
+                        'label' => $page['label'],
+                        'url' => $omekaSSitePath . '/item/search',
+                        // TODO Convert the query if any.
+                        // 'query' => '',
+                ));
+            case '/items':
+            case '/items/browse':
+                return array(
+                    'type' => 'browse',
+                    'data' => array(
+                        'label' => $page['label'],
+                        // TODO Convert the query if any.
+                        'query' => '',
+                ));
+            case '/collections':
+            case '/collections/browse':
+                return array(
+                    'type' => 'browseItemSets',
+                    'data' => array(
+                        'label' => $page['label'],
+                        // TODO Convert the query if any.
+                        'query' => '',
+                ));
+            case strpos($path, '/items/show/') === 0:
+                // Id of items are kept.
+                $id = substr($path, strlen('/items/show/'));
+                return array(
+                    'type' => 'url',
+                    'data' => array(
+                        'label' => $page['label'],
+                        'url' => $omekaSSitePath . '/item/' . $id,
+                ));
+            case strpos($path, '/collections/show/') === 0:
+                // TODO Wrong path to collection (id changes).
+                $id = substr($path, strlen('/collections/show/'));
+                return array(
+                    'type' => 'url',
+                    'data' => array(
+                        'label' => $page['label'],
+                        'url' => $omekaSSitePath . '/item-set/' . $id,
+                ));
+            case strpos($path, '/files/show/') === 0:
+                // TODO Wrong path to file (id changes).
+                $id = substr($path, strlen('/files/show/'));
+                return array(
+                    'type' => 'url',
+                    'data' => array(
+                        'label' => $page['label'],
+                        'url' => $omekaSSitePath . '/media/' . $id,
+                ));
+            case '/users':
+            case '/users/login':
+                return array(
+                    'type' => 'url',
+                    'data' => array(
+                        'label' => $page['label'],
+                        'url' => $omekaSPath . '/login',
+                ));
+            case '/users/logout':
+                return array(
+                    'type' => 'url',
+                    'data' => array(
+                        'label' => $page['label'],
+                        'url' => $omekaSPath . '/logout',
+                ));
+            case '/map':
+            case '/geolocation':
+            case '/geolocation/map':
+            case '/geolocation/map/browse':
+                return array(
+                    'type' => 'mapping',
+                    'data' => array(
+                        'label' => $page['label'],
+                ));
+            case '/exhibits':
+            case '/exhibits/browse':
+                return array(
+                    'type' => 'url',
+                    'data' => array(
+                        'label' => $page['label'],
+                        'url' => $omekaSPath,
+                ));
+            case strpos($path, '/exhibits/show/') === 0:
+                $slug = substr($path, strlen('/exhibits/show/'));
+                $pos = strpos($slug, '/');
+                if ($pos === false) {
+                    // The exhibit exists, because it's a visible internal link.
+                    return array(
+                        'type' => 'url',
+                        'data' => array(
+                            'label' => $page['label'],
+                            // TODO The slug shouldn't be the same than the site (very rare).
+                            'url' => $omekaSPath . '/s/' . $slug,
+                    ));
+                }
+                // TODO Get the id of the page (the number of simple pages + the id of the exhibit page)..
+                $id = 1;
+                return array(
+                    'type' => 'page',
+                    'data' => array(
+                        'label' => $page['label'],
+                        'id' => $id,
+                ));
+        }
+    }
+
+    /**
+     * Get all visible or invisible pages.
+     *
+     * @todo Check if a visible page is under an invisible page.
+     *
+     * @param string $visible
+     * @return unknown
+     */
+    protected function _countNavigationPages($visible = true)
+    {
+        // From public_nav_main()
+        $nav = new Omeka_Navigation;
+        $nav->loadAsOption(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_OPTION_NAME);
+        $nav->addPagesFromFilter(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_FILTER_NAME);
+        $total = $nav->findAllBy('visible', $visible);
+        return count($total);
     }
 }

@@ -196,6 +196,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $params['isProcessing'] = true;
 
         $url = $this->_determineUrl($params['base_dir']);
+        $params['url'] = $url;
         set_option('upgrade_to_omeka_s_process_url', $url);
 
         // TODO Set a single id in options and in an option to find the process?

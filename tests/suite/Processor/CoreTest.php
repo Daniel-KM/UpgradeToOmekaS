@@ -423,11 +423,9 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $sql = 'SELECT local_name FROM resource_class WHERE id = 105;';
         $result = $targetDb->fetchOne($sql);
         $this->assertEquals('OnlineChatAccount', $result);
-
         $sql = 'SELECT local_name FROM property WHERE id = 184;';
         $result = $targetDb->fetchOne($sql);
         $this->assertEquals('status', $result);
-
         $sql = 'SELECT value FROM setting WHERE id = "administrator_email";';
         $result = $targetDb->fetchOne($sql);
         $this->assertEquals($this->user->email, json_decode($result));
@@ -473,6 +471,75 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $sql = 'SELECT COUNT(*) FROM user;';
         $result = $targetDb->fetchOne($sql);
         $this->assertEquals($totalRecords - 1, $result);
+    }
+
+    public function testImportSite()
+    {
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers', '_importSite'));
+        $result = $processor->process();
+
+        $targetDb = $processor->getTargetDb();
+
+        $sql = 'SELECT COUNT(*) FROM site;';
+        $result = $targetDb->fetchOne($sql);
+        $this->assertEquals(1, $result);
+        $sql = 'SELECT * FROM site;';
+        $result = $targetDb->fetchRow($sql);
+        $this->assertEquals($this->user->id, $result['owner_id']);
+
+        $title = get_option('site_title');
+        $this->assertEquals($title, $result['title']);
+        $slugDirect = str_replace(' ', '-', strtolower($title));
+        $slug = $processor->getSiteSlug();
+        $this->assertEquals($slugDirect, $slug);
+    }
+
+    public function hookPublicNavigationMain($nav)
+    {
+        add_filter('public_navigation_main', array($this, 'hookPublicNavigationMain'));
+
+        $nav[] = array(
+            'label' => 'Foo',
+            'uri' => url('foo'),
+        );
+        $nav[] = array(
+            'label' => 'Search bar',
+            'uri' => url('items/search'),
+        );
+        $nav[] = array(
+            'label' => 'Bar',
+            'uri' => 'https://example.org/path/to/bar?a=z&b=y#here',
+        );
+        return $nav;
+    }
+
+    public function testImportSiteNavigationMain()
+    {
+        add_filter('public_navigation_main', array($this, 'hookPublicNavigationMain'));
+
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers', '_importSite'));
+        $result = $processor->process();
+        $targetDb = $processor->getTargetDb();
+        $slug = $processor->getSiteSlug();
+        $sql = 'SELECT * FROM site;';
+        $result = $targetDb->fetchRow($sql);
+        $nav = json_decode($result['navigation'], true);
+
+        $this->assertEquals(5, count($nav));
+        $this->assertEquals('Foo', $nav[2]['data']['label']);
+        $this->assertEquals('/foo', $nav[2]['data']['url']);
+        $this->assertEquals('Search bar', $nav[3]['data']['label']);
+        $this->assertEquals('/s/' . $slug . '/item/search', $nav[3]['data']['url']);
+        $this->assertEquals('Bar', $nav[4]['data']['label']);
+        // TODO Omeka doesn't allow fragment?
+        // $this->assertEquals('https://example.org/path/to/bar?a=z&b=y#here', $nav[4]['data']['url']);
+        $this->assertEquals('https://example.org/path/to/bar?a=z&b=y#', $nav[4]['data']['url']);
     }
 
     protected function _prepareProcessor($params = null, $methods = array(), $checkDir = true)

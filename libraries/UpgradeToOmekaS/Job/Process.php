@@ -56,7 +56,7 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
             // $startMessage .= __('Database prefix: %s', $params['database_prefix']) . PHP_EOL;
         }
         $startMessage .= __('Files type: %s', $params['files_type']) . PHP_EOL;
-        $startMessage .= __('Url: %s', get_option('upgrade_to_omeka_s_process_url')) . PHP_EOL;
+        $startMessage .= __('Url: %s', $params['url']) . PHP_EOL;
         $startMessage .= __('User: %s (#%d)', $user->username, $user->id);
         $this->_log($startMessage, Zend_Log::INFO);
 
