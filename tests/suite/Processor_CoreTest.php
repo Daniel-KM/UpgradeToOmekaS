@@ -64,6 +64,11 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $result = $processor->precheckConfig();
         $this->assertEquals(1, count($result));
         $this->assertEquals('1 job is running.', $result[0]);
+
+        $job->delete();
+        $processor = new UpgradeToOmekaS_Processor_Core();
+        $result = $processor->precheckConfig();
+        $this->assertEmpty($result);
     }
 
     public function testCheckConfigDatabase()
@@ -155,6 +160,24 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $result = $processor->checkConfig();
         $this->assertEquals(3, count($result));
         $this->assertEquals('The database prefix should be different from the Omeka Classic one when the database is shared.', $result[0]);
+    }
+
+    public function testCheckConfigBadDatabaseShareTableExists()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `vocabulary` (
+            `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY
+        );';
+        $result = get_db()->prepare($sql)->execute();
+        $this->assertTrue($result);
+        $params = array(
+            'database_type' => 'share',
+            'database_prefix' => 's_' . get_db()->prefix,
+        );
+        $processor = new UpgradeToOmekaS_Processor_Core();
+        $processor->setParams($params);
+        $result = $processor->checkConfig();
+        $this->assertEquals(3, count($result));
+        $this->assertEquals('Some names of tables of Omeka S are existing in the database of Omeka Classic.', $result[0]);
     }
 
     /**
