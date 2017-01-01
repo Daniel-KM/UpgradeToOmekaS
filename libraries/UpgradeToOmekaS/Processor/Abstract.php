@@ -377,12 +377,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             }, $installedPlugins);
             $activePlugins = array_filter($activePlugins);
             // Add all core "plugins".
-            $activePlugins[] = 'Core / Server';
-            $activePlugins[] = 'Core / Site';
-            $activePlugins[] = 'Core / Elements';
-            $activePlugins[] = 'Core / Records';
-            $activePlugins[] = 'Core / Files';
-            $activePlugins[] = 'Core / Themes';
+            $activePlugins[] = 'Core/Server';
+            $activePlugins[] = 'Core/Site';
+            $activePlugins[] = 'Core/Elements';
+            $activePlugins[] = 'Core/Records';
+            $activePlugins[] = 'Core/Files';
+            $activePlugins[] = 'Core/Themes';
+            $activePlugins[] = 'Core/Checks';
 
             // Check processors to prevents possible issues with external plugins.
             foreach ($allProcessors as $name => $class) {
@@ -401,6 +402,12 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                     }
                 }
             }
+
+            // Set "Core/Checks" the last processor.
+            $processor = $processors['Core/Checks'];
+            unset($processors['Core/Checks']);
+            $processors['Core/Checks'] = $processor;
+
             $this->_processors = $processors;
         }
         return $this->_processors;
@@ -599,12 +606,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         // get_class() isn't used directly because it can be bypassed.
         $processors = apply_filters('upgrade_omekas', array());
         $core = array();
-        $core[] = 'Core / Server';
-        $core[] = 'Core / Site';
-        $core[] = 'Core / Elements';
-        $core[] = 'Core / Records';
-        $core[] = 'Core / Files';
-        $core[] = 'Core / Themes';
+        $core[] = 'Core/Server';
+        $core[] = 'Core/Site';
+        $core[] = 'Core/Elements';
+        $core[] = 'Core/Records';
+        $core[] = 'Core/Files';
+        $core[] = 'Core/Themes';
+        $core[] = 'Core/Checks';
         $coreProcessors = array_intersect_key($processors, array_flip($core));
         return in_array(get_class($this), $coreProcessors);
     }
@@ -661,7 +669,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     final public function precheckProcessorPlugin()
     {
-        if (strpos($this->pluginName, 'Core / ') === 0) {
+        if (strpos($this->pluginName, 'Core/') === 0) {
             return;
         }
 

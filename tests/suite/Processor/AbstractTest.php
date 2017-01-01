@@ -86,7 +86,7 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
     {
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
-            'Core / Server',
+            'Core/Server',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers'));
         $target = $processor->getTarget();

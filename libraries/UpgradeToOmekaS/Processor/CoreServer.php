@@ -9,7 +9,7 @@
  */
 class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abstract
 {
-    public $pluginName = 'Core / Server';
+    public $pluginName = 'Core/Server';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
 

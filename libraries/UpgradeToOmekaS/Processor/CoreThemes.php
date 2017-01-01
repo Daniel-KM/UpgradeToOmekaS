@@ -7,7 +7,7 @@
  */
 class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abstract
 {
-    public $pluginName = 'Core / Themes';
+    public $pluginName = 'Core/Themes';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
 
@@ -46,13 +46,6 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         '_upgradeHooks',
         '_upgradeFiles',
     );
-
-    /**
-     * Store the translated files from Omeka C to Omeka S.
-     *
-     * @var array
-     */
-    protected $_checkedFiles = array();
 
     /**
      * Check if the plugin is installed.
@@ -889,8 +882,6 @@ OUTPUT;
         $toExcludeMatch = '~^' . preg_quote($path, '~') . '/(\w|\-)+/asset/~';
 
         $totalCalls = 0;
-        $this->_checkedFiles = array();
-        $errors = 0;
         $i = 0;
         $flag = false;
         foreach ($files as $file) {
@@ -920,59 +911,10 @@ OUTPUT;
             }
 
             $result = file_put_contents($file, $output);
-
-            // Check the syntax for info, but no throw error, because any file
-            // should be manually reviewed.
-            $result = $this->_checkPhp($file);
-            $this->_checkedFiles[$file] = $result;
-            if (!empty($result)) {
-                ++$errors;
-            }
         }
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('A total of %d calls to functions have been converted.',
             $totalCalls), Zend_Log::INFO);
-
-        if ($errors) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The files (%d) of the themes below have errors.',
-                $errors), Zend_Log::ERR);
-            $this->_log('[' . __FUNCTION__ . ']: ' . implode(PHP_EOL, array_filter($this->_checkedFiles)),
-                Zend_Log::INFO);
-        }
-    }
-
-    /**
-     * Helper to check the syntax of a php file.
-     *
-     * @param string $file
-     * @return null|string Null if cli is disabled, empty string if no error,
-     * else the error.
-     */
-    protected function _checkPhp($file)
-    {
-        static $cliPath;
-
-        if (is_null($cliPath)) {
-            $cliPath = (string) Omeka_Job_Process_Dispatcher::getPHPCliPath();
-        }
-
-        if (empty($cliPath)) {
-            return null;
-        }
-
-        $command = $cliPath . ' --syntax-check ' . escapeshellarg($file);
-
-        try {
-            UpgradeToOmekaS_Common::executeCommand($command, $status, $output, $errors);
-            // A return value of 0 indicates the convert binary is working correctly.
-            $result = $status == 0;
-        } catch (Exception $e) {
-            return false;
-        }
-        if ($result) {
-            return '';
-        }
-        return $output;
     }
 
     protected function _upgradeHooks()

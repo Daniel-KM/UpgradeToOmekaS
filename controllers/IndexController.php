@@ -89,7 +89,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $plugins = $this->_listPlugins();
 
         $prechecksPlugins = array_filter($prechecks, function ($k) {
-            return strpos($k, 'Core / ') !== 0;
+            return strpos($k, 'Core/') !== 0;
         }, ARRAY_FILTER_USE_KEY);
         $prechecksCore = array_diff_key($prechecks, $prechecksPlugins);
 
@@ -161,7 +161,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         // Launch the check of the config with params.
         $checks = $this->_checkConfig();
         $checksPlugins = array_filter($checks, function ($k) {
-            return strpos($k, 'Core / ') !== 0;
+            return strpos($k, 'Core/') !== 0;
         }, ARRAY_FILTER_USE_KEY);
         $checksCore = array_diff_key($checks, $checksPlugins);
         $this->view->checksCore = $checksCore;
@@ -650,12 +650,13 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
                 return $v->name;
             }, $installedPlugins);
             // Add all core "plugins".
-            $installedPlugins[] = 'Core / Server';
-            $installedPlugins[] = 'Core / Site';
-            $installedPlugins[] = 'Core / Elements';
-            $installedPlugins[] = 'Core / Records';
-            $installedPlugins[] = 'Core / Files';
-            $installedPlugins[] = 'Core / Themes';
+            $installedPlugins[] = 'Core/Server';
+            $installedPlugins[] = 'Core/Site';
+            $installedPlugins[] = 'Core/Elements';
+            $installedPlugins[] = 'Core/Records';
+            $installedPlugins[] = 'Core/Files';
+            $installedPlugins[] = 'Core/Themes';
+            $installedPlugins[] = 'Core/Checks';
 
             // Check processors to prevents possible issues with external plugins.
             foreach ($processors as $name => $class) {
@@ -673,6 +674,11 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
                     $this->_processors[$name] = new $class();
                 }
             }
+
+            // Set "Core/Checks" the last processor.
+            $processor = $this->_processors['Core/Checks'];
+            unset($this->_processors['Core/Checks']);
+            $this->_processors['Core/Checks'] = $processor;
         }
 
         return $this->_processors;

@@ -7,7 +7,7 @@
  */
 class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_Abstract
 {
-    public $pluginName = 'Core / Elements';
+    public $pluginName = 'Core/Elements';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
 

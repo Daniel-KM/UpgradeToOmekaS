@@ -17,7 +17,7 @@ class UpgradeToOmekaS_Processor_CoreRecordsTest extends UpgradeToOmekaS_Test_App
     {
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
-            'Core / Records',
+            'Core/Records',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeItems'));
@@ -37,7 +37,7 @@ class UpgradeToOmekaS_Processor_CoreRecordsTest extends UpgradeToOmekaS_Test_App
     {
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
-            'Core / Records',
+            'Core/Records',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_createItemSetForSite'));
@@ -97,7 +97,7 @@ class UpgradeToOmekaS_Processor_CoreRecordsTest extends UpgradeToOmekaS_Test_App
     {
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
-            'Core / Records',
+            'Core/Records',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeCollections'));
@@ -170,7 +170,7 @@ class UpgradeToOmekaS_Processor_CoreRecordsTest extends UpgradeToOmekaS_Test_App
         $this->assertEquals(2, $totalCollections);
 
         $processor = $this->_prepareProcessor(
-            'Core / Records',
+            'Core/Records',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeItems', '_upgradeCollections', '_setCollectionsOfItems'));
@@ -274,7 +274,7 @@ class UpgradeToOmekaS_Processor_CoreRecordsTest extends UpgradeToOmekaS_Test_App
         // $this->assertEquals(1, $totalCollections);
 
         $processor = $this->_prepareProcessor(
-            'Core / Records',
+            'Core/Records',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeItems', '_upgradeCollections', '_setCollectionsOfItems', '_upgradeMetadata'));

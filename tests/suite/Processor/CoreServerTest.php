@@ -346,7 +346,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
     public function testCreateDirectory()
     {
         $this->assertFalse(file_exists($this->_baseDir));
-        $processor = $this->_prepareProcessor('Core / Server', null, array(), false);
+        $processor = $this->_prepareProcessor('Core/Server', null, array(), false);
         $processor->processMethods = array('_createDirectory');
         $result = $processor->process();
         $this->assertEmpty($result);
@@ -358,7 +358,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
 
     public function testDownloadOmekaS()
     {
-        $processor = $this->_prepareProcessor('Core / Server', null, array(), false);
+        $processor = $this->_prepareProcessor('Core/Server', null, array(), false);
         $processor->processMethods = array('_downloadOmekaS');
         // TODO There are two different tests, with and without downloading.
         $path = $this->_zippath;
@@ -389,7 +389,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
     public function testUnzipOmekaS()
     {
         $this->_checkDownloadedOmekaS();
-        $processor = $this->_prepareProcessor('Core / Server', null, array());
+        $processor = $this->_prepareProcessor('Core/Server', null, array());
         $processor->processMethods = array('_unzipOmekaS');
         $result = $processor->process();
         $this->assertEmpty($result);

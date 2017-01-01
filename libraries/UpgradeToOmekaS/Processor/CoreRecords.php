@@ -7,7 +7,7 @@
  */
 class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Abstract
 {
-    public $pluginName = 'Core / Records';
+    public $pluginName = 'Core/Records';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
 
@@ -370,7 +370,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                         . ' ' . __('Check the processors of the plugins.'));
                 }
 
-                $mappingItemTypes = $this->getProcessor('Core / Elements')
+                $mappingItemTypes = $this->getProcessor('Core/Elements')
                     ->getMappingItemTypesToClasses();
                 break;
 
@@ -625,7 +625,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
 
         $table = $db->getTable($recordType);
 
-        $mapping = $this->getProcessor('Core / Elements')
+        $mapping = $this->getProcessor('Core/Elements')
             ->getMappingElementsToProperties();
 
         $totalRecordsUnmapped = 0;
@@ -809,7 +809,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         $target = $this->getTarget();
 
         // Get the flat list of properties to get the id of each property.
-        $propertiesIds = $this->getProcessor('Core / Elements')
+        $propertiesIds = $this->getProcessor('Core/Elements')
             ->getPropertyIds();
 
         // Set the default values for the "value", that is a literal.

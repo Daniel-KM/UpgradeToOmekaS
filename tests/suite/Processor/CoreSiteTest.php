@@ -17,7 +17,7 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
 
     public function testConfigOmekaS()
     {
-        $processor = $this->_prepareProcessor('Core / Site', null, array('_unzipOmekaS'));
+        $processor = $this->_prepareProcessor('Core/Site', null, array('_unzipOmekaS'));
         $params = $processor->getParams();
         $this->assertNotEmpty($params);
         $processor->processMethods = array('_configOmekaS');
@@ -28,7 +28,7 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
     public function testInstallOmekaS()
     {
         $processor = $this->_prepareProcessor(
-            'Core / Site',
+            'Core/Site',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS'));
 
@@ -53,7 +53,7 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
     {
         // TODO Check modified config.ini, for example for priority or locale.
         $processor = $this->_prepareProcessor(
-            'Core / Site',
+            'Core/Site',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeLocalConfig'));
 
@@ -75,7 +75,7 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
         $user->save();
 
         $processor = $this->_prepareProcessor(
-            'Core / Site',
+            'Core/Site',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers'));
 
@@ -93,7 +93,7 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
     public function testUpgradeSite()
     {
         $processor = $this->_prepareProcessor(
-            'Core / Site',
+            'Core/Site',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeSite'));
@@ -140,7 +140,7 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
 
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
-            'Core / Site',
+            'Core/Site',
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeSite'));
