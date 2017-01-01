@@ -450,6 +450,32 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         // $this->assertContains('fr_QC', $localConfig);
     }
 
+    public function testImportUsers()
+    {
+        $user = new User;
+        $user->name = 'foo';
+        $user->email = 'bar@foo.com';
+        $user->active = '1';
+        $user->role = 'none';
+        $user->username = 'foo';
+        $user->save();
+
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers'));
+        $result = $processor->process();
+
+        $targetDb = $processor->getTargetDb();
+
+        // There are 4 users by default, 2 supers, 1 admin, 1 "none".
+        $totalRecords = total_records('User');
+
+        $sql = 'SELECT COUNT(*) FROM user;';
+        $result = $targetDb->fetchOne($sql);
+        $this->assertEquals($totalRecords - 1, $result);
+    }
+
     protected function _prepareProcessor($params = null, $methods = array(), $checkDir = true)
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);

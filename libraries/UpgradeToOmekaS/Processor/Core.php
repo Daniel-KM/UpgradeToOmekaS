@@ -78,6 +78,35 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         '_installCompatibiltyModule',
     );
 
+    public $mappingRoles = array(
+        // Default roles of Omeka C.
+        // Only the current super user will be the "global_admin".
+        'super' => 'site_admin',
+        'admin' => 'site_admin',
+        'contributor' => 'author',
+        'researcher' => 'researcher',
+        // Default roles of Omeka S, if needed.
+        'global_admin' => 'global_admin',
+        'site_admin' => 'site_admin',
+        'editor' => 'editor',
+        'reviewer' => 'reviewer',
+        'author' => 'author',
+        'researcher' => 'researcher',
+        // Plugin"More user roles".
+        'editor' => 'editor',
+        'reviewer' => 'reviewer',
+        'author' => 'author',
+        // Specific roles.
+        'fulladmin' => 'site_admin',
+        'documentalist' => 'editor',
+        // TODO Currently not managed
+        // Plugin Guest User.
+        // 'guest' => 'guest',
+        // Plugin Contribution.
+        // 'contribution-anonymous' => 'anonymous',
+        // 'contribution_anonymous' => 'anonymous',
+    );
+
     /**
      * The url of the Omeka S package, minus version.
      *
@@ -261,6 +290,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         if (!$this->_isProcessing) {
             $this->_checkJobs();
         }
+        // TODO Check Omeka: no user; missing files; files without item; items without metadata, etc.
+        // $this->_checkOmekaIntegrity();
     }
 
     protected function _checkConfig()
@@ -1288,7 +1319,113 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     protected function _importUsers()
     {
+        $recordType = 'User';
+        $db = $this->_db;
+        $targetDb = $this->getTargetDb();
 
+        $user = $this->getParam('user');
+
+        $totalRecords = total_records($recordType);
+        $datetime = date('Y-m-d H:i:s');
+
+        // This case is possible with an external identification (ldap...).
+        if (empty($totalRecords)) {
+            $toInsert = array();
+            $toInsert['id'] = 1;
+            $toInsert['email'] = substr($user->email, 0, 190);
+            $toInsert['name'] = substr($user->name, 0, 190);
+            $toInsert['created'] = $datetime;
+            $toInsert['role'] = 'global_admin';
+            $toInsert['is_active'] = 1;
+            $result = $targetDb->insert('user', $toInsert);
+            if (!$result) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('Unable to insert the global user.'));
+            }
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('No user to import: only the global administrator has been created from the current user.'),
+                Zend_Log::WARN);
+        }
+        // There is one or more users, at least the current one.
+        else {
+            $roles = $this->mappingRoles;
+            $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
+            $totalSupers = 0;
+            $totalAdmins = 0;
+            $unmanagedRoles = array();
+            for ($page = 1; $page <= $loops; $page++) {
+                // The process uses the regular queries of Omeka in order to keep
+                // only good records.
+                $table = $db->getTable('User');
+                $records = $table->findBy(array(), $this->maxChunk, $page);
+                $toInserts = array();
+
+                foreach ($records as $record) {
+                    if ($record->role == 'super') {
+                        $totalSupers++;
+                    } elseif ($record->role == 'admin') {
+                        $totalAdmins++;
+                    }
+                    if (!isset($roles[$record->role])) {
+                        $unmanagedRoles[$record->role] = isset($unmanagedRoles[$record->role])
+                            ? ++$unmanagedRoles[$record->role]
+                            : 1;
+                        continue;
+                    }
+                    $role = $record->id == $user->id ? 'global_admin' : $roles[$record->role];
+                    $toInsert = array();
+                    $toInsert['id'] = (integer) $record->id;
+                    $toInsert['email'] = $targetDb->quote(substr($record->email, 0, 190));
+                    $toInsert['name'] = $targetDb->quote(substr($record->name, 0, 190));
+                    $toInsert['created'] = $targetDb->quote($datetime);
+                    $toInsert['role'] = $targetDb->quote($role);
+                    $toInsert['is_active'] = (integer) (boolean) $record->active;
+                    $toInserts[] = implode(",\t", $toInsert);
+                }
+
+                if ($toInserts) {
+                    $sql = 'INSERT INTO `user` (`id`, `email`, `name`, `created`, `role`, `is_active`) VALUES ';
+                    $sql .= '(' . implode('),' . PHP_EOL . '(', $toInserts) . ');';
+                    $result = $targetDb->prepare($sql)->execute();
+                    if (!$result) {
+                        throw new UpgradeToOmekaS_Exception(
+                            __('Unable to insert users.'));
+                    }
+                }
+            }
+
+            $totalUnmanaged = array_sum($unmanagedRoles);
+            $totalImported = $totalRecords - $totalUnmanaged;
+            if ($totalUnmanaged) {
+                // Plural needs v2.3.1.
+                $unknownRolesString = implode('", "', array_keys($unmanagedRoles));
+                $message = function_exists('plural')
+                    ? __(plural('%d user not imported (role: "%s").', '%d users not imported (roles: "%s").',
+                        $totalUnmanaged), $totalUnmanaged, $unknownRolesString)
+                    : __('%d users not imported (roles: "%s").', $totalUnmanaged, $unknownRolesString);
+                $this->_log('[' . __FUNCTION__ . ']: ' . $message,
+                    Zend_Log::WARN);
+            }
+
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The current user has been made the global administrator.'),
+                Zend_Log::NOTICE);
+            if ($totalSupers > 1 && $totalAdmins) {
+                $message = __('The other super users [%d] have been made site administrators, like the admins [%d].',
+                    $totalSupers <= 1 ? 0 : $totalSupers - 1, $totalAdmins);
+                $this->_log('[' . __FUNCTION__ . ']: ' . $message,
+                    Zend_Log::NOTICE);
+            }
+            // Plural needs v2.3.1.
+            $message = function_exists('plural')
+                ? __(plural('%d user imported.', '%d users imported.', $totalImported), $totalImported)
+                : __('%d users imported.', $totalImported);
+            $this->_log('[' . __FUNCTION__ . ']: ' . $message,
+                Zend_Log::NOTICE);
+        }
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The username of users has been removed; the displayed name is unchanged.'),
+            Zend_Log::NOTICE);
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('All users must request a new password in the login page.'),
+            Zend_Log::NOTICE);
     }
 
     protected function _importSettings()

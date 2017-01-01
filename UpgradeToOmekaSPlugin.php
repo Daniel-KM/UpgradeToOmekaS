@@ -153,10 +153,6 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
 //             'class' => 'UpgradeToOmekaS_Processor_Geolocation',
 //             'description' => __('Geolocation'),
 //         );
-//         $processors['GuestUser'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_GuestUser',
-//             'description' => __('Guest User'),
-//         );
 //         $processors['ExhibitBuilder'] = array(
 //             'class' => 'UpgradeToOmekaS_Processor_ExhibitBuilder',
 //             'description' => __('Exhibit Builder'),
@@ -165,10 +161,10 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
 //             'class' => 'UpgradeToOmekaS_Processor_ItemRelations',
 //             'description' => __('Item Relations'),
 //         );
-//         $processors['MoreUserRoles'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_MoreUserRoles',
-//             'description' => __('More User Roles'),
-//         );
+        $processors['MoreUserRoles'] = array(
+            'class' => 'UpgradeToOmekaS_Processor_MoreUserRoles',
+            'description' => __('More User Roles'),
+        );
         $processors['SimplePages'] = array(
             'class' => 'UpgradeToOmekaS_Processor_SimplePages',
             'description' => __('Simple Pages'),
@@ -228,6 +224,10 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
 //         $processors['CsvImportPlus'] = array(
 //             'class' => 'UpgradeToOmekaS_Processor_CsvImportPlus',
 //             'description' => __('Csv Import Plus'),
+//         );
+//         $processors['GuestUser'] = array(
+//             'class' => 'UpgradeToOmekaS_Processor_GuestUser',
+//             'description' => __('Guest User'),
 //         );
 //         $processors['HistoryLog'] = array(
 //             'class' => 'UpgradeToOmekaS_Processor_HistoryLog',

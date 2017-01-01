@@ -44,7 +44,8 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
         $this->_removeStubPlugin();
         $this->_removeBaseDir();
         $this->_removeTableOmekaS();
-        $this->_removeJobs();
+        $this->_removeRecords('Process');
+        $this->_removeRecords('User');
 
         parent::tearDown();
     }
@@ -115,11 +116,11 @@ PLUGIN;
         $result = get_db()->query($sql);
     }
 
-    protected function _removeJobs()
+    protected function _removeRecords($recordType)
     {
-        $processes = get_records('Process', array(), 0);
-        foreach ($processes as $process) {
-            $process->delete();
+        $records = get_records($recordType, array(), 0);
+        foreach ($records as $record) {
+            $record->delete();
         }
     }
 

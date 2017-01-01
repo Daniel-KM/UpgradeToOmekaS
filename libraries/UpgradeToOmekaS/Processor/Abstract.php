@@ -37,6 +37,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $processMethods;
 
     /**
+     * Maximum rows to process by loop.
+     *
+     * @var integer
+     */
+    public $maxChunk = 100;
+
+    /**
      * To bypass default prechecks. Should be true for the core only.
      *
      * @var boolean
