@@ -46,7 +46,7 @@ class UpgradeToOmekaS_Job_Remove extends UpgradeToOmekaS_Job_Abstract
             if (empty($target)) {
                 throw new UpgradeToOmekaS_Exception(
                     __('Unable to access to the target database (%s).',
-                        $params['database']['type'] == 'shared'
+                        $params['database']['type'] == 'share'
                             ? __('shared database')
                             : $params['database']['host'] . (empty($params['database']['port']) ? '' : ':' . $params['database']['port']) . ' / ' . $params['database']['dbname'],
                         $params['base_dir']));

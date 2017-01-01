@@ -29,6 +29,7 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
         ),
         // Set during setup.
         'base_dir' => null,
+        'WEB_ROOT' => WEB_ROOT,
         'files_type' => 'copy',
     );
 
@@ -56,27 +57,31 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
         $pluginHelper = new Omeka_Test_Helper_Plugin;
         $pluginHelper->setUp(self::PLUGIN_NAME);
 
-        // Omeka S requires Apache.
-        $_SERVER['SERVER_SOFTWARE'] = 'Apache 2.4';
-        // Set Omeka dir the base dir of the server.
-        // $_SERVER['DOCUMENT_ROOT'] = sys_get_temp_dir();
-
         $this->_tmpdir = sys_get_temp_dir()
             . DIRECTORY_SEPARATOR . 'UpgradeToOmekaS_unit_test';
+
+            // This is where the downloaded package omeka-s.zip is saved.
+            // TODO Move it in the main setup of the tests.
+        $this->_zippath = sys_get_temp_dir()
+            . DIRECTORY_SEPARATOR . 'omeka-s.zip';
+
+        // Omeka S requires Apache, even if this just for tests.
+        $_SERVER['SERVER_SOFTWARE'] = 'Apache 2.4';
+
+        set_option('upgrade_to_omeka_s_document_root', $this->_tmpdir);
+        // Set Omeka dir the base dir of the server.
+        // $_SERVER['DOCUMENT_ROOT'] = sys_get_temp_dir();
 
         //This is where the install test will be done by default.
         $this->_baseDir = $this->_tmpdir
             . DIRECTORY_SEPARATOR . 'Semantic';
+        UpgradeToOmekaS_Common::removeDir($this->_baseDir, true);
         $test = file_exists($this->_baseDir)
             ? __('The test base dir %s must not exist.', $this->_baseDir)
             : __('You should remove it.');
         $this->assertEquals($test, __('You should remove it.'));
 
         $this->_defaultParams['base_dir'] = $this->_baseDir;
-
-        // This is where the downloaded package omeka-s.zip is saved.
-        // TODO Move it in the main setup of the tests.
-        $this->_zippath = $this->_tmpdir . DIRECTORY_SEPARATOR . 'omeka-s.zip';
 
         // To clear cache after a crash.
         $this->_removeStubPlugin();
@@ -174,7 +179,7 @@ PLUGIN;
     {
         $path = $this->_baseDir;
         $this->assertFalse(file_exists($path));
-        $result = mkdir($path);
+        $result = UpgradeToOmekaS_Common::createDir($path);
         $this->assertTrue($result);
         $this->_isBaseDirCreated = $this->_baseDir;
     }

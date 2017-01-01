@@ -615,7 +615,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     {
         if (is_null($this->_securityIni)) {
             $iniFile = dirname(dirname(dirname(dirname(__FILE__))))
-            . DIRECTORY_SEPARATOR . 'security.ini';
+                . DIRECTORY_SEPARATOR . 'security.ini';
             $this->_securityIni = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
         }
         return $this->_securityIni;
@@ -1122,14 +1122,16 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
         // TODO Use a temp name, but it's important to avoid re-downloads.
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
+
         if (file_exists($path)) {
+            $filesize = filesize($path);
             // Check if the file is empty, in particular for network issues.
-            if (!filesize($path)) {
+            if (empty($filesize)) {
                 throw new UpgradeToOmekaS_Exception(
                     __('An empty file "%s" exists in the temp directory.', $filename)
                     . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url));
             }
-            if (filesize($path) != $this->module['size']
+            if ($filesize != $this->module['size']
                     || md5_file($path) != $this->module['md5']
                 ) {
                 throw new UpgradeToOmekaS_Exception(
@@ -1178,7 +1180,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         $result = UpgradeToOmekaS_Common::extractZip($path, $dir);
         if (!$result) {
             throw new UpgradeToOmekaS_Exception(
-                __('Unable to extract the zip file "%s" into the destination "%s".', $path, $dir));
+                __('Unable to extract the zip file "%s" into the destination "%s".', $path, $dir)
+                . ' ' . __('Check the rights of the folder. "%s".', dirname($dir)));
         }
     }
 

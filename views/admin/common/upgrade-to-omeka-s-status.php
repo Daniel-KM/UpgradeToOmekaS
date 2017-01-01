@@ -33,7 +33,7 @@
 <?php if ($isReset && $hasPreviousUpgrade): ?>
 <h2><?php echo __('Previous Upgrade'); ?></h2>
 <p><?php echo __('You can safely remove automatically the created tables (%s), the Omeka S folder (%s) and the copied files of the previous process, if wished.',
-    $previousParams['database']['type'] == 'shared'
+    $previousParams['database']['type'] == 'share'
         ? __('shared database')
         : $previousParams['database']['host'] . (empty($previousParams['database']['port']) ? '' : ':' . $previousParams['database']['port']) . ' / ' . $previousParams['database']['dbname'],
     $previousParams['base_dir']); ?></p>

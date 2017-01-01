@@ -49,6 +49,51 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
         $this->assertEquals($this->user->email, json_decode($result));
     }
 
+    public function hookPublicNavigationMain($nav)
+    {
+        $nav[] = array(
+            'label' => 'Foo',
+            'uri' => url('foo'),
+        );
+        $nav[] = array(
+            'label' => 'Search bar',
+            'uri' => url('items/search'),
+        );
+        $nav[] = array(
+            'label' => 'Bar',
+            'uri' => 'https://example.org/path/to/bar?a=z&b=y#here',
+        );
+        return $nav;
+    }
+
+    public function testUpgradeSiteNavigationMain()
+    {
+        add_filter(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_FILTER_NAME, array($this, 'hookPublicNavigationMain'));
+
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            'Core/Site',
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
+                '_upgradeSite'));
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
+        $slug = $processor->getSiteSlug();
+        $sql = 'SELECT * FROM site;';
+        $result = $targetDb->fetchRow($sql);
+        $nav = json_decode($result['navigation'], true);
+
+        $this->assertEquals(5, count($nav));
+        $this->assertEquals('Foo', $nav[2]['data']['label']);
+        $this->assertEquals('http://www.example.com/foo', $nav[2]['data']['url']);
+        $this->assertEquals('Search bar', $nav[3]['data']['label']);
+        $this->assertEquals('/s/' . $slug . '/item/search', $nav[3]['data']['url']);
+        $this->assertEquals('Bar', $nav[4]['data']['label']);
+        // TODO Omeka doesn't allow fragment?
+        // $this->assertEquals('https://example.org/path/to/bar?a=z&b=y#here', $nav[4]['data']['url']);
+        $this->assertEquals('https://example.org/path/to/bar?a=z&b=y#', $nav[4]['data']['url']);
+    }
+
     public function testUpgradeLocalConfig()
     {
         // TODO Check modified config.ini, for example for priority or locale.
@@ -113,52 +158,5 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
         $slugDirect = str_replace(' ', '-', strtolower($title));
         $slug = $processor->getSiteSlug();
         $this->assertEquals($slugDirect, $slug);
-    }
-
-    public function hookPublicNavigationMain($nav)
-    {
-        add_filter('public_navigation_main', array($this, 'hookPublicNavigationMain'));
-
-        $nav[] = array(
-            'label' => 'Foo',
-            'uri' => url('foo'),
-        );
-        $nav[] = array(
-            'label' => 'Search bar',
-            'uri' => url('items/search'),
-        );
-        $nav[] = array(
-            'label' => 'Bar',
-            'uri' => 'https://example.org/path/to/bar?a=z&b=y#here',
-        );
-        return $nav;
-    }
-
-    public function testUpgradeSiteNavigationMain()
-    {
-        add_filter('public_navigation_main', array($this, 'hookPublicNavigationMain'));
-
-        $this->_checkDownloadedOmekaS();
-        $processor = $this->_prepareProcessor(
-            'Core/Site',
-            array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
-                '_upgradeSite'));
-        $target = $processor->getTarget();
-        $targetDb = $target->getDb();
-        $slug = $processor->getSiteSlug();
-        $sql = 'SELECT * FROM site;';
-        $result = $targetDb->fetchRow($sql);
-        $nav = json_decode($result['navigation'], true);
-
-        $this->assertEquals(5, count($nav));
-        $this->assertEquals('Foo', $nav[2]['data']['label']);
-        $this->assertEquals('/foo', $nav[2]['data']['url']);
-        $this->assertEquals('Search bar', $nav[3]['data']['label']);
-        $this->assertEquals('/s/' . $slug . '/item/search', $nav[3]['data']['url']);
-        $this->assertEquals('Bar', $nav[4]['data']['label']);
-        // TODO Omeka doesn't allow fragment?
-        // $this->assertEquals('https://example.org/path/to/bar?a=z&b=y#here', $nav[4]['data']['url']);
-        $this->assertEquals('https://example.org/path/to/bar?a=z&b=y#', $nav[4]['data']['url']);
     }
 }

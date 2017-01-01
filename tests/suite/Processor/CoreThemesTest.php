@@ -26,6 +26,18 @@ class UpgradeToOmekaS_Processor_CoreThemesTest extends UpgradeToOmekaS_Test_AppT
         $this->markTestIncomplete();
     }
 
+    public function testCopyThemes()
+    {
+        $path = BASE_DIR;
+
+        $this->_checkFilesDirSize();
+
+        $processor = new UpgradeToOmekaS_Processor_CoreThemes();
+        $processor->setParams($this->_defaultParams);
+        $result = $this->invokeMethod($processor, '_copyThemes');
+        $this->assertEmpty($resut);
+    }
+
     public function testUpgradeConfigTheme()
     {
         $path = dirname(dirname(__FILE__))
@@ -50,5 +62,49 @@ class UpgradeToOmekaS_Processor_CoreThemesTest extends UpgradeToOmekaS_Test_AppT
         $this->assertEquals('Omeka\Form\Element\Asset', $resultIni['config']['elements.logo.type']);
         $this->assertEquals('Footer Content', $resultIni['config']['elements.footer.options.label']);
         $this->assertFalse(isset($resultIni['config']['elements.footer_text']));
+        UpgradeToOmekaS_Common::removeDir($tmpPath, true);
+    }
+
+    public function testUpgradeThemes()
+    {
+        $path = BASE_DIR;
+
+        $this->_checkFilesDirSize();
+
+        $processor = new UpgradeToOmekaS_Processor_CoreThemes();
+        $processor->setParams($this->_defaultParams);
+        $result = $this->invokeMethod($processor, '_copyThemes');
+        $result = $this->invokeMethod($processor, '_upgradeThemes');
+        $this->assertEmpty($resut);
+    }
+
+    public function testUpgradeFunctionsAndVariables()
+    {
+        $path = BASE_DIR;
+
+        $this->_checkFilesDirSize();
+
+        $processor = new UpgradeToOmekaS_Processor_CoreThemes();
+        $processor->setParams($this->_defaultParams);
+        $result = $this->invokeMethod($processor, '_copyThemes');
+        $result = $this->invokeMethod($processor, '_upgradeThemes');
+        $result = $this->invokeMethod($processor, '_upgradeFunctionsAndVariables');
+        $this->assertEmpty($resut);
+    }
+
+    /**
+     * Helper to check the source size.
+     *
+     * @return boolean
+     */
+    protected function _checkFilesDirSize()
+    {
+        $maxSize = 10000000;
+
+        $fileSize = UpgradeToOmekaS_Common::getDirectorySize(FILES_DIR);
+        if ($fileSize > $maxSize) {
+            $this->markTestSkipped(__('The size of the directory of files "%s" is %d; it should not be bigger than to test it.',
+                FILES_DIR, $fileSize, $maxSize));
+        }
     }
 }

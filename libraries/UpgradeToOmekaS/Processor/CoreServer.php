@@ -268,14 +268,14 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         $result = UpgradeToOmekaS_Common::containsSymlinks(FILES_DIR);
         if ($result) {
             $this->_prechecks[] = __('There are symbolic links inside the directory of files.')
-                . ' ' . __('They cannot be managed.')
+                . ' ' . __('Some errors may occur in some cases.')
                 . ' ' . __('This precheck may be bypassed via "security.ini".');
         }
 
         $result = UpgradeToOmekaS_Common::containsSymlinks(PUBLIC_THEME_DIR);
         if ($result) {
             $this->_prechecks[] = __('There are symbolic links inside the directory of themes.')
-                . ' ' . __('They cannot be managed.')
+                . ' ' . __('Some errors may occur in some cases.')
                 . ' ' . __('This precheck may be bypassed via "security.ini".');
         }
 
@@ -283,8 +283,8 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         $result = UpgradeToOmekaS_Common::containsSymlinks(PLUGIN_DIR);
         if ($result) {
             $this->_prechecks[] = __('There are symbolic links inside the directory of plugins.')
-            . ' ' . __('They cannot be managed.')
-            . ' ' . __('This precheck may be bypassed via "security.ini".');
+                . ' ' . __('Some errors may occur in some cases.')
+                . ' ' . __('This precheck may be bypassed via "security.ini".');
         }
     }
 

@@ -129,9 +129,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         // Simple display of the form if no post.
         if (!$this->getRequest()->isPost()) {
             // Set default parameters if set.
-            $iniFile = dirname(dirname(__FILE__))
-                . DIRECTORY_SEPARATOR . 'security.ini';
-            $settings = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
+            $settings = $this->_getSecurityIni();
             $defaults = $settings->default;
             if ($defaults) {
                 $form->setDefaults($defaults->toArray());
@@ -631,6 +629,18 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     }
 
     /**
+     * Helper to get the backend settings from the file "security.ini".
+     *
+     * @return Zend_Config_Ini
+     */
+    protected function _getSecurityIni()
+    {
+        $iniFile = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'security.ini';
+        $settings = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
+        return $settings;
+    }
+
+    /**
      * Get the base processor.
      *
      * @return UpgradeToOmekaS_Processor_Base
@@ -652,6 +662,10 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     {
         if (is_null($this->_processors)) {
             $processors = apply_filters('upgrade_omekas', array());
+
+            //Add the security ini params.
+            $settings = $this->_getSecurityIni()->toArray();
+            $checks = $settings['check'];
 
             // Get installed plugins, includes active and inactive.
             $pluginLoader = Zend_Registry::get('pluginloader');
@@ -684,6 +698,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
                 // but all are kept, even if not this version.
                 else {
                     $this->_processors[$name] = new $class();
+                    $this->_processors[$name]->setParam('checks', $checks);
                 }
             }
 
@@ -924,9 +939,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      */
     private function _getDocumentRoot()
     {
-        // Get the backend settings from the security.ini file.
-        $iniFile = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'security.ini';
-        $settings = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
+        $settings = $this->_getSecurityIni();
 
         // Check if the document root is set in security.ini.
         $documentRoot = $settings->document_root;

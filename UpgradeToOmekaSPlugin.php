@@ -117,7 +117,7 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
 
         echo '<p>';
         echo  __('You can check the database (%s) and the directory (%s), or restore a backup.',
-            $previousParams['database']['type'] == 'shared'
+            $previousParams['database']['type'] == 'share'
                 ? __('shared database')
                 : $previousParams['database']['host'] . (empty($previousParams['database']['port']) ? '' : ':' . $previousParams['database']['port']) . ' / ' . $previousParams['database']['dbname'],
             $previousParams['base_dir']);

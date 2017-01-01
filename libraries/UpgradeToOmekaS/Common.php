@@ -19,7 +19,7 @@ class UpgradeToOmekaS_Common
      */
     public static function isDirEmpty($dir)
     {
-        if (!is_readable($dir)) {
+        if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
             return null;
         }
         $handle = opendir($dir);
@@ -32,6 +32,29 @@ class UpgradeToOmekaS_Common
     }
 
     /**
+     * Get the size of a directory.
+     *
+     * @link https://stackoverflow.com/questions/478121/php-get-directory-size#21409562
+     *
+     * @param string $path
+     * @return number
+     */
+    public static function getDirectorySize($dir)
+    {
+        if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
+            return null;
+        }
+        $bytestotal = 0;
+        $path = realpath($dir);
+        if($path!==false){
+            foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object){
+                $bytestotal += $object->getSize();
+            }
+        }
+        return $bytestotal;
+    }
+
+    /**
      * Determines the number of files of a directory.
      *
      * @link https://stackoverflow.com/questions/12801370/count-how-many-files-in-directory-php
@@ -41,17 +64,12 @@ class UpgradeToOmekaS_Common
      */
     public static function countFilesInDir($dir)
     {
-        if (!file_exists($dir)) {
-            return null;
-        }
-        if (!is_dir($dir)) {
-            return null;
-        }
-        if (!is_readable($dir)) {
+        if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
             return null;
         }
         $fi = new FilesystemIterator($dir, FilesystemIterator::SKIP_DOTS);
-        return iterator_count($fi);
+        $total = iterator_count($fi);
+        return $total;
     }
 
     /**
@@ -62,13 +80,7 @@ class UpgradeToOmekaS_Common
      */
     public static function containsSymlinks($dir)
     {
-        if (!file_exists($dir)) {
-            return null;
-        }
-        if (!is_dir($dir)) {
-            return null;
-        }
-        if (!is_readable($dir)) {
+        if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
             return null;
         }
         $recDirIterator = new recursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS | FilesystemIterator::UNIX_PATHS);
@@ -90,6 +102,9 @@ class UpgradeToOmekaS_Common
      */
     public static function listFilesInDir($dir)
     {
+        if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
+            return;
+        }
         return array_filter(scandir($dir), function($file) use ($dir) {
             return is_file($dir . DIRECTORY_SEPARATOR . $file);
         });
@@ -103,6 +118,9 @@ class UpgradeToOmekaS_Common
      */
     public static function listDirsInDir($dir)
     {
+        if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
+            return;
+        }
         return array_filter(array_diff(scandir($dir), array('.', '..')), function($file) use ($dir) {
             return is_dir($dir . DIRECTORY_SEPARATOR . $file);
         });
@@ -115,16 +133,16 @@ class UpgradeToOmekaS_Common
      * @param string $extensions
      * @return array
      */
-    public static function listFilesInFolder($dirpath, $extensions = array())
+    public static function listFilesInFolder($dir, $extensions = array())
     {
-        if (!file_exists($dirpath)) {
-            return array();
+        if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
+            return null;
         }
         $regex = empty($extensions)
             ? '/^.+$/i'
             : '/^.+\.(' . implode('|', $extensions) . ')$/i';
 
-        $Directory = new RecursiveDirectoryIterator($dirpath);
+        $Directory = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
         $Iterator = new RecursiveIteratorIterator($Directory);
         $Regex = new RegexIterator($Iterator, $regex, RecursiveRegexIterator::GET_MATCH);
         $files = array();
@@ -143,17 +161,14 @@ class UpgradeToOmekaS_Common
      * @param numeric $modDir
      * @return boolean
      */
-    public static function chmodFolder($dirpath, $modFile = 0644, $modDIr = 0755)
+    public static function chmodFolder($dir, $modFile = 0644, $modDir = 0755)
     {
-        if (empty($dirpath)) {
-            return false;
-        }
-        if (!file_exists($dirpath) || !is_dir($dirpath) || !is_readable($dirpath)) {
+        if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
             return false;
         }
 
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($dirpath, RecursiveDirectoryIterator::SKIP_DOTS),
+            new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($iterator as $item) {
@@ -175,20 +190,6 @@ class UpgradeToOmekaS_Common
         }
 
         return true;
-    }
-
-    /**
-     * Determine if the uri of a file is a remote url or a local path.
-     *
-     * @param string $uri
-     * @return boolean
-     */
-    public static function isRemote($uri)
-    {
-        $scheme = parse_url($uri, PHP_URL_SCHEME);
-        return in_array($scheme, array(
-            'https', 'http', 'sftp', 'ftps', 'ftp',
-        ));
     }
 
     /**
@@ -291,27 +292,76 @@ class UpgradeToOmekaS_Common
     }
 
     /**
+     * Copy all contents of a directory recursively.
+     *
+     * @param string $source
+     * @param string $destination
+     * @param boolean $overwrite
+     * @param array $extensionsToRename
+     * @return boolean
+     */
+    public static function copyInsideDir($source, $destination, $overwrite = false, $extensionsToRename = array())
+    {
+        $dirs = self::listDirsInDir($source);
+        if ($dirs) {
+            foreach ($dirs as $dir) {
+                $result = self::copyDir(
+                    $source . DIRECTORY_SEPARATOR . $dir,
+                    $destination . DIRECTORY_SEPARATOR . basename($dir),
+                    $overwrite,
+                    $extensionsToRename);
+                if (!$result) {
+                    return false;
+                }
+            }
+        }
+        $files = self::listFilesInDir($source);
+        if ($files) {
+            foreach ($files as $file) {
+                $subpath = $destination
+                    . DIRECTORY_SEPARATOR . pathinfo($file, PATHINFO_BASENAME);
+                $extension = pathinfo($file, PATHINFO_EXTENSION);
+                if (isset($extensionsToRename[$extension])) {
+                    $subpath = $destination
+                        . DIRECTORY_SEPARATOR . pathinfo($file, PATHINFO_FILENAME)
+                        . '.' . $extensionsToRename[$extension];
+                    if (file_exists($subpath) && !$overwrite) {
+                        continue;
+                    }
+                }
+                $result = copy($source . DIRECTORY_SEPARATOR . $file, $subpath);
+                if (!$result) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Checks and removes a folder, empty or not.
      *
      * @param string $path Full path of the folder to remove.
      * @param boolean $evenNonEmpty Remove non empty folder.
      * This parameter can be used with non standard folders.
-     * @return void.
+     * @return boolean.
      */
     public static function removeDir($path, $evenNonEmpty = false)
     {
         $path = realpath($path);
-        if (strlen($path)
-                && $path != '/'
-                && file_exists($path)
-                && is_dir($path)
+        if (!strlen($path) || $path == '/' || !file_exists($path)) {
+            return true;
+        }
+        if (is_dir($path)
                 && is_readable($path)
+                && is_writable($path)
                 && ((count(@scandir($path)) == 2) // Only '.' and '..'.
                     || $evenNonEmpty)
-                && is_writable($path)
             ) {
-            self::_rrmdir($path);
+            $result = self::_rrmdir($path);
+            return is_null($result) || $result;
         }
+        return false;
     }
 
     /**
@@ -342,27 +392,7 @@ class UpgradeToOmekaS_Common
                 unlink($path);
             }
         }
-        return rmdir($dir);
-    }
-
-    /**
-     * Get the size of a directory.
-     *
-     * @link https://stackoverflow.com/questions/478121/php-get-directory-size#21409562
-     *
-     * @param string $path
-     * @return number
-     */
-    public static function getDirectorySize($path)
-    {
-        $bytestotal = 0;
-        $path = realpath($path);
-        if($path!==false){
-            foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object){
-                $bytestotal += $object->getSize();
-            }
-        }
-        return $bytestotal;
+        return @rmdir($dir);
     }
 
     /**
@@ -402,6 +432,20 @@ class UpgradeToOmekaS_Common
         }
 
         return true;
+    }
+
+    /**
+     * Determine if the uri of a file is a remote url or a local path.
+     *
+     * @param string $uri
+     * @return boolean
+     */
+    public static function isRemote($uri)
+    {
+        $scheme = parse_url($uri, PHP_URL_SCHEME);
+        return in_array($scheme, array(
+            'https', 'http', 'sftp', 'ftps', 'ftp',
+        ));
     }
 
     /**
@@ -471,15 +515,25 @@ class UpgradeToOmekaS_Common
             if ($result) {
                 // A double rename is the quickest and simplest way.
                 $subDir = reset($dirs);
-                $thirdDir = dirname($path) . DIRECTORY_SEPARATOR . md5(rtrim(strtok(substr(microtime(), 2), ' '), '0'));
-                $result = rename($subDir, $thirdDir);
+                $thirdDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . md5(rtrim(strtok(substr(microtime(), 2), ' '), '0'));
+                // The function rename() may not work on different file systems.
+                // $result = rename($subDir, $thirdDir);
+                // if ($result) {
+                //     self::removeDir($path, true);
+                //     $result = rename($thirdDir, $path);
+                // }
+                $result = self::copyDir($subDir, $thirdDir);
                 if ($result) {
-                    self::removeDir($path, true);
-                    $result = rename($thirdDir, $path);
+                    $result = self::removeDir($subDir, true);
+                    if ($result) {
+                        $result = self::copyInsideDir($thirdDir, $path);
+                        if ($result) {
+                            self::removeDir($thirdDir, true);
+                        }
+                    }
                 }
             }
         }
-
         return $result;
     }
 

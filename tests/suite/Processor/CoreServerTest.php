@@ -79,6 +79,9 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
+        if ($result) {
+            $this->assertEquals('', reset($result));
+        }
         $this->assertEmpty($result);
         $database = $processor->getParam('database');
         $this->assertEquals('omekas_test_unit_', $database['prefix']);
@@ -362,12 +365,13 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
         $processor->processMethods = array('_downloadOmekaS');
         // TODO There are two different tests, with and without downloading.
         $path = $this->_zippath;
-        $exists = file_exists($path);
-        if ($exists) {
-            if (filesize($path) == 0) {
+        $fileExists = file_exists($path);
+        if ($fileExists) {
+            $filesize = filesize($path);
+            if (empty($filesize)) {
                 $this->markTestIncomplete(__('An empty file "%s" exists: replace it by the true omeka-s.zip.', $path));
             }
-            elseif (filesize($path) != $processor->module['size']
+            elseif ($filesize != $processor->module['size']
                     || md5_file($path) != $processor->module['md5']
                 ) {
                 $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));
@@ -379,7 +383,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
         }
         else {
             touch($path);
-            $this -> expectException (UpgradeToOmekaS_Exception::class);
+            $this -> expectException(UpgradeToOmekaS_Exception::class);
             $result = $processor->process();
         }
     }

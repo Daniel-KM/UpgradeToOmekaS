@@ -680,7 +680,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         $base = FILES_DIR . DIRECTORY_SEPARATOR . 'thumbnails';
         $target = $base . DIRECTORY_SEPARATOR . 'index.html';
         $link = $base . DIRECTORY_SEPARATOR . md5(rtrim(strtok(substr(microtime(), 2), ' '), '0'));
-        $result = link($target, $link);
+        $result = @link($target, $link);
         if ($result) {
             unlink($link);
         }
