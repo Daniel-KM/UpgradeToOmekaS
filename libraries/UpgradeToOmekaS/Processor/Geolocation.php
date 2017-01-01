@@ -146,9 +146,11 @@ ALTER TABLE mapping ADD CONSTRAINT FK_49E62C8A126F525E FOREIGN KEY (item_id) REF
 
     protected function _convertNavigationPageToLink($page, $parsed, $site)
     {
-        $omekaSPath = $site['omekaSPath'];
-        $omekaSSitePath = $site['omekaSSitePath'];
         $path = $parsed['path'];
+        if (strlen($path) == 0) {
+            return;
+        }
+
         switch ($path) {
             case '/map':
             case '/geolocation':

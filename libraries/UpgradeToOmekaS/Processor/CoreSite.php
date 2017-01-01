@@ -776,13 +776,15 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
         $id = 1;
 
+        $navigation = $this->_convertNavigation();
+
         $toInsert = array();
         $toInsert['id'] = $id;
         $toInsert['owner_id'] = $user->id;
         $toInsert['slug'] = $slug;
         $toInsert['theme'] = substr($theme ?: 'default', 0, 190);
         $toInsert['title'] = substr($title, 0, 190);
-        $toInsert['navigation'] = $this->_toJson($this->_convertNavigation());
+        $toInsert['navigation'] = $this->_toJson($navigation);
         $toInsert['item_pool'] = json_encode(array());
         $toInsert['created'] = $this->getDatetime();
         $toInsert['is_public'] = 1;
@@ -799,26 +801,28 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
         // An item set for the site will be created later to keep original ids.
 
-        $totalVisibleLinks = $this->_countNavigationPages(true);
-        if ($totalVisibleLinks) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('%d navigation links have been upgraded.',
-                $totalVisibleLinks), Zend_Log::INFO);
+        if (!empty($navigation)) {
+            $totalVisibleLinks = $this->_countNavigationPages(true);
+            if ($totalVisibleLinks) {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('%d navigation links have been upgraded.',
+                    $totalVisibleLinks), Zend_Log::INFO);
+            }
+            $totalInvisibleLinks = $this->_countNavigationPages(false);
+            if ($totalInvisibleLinks) {
+                // Plural needs v2.3.1.
+                $message = function_exists('plural')
+                    ? __(plural(
+                        'Omeka S doesn’t allow to hide/show navigation links, so %d link has not been upgraded.',
+                        'Omeka S doesn’t allow to hide/show navigation links, so %d links have not been upgraded.',
+                        $totalInvisibleLinks), $totalInvisibleLinks)
+                    : __('Omeka S doesn’t allow to hide/show navigation links, so %d links have not been upgraded.',
+                        $totalInvisibleLinks);
+                $this->_log('[' . __FUNCTION__ . ']: ' . $message,
+                    Zend_Log::NOTICE);
+            }
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The conversion of the navigation is currently partial and some false links may exist.',
+                $totalInvisibleLinks), Zend_Log::INFO);
         }
-        $totalInvisibleLinks = $this->_countNavigationPages(false);
-        if ($totalInvisibleLinks) {
-            // Plural needs v2.3.1.
-            $message = function_exists('plural')
-                ? __(plural(
-                    'Omeka S doesn’t allow to hide/show navigation links, so %d link has not been upgraded.',
-                    'Omeka S doesn’t allow to hide/show navigation links, so %d links have not been upgraded.',
-                    $totalInvisibleLinks), $totalInvisibleLinks)
-                : __('Omeka S doesn’t allow to hide/show navigation links, so %d links have not been upgraded.',
-                    $totalInvisibleLinks);
-            $this->_log('[' . __FUNCTION__ . ']: ' . $message,
-                Zend_Log::NOTICE);
-        }
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('The conversion of the navigation is currently partial and some false links may exist.',
-            $totalInvisibleLinks), Zend_Log::INFO);
 
         // Check if SimplePages is active to add the default page or not.
         $processors = $this->getProcessors();
@@ -972,18 +976,21 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
     protected function _convertNavigation()
     {
-        // From public_nav_main()
-        $nav = new Omeka_Navigation;
-        $nav->loadAsOption(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_OPTION_NAME);
-        $nav->addPagesFromFilter(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_FILTER_NAME);
+        $navigation = $this->_getMainNavigation();
+        if (empty($navigation)) {
+            return array();
+        }
+
         // Process nav directly.
-        $nav = $nav->toArray();
-        foreach ($nav as &$page) {
+        if (!is_array($navigation)) {
+            $navigation = $navigation->toArray();
+        }
+        foreach ($navigation as &$page) {
             $page['visible'] ? $this->_convertNavigationPage($page) : $page = null;
         }
 
-        $nav = array_filter($nav);
-        return $nav;
+        $navigation = array_filter($navigation);
+        return $navigation;
     }
 
     protected function _convertNavigationPage(&$page)
@@ -1005,15 +1012,17 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
     protected function _convertNavigationPageValues($page)
     {
+        static $webRoot;
         static $baseRoot;
         static $omekaPath;
         static $omekaSPath;
         static $omekaSSitePath;
 
-        if (is_null($baseRoot)) {
-            $parsed = parse_url(WEB_ROOT);
+        if (is_null($webRoot)) {
+            $webRoot = $this->getParam('WEB_ROOT');
+            $parsed = parse_url($webRoot);
             $baseRoot = $parsed['scheme'] . '://' . $parsed['host'] . (!empty($parsed['port']) ? ':' . $parsed['port'] : '');
-            $omekaPath = substr(WEB_ROOT, strlen($baseRoot));
+            $omekaPath = substr($webRoot, strlen($baseRoot));
             $omekaSPath = substr($this->getParam('url'), strlen($baseRoot));
             $omekaSSitePath = $omekaSPath . '/s/' . $this->getSiteSlug();
         }
@@ -1021,7 +1030,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         // The uri doesn't keep the fragment?
         $url = isset($page['uri']) ? $page['uri'] : $page['uid'];
 
-        if ($url == WEB_ROOT) {
+        if ($url == $webRoot) {
             return array(
                 'type' => 'url',
                 'data' => array(
@@ -1033,7 +1042,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $parsed = parse_url($url);
         $isRemote = isset($parsed['scheme']) && in_array($parsed['scheme'], array('http', 'https'));
         // Check if this is an external url.
-        if ($isRemote && strpos($url, WEB_ROOT) !== 0) {
+        if ($isRemote && strpos($url, $webRoot) !== 0) {
             return array(
                 'type' => 'url',
                 'data' => array(
@@ -1075,9 +1084,13 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
     protected function _convertNavigationPageToLink($page, $parsed, $site)
     {
+        $path = $parsed['path'];
+        if (strlen($path) == 0) {
+            return;
+        }
+
         $omekaSPath = $site['omekaSPath'];
         $omekaSSitePath = $site['omekaSSitePath'];
-        $path = $parsed['path'];
         switch ($path) {
             case '/search':
             case '/items/search':
@@ -1182,6 +1195,36 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
     }
 
     /**
+     * Get main navigation pages.
+     *
+     * @return Omeka_Navigation|array
+     */
+    protected function _getMainNavigation()
+    {
+        static $navigation;
+
+        if (is_null($navigation)) {
+            $navigation = $this->getParam('navigation');
+            if (is_null($navigation)) {
+                try {
+                    // From public_nav_main()
+                    $navigation = new Omeka_Navigation;
+                    $navigation->loadAsOption(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_OPTION_NAME);
+                    $navigation->addPagesFromFilter(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_FILTER_NAME);
+                } catch (Exception $e) {
+                    $navigation = array();
+                }
+            }
+            if (empty($navigation)) {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The main navigation menu is unavailable.'),
+                    Zend_Log::WARN);
+            }
+        }
+
+        return $navigation;
+    }
+
+    /**
      * Get all visible or invisible pages.
      *
      * @todo Check if a visible page is under an invisible page.
@@ -1191,11 +1234,15 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
      */
     protected function _countNavigationPages($visible = true)
     {
-        // From public_nav_main()
-        $nav = new Omeka_Navigation;
-        $nav->loadAsOption(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_OPTION_NAME);
-        $nav->addPagesFromFilter(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_FILTER_NAME);
-        $total = $nav->findAllBy('visible', $visible);
+        $navigation = $this->_getMainNavigation();
+        if (empty($navigation)) {
+            return 0;
+        }
+        // TODO Count the sub pages of the main navigation when array.
+        if (is_array($navigation)) {
+            return count($navigation);
+        }
+        $total = $navigation->findAllBy('visible', $visible);
         return count($total);
     }
 

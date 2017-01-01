@@ -107,6 +107,10 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
     {
         // Check if this is a slug.
         $slug = ltrim($args['path'], '/');
+        if (strlen($slug) == 0) {
+            return;
+        }
+
         $simplePage = get_record('SimplePagesPage', array(
             'slug' => $slug,
         ));

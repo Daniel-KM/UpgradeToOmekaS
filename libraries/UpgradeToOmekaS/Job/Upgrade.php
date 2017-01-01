@@ -76,6 +76,7 @@ class UpgradeToOmekaS_Job_Upgrade extends UpgradeToOmekaS_Job_Abstract
                     // The params should be set now, because there is the processing
                     // parameter.
                     $processor->setParams($params);
+                    $processor->setAssetPaths();
                     $processor->setDatetime($datetime);
                     $result = $processor->precheckConfig();
                     if (!empty($result)) {

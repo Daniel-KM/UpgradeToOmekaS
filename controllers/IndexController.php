@@ -218,9 +218,21 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
         $params = $this->_cleanParams();
         $params['isProcessing'] = true;
+        $params['start'] = date('Y-m-d H:i:s');
 
+        // Keep various values, that may be lost in a background job.
         $url = $this->_determineUrl($params['base_dir']);
         $params['url'] = $url;
+        $params['WEB_ROOT'] = WEB_ROOT;
+        set_theme_base_url('public');
+        $assetPaths = get_view()->getAssetPaths();
+        revert_theme_base_url();
+        $params['assetPaths'] = $assetPaths;
+        $nav = new Omeka_Navigation;
+        $nav->loadAsOption(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_OPTION_NAME);
+        $nav->addPagesFromFilter(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_FILTER_NAME);
+        $params['navigation'] = $nav->toArray();
+
         set_option('upgrade_to_omeka_s_process_params', version_compare(phpversion(), '5.4.0', '<')
             ? json_encode($params)
             : json_encode($params, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));

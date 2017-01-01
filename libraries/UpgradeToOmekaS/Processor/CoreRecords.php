@@ -153,7 +153,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         $properties['dcterms:date'][] = $this->getDatetime();
         $properties['dcterms:replaces'][] = array(
             'type' => 'uri',
-            'uri' => WEB_ROOT,
+            'uri' => $this->getParam('WEB_ROOT') ?: '#',
             'value' => __('Digital library powered by Omeka Classic'),
         );
         $toInserts['value'] = $this->_prepareRowsForProperties($id, $properties);

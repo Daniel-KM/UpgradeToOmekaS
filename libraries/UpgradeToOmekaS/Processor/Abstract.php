@@ -351,6 +351,31 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         return isset($this->_params[$name]) ? $this->_params[$name] : null;
     }
 
+    public function setAssetPaths($assetPaths = array())
+    {
+        $view = get_view();
+        if (empty($assetPaths)) {
+            $assetPaths = $view->getAssetPaths();
+            if (!empty($assetPaths)) {
+                return;
+            }
+            $assetPaths = $this->getParam('assetPaths');
+            if (empty($assetPaths)) {
+                $physical = $this->getParam('base_dir')
+                    . DIRECTORY_SEPARATOR . 'application'
+                    . DIRECTORY_SEPARATOR . 'views'
+                    . DIRECTORY_SEPARATOR . 'scripts';
+                $web = $this->getParam('WEB_ROOT') . '/application/views/scripts';
+                $assetPaths = array($physical => $web);
+            }
+        }
+        foreach ($assetPaths as $assetPath) {
+            list($physical, $web) = $assetPath;
+            $view->addAssetPath($physical, $web);
+        }
+        Zend_Registry::set('view', $view);
+    }
+
     /**
      * Get the list of all active processors with current params.
      *
@@ -497,7 +522,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public function getSiteTitle()
     {
         if (empty($this->_siteTitle)) {
-            $title = get_option('site_title') ?: __('Site %s', WEB_ROOT);
+            $title = get_option('site_title') ?: __('Site %s', $this->getParam('WEB_ROOT') ?: __('[unknown]'));
             $title = substr($title, 0, 190);
             $this->_siteTitle = $title;
         }
