@@ -401,9 +401,9 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      *
      * @param string $path A relative path.
      * @param boolean $check Check if exists and is readable.
-     * @param
+     * @return string
      */
-    protected function _getFullPath($path, $check = true)
+    public function getFullPath($path, $check = true)
     {
         $baseDir = $this->getParam('base_dir');
         if (empty($baseDir)) {

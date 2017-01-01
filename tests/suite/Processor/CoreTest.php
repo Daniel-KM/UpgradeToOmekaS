@@ -351,7 +351,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
     public function testCreateDirectory()
     {
         $this->assertFalse(file_exists($this->_baseDir));
-        $processor = $this->_prepareProcessor(null, array('_createDirectory'));
+        $processor = $this->_prepareProcessor(null, array('_createDirectory'), false);
         $result = $processor->process();
         $this->assertEmpty($result);
         $result = file_exists($this->_baseDir);
@@ -362,7 +362,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
     public function testDownloadOmekaS()
     {
-        $processor = $this->_prepareProcessor(null, array('_downloadOmekaS'));
+        $processor = $this->_prepareProcessor(null, array('_downloadOmekaS'), false);
         // TODO There are two different tests, with and without downloading.
         $path = $this->_zippath;
         $exists = file_exists($path);
@@ -394,12 +394,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
     {
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(null, array('_unzipOmekaS'));
-        $path = $this->_zippath;
-        $baseDir = $processor->getParam('base_dir');
-        $result = !file_exists($baseDir) || UpgradeToOmekaS_Common::isDirEmpty($baseDir);
-        $this->assertTrue($result);
-        $this->_isBaseDirCreated = true;
         $result = $processor->process();
+        $baseDir = $processor->getParam('base_dir');
         $this->assertEmpty($result);
         $indexFile = $baseDir . DIRECTORY_SEPARATOR . 'index.php';
         $this->assertEquals('13ceb3fef1651b438721315340702ce4', md5_file($indexFile));
@@ -407,30 +403,19 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
     public function testConfigOmekaS()
     {
-        // TODO To be moved.
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(null, array('_unzipOmekaS', '_configOmekaS'));
-        $path = $this->_zippath;
-        $baseDir = $processor->getParam('base_dir');
-        $result = !file_exists($baseDir) || UpgradeToOmekaS_Common::isDirEmpty($baseDir);
-        $this->assertTrue($result);
-        $this->_isBaseDirCreated = true;
         $result = $processor->process();
         $this->assertEmpty($result);
     }
 
     public function testInstallOmekaS()
     {
-        // TODO To be moved.
         $this->_checkDownloadedOmekaS();
-        $processor = $this->_prepareProcessor(array('user' => $this->user), array('_unzipOmekaS', '_configOmekaS', '_installOmekaS'));
-        $path = $this->_zippath;
-        $baseDir = $processor->getParam('base_dir');
-        $result = !file_exists($baseDir) || UpgradeToOmekaS_Common::isDirEmpty($baseDir);
-        $this->assertTrue($result);
-        $this->_isBaseDirCreated = true;
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS'));
         $result = $processor->process();
-        $this->assertEmpty($result);
 
         $targetDb = $processor->getTargetDb();
         $sql = 'SELECT COUNT(*) FROM resource_class;';
@@ -449,7 +434,23 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals($this->user->email, json_decode($result));
     }
 
-    protected function _prepareProcessor($params = null, $methods = array())
+    public function testConvertLocalConfig()
+    {
+        // TODO Check modified config.ini, for example for priority or locale.
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_convertLocalConfig'));
+        $result = $processor->process();
+
+        $localConfigPhp = $processor->getFullPath('config/local.config.php');
+        $localConfig = file_get_contents($localConfigPhp);
+        $this->assertContains("'use_externals' => false", $localConfig);
+        $this->assertContains("'priority' => \Zend\Log\Logger::DEBUG,", $localConfig);
+        // $this->assertContains('fr_QC', $localConfig);
+    }
+
+    protected function _prepareProcessor($params = null, $methods = array(), $checkDir = true)
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);
         $defaultParams = array(
@@ -471,6 +472,14 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         if ($methods) {
             $processor->processMethods = $methods;
         }
+
+        if ($checkDir) {
+            $baseDir = $processor->getParam('base_dir');
+            $result = !file_exists($baseDir) || UpgradeToOmekaS_Common::isDirEmpty($baseDir);
+            $this->assertTrue($result);
+            $this->_isBaseDirCreated = true;
+        }
+
         return $processor;
     }
 
