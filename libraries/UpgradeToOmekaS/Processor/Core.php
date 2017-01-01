@@ -14,13 +14,15 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     public $maxVersion = '2.5';
     protected $_bypassDefaultPrechecks = true;
 
-    public $minVersionMysql = '5.5.3';
-    public $minVersionMariadb = '5.5.3';
-
     public $omekaSemantic = array(
         'version' => 'v1.0.0-beta2',
         'size' => 11526232,
         'md5' => '45283a20f3a8e13dac1a9cfaeeaa9c51',
+    );
+
+    public $omekaSemanticMinDb = array(
+        'mariadb' => '5.5.3',
+        'mysql' => '5.5.3',
     );
 
     /**
@@ -238,17 +240,15 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $mariadb = strpos($result, '-mariadb');
             $version = strtok($result, '-');
             if ($mariadb) {
-                if (version_compare($this->minVersionMariadb, $version, '>')) {
-                    $this->_prechecks[] = __('The current release requires at least MariaDB %s or Mysql %s, current is only %s.',
-                        $this->minVersionMariadb, $this->minVersionMysql, 'MariaDB ' . $version);
-                }
+                $result = version_compare($this->omekaSemanticMinDb['mariadb'], $version, '>');
             }
             // Probably a mysql database.
             else {
-                if (version_compare($this->minVersionMysql, $version, '>')) {
-                    $this->_prechecks[] = __('The current release requires at least MariaDB %s or Mysql %s, current is only Mysql %s.',
-                        $this->minVersionMariadb, $this->minVersionMysql, 'MySQL ' . $version);
-                }
+                $result = version_compare($this->omekaSemanticMinDb['mysql'], $version, '>');
+            }
+            if ($result) {
+                $this->_prechecks[] = __('The current release requires at least MariaDB %s or Mysql %s, current is only %s.',
+                    $this->omekaSemanticMinDb['mariadb'], $this->omekaSemanticMinDb['mysql'], ($mariadb ? 'MariaDB' : 'MySQL') . ' ' . $version);
             }
         }
     }

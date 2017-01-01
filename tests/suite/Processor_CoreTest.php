@@ -45,11 +45,13 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
     public function testPrecheckConfigBadDatabaseVersions()
     {
         $processor = new UpgradeToOmekaS_Processor_Core();
-        $processor->minVersionMysql = '15.5.3';
-        $processor->minVersionMariadb = '15.5.3';
+        $processor->omekaSemanticMinDb = array(
+            'mariadb' => '1005.5.3',
+            'mysql' => '1005.5.3',
+        );
         $result = $processor->precheckConfig();
         $this->assertEquals(1, count($result));
-        $this->assertContains('The current release requires at least MariaDB 15.5.3 or Mysql 15.5.3', $result[0]);
+        $this->assertContains('The current release requires at least MariaDB 1005.5.3 or Mysql 1005.5.3', $result[0]);
     }
 
     public function testPrecheckConfigExistingJob()
