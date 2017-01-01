@@ -41,13 +41,6 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
     );
 
     /**
-     * Initialized during init via libraries/data/mapping_roles.php.
-     *
-     * @var array
-     */
-    // public $mapping_roles = array();
-
-    /**
      * The target default local config.
      *
      * @internal Because the target config uses a namespace for priority, it
@@ -136,17 +129,6 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         'tiff', 'txt', 'wav', 'wax', 'wma', 'wmv', 'wmx', 'wri', 'xla', 'xls',
         'xlsx', 'xlt', 'xlw', 'zip',
     );
-
-    protected function _init()
-    {
-        $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
-            . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'data';
-
-        $script = $dataDir
-            . DIRECTORY_SEPARATOR . 'mapping_roles.php';
-        $this->mapping_roles = require $script;
-    }
 
     /**
      * Check if the plugin is installed.

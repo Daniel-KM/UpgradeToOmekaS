@@ -25,24 +25,6 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
     );
 
     /**
-     * Initialized during init via libraries/data/mapping_derivatives.php.
-     *
-     * @var array
-     */
-    // public  $mapping_derivatives = array();
-
-    protected function _init()
-    {
-        $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
-            . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'data';
-
-        $script = $dataDir
-            . DIRECTORY_SEPARATOR . 'mapping_derivatives.php';
-        $this->mapping_derivatives = require $script;
-    }
-
-    /**
      * Check if the plugin is installed.
      *
      * @internal Always true for the Core.

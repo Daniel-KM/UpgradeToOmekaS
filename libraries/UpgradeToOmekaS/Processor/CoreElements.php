@@ -26,20 +26,6 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
     );
 
     /**
-     * Initialized during init via libraries/data/mapping_item_types.php.
-     *
-     * @var array
-     */
-    // public $mapping_item_types = array();
-
-    /**
-     * Initialized during init via libraries/data/mapping_elements.php.
-     *
-     * @var array
-     */
-    // public $mapping_elements = array();
-
-    /**
      * Flat list of classes as an associative array of prefix:names and ids.
      *
      * @var
@@ -52,21 +38,6 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
      * @var
      */
     protected $_propertyIds = array();
-
-    protected function _init()
-    {
-        $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
-            . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'data';
-
-        $script = $dataDir
-            . DIRECTORY_SEPARATOR . 'mapping_item_types.php';
-        $this->mapping_item_types = require $script;
-
-        $script = $dataDir
-            . DIRECTORY_SEPARATOR . 'mapping_elements.php';
-        $this->mapping_elements = require $script;
-    }
 
     /**
      * Check if the plugin is installed.

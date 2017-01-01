@@ -47,73 +47,11 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
     );
 
     /**
-     * Initialized during init via libraries/data/mapping_theme_folders.php.
-     *
-     * @var array
-     */
-    // public $mapping_theme_folders = array();
-
-    /**
-     * Initialized during init via libraries/data/mapping_theme_files.php.
-     *
-     * @var array
-     */
-    // public $mapping_theme_files = array();
-
-    /**
-     * Initialized during init via libraries/data/mapping_functions.php.
-     *
-     * @var array
-     */
-    // public $mapping_functions = array();
-
-    /**
-     * Initialized during init via libraries/data/mapping_functions.php.
-     *
-     * @var array
-     */
-    // public $mapping_variables = array();
-
-    /**
-     * Initialized during init via libraries/data/list_hooks.php.
-     *
-     * @var array
-     */
-    // public $list_hooks = array();
-
-    /**
      * Store the translated files from Omeka C to Omeka S.
      *
      * @var array
      */
     protected $_checkedFiles = array();
-
-    protected function _init()
-    {
-        $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
-            . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'data';
-
-            $script = $dataDir
-                . DIRECTORY_SEPARATOR . 'mapping_theme_folders.php';
-            $this->mapping_theme_folders = require $script;
-
-            $script = $dataDir
-                . DIRECTORY_SEPARATOR . 'mapping_theme_files.php';
-            $this->mapping_theme_files = require $script;
-
-            $script = $dataDir
-                . DIRECTORY_SEPARATOR . 'mapping_functions.php';
-            $this->mapping_functions = require $script;
-
-            $script = $dataDir
-                . DIRECTORY_SEPARATOR . 'mapping_variables.php';
-            $this->mapping_variables = require $script;
-
-            $script = $dataDir
-                . DIRECTORY_SEPARATOR . 'list_hooks.php';
-            $this->list_hooks = require $script;
-        }
 
     /**
      * Check if the plugin is installed.

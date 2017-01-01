@@ -20,12 +20,6 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
         '_upgradeData',
     );
 
-    public $mapping_theme_folders = array(
-        'simple-pages/page' => 'view/omeka/site/page',
-        // Remove the dir "simple-pages".
-        // 'simple-pages' => '',
-    );
-
     protected function _upgradeData()
     {
         $recordType = 'SimplePagesPage';

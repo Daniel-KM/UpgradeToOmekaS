@@ -258,6 +258,41 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     protected function _init()
     {
+        $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'libraries'
+            . DIRECTORY_SEPARATOR . 'data';
+
+        $loadables = array(
+            // Server.
+
+            // Site.
+            'mapping_roles',
+
+            // Elements.
+            'mapping_item_types',
+            'mapping_elements',
+
+            // Records.
+
+            // Files.
+            'mapping_derivatives',
+
+            // Themes.
+            'mapping_theme_folders',
+            'mapping_theme_files',
+            'mapping_functions',
+            'mapping_variables',
+            'list_hooks',
+        );
+
+        $underscoreName = $this->isCore() ? '' : ('_' . Inflector::underscore($this->pluginName));
+        foreach ($loadables as $basename) {
+            $file = $dataDir
+                . DIRECTORY_SEPARATOR . $basename . $underscoreName . '.php';
+            if (file_exists($file)) {
+                $this->$basename = require $file;
+            }
+        }
     }
 
     /**
