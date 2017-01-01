@@ -91,13 +91,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         'reviewer' => 'reviewer',
         'author' => 'author',
         'researcher' => 'researcher',
-        // Plugin"More user roles".
-        'editor' => 'editor',
-        'reviewer' => 'reviewer',
-        'author' => 'author',
-        // Specific roles.
-        'fulladmin' => 'site_admin',
-        'documentalist' => 'editor',
         // TODO Currently not managed
         // Plugin Guest User.
         // 'guest' => 'guest',
@@ -435,15 +428,19 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _precheckIntegrityUsers()
     {
         $db = $this->_db;
-        $roles = array_keys($this->mappingRoles);
+        $mappingRoles = $this->getMappingRoles();
+        $roles = array_keys($mappingRoles);
         $table = $db->getTable('User');
         $totalRecords = total_records('User');
         $select = $table->getSelect()
             ->reset(Zend_Db_Select::COLUMNS)
             ->columns(array('id', 'role'))
-            ->where('role NOT IN (?)', $roles)
             ->order('role')
             ->distinct();
+        if ($roles) {
+            $select
+                ->where('role NOT IN (?)', $roles);
+        }
         $unmanagedUsers = $table->fetchPairs($select);
         if ($unmanagedUsers) {
             $this->_prechecks[] = __('Some users (%d/%d) have an unmanaged role ("%s") and can’t be imported.',
@@ -1395,7 +1392,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
         // There is one or more users, at least the current one.
         else {
-            $roles = $this->mappingRoles;
+            $roles = $this->getMappingRoles();
             $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
             $totalSupers = 0;
             $totalAdmins = 0;

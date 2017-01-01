@@ -81,4 +81,38 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
         $result = $processor->checkConfig();
         $this->assertEmpty($result);
     }
+
+    public function testMappingRoles()
+    {
+        $processor = $this->getMockForAbstractClass('UpgradeToOmekaS_Processor_Abstract');
+        $result = $processor->getMappingRoles();
+        $this->assertEquals(9, count($result));
+        $this->assertEquals('site_admin', $result['admin']);
+    }
+
+    public function filterUpgradeOmekas($processors)
+    {
+        $processors['AbstractMock'] = array(
+            'class' => get_class($this->_processorMock),
+            'description' => __('Abstract Mock'),
+        );
+        return $processors;
+    }
+
+    public function testMappingRolesAdd()
+    {
+        // TODO Finish the test with added roles.
+        $this->markTestIncomplete();
+        add_filter('upgrade_omekas', array($this, 'filterUpgradeOmekas'));
+        $this->_processorMock = $this->getMockForAbstractClass('UpgradeToOmekaS_Processor_Abstract');
+        $processor = $this->_processorMock;
+        $processor->mappingRoles = array(
+            'foo' => 'bar',
+            'omeka-c-role' => 'omeka-s-role',
+        );
+        $result = $processor->getMappingRoles();
+        $this->assertEquals('site_admin', $result['admin']);
+        $this->assertEquals(11, count($result));
+        $this->assertEquals('bar', $result['foo']);
+    }
 }

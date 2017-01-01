@@ -37,6 +37,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $processMethods = array();
 
     /**
+     * List of roles mapped from Omeka C to Omeka S.
+     *
+     * @var array
+     */
+    public $mappingRoles = array();
+
+    /**
      * Maximum rows to process by loop.
      *
      * @var integer
@@ -129,6 +136,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @var string
      */
     protected $_siteSlug;
+
+    /**
+     * List of merged roles mapped from Omeka C to Omeka S.
+     *
+     * @var array
+     */
+    protected $_mergedMappingRoles;
 
     /**
      * Constructor of the class.
@@ -267,6 +281,41 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             $this->setDatetime(date('Y-m-d H:i:s'));
         }
         return $this->_datetime;
+    }
+
+    /**
+     * Helper to get the site slug.
+     *
+     * @return string
+     */
+    public function getSiteSlug()
+    {
+        if (empty($this->_siteSlug)) {
+            $title = get_option('site_title') ?: __('Site %s', WEB_ROOT);
+            $slug = substr($this->_slugify($title), 0, 190);
+            $this->_siteSlug = $slug;
+            $this->setParam('siteSlug', $slug);
+        }
+        return $this->_siteSlug;
+    }
+
+    /**
+     * Get the mapping of roles of all plugins.
+     *
+     * @return array
+     */
+    public function getMappingRoles()
+    {
+        if (is_null($this->_mergedMappingRoles)) {
+            $this->_mergedMappingRoles = array();
+            $processors = $this->getProcessors();
+            foreach ($processors as $processor) {
+                $this->_mergedMappingRoles = array_merge(
+                    $this->_mergedMappingRoles,
+                    $processor->mappingRoles);
+            }
+        }
+        return $this->_mergedMappingRoles;
     }
 
     /**
@@ -575,22 +624,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             }
         }
         return $file;
-    }
-
-    /**
-     * Helper to get the site slug.
-     *
-     * @return string
-     */
-    public function getSiteSlug()
-    {
-        if (empty($this->_siteSlug)) {
-            $title = get_option('site_title') ?: __('Site %s', WEB_ROOT);
-            $slug = substr($this->_slugify($title), 0, 190);
-            $this->_siteSlug = $slug;
-            $this->setParam('siteSlug', $slug);
-        }
-        return $this->_siteSlug;
     }
 
     /**
