@@ -107,7 +107,8 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'description'   => __('Define the database Omeka S will be using.'),
             'multiOptions' => array(
                 'separate' => __('Use a separate database (recommended)'),
-                'share' => __('Share the database with a different prefix'),
+                // 'share' => __('Share the database with a different prefix'),
+                'share' => __('Share the database'),
             ),
             'required' => true,
             'value' => 'separate',
@@ -115,7 +116,8 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         ));
         $this->addElement('note', 'database_type_note_separate', array(
             'description' => __('When the database is separated, it should be created before process, then the parameters should be set below.')
-                . ' ' . __('"Port" and "prefix" are optional.'),
+            // . ' ' . __('"Port" and "prefix" are optional.'),
+            . ' ' . __('"Port" is optional.'),
         ));
         $this->addElement('text', 'database_host', array(
             'label' => __('Host'),
@@ -136,6 +138,8 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         $this->addElement('password', 'database_password', array(
             'label' => __('Password'),
         ));
+        // Currently, Omeka S doesn't allow a table prefix.
+        /*
         $this->addElement('text', 'database_prefix', array(
             'label' => __('Table Prefix'),
             'description'   => __('When the database is shared, the prefix of the tables should be different from the existing one ("%s").',
@@ -152,6 +156,14 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 ),
             ),
             'errorMessages' => array(__('A prefix should have only alphanumeric characters, no space, and end with an underscore "_".')),
+        ));
+        */
+        // An hidden value is set, but it won't be used until Omeka S allows it.
+        $this->addElement('hidden', 'database_prefix', array(
+            'value' => $databasePrefix == 'omekas_' ? 'omekasemantic_' : 'omekas_',
+        ));
+        $this->addElement('note', 'database_prefix_note', array(
+            'description' => __('Currently, Omeka S doesn’t allow to use a prefix.'),
         ));
 
         if ($this->_isConfirmation) {
@@ -200,6 +212,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             array(
                 'database_type',
                 'database_type_note_separate',
+                'database_prefix_note',
                 'database_host',
                 'database_port',
                 'database_name',

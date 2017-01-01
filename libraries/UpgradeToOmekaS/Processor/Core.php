@@ -622,7 +622,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 $dbname = $this->getParam('database_name');
                 $username = $this->getParam('database_username');
                 $password = $this->getParam('database_password');
-                $prefix = $this->getParam('database_prefix');
+                // $prefix = $this->getParam('database_prefix');
                 break;
 
             case 'share':
@@ -633,7 +633,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 $dbname = isset($config['dbname']) ? $config['dbname'] : '';
                 $username = isset($config['username']) ? $config['username'] : '';
                 $password = isset($config['password']) ? $config['password'] : '';
-                $prefix = isset($config['prefix']) ? $config['prefix'] : '';
+                // $prefix = isset($config['prefix']) ? $config['prefix'] : '';
                 break;
 
             default:
@@ -646,9 +646,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $databaseConfig .= 'password = "' . $password . '"'. PHP_EOL;
         $databaseConfig .= 'dbname   = "' . $dbname . '"'. PHP_EOL;
         $databaseConfig .= 'host     = "' . $host . '"'. PHP_EOL;
-        $databaseConfig .= empty($prefix)
-            ? ';prefix   = '. PHP_EOL
-            : 'prefix   = "' . $prefix . '"'. PHP_EOL;
+        // $databaseConfig .= empty($prefix)
+        //     ? ';prefix   = '. PHP_EOL
+        //     : 'prefix   = "' . $prefix . '"'. PHP_EOL;
         $databaseConfig .= empty($port)
             ? ';port     = '. PHP_EOL
             : 'port     = "' . $port . '"'. PHP_EOL;

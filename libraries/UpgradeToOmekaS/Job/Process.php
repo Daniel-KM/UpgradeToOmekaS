@@ -40,14 +40,14 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
         if ($params['database_type'] == 'separate') {
             $startMessage .= __('Database host: %s', $params['database_host']) . PHP_EOL;
             $startMessage .= __('Database port: %s', $params['database_port']) . PHP_EOL;
-            $startMessage .= __('Database prefix: %s', $params['database_prefix']) . PHP_EOL;
+            // $startMessage .= __('Database prefix: %s', $params['database_prefix']) . PHP_EOL;
             $startMessage .= __('Database name: %s', $params['database_name']) . PHP_EOL;
             $startMessage .= __('Database username: %s', $params['database_username']) . PHP_EOL;
             $startMessage .= __('Database password: %s', 'xxxxxxxxxxxxxxxx') . PHP_EOL;
         }
         // Database is shared.
         else {
-            $startMessage .= __('Database prefix: %s', $params['database_prefix']) . PHP_EOL;
+            // $startMessage .= __('Database prefix: %s', $params['database_prefix']) . PHP_EOL;
         }
         $startMessage .= __('Url: %s', get_option('upgrade_to_omeka_s_process_url'));
         $this->_log($startMessage, Zend_Log::INFO);

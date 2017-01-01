@@ -28,6 +28,7 @@ TODO
 ----
 
 * End of the install and copy of settings, records and files.
+* Add a prefix in the core of Omeka S
 * Update `.htaccess` when Omeka Semantic is installed in a subfolder of Omeka Classic
 * Import, conversion and copy
 * Compatibility layer
@@ -62,7 +63,12 @@ first and the last.
 
 * *IMPORTANT*: backup your database and your files manually and check them
 * Optional: create manually the database if you want a separate one, else, the
-  database will be shared with the one of Omeka Classic.
+  database will be shared with the one of Omeka Classic. This is not a problem,
+  but currently, Omeka S doesn't manage prefixes. Fortunately, there was one by
+  default in Omeka 2 ("omeka_"). Furthermore, Omeka 2 creates tables with plural
+  names (like "users") and Omeka S with singular names ("user"), so even if the
+  prefix was removed during install, there will be no issue. Anyway, it's
+  recommended to create a separate database.
 * Checks
   * rights to write in the specified directory
   * version and config of Omeka

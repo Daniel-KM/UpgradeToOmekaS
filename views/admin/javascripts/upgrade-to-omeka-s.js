@@ -10,7 +10,7 @@ jQuery(document).ready(function () {
     function shareDatabase() {
         var inputs = $('#fieldset-database .field');
         $(inputs).each(function() {
-            if (!$(this).find('.inputs.radio').length && !$(this).find('#database_prefix').length) {
+            if (!$(this).find('.inputs.radio').length && !$(this).find('#database_prefix').length && !$(this).find('#database_prefix_note-label').length) {
                 $(this).hide(300);
             }
         });
