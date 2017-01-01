@@ -1349,7 +1349,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $user = $this->getParam('user');
 
         $totalRecords = total_records($recordType);
-        $datetime = date('Y-m-d H:i:s');
 
         // This case is possible with an external identification (ldap...).
         if (empty($totalRecords)) {
@@ -1357,7 +1356,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $toInsert['id'] = 1;
             $toInsert['email'] = substr($user->email, 0, 190);
             $toInsert['name'] = substr($user->name, 0, 190);
-            $toInsert['created'] = $datetime;
+            $toInsert['created'] = $this->getDatetime();
             $toInsert['role'] = 'global_admin';
             $toInsert['is_active'] = 1;
             $result = $targetDb->insert('user', $toInsert);
@@ -1399,7 +1398,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     $toInsert['id'] = (integer) $record->id;
                     $toInsert['email'] = $targetDb->quote(substr($record->email, 0, 190));
                     $toInsert['name'] = $targetDb->quote(substr($record->name, 0, 190));
-                    $toInsert['created'] = $targetDb->quote($datetime);
+                    $toInsert['created'] = $targetDb->quote($this->getDatetime());
                     $toInsert['role'] = $targetDb->quote($role);
                     $toInsert['is_active'] = (integer) (boolean) $record->active;
                     $toInserts[] = implode(",\t", $toInsert);

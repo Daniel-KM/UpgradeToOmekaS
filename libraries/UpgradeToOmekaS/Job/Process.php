@@ -61,6 +61,7 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
         $this->_log($startMessage, Zend_Log::INFO);
 
         $processors = $this->_listProcessors();
+        $datetime = date('Y-m-d H:i:s');
 
         // Reprocess the checks, because some time may have been occurred and
         // this is not a problem in a background process. Above all, the config
@@ -73,6 +74,7 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
                     // The params should be set now, because there is the processing
                     // parameter.
                     $processor->setParams($params);
+                    $processor->setDatetime($datetime);
                     $result = $processor->precheckConfig();
                     if (!empty($result)) {
                         $this->_processError(__('An error occurred during precheck of "%s".',
@@ -150,7 +152,7 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
         $this->_log(__('Process end successfully.'), Zend_Log::INFO);
 
         // No error.
-        $this->_log(__('End of upgrade from Omeka Classic to Omeka Semantic.'), Zend_Log::INFO);
+        $this->_log(__('End of the upgrade from Omeka Classic to Omeka Semantic.'), Zend_Log::INFO);
 
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_COMPLETED);
         set_option('upgrade_to_omeka_s_service_down', false);

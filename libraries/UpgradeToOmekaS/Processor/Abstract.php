@@ -89,6 +89,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_securityIni;
 
     /**
+     * Single datetime for whole process.
+     *
+     * @var string
+     */
+    protected $_datetime;
+
+    /**
      * List of parameters.
      *
      * @var array
@@ -171,6 +178,29 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public function getParam($name)
     {
         return isset($this->_params[$name]) ? $this->_params[$name] : null;
+    }
+
+    /**
+     * Set the datetime.
+     *
+     * @param string $datetime
+     */
+    public function setDatetime($datetime)
+    {
+        $this->_datetime = $datetime;
+    }
+
+    /**
+     * Get the datetime.
+     *
+     * @return string
+     */
+    public function getDatetime()
+    {
+        if (is_null($this->_datetime)) {
+            $this->setDatetime(date('Y-m-d H:i:s'));
+        }
+        return $this->_datetime;
     }
 
     /**
