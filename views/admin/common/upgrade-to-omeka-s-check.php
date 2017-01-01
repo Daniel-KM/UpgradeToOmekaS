@@ -1,22 +1,32 @@
 <h2><?php echo __('Core & Server'); ?></h2>
-<?php if (isset($prechecks['Core']) || isset($checks['Core'])): ?>
-<p><?php echo __('Omeka can’t be upgraded.'); ?></p>
-<ul><?php
-// Checks contains prechecks.
-if (isset($prechecks['Core'])):
-    echo '<li>' . implode('</li><li>', $prechecks['Core']) . '</li>';
-endif;
-if (isset($checks['Core'])):
-    echo '<li>' . implode('</li><li>', $checks['Core']) . '</li>';
-endif;
-?></ul>
-<?php else: ?>
-<p><?php echo __('The prechecks processor deems that Omeka Classic can be upgraded on this server.'); ?></p>
+<?php
+if (isset($prechecks['Core'])): ?>
+    <p class="check-error"><?php echo __('Omeka can’t be upgraded.'); ?></p>
+    <?php echo '<ul><li>' . implode('</li><li>', $prechecks['Core']) . '</li></ul>';
+elseif (isset($checks['Core'])): ?>
+    <p class="check-error"><?php echo __('Omeka can be upgraded, but some errors have been reported in the form.'); ?></p>
+    <?php echo '<ul><li>' . implode('</li><li>', $checks['Core']) . '</li></ul>';
+else: ?>
+    <p><?php echo __('The precheck processor deems that the core of Omeka Classic can be upgraded on this server.'); ?></p>
     <?php if ($hasErrors == 'form'): ?>
-    <p><?php echo __('Nevertheless, the form should be checked.'); ?></p>
+    <p class="check-error"><?php echo __('Nevertheless, the form should be checked.'); ?></p>
     <?php endif; ?>
 <?php endif; ?>
 <h2><?php echo __('Plugins'); ?></h2>
+<?php
+// A check for the message for the plugins, except core.
+$prechecksPlugins = $prechecks;
+unset($prechecksPlugins['Core']);
+$checksPlugins = $checks;
+unset($checksPlugins['Core']);
+if ($prechecksPlugins or $checksPlugins):
+    $totalErrorsPlugins = count($prechecksPlugins) + count($checksPlugins);
+    echo '<p class="check-error">' . __(plural('%d plugin can’t be upgraded.', '%d plugins can’t be upgraded.', $totalErrorsPlugins), $totalErrorsPlugins) . '</p>';
+    echo '<p>' . __(plural('Fix it before upgrade.', 'Fix them before upgrade.', $totalErrorsPlugins), $totalErrorsPlugins) . '</p>';
+else:
+    echo '<p>' . __('The precheck processor deems that all installed plugins with an available processor can be upgraded.') . '</p>';
+endif;
+?>
 <table>
     <thead>
         <tr>
@@ -50,11 +60,14 @@ endif;
         </tr>
         <?php if (!$plugin['skip'] && !$plugin['upgradable']): ?>
         <tr>
-            <td colspan="7" class="check-error"><div>
+            <td colspan="7" class="check-error">
                 <?php
                 // An empty check means no processor.
+                if (!empty($prechecks[$name])):
+                    echo '<div>' . implode ('</div><div>', $prechecks[$name]) . '</div>';
+                endif;
                 if (!empty($checks[$name])):
-                    echo implode ('</div><div>', $checks[$name]);
+                    echo '<div>' . implode ('</div><div>', $checks[$name]) . '</div>';
                 endif;
                 ?>
             </div></td>

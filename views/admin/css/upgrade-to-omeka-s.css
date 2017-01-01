@@ -1,9 +1,6 @@
 .inputs.radio ul.error {
     padding-top: 60px;
 }
-p.explanation.note {
-    font-style: italic;
-}
 @media only screen and (min-width: 768px) {
     .inputs.radio .explanation {
         padding-left: 160px;
@@ -18,6 +15,12 @@ p.explanation.note {
         padding-right: 240px;
     }
 }
+p.explanation.note {
+    font-style: italic;
+}
+.upgrade .check-error {
+    color: red;
+}
 #upgrade-logs .emergency,
 #upgrade-logs .alert,
 #upgrade-logs .critical {
@@ -25,13 +28,15 @@ p.explanation.note {
     font-size: 16px;
     font-weight: bold;
 }
-#upgrade-logs .error,
-#upgrade-logs .warning {
+#upgrade-logs .error {
     color: red;
     font-weight: bold;
 }
+#upgrade-logs .warning {
+    color: red;
+}
 #upgrade-logs .notice {
-    color: green;
+    color: orange;
 }
 #upgrade-logs .info {
     color: black;
