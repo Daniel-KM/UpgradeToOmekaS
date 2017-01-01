@@ -4,17 +4,18 @@ class UpgradeToOmekaS_Processor_SimplePagesTest extends UpgradeToOmekaS_Test_App
 {
     protected $_isAdminTest = true;
 
-    protected $_processor;
+    protected $_processorName = 'UpgradeToOmekaS_Processor_SimplePages';
 
     public function setUp()
     {
         parent::setUp();
 
-        // Authenticate and set the current user.
-        $this->user = $this->db->getTable('User')->find(1);
-        $this->_authenticateUser($this->user);
+        $this->_setupPlugin();
 
-        $this->_processor = new UpgradeToOmekaS_Processor_SimplePages();
+        if (!class_exists('SimplePagesPage')) {
+            $this->markTestSkipped(__('The plugin "%s" must be available to test it.',
+                $this->_processor->pluginName));
+        }
     }
 
     public function testPrecheckConfig()

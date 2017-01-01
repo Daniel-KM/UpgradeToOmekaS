@@ -1167,15 +1167,6 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
                         'label' => $page['label'],
                         'url' => $omekaSPath . '/logout',
                 ));
-            case '/map':
-            case '/geolocation':
-            case '/geolocation/map':
-            case '/geolocation/map/browse':
-                return array(
-                    'type' => 'mapping',
-                    'data' => array(
-                        'label' => $page['label'],
-                ));
             case '/exhibits':
             case '/exhibits/browse':
                 return array(

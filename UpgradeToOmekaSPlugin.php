@@ -194,7 +194,7 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
         // Upgraded or equivalent plugins in Omeka S.
         // $processors['CsvImport'] = 'UpgradeToOmekaS_Processor_CsvImport';
         $processors['EmbedCodes'] = 'UpgradeToOmekaS_Processor_EmbedCodes';
-        // $processors['Geolocation'] = 'UpgradeToOmekaS_Processor_Geolocation';
+        $processors['Geolocation'] = 'UpgradeToOmekaS_Processor_Geolocation';
         // $processors['SimpleVocab'] = 'UpgradeToOmekaS_Processor_SimpleVocab';
         $processors['SocialBookmarking'] = 'UpgradeToOmekaS_Processor_SocialBookmarking';
         // $processors['ZoteroImport'] = 'UpgradeToOmekaS_Processor_ZoteroImport';

@@ -839,6 +839,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
                 $this->_upgradeSettings();
                 $this->_upgradeData();
+                $this->_upgradeFiles();
                 return;
             }
             // This is strange, but proceeds.
@@ -866,8 +867,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         // Upgrade settings.
         $this->_upgradeSettings();
 
-        // Upgrade data and files.
+        // Upgrade data.
         $this->_upgradeData();
+
+        // Upgrade files.
+        $this->_upgradeFiles();
     }
 
     /**
@@ -1075,9 +1079,16 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Upgrade metadata and files of a module once installed.
+     * Upgrade metadata of a module once installed.
      */
     protected function _upgradeData()
+    {
+    }
+
+    /**
+     * Upgrade files of a module once installed.
+     */
+    protected function _upgradeFiles()
     {
     }
 

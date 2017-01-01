@@ -32,6 +32,23 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
         'files_type' => 'copy',
     );
 
+    /**
+     * Call protected/private method of a class.
+     *
+     * @param object &$object    Instantiated object that we will run method on.
+     * @param string $methodName Method name to call
+     * @param array  $parameters Array of parameters to pass into method.
+     *
+     * @return mixed Method return.
+     */
+    public function invokeMethod(&$object, $methodName, array $parameters = array())
+    {
+        $reflection = new ReflectionClass(get_class($object));
+        $method = $reflection->getMethod($methodName);
+        $method->setAccessible(true);
+        return $method->invokeArgs($object, $parameters);
+    }
+
     public function setUp()
     {
         parent::setUp();
@@ -82,6 +99,41 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
         $this->_removeRecords('Collection');
 
         parent::tearDown();
+    }
+
+    protected function _setupPlugin()
+    {
+        $this->assertNotEmpty($this->_processorName);
+
+        // Authenticate and set the current user.
+        $this->user = $this->db->getTable('User')->find(1);
+        $this->_authenticateUser($this->user);
+
+        $processorName = $this->_processorName;
+        $this->_processor = new $processorName();
+
+        $pluginHelper = new Omeka_Test_Helper_Plugin;
+        try {
+            $pluginHelper->setUp($this->_processor->pluginName);
+        } catch (Omeka_Plugin_Loader_Exception $e) {
+            $this->markTestSkipped(__('The plugin "%s" must be available to test it.',
+                $this->_processor->pluginName));
+        }
+
+        $this->_installDatabase();
+    }
+
+    protected function _installDatabase()
+    {
+        $path = dirname(__FILE__)
+            . DIRECTORY_SEPARATOR . 'suite'
+            . DIRECTORY_SEPARATOR . '_files'
+            . DIRECTORY_SEPARATOR . 'schema.sql';
+        $sqls = file_get_contents($path);
+        $sqls = array_filter(explode(';' . PHP_EOL, $sqls));
+        foreach ($sqls as $sql) {
+            $result = get_db()->prepare($sql)->execute();
+        }
     }
 
     protected function _createStubPlugin()
@@ -250,5 +302,45 @@ PLUGIN;
                 $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));
             }
         }
+    }
+
+    /**
+     * Helper to create an item directly in the target base.
+     *
+     * @param Target $target
+     * @return id
+     */
+    protected function _createItemViaDb($target)
+    {
+        $targetDb = $target->getDb();
+
+        $toInserts = array();
+
+        $toInsert = array();
+        $toInsert['id'] = null;
+        $toInsert['owner_id'] = null;
+        $toInsert['resource_class_id'] = null;
+        $toInsert['resource_template_id'] = null;
+        $toInsert['is_public'] = 0;
+        $toInsert['created'] = date('Y-m-d H:i:s');
+        $toInsert['modified'] = date('Y-m-d H:i:s');
+        $toInsert['resource_type'] = 'Omeka\Entity\Item';
+        $toInserts['resource'][] = $target->cleanQuote($toInsert);
+
+        $id = 'LAST_INSERT_ID()';
+
+        $toInsert = array();
+        $toInsert['id'] =$id;
+        $toInserts['item'][] = $target->cleanQuote($toInsert, 'id');
+
+        // No properties.
+
+        $target->insertRowsInTables($toInserts);
+
+        // Get the id.
+        $sql = 'SELECT MAX(id) FROM item;';
+        $itemId = $targetDb->fetchOne($sql);
+
+        return (integer) $itemId;
     }
 }
