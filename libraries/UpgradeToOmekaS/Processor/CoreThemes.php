@@ -15,24 +15,7 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         'type' => 'integrated',
     );
 
-    /**
-     * This is a module installed via the core.
-     *
-     * @var array
-     */
-    protected $_module = array(
-        'name' => 'Upgrade from Omeka Classic',
-        'version' => '3.1',
-        'url' => 'https://github.com/Daniel-KM/UpgradeFromOmekaClassic/archive/%s.zip',
-        'size' => 0,
-        'md5' => '',
-        'type' => 'upgrade',
-        'partial' => true,
-        'install' => array(),
-    );
-
     public $processMethods = array(
-        '_installCompatibiltyLayer',
         '_copyAssets',
         '_copyThemes',
         '_upgradeThemesParams',
@@ -62,39 +45,6 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
     public function isPluginReady()
     {
         return true;
-    }
-
-    protected function _installCompatibiltyLayer()
-    {
-        // TODO To be removed.
-        return;
-
-        $module = $this->module;
-        $this->module = $this->_module;
-
-        $this->_installModule();
-
-        $this->_module = $module;
-
-        // Modify "module.config.php" to manage the home page.
-        $siteSlug = $this->getSiteSlug();
-
-        $source = $destination = $this->_getModuleDir()
-            . DIRECTORY_SEPARATOR . 'UpgradeFromOmekaClassic'
-            . DIRECTORY_SEPARATOR . 'config'
-            . DIRECTORY_SEPARATOR . 'module.config.php';
-        $input = file_get_contents($source);
-        $output = preg_replace('~^' . preg_quote('$siteSlug = \'\';') . '$~', "\$siteSlug = '$siteSlug';", $input);
-        $result = file_put_contents($destination, $output);
-
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('The compatibility layer translates only standard functions: check your theme if there are custom ones.'),
-            Zend_Log::INFO);
-
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('Two aliases for the home page and for the items are added, so main links from the web are maintained.'),
-            Zend_Log::INFO);
-
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('Change the site slug in "modules/UpgradeFromOmekaClassic/config/module.config.php" if you change the main site slug.'),
-            Zend_Log::NOTICE);
     }
 
     protected function _copyAssets()
