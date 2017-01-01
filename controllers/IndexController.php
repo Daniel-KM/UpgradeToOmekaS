@@ -576,7 +576,15 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             $this->_listProcessors();
 
             foreach ($this->_processors as $name => $processor) {
-                $result = $processor->precheckConfig();
+                try {
+                    $result = $processor->precheckConfig();
+                } catch (UpgradeToOmekaS_Exception $e) {
+                    $result = array($e->getMessage());
+                } catch (Exception $e) {
+                    $message = __('A recoverable error occured during precheck of "%s".',
+                        $processor->pluginName);
+                    $result = array($message, $e->getMessage());
+                }
                 if ($result) {
                     // Some prechecks may have been added by processors.
                     $this->_prechecks[$name] = isset($this->_prechecks[$name])
@@ -601,7 +609,15 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $params = $this->_getParams();
         foreach ($this->_processors as $name => $processor) {
             $processor->setParams($params);
-            $result = $processor->checkConfig();
+            try {
+                $result = $processor->checkConfig();
+            } catch (UpgradeToOmekaS_Exception $e) {
+                $result = array($e->getMessage());
+            } catch (Exception $e) {
+                $message = __('A recoverable error occured during precheck of "%s".',
+                    $processor->pluginName);
+                $result = array($message, $e->getMessage());
+            }
             if ($result) {
                 // Normally, no previous checks.
                 $this->_checks[$name] = isset($this->_checks[$name])

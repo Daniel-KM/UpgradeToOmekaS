@@ -117,15 +117,19 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
             if ($this->_isProcessing()) {
                 try {
                     $result = $processor->process();
+                    // The result should be empty.
                     if ($result) {
-                        $this->_processError(__('An error occured during process of "%s".',
-                            $processor->pluginName), array($result));
-                        return;
+                        throw new UpgradeToOmekaS_Exception($result);
                     }
+                } catch (UpgradeToOmekaS_Exception $e) {
+                        $message = $e->getMessage();
+                        $this->_processError(__('A recoverable error occured during process of "%s".',
+                            $processor->pluginName), array('[' . $processor->pluginName . ']' . $e->getMessage()));
+                        return;
                 } catch (Exception $e) {
                     $message = $e->getMessage();
-                    $this->_processError(__('A recoverable error occured during process of "%s".',
-                        $processor->pluginName), array($e->getMessage()));
+                    $this->_processError(__('An unknown recoverable error occured during process of "%s".',
+                        $processor->pluginName), array('[' . $processor->pluginName . ']' . $e->getMessage()));
                     return;
                 }
             }

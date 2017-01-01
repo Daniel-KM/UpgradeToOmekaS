@@ -116,8 +116,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         if ($this->processMethods) {
             foreach ($this->processMethods as $method) {
                 if (!method_exists($this, $method)) {
-                    throw new UpgradeToOmekaS_Exception(__('The method "%s" of the plugin %s does not exist.',
-                        $method, $this->pluginName));
+                    throw new UpgradeToOmekaS_Exception(
+                        __('The method "%s" of the plugin %s does not exist.', $method, $this->pluginName));
                 }
             }
         }
@@ -178,9 +178,9 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 try {
                     $version = $this->_iniReader->getPluginIniValue($path, 'version');
                 } catch (Exception $e) {
+                    $version = null;
                     $this->_prechecks[] = __('The plugin.ini file of the plugin "%s" is not readable: %s',
                         $this->pluginName, $e->getMessage());
-                    $version = null;
                 }
 
                 if ($version) {
@@ -265,6 +265,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      *
      * @todo Move this in the job processor.
      *
+     * @throws UpgradeToOmekaS_Exception
      * @return null|string Null if no error, else the last message of error.
      */
     final public function process()
@@ -284,17 +285,19 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
             // Missing method.
             if (!method_exists($this, $method)) {
-                return __('Method "%s" does not exist.', $method);
+                throw new UpgradeToOmekaS_Exception(
+                    $baseMessage . __('Method "%s" does not exist.', $method));
             }
 
             $this->_log($baseMessage . __('Started.'), Zend_Log::INFO);
             try {
                 $result = $this->$method();
+                // Needed for prechecks and checks.
                 if ($result) {
-                    return $result;
+                    throw new UpgradeToOmekaS_Exception($result);
                 }
             } catch (Exception $e) {
-                return $e->getMessage();
+                throw new UpgradeToOmekaS_Exception($baseMessage . $e->getMessage());
             }
             $this->_log($baseMessage . __('Ended.'), Zend_Log::INFO);
         }
@@ -305,6 +308,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     /**
      * Helper to get the Omeka S database object.
      *
+     * @throws UpgradeToOmekaS_Exception
      * @return Db|null
      */
     public function getTargetDb()
@@ -315,7 +319,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
         $params = $this->getParams();
         if (empty($params)) {
-            throw new UpgradeToOmekaS_Exception(__('The params of are not defined.'));
+            throw new UpgradeToOmekaS_Exception(
+                __('The params of the processor are not defined.'));
         }
 
         $type = $this->getParam('database_type');
@@ -339,7 +344,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 $password = isset($config['password']) ? $config['password'] : '';
                 break;
             default:
-                throw new UpgradeToOmekaS_Exception(__('The type "%s" is not possible for the database.', $type));
+                throw new UpgradeToOmekaS_Exception(
+                    __('The type "%s" is not possible for the database.', $type));
         }
 
         // Check the connection.
@@ -359,7 +365,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 throw new UpgradeToOmekaS_Exception();
             }
         } catch (Exception $e) {
-            throw new UpgradeToOmekaS_Exception(__('Cannot access to the database "%s".', $dbname));
+            throw new UpgradeToOmekaS_Exception(
+                __('Cannot access to the database "%s".', $dbname));
         }
 
         $this->_targetDb = $targetDb;
@@ -376,7 +383,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     {
         $baseDir = $this->getParam('base_dir');
         if (empty($baseDir)) {
-            throw new UpgradeToOmekaS_Exception(__('Base dir undefined.'));
+            throw new UpgradeToOmekaS_Exception(
+                __('Base dir undefined.'));
         }
         return $baseDir . DIRECTORY_SEPARATOR . ltrim($path, '/');
     }

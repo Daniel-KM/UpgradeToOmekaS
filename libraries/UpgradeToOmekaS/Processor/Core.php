@@ -159,6 +159,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $this->_checkFreeSize();
     }
 
+    /* Prechecks. */
+
     protected function _checkVersion()
     {
         if (version_compare($this->minVersion, OMEKA_VERSION, '>')) {
@@ -280,6 +282,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 $totalRunningJobs), $totalRunningJobs);
         }
     }
+
+    /* Checks. */
 
     protected function _checkDatabase()
     {
@@ -577,7 +581,10 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     {
         $path = $this->getParam('base_dir');
         $result = UpgradeToOmekaS_Common::createDir($path);
-        return $result ? null : __('Unable to create the directory %s.', $path);
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to create the directory %s.', $path));
+        }
     }
 
     protected function _downloadOmekaS()
@@ -587,14 +594,16 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         if (file_exists($path)) {
             // Check if the file is empty, in particular for network issues.
             if (!filesize($path)) {
-                return __('An empty file "omeka-s.zip" exists in the temp directory.')
-                    . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url);
+                throw new UpgradeToOmekaS_Exception(
+                    __('An empty file "omeka-s.zip" exists in the temp directory.')
+                    . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url));
             }
             if (filesize($path) != $this->omekaSemantic['size']
                     || md5_file($path) != $this->omekaSemantic['md5']
                 ) {
-                return __('A file "omeka-s.zip" exists in the temp directory and this is not the release %s.',
-                    $this->omekaSemantic['version']);
+                throw new UpgradeToOmekaS_Exception(
+                    __('A file "omeka-s.zip" exists in the temp directory and this is not the release %s.',
+                        $this->omekaSemantic['version']));
             }
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The file is already downloaded.'), Zend_Log::INFO);
         }
@@ -603,14 +612,16 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dMB, so wait a while.', $this->omekaSemantic['size'] / 1000000), Zend_Log::INFO);
             $result = file_put_contents($path, fopen($url, 'r'));
             if (empty($result)) {
-                return __('An issue occured during the file download.')
-                    . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path);
+                throw new UpgradeToOmekaS_Exception(
+                    __('An issue occured during the file download.')
+                    . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path));
             }
             if (filesize($path) != $this->omekaSemantic['size']
                     || md5_file($path) != $this->omekaSemantic['md5']
                 ) {
-                return __('The downloaded file is corrupted.')
-                . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path);
+                throw new UpgradeToOmekaS_Exception(
+                    __('The downloaded file is corrupted.')
+                    . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path));
             }
         }
     }
@@ -621,8 +632,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $baseDir = $this->getParam('base_dir');
         $result = UpgradeToOmekaS_Common::extractZip($path, $baseDir);
         if (!$result) {
-            return __('Unable to extract the zip file "%s" into the destination "%s".',
-                $path, $baseDir);
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to extract the zip file "%s" into the destination "%s".', $path, $baseDir));
         }
     }
 
@@ -652,7 +663,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 break;
 
             default:
-                return __('The type "%s" is not possible for the database.', $type);
+                throw new UpgradeToOmekaS_Exception(
+                    __('The type "%s" is not possible for the database.', $type));
         }
 
         $databaseIni = $this->_getFullPath('config/database.ini');
@@ -671,7 +683,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         $result = file_put_contents($databaseIni, $databaseConfig);
         if (empty($result)) {
-            return __('Unable to save the database.ini file.');
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to save the database.ini file.'));
         }
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The file "config/database.ini" has been updated successfully.'), Zend_Log::INFO);
@@ -690,10 +703,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         try {
             $targetDb = Zend_Db::Factory('PDO_MYSQL', $params);
             if (empty($targetDb)) {
-                return __('Cannot access to the database "%s".', $dbname);
+                throw new UpgradeToOmekaS_Exception(
+                    __('Database is null.'));
             }
         } catch (Exception $e) {
-            return __('Cannot access to the database "%s": %s', $dbname, $e->getMessage());
+            throw new UpgradeToOmekaS_Exception(
+                __('Cannot access to the database "%s": %s', $dbname, $e->getMessage()));
         }
 
         // Another check.
@@ -702,14 +717,16 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "' . $dbname . '";';
                 $result = $targetDb->fetchOne($sql);
                 if ($result) {
-                    return __('The target database "%s" should be empty when using a separate database.', $dbname);
+                    throw new UpgradeToOmekaS_Exception(
+                        __('The target database "%s" should be empty when using a separate database.', $dbname));
                 }
                 break;
             case 'share':
                 $sql = 'SHOW TABLES;';
                 $result = $targetDb->fetchCol($sql);
                 if (array_intersect($result, $this->getOmekaSDefaultTables())) {
-                    return __('Some names of tables of Omeka S are existing in the database of Omeka Classic.');
+                    throw new UpgradeToOmekaS_Exception(
+                        __('Some names of tables of Omeka S are existing in the database of Omeka Classic.'));
                 }
                 break;
         }
@@ -726,7 +743,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $sql = file_get_contents($script);
         $result = $targetDb->prepare($sql)->execute();
         if (!$result) {
-            return __('Unable to execute install queries.');
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to execute install queries.'));
         }
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The main tables are installed.'), Zend_Log::INFO);
