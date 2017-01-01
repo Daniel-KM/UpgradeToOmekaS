@@ -268,30 +268,25 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
      */
     protected function _precheckConfig()
     {
-        $this->_checkVersion();
-        // The check of the dispatcher may be disabled.
-        $iniFile = dirname(dirname(dirname(dirname(__FILE__))))
-            . DIRECTORY_SEPARATOR . 'security.ini';
-        $settings = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
-        if ($settings->check->background_dispatcher == '1') {
-            $this->_checkBackgroundDispatcher();
+        $this->_precheckVersion();
+        $settings = $this->_getSecurityIni();
+        if ($settings->precheck->background_dispatcher) {
+            $this->_precheckBackgroundDispatcher();
         }
         // During the background process, the server is not Apache.
         if (!$this->_isProcessing) {
-            $this->_checkServer();
+            $this->_precheckServer();
         }
         // See Omeka S ['installer']['pre_tasks']: CheckEnvironmentTask.php
-        $this->_checkPhp();
-        $this->_checkPhpModules();
+        $this->_precheckPhp();
+        $this->_precheckPhpModules();
         // See Omeka S ['installer']['pre_tasks']: CheckDbConfigurationTask.php
-        $this->_checkDatabaseServer();
-        $this->_checkZip();
+        $this->_precheckDatabaseServer();
+        $this->_precheckZip();
         // Don't check the jobs during true process.
         if (!$this->_isProcessing) {
-            $this->_checkJobs();
+            $this->_precheckJobs();
         }
-        // TODO Check Omeka: no user; missing files; files without item; items without metadata, etc.
-        // $this->_checkOmekaIntegrity();
     }
 
     protected function _checkConfig()
@@ -304,7 +299,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     /* Prechecks. */
 
-    protected function _checkVersion()
+    protected function _precheckVersion()
     {
         if (version_compare($this->minVersion, OMEKA_VERSION, '>')) {
             $this->_prechecks[] = __('The current release requires at least Omeka %s, current is only %s.',
@@ -317,14 +312,14 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
     }
 
-    protected function _checkBackgroundDispatcher()
+    protected function _precheckBackgroundDispatcher()
     {
         $config = Zend_Registry::get('bootstrap')->config;
         if ($config) {
             if (isset($config->jobs->dispatcher->longRunning)) {
                 if ($config->jobs->dispatcher->longRunning == 'Omeka_Job_Dispatcher_Adapter_Synchronous') {
                     $this->_prechecks[] = __('The process should be done in the background: modify the setting "jobs.dispatcher.longRunning" in the config of Omeka Classic.')
-                        . ' ' . __('This check may be bypassed in "security.ini".');
+                        . ' ' . __('This precheck may be bypassed via "security.ini".');
                 }
             }
             // No long job.
@@ -338,7 +333,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
     }
 
-    protected function _checkServer()
+    protected function _precheckServer()
     {
         if ($this->_isServerWindows()) {
             $this->_prechecks[] = __('According to the readme of Omeka Semantic, the server should be a Linux one.');
@@ -349,7 +344,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
     }
 
-    protected function _checkPhp()
+    protected function _precheckPhp()
     {
         if (version_compare(PHP_VERSION, '5.6', '<')) {
             $this->_prechecks[] = __('Omeka Semantic requires at least PHP 5.6 and prefers the last stable version.');
@@ -357,7 +352,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // TODO Add a check for the vesion of PHP in background process?
     }
 
-    protected function _checkPhpModules()
+    protected function _precheckPhpModules()
     {
         $requiredExtensions = array(
             'pdo',
@@ -373,7 +368,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
     }
 
-    protected function _checkDatabaseServer()
+    protected function _precheckDatabaseServer()
     {
         $sql = 'SHOW VARIABLES LIKE "version"';
         $result = $this->_db->query($sql)->fetchAll();
@@ -399,7 +394,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
     }
 
-    protected function _checkZip()
+    protected function _precheckZip()
     {
         if (!class_exists('ZipArchive')) {
             try {
@@ -417,7 +412,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
     }
 
-    protected function _checkJobs()
+    protected function _precheckJobs()
     {
         $totalRunningJobs = $this->_db->getTable('Process')
             ->count(array('status' => array(Process::STATUS_STARTING, Process::STATUS_IN_PROGRESS)));
@@ -427,6 +422,34 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 ? __(plural('%d job is running.', '%d jobs are running.',
                     $totalRunningJobs), $totalRunningJobs)
                 : __('%d jobs are running.', $totalRunningJobs);
+        }
+    }
+
+    protected function _precheckIntegrity()
+    {
+        $settings = $this->_getSecurityIni();
+        if ($settings->precheck->integrity->users) {
+            $this->_precheckIntegrityUsers();
+        }
+    }
+
+    protected function _precheckIntegrityUsers()
+    {
+        $db = $this->_db;
+        $roles = array_keys($this->mappingRoles);
+        $table = $db->getTable('User');
+        $totalRecords = total_records('User');
+        $select = $table->getSelect()
+            ->reset(Zend_Db_Select::COLUMNS)
+            ->columns(array('id', 'role'))
+            ->where('role NOT IN (?)', $roles)
+            ->order('role')
+            ->distinct();
+        $unmanagedUsers = $table->fetchPairs($select);
+        if ($unmanagedUsers) {
+            $this->_prechecks[] = __('Some users (%d/%d) have an unmanaged role ("%s") and can’t be imported.',
+                count($unmanagedUsers), $totalRecords, implode('", "', array_unique($unmanagedUsers)))
+                . ' ' . __('This precheck can be bypassed via security.ini.');
         }
     }
 

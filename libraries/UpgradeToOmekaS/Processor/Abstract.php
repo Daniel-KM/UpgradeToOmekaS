@@ -82,6 +82,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_iniReader;
 
     /**
+     * Short to the security.ini.
+     *
+     * @var Zend_Ini
+     */
+    protected $_securityIni;
+
+    /**
      * List of parameters.
      *
      * @var array
@@ -167,6 +174,21 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Get security.ini of the plugin.
+     *
+     * @return Zend_Config_Ini
+     */
+    protected function _getSecurityIni()
+    {
+        if (is_null($this->_securityIni)) {
+            $iniFile = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'security.ini';
+            $this->_securityIni = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
+        }
+        return $this->_securityIni;
+    }
+
+    /**
      * Check if the plugin is installed.
      *
      * @return boolean
@@ -224,6 +246,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
         if ($this->isPluginReady()) {
             $this->_precheckConfig();
+            $this->_precheckIntegrity();
         }
 
         return $this->_prechecks;
@@ -235,6 +258,15 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @return void
      */
     protected function _precheckConfig()
+    {
+    }
+
+    /**
+     * Specific precheck of the integrity of the base and the files.
+     *
+     * @return void
+     */
+    protected function _precheckIntegrity()
     {
     }
 

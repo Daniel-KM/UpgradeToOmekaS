@@ -602,13 +602,12 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
                 if ($result) {
                     // Some prechecks may have been added by processors.
                     $this->_prechecks[$name] = isset($this->_prechecks[$name])
-                        ? array_merge($this->_prechecks[$name], $result)
+                        ? array_unique(array_merge($this->_prechecks[$name], $result))
                         : $result;
                 }
             }
             $isChecked = true;
         }
-
         return $this->_prechecks;
     }
 
@@ -635,7 +634,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             if ($result) {
                 // Normally, no previous checks.
                 $this->_checks[$name] = isset($this->_checks[$name])
-                    ? array_merge($this->_checks[$name], $result)
+                    ? array_unique(array_merge($this->_checks[$name], $result))
                     : $result;
             }
         }
