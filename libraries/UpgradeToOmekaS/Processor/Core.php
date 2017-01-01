@@ -72,7 +72,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         '_importItems',
         '_createItemSetForSite',
         '_importCollections',
-        '_setCollectionOfItems',
+        '_setCollectionsOfItems',
         '_importFiles',
         '_importMetadata',
 
@@ -1488,6 +1488,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 __('Unable to create the first site.'));
         }
 
+
         $this->_setSiteSetting('attachment_link_type', 'item');
         $this->_setSiteSetting('browse_attached_items', '0');
 
@@ -1546,15 +1547,11 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $toInsert['data'] = $this->_toJson($data);
             $toInsert['position'] = 2;
             $result = $targetDb->insert('site_page_block', $toInsert);
+        }
 
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The "author", the "description" and the "copyright" of the site are not managed by Omeka S and have been moved to a page.'),
-                Zend_Log::INFO);
-        }
-        // TODO Keep these values inside a page in all cases (and keep ids)?
-        else {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The "author", the "description" and the "copyright" of the site are not managed by Omeka S.'),
-                Zend_Log::NOTICE);
-        }
+        $this->_log('[' . __FUNCTION__ . ']: '
+                . __('The "author", the "description" and the "copyright" of the site have been moved to the collection created for the site.'),
+            Zend_Log::INFO);
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The first site has been created.'),
             Zend_Log::INFO);
@@ -1648,6 +1645,66 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::INFO);
     }
 
+    protected function _createItemSetForSite()
+    {
+        $db = $this->_db;
+        $targetDb = $this->getTargetDb();
+
+        $user = $this->getParam('user');
+
+        $recordType = 'Collection';
+
+        $lastId = $this->_getGreatestId('resource');
+
+        $siteId = 1;
+
+        // TODO Add the resource template when it will be created.
+        $defaultResourceTemplateId = null;
+
+        // Create the item set.
+        $id = ++$lastId;
+
+        $toInsert = array();
+        $toInsert['id'] = $id;
+        $toInsert['owner_id'] = $user->id;
+        $toInsert['resource_class_id'] = null;
+        $toInsert['resource_template_id'] = $defaultResourceTemplateId;
+        $toInsert['is_public'] = 1;
+        $toInsert['created'] = $this->getDatetime();
+        $toInsert['modified'] = $this->getDatetime();
+        $toInsert['resource_type'] = $this->_mappingRecordClasses[$recordType];
+        $result = $targetDb->insert('resource', $toInsert);
+
+        $toInsert = array();
+        $toInsert['id'] = $id;
+        $toInsert['is_open'] = 1;
+        $result = $targetDb->insert('item_set', $toInsert);
+
+        // Give it some metadata.
+        $properties = array();
+        $properties['dcterms:title'][] = __('Items for the site "%s"', $this->getSiteTitle());
+        $properties['dcterms:creator'][] = get_option('author') ?: $user->name;
+        $properties['dcterms:rights'][] = get_option('copyright') ?: __('Public Domain');
+        $properties['dcterms:description'][] = get_option('description') ?: __('This collection contains all items of the site.');
+        $properties['dcterms:date'][] = $this->getDatetime();
+        $properties['dcterms:replaces'][] = array(
+            'type' => 'uri',
+            'uri' => WEB_ROOT,
+            'value' => __('Digital library powered by Omeka Classic'),
+        );
+        $this->_insertProperties($id, $properties);
+
+        // Set it as the first item set for the site.
+        $toInsert['id'] = null;
+        $toInsert['site_id'] = $siteId;
+        $toInsert['item_set_id'] = $id;
+        $toInsert['position'] = 1;
+        $result = $targetDb->insert('site_item_set', $toInsert);
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('An item set has been set for the site.'),
+            Zend_Log::INFO);
+    }
+
     protected function _importCollections()
     {
         $this->_importRecords('Collection');
@@ -1656,18 +1713,86 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::INFO);
     }
 
-    protected function _createItemSetForSite()
+    protected function _setCollectionsOfItems()
     {
-        // Create the item set.
+        $recordType = 'Item';
 
-        // Set it as as a collection for the site.
+        $db = $this->_db;
+        $targetDb = $this->getTargetDb();
 
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('A site may group a set of items.'),
-            Zend_Log::INFO);
-    }
+        $totalRecords = total_records($recordType);
+        if (empty($totalRecords)) {
+            return;
+        }
 
-    protected function _setCollectionOfItems()
-    {
+        $siteId = 1;
+
+        $sql = 'SELECT `item_set_id` FROM site_item_set WHERE site_id = ?';
+        $collectionSiteId = $targetDb->fetchOne($sql, array($siteId));
+
+        $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
+        for ($page = 1; $page <= $loops; $page++) {
+            $records = $table->findBy(array(), $this->maxChunk, $page);
+
+            $toInserts = array();
+            foreach ($records as $record) {
+                if (!isset($this->_mappingIds['Collection'][$record->collection_id])) {
+                    throw new UpgradeToOmekaS_Exception(
+                        __('An error occurred: the collection %d for item %d can’t be found in Omeka S.',
+                            $record->collection_id, $record->id)
+                        . ' ' . __('Check the processors of the plugins.'));
+                }
+
+                $toInsert = array();
+                $toInsert['item_id'] = $record->id;
+                $toInsert['item_set_id'] = $this->_mappingIds['Collection'][$record->collection_id];
+                $toInserts[] = $this->_dbQuote($toInsert);
+
+                if ($collectionSiteId) {
+                    $toInsert = array();
+                    $toInsert['item_id'] = $record->id;
+                    $toInsert['item_set_id'] = $this->_mappingIds['Collection'][$record->collection_id];
+                    $toInserts[] = $this->_dbQuote($toInsert);
+                }
+            }
+
+            if ($toInserts) {
+                $this->_insertRows('item_item_set', $toInserts);
+            }
+        }
+
+        // A final check, normally useless.
+        $totalTargetRecords = $this->countTargetTable($mappedType);
+        if ($totalRecords > $totalTargetRecords) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Only %d/%d %s have been upgraded into "%s".',
+                    $totalTargetRecords, $totalRecords, $recordTypePlural, $mappedType));
+        }
+        // May be possible with plugins?
+        if ($totalRecords < $totalTargetRecords) {
+            throw new UpgradeToOmekaS_Exception(
+                __('An error occurred: there are %d upgraded "%s" in Omeka S, but only %d %s in Omeka C.',
+                    $totalTargetRecords, $mappedType, $totalRecords, $recordType)
+                . ' ' . __('Check the processors of the plugins.'));
+        }
+
+        if (in_array($recordType, array('Item', 'Collection'))) {
+            // The roles are checked, because at this point, all users were
+            // imported according to the role and there is no option to set a
+            // default role to the users without an existing role.
+            $lostOwners = $this->countRecordsWithoutOwner($recordType, 'owner_id', true);
+            if ($lostOwners) {
+                $this->_log('[' . __FUNCTION__ . ']: '
+                    . ($lostOwners <= 1
+                        ? __('One %s has lost its owner.', $recordTypeSingular)
+                        : __('%d %s have lost their owner.', $lostOwners, $recordTypePlural)),
+                    Zend_Log::NOTICE);
+            }
+        }
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('All %s (%d) have been upgraded as "%s".',
+            $recordTypePlural, $totalRecords, $mappedType), Zend_Log::INFO);
+
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, an item can belong to multiple collections (item sets) and multipe sites.'),
             Zend_Log::INFO);
@@ -2449,5 +2574,53 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         ;";
         $result = $targetDb->fetchOne($sql);
         return $result;
+    }
+
+    /**
+     * Insert properties for a resource.
+     *
+     * @param integer $id The resource id
+     * @param unknown $properties
+     * @return void
+     */
+    protected function _insertProperties($id, $properties)
+    {
+        // Get the flat list of properties to get the id of each property.
+        $propertiesIds = $this->getPropertiesIds();
+
+        // Set the default values for the "value", that is a literal.
+        // As all other insertions, keep order and completion of the list.
+        $toInsertBase = array();
+        $toInsertBase['id'] = '';
+        $toInsertBase['resource_id'] = $id;
+        $toInsertBase['property_id'] = null;
+        $toInsertBase['value_resource_id'] = null;
+        $toInsertBase['type'] = 'literal';
+        $toInsertBase['lang'] = null;
+        $toInsertBase['value'] = null;
+        $toInsertBase['uri'] = null;
+
+        $toInserts = array();
+        foreach ($properties as $property => $values) {
+            if (!isset($propertiesIds[$property])) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('The property "%s" does not exist in Omeka S.', $property));
+            }
+            $toInsertBase['property_id'] = $propertiesIds[$property];
+            foreach ($values as $value) {
+                // This is not a literal value.
+                if (is_array($value)) {
+                    $toInsert = array_merge($toInsertBase, $value);
+                }
+                // This is a litteral.
+                else {
+                    $toInsert = $toInsertBase;
+                    $toInsert['value'] = $value;
+                }
+                $toInserts[] = $this->_dbQuote($toInsert);
+            }
+        }
+
+        $this->_insertRows('value', $toInserts);
     }
 }

@@ -99,6 +99,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_targetDbTablesColumns = array();
 
     /**
+     * Flat list of properties as an associative array of names to ids.
+     *
+     * @var
+     */
+    protected $_propertyIds = array();
+
+    /**
      * Short to the security.ini.
      *
      * @var Zend_Ini
@@ -998,12 +1005,44 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     public function getProperties()
     {
-        $script = dirname(dirname(dirname(dirname(__FILE__))))
-            . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'data'
-            . DIRECTORY_SEPARATOR . 'properties.php';
-        $properties = require $script;
+        static $properties;
+
+        if (empty($properties)) {
+            $script = dirname(dirname(dirname(dirname(__FILE__))))
+                . DIRECTORY_SEPARATOR . 'libraries'
+                . DIRECTORY_SEPARATOR . 'data'
+                . DIRECTORY_SEPARATOR . 'properties.php';
+            $properties = require $script;
+        }
+
         return $properties;
+    }
+
+    /**
+     * Get the flat list of properties of all vocabularies of Omeka S.
+     *
+     * This method doesn't use the database of Omeka S, but the file "properties.php".
+     *
+     * @todo Add an option to fetch the list from the database when possible.
+     *
+     * @return array
+     */
+    public function getPropertyIds()
+    {
+        if (empty($this->_propertyIds)) {
+            $properties = $this->getProperties();
+            $result = array();
+            foreach ($properties as $vocabularyLabel => $vocabulary) {
+                // Use only the prefix of the vocabulary.
+                $prefix = trim(substr($vocabularyLabel, strpos($vocabularyLabel, '[')), '[] ');
+                foreach ($vocabulary as $propertyId => $property) {
+                    $name = key($property);
+                    $result[$prefix . ':' . $name] = $propertyId;
+                }
+            }
+            $this->_propertyIds = $result;
+        }
+        return $this->_propertyIds;
     }
 
     /**
