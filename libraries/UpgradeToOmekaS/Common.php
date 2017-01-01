@@ -158,11 +158,16 @@ class UpgradeToOmekaS_Common
      * @param string $source
      * @param string $destination
      * @param boolean $overwrite
+     * @param array $extensionsToRename
      * @return boolean
      */
-    public static function copyDir($source, $destination, $overwrite = false)
+    public static function copyDir($source, $destination, $overwrite = false, $extensionsToRename = array())
     {
         if (empty($source) || empty($destination)) {
+            return false;
+        }
+
+        if (!file_exists($source) || !is_dir($source) || !is_readable($source)) {
             return false;
         }
 
@@ -191,6 +196,15 @@ class UpgradeToOmekaS_Common
             }
             // This may be a file.
             elseif ($item->isFile()) {
+                $extension = $item->getExtension();
+                if (isset($extensionsToRename[$extension])) {
+                    $subpath = dirname($subpath)
+                        . DIRECTORY_SEPARATOR . pathinfo($item->getBasename(), PATHINFO_FILENAME)
+                        . '.' . $extensionsToRename[$extension];
+                    if (file_exists($subpath) && !$overwrite) {
+                        continue;
+                    }
+                }
                 $result = copy($item, $subpath);
             }
             // This may be a symbolic link or something else.

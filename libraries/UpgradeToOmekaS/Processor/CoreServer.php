@@ -278,6 +278,14 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
                 . ' ' . __('They cannot be managed.')
                 . ' ' . __('This precheck may be bypassed via "security.ini".');
         }
+
+        // A check is done on plugins since their views are copied in the theme.
+        $result = UpgradeToOmekaS_Common::containsSymlinks(PLUGIN_DIR);
+        if ($result) {
+            $this->_prechecks[] = __('There are symbolic links inside the directory of plugins.')
+            . ' ' . __('They cannot be managed.')
+            . ' ' . __('This precheck may be bypassed via "security.ini".');
+        }
     }
 
     /* Checks. */

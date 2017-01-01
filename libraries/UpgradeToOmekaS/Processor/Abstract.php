@@ -81,6 +81,23 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $mapping_elements = array();
 
     /**
+     * Mapping of each theme folders between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    public $mapping_theme_folders = array();
+
+    /**
+     * Mapping of each theme files between Omeka C and Omeka S.
+     *
+     * @internal The key is the filepath of the files already moved in the good
+     * Omeka S folder according to the mapping of theme folders.
+     *
+     * @var array
+     */
+    public $mapping_theme_files = array();
+
+    /**
      * Maximum rows to process by loop.
      *
      * @var integer
