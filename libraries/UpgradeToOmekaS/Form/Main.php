@@ -114,15 +114,6 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'errorMessages' => array(__('A time zone is required for Omeka S.')),
         ));
 
-        $this->addElement('text', 'first_user_password', array(
-            'label' => __('First User Password'),
-            'description'   => __('The password of users will be lost and they have to request a new one on the login form.')
-                . ' ' . __('You may enter the password of the first user here to access directly to admin board of Omeka S.'),
-            'required' => false,
-            'value' => '',
-            'filters' => array('StringTrim'),
-        ));
-
         $this->addElement('radio', 'database_type', array(
             'label' => __('Database'),
             'description'   => __('Define the database Omeka S will be using.'),
@@ -412,6 +403,25 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             $elementNames[] = $elementName;
         }
 
+        $this->addElement('text', 'first_user_password', array(
+            'label' => __('First User Password'),
+            'description'   => __('The password of users will be lost and they have to request a new one on the login form.')
+                . ' ' . __('You may enter the password of the first user here to access directly to admin board of Omeka S.'),
+            'required' => false,
+            'value' => '',
+            'filters' => array('StringTrim'),
+        ));
+
+        $this->addElement('checkbox', 'skip_hash_files', array(
+            'label' => __('Skip Hash files'),
+            'description' => __('To check integrity of files, the hashing algorithm is md5 in Omeka Classic and sha256 in Omeka S.')
+                . ' ' . __('This process is the longer upgrade step.')
+                . ' ' . __('If checked, the hashing will be skipped, so you’ll have to hash files directly in Omeka S, if wished.')
+                . ' ' . __('The hashing is the last step in the upgrade process, so you will be able to try Omeka S even if the process is not ended.'),
+            'required' => false,
+            'value' => false,
+        ));
+
         // TODO Replace by a checkbox to skip any plugins.
         if (empty($this->_unupgradablePlugins)) {
             $this->addElement('hidden', 'plugins_confirm_unupgradable', array(
@@ -468,7 +478,6 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 'base_dir',
                 'installation_title',
                 'time_zone',
-                'first_user_password',
             ),
             'general',
             array(
@@ -563,6 +572,16 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 'description' => $this->_unupgradablePlugins
                     ? __('Some plugins (%d) are not upgradable.', $this->_unupgradablePlugins)
                     : __('All plugins are upgradable.'),
+        ));
+
+        $this->addDisplayGroup(
+            array(
+                'first_user_password',
+                'skip_hash_files',
+            ),
+            'various',
+            array(
+                'legend' => __('Various'),
         ));
 
         if ($this->_isConfirmation) {

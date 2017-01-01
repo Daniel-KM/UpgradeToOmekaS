@@ -23,12 +23,13 @@ class UpgradeToOmekaS_Processor_CoreChecks extends UpgradeToOmekaS_Processor_Abs
     protected $_checkedFiles = array();
 
     public $processMethods = array(
-        '_checkFiles',
+        '_checkThemeFiles',
+        '_hashFiles',
     );
 
     public $specificProcessMethods = array(
         'themes' => array(
-            '_checkFiles',
+            '_checkThemeFiles',
         ),
     );
 
@@ -37,7 +38,7 @@ class UpgradeToOmekaS_Processor_CoreChecks extends UpgradeToOmekaS_Processor_Abs
         return true;
     }
 
-    protected function _checkFiles()
+    protected function _checkThemeFiles()
     {
         // Check the syntax for info, but don't throw error, because any file
         // should be manually reviewed.
@@ -55,9 +56,9 @@ class UpgradeToOmekaS_Processor_CoreChecks extends UpgradeToOmekaS_Processor_Abs
             . DIRECTORY_SEPARATOR . 'layout.phtml';
         $toExcludeMatch = '~^' . preg_quote($path, '~') . '/(\w|\-)+/asset/~';
 
-        $i = 0;
+        $progress = 0;
         foreach ($files as $file) {
-            $this->_progress(++$i);
+            $this->_progress(++$progress);
             // Exclude some files from Omeka S.
             if (strpos($file, $toExclude)) {
                 continue;
@@ -129,5 +130,56 @@ class UpgradeToOmekaS_Processor_CoreChecks extends UpgradeToOmekaS_Processor_Abs
             return '';
         }
         return $output;
+    }
+
+    protected function _hashFiles()
+    {
+        $skipHashFiles = $this->getParam('skip_hash_files');
+        if ($skipHashFiles) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The hashing of files is skipped.')
+                . ' ' . __('Don’t forget to hash them in Omeka S.'),
+                Zend_Log::NOTICE);
+            return;
+        }
+
+        $resourceType = 'media';
+
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
+
+        $totalResources = $target->totalRows('media');
+        if (empty($totalResources)) {
+            return;
+        }
+        $this->_progress(0, $totalResources);
+
+        $basepath = $this->getParam('base_dir')
+            . DIRECTORY_SEPARATOR . 'files'
+            . DIRECTORY_SEPARATOR . 'original';
+
+        $select = $targetDb->select()
+            ->from('media', array('id', 'storage_id', 'extension', 'sha256', 'has_original'))
+            ->order('id ASC');
+
+        $stmt = $targetDb->query($select);
+        $progress = 0;
+        while ($row = $stmt->fetch()) {
+            $this->_progress(++$progress);
+            if (!empty($row['sha256']) || empty($row['has_original'])) {
+                continue;
+            }
+
+            $filename = $row['storage_id'] . (strlen($row['extension']) ? '.' . $row['extension'] : '');
+            $filepath = $basepath . DIRECTORY_SEPARATOR . $filename;
+            if (!file_exists($filepath)) {
+                continue;
+            }
+
+            $hash = hash_file('sha256', $filepath);
+            $result = $targetDb->update('media', array('sha256' => $hash), 'id = ' . $row['id']);
+        }
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('All %d files have been hashed.', $totalResources),
+            Zend_Log::INFO);
     }
 }
