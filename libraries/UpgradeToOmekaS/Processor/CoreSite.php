@@ -768,7 +768,27 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
         $id = 1;
 
+        // Check if SimplePages is active to add the default page or not.
+        $processors = $this->getProcessors();
+        $isSimplePagesProcessor = isset($processors['SimplePages']);
+
         $navigation = $this->_convertNavigation();
+
+        // Add the home page to the navigation menu.
+        $homepageId = $this->_getNextId('SimplePagesPage');
+        $homepage = array(
+            'type' => 'page',
+            'data' => array(
+                'label' => __('Home'),
+                'id' => $homepageId,
+        ));
+
+        $homepageUri = get_option(Omeka_Form_Navigation::HOMEPAGE_URI_OPTION_NAME);
+        if ($homepageUri == '/') {
+            array_unshift($navigation, $homepage);
+        } else {
+            $navigation[] = $homepage;
+        }
 
         $toInsert = array();
         $toInsert['id'] = $id;
@@ -816,13 +836,23 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
                 $totalInvisibleLinks), Zend_Log::INFO);
         }
 
-        // Check if SimplePages is active to add the default page or not.
-        $processors = $this->getProcessors();
-        if (!isset($processors['SimplePages'])) {
+        // Add an empty page for the specific template of the home page.
+        $title = __('Home page (specific template)');
+        // This slug is probably never used in pages of Omeka Classic.
+        $slug = 'homepage-site';
+        $toInsert = array();
+        $toInsert['id'] = $homepageId;
+        $toInsert['site_id'] = 1;
+        $toInsert['slug'] = substr($slug, 0, 190);
+        $toInsert['title'] = substr($title, 0, 190);
+        $toInsert['created'] = $this->getDatetime();
+        $result = $targetDb->insert('site_page', $toInsert);
+
+        if (!$isSimplePagesProcessor) {
             $title = __('Welcome');
             $slug = $this->_slugify($title);
             $toInsert = array();
-            $toInsert['id'] = 1;
+            $toInsert['id'] = $homepageId + 1;
             $toInsert['site_id'] = 1;
             $toInsert['slug'] = substr($slug, 0, 190);
             $toInsert['title'] = substr($title, 0, 190);
@@ -830,7 +860,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
             $result = $targetDb->insert('site_page', $toInsert);
 
             $toInsert = array();
-            $toInsert['page_id'] = 1;
+            $toInsert['page_id'] = 2;
             $toInsert['layout'] = 'pageTitle';
             $toInsert['data'] = $target->toJson(array());
             $toInsert['position'] = 1;
@@ -843,7 +873,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
                     . '<p>' . __('Copyright: %s', get_option('copyright')) . '</p>',
             );
             $toInsert = array();
-            $toInsert['page_id'] = 1;
+            $toInsert['page_id'] = 2;
             $toInsert['layout'] = 'html';
             $toInsert['data'] = $target->toJson($data);
             $toInsert['position'] = 2;

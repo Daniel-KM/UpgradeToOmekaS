@@ -621,11 +621,18 @@ $upgrade['view/omeka/site/media/show.phtml'] = array(
     ),
 );
 
+/**
+ * view/omeka/site/page.
+ */
+
+
 $prepend = <<<'OUTPUT'
 <?php
 // NOTE The template for the homepage has been removed and replaced by a normal
-// page, where any block can now be added. This template can still be used as a
-// block, but this feature needs a module.
+// page, where any block can now be added.
+// This template is still used for the page with the slug "homepage-site".
+// The home page can be set in the config of the module "UpgradeFromOmekaClassic"
+// (file config/module.config.php) too.
 
 ?>
 
@@ -633,6 +640,75 @@ OUTPUT;
 
 $upgrade['view/omeka/site/page/homepage.phtml'] = array(
     'prepend' => $prepend,
+    'preg_replace' => array(
+        '~\bwhile\s*' . preg_quote('($this->upgrade()->loop /* TODO Replace by the variable directly. */ ($items)') . '\s*\)\s*(\{|\:)~'
+            => 'foreach ($items as $item)\1 $this->upgrade()->set_current_record(\'item\', $item);',
+        '~\bwhile\s*' . preg_quote('($this->upgrade()->loop($items)') . '\s*\)\s*(\{|\:)~'
+            => 'foreach ($items as $item)\1 $this->upgrade()->set_current_record(\'item\', $item);',
+        '~\bendwhile~' => 'endforeach',
+    ),
+);
+
+$prepend = <<<'OUTPUT'
+<?php
+// Use a specific template for the home page (the upgraded Omeka Classic one).
+if ($this->themeSetting('use_homepage_template')) {
+    echo $this->partial('omeka/site/page/homepage.phtml');
+    return;
+}
+
+$this->htmlElement('body')->appendAttribute('class', 'page simple-page');
+$nav = $site->publicNav();
+$container = $nav->getContainer();
+$activePage = $nav->findActive($container);
+?>
+
+OUTPUT;
+
+$replace = <<<'OUTPUT'
+?>
+<?php if ($activePage): ?>
+    <?php if ($this->displayNavigation && $activePage['page']->hasPages()): ?>
+    <nav class="sub-menu"><?php echo $nav->menu()->renderSubMenu(); ?></nav>
+    <?php endif; ?>
+<?php endif; ?>
+
+<?php $this->trigger('view.show.before'); ?>
+<?php echo $this->content; // $this->shortcodes($this->content); ?>
+<?php $this->trigger('view.show.after'); ?>
+<?php echo $this->sitePagePagination(); ?>
+<?php
+
+OUTPUT;
+
+$upgrade['view/omeka/site/page/show.phtml'] = array(
+    'prepend' => $prepend,
+    'preg_replace' => array(
+        '~(' . preg_quote('$text = $this->upgrade()->metadata(') . '.*?page.*?\)\;' . ')~' => '// \1',
+    ),
+    'replace' => array(
+        '$is_home_page' => '$this->upgrade()->isHomePage()',
+        'echo $this->upgrade()->fallback(\'shortcodes\', $text);' => $replace,
+    ),
+);
+
+/**
+ * Functions of various themes.
+ */
+
+$upgrade['common/breadcrumb.phtml'] = array(
+    'preg_replace' => array(
+        '~(' . preg_quote('Zend_Controller_Front::getInstance()->getRequest()') . ')~' => 'null; // \1',
+        '~' . preg_quote('$params = $request->getParams()') . '~' => '$this->params()->fromRoute();',
+    ),
+);
+
+$upgrade['view/layout/layout.phtml'] = array(
+    'preg_replace' => array(        '~' . preg_quote('[\'maxDepth\' => $this->themeSetting(\'nav_depth\') - 1])->setMaxDepth(') . '(\d+)\)~' => '[\'maxDepth\' => \1])'
+    ),
+    'replace' => array(
+        '$nav = bootstrap_nav(' => '$nav = ',
+    ),
 );
 
 return $upgrade;

@@ -46,9 +46,11 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
         // Check if there are already records for a warn.
         $totalExisting = $target->totalRows('site_page');
         $previousRecordsExists = (boolean) $totalExisting;
-        if ($previousRecordsExists) {
+        $previousRecordsExistsExceptHomepage = $previousRecordsExists > 1;
+        // The homepage is automatically created.
+        if ($previousRecordsExistsExceptHomepage) {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('Some simple pages (%d) have been upgraded, so ids will change and the main menu should be checked.',
-                $totalExisting), Zend_Log::INFO);
+                $totalExisting - 1), Zend_Log::INFO);
         }
 
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
@@ -59,7 +61,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
             $baseId = 0;
             $toInserts = array();
             foreach ($records as $record) {
-                $id = $previousRecordsExists ? null : (integer) $record->id;
+                $id = $previousRecordsExistsExceptHomepage ? null : (integer) $record->id;
                 $toInsert = array();
                 $toInsert['id'] = $id;
                 $toInsert['site_id'] = $siteId;
@@ -69,7 +71,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
                 $toInsert['modified'] = $record->updated;
                 $toInserts['site_page'][] = $target->cleanQuote($toInsert);
 
-                if ($previousRecordsExists) {
+                if ($previousRecordsExistsExceptHomepage) {
                     $id = 'LAST_INSERT_ID() + ' . $baseId;
                     ++$baseId;
                 }

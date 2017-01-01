@@ -1439,6 +1439,27 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
+    /**
+     * Get the next record id.
+     *
+     * @internal This allows to insert a record in Omeka S and to keep ids.
+     *
+     * @param string $recordType
+     * @return integer
+     */
+    protected function _getNextId($recordType)
+    {
+        try {
+            $record = get_record($recordType, array(
+                Omeka_Db_Table::SORT_PARAM => 'id',
+                Omeka_Db_Table::SORT_DIR_PARAM => 'd',
+            ));
+        } catch (Exception $e) {
+            return 1;
+        }
+        return $record ? $record->id + 1 : 1;
+    }
+
     /* Methods for the theme conversion, to be refactored. */
 
     /**

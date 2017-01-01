@@ -76,8 +76,28 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
 
         $this->_module = $module;
 
+        // Modify "module.config.php" to manage the home page.
+        $siteSlug = $this->getSiteSlug();
+
+        $source = $destination = $this->_getModuleDir()
+            . DIRECTORY_SEPARATOR . 'UpgradeFromOmekaClassic'
+            . DIRECTORY_SEPARATOR . 'config'
+            . DIRECTORY_SEPARATOR . 'module.config.php';
+        $input = file_get_contents($source);
+        $line = <<<'INPUT'
+$siteSlug = '__MAINSITE__ (see modules/UpgradeFromOmekaClassic/config/module.config.php)';
+INPUT;
+        $output = preg_replace('~^' . preg_quote($line,  '~') . '$~', "\$siteSlug = '$siteSlug';", $input);
+        $result = file_put_contents($destination, $output);
+
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The compatibility layer translates only standard functions: check your theme if there are custom ones.'),
             Zend_Log::INFO);
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Two aliases for the home page and for the items are added, so main links from the web are maintained.'),
+            Zend_Log::INFO);
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Change the site slug in "modules/UpgradeFromOmekaClassic/config/module.config.php" if you change the main site slug.'),
+            Zend_Log::NOTICE);
     }
 
     protected function _copyAssets()
@@ -394,10 +414,7 @@ OUTPUT;
                 continue;
             }
 
-            $values = unserialize($values);
-            if (empty($values)) {
-                continue;
-            }
+            $values = unserialize($values) ?: array();
 
             // Check if there is an asset to upgrade the logo, else remove.
             if (!empty($values['logo'])) {
@@ -405,6 +422,9 @@ OUTPUT;
                     ? $assets[$values['logo']]
                     : '';
             }
+
+            // Add the option for the homepage.
+            $values['use_homepage_template'] = '0';
 
             $nameSetting = 'theme_settings_' . $name;
             $target->saveSiteSetting($nameSetting, $values, $siteId);
@@ -537,6 +557,17 @@ OUTPUT;
                     'select' => 'Zend\Form\Element\Select',
                     'text' => 'Zend\Form\Element\Text',
                 );
+
+                // Add the check box for home page before the other options.
+                $element = array();
+                $element['name'] = 'use_homepage_template';
+                $element['type'] = 'Zend\Form\Element\Checkbox';
+                $element['options']['label'] = 'Use Home Page Template';
+                $element['options']['info'] = 'Check this box to use the specific template `view/omeka/site/page/homepage.phtml` for the home page, instead of a standard page.';
+                $element['attributes']['value '] = '1';
+                $element = new Zend_Config($element, true);
+                $elements['use_homepage_template'] = $element;
+
                 foreach ($sourceIni->config as $key => $element) {
                     // Add the name.
                     $element->name = $key;
@@ -554,6 +585,14 @@ OUTPUT;
                         $element = $element->toArray();
                         $element['attributes']['value'] = $element['options']['value'];
                         unset($element['options']['value']);
+                        $element = new Zend_Config($element, true);
+                    }
+
+                    // Convert multi options to values options.
+                    if (isset($element->options->multiOptions)) {
+                        $element = $element->toArray();
+                        $element['options']['value_options'] = $element['options']['multiOptions'];
+                        unset($element['options']['multiOptions']);
                         $element = new Zend_Config($element, true);
                     }
 
@@ -629,6 +668,12 @@ OUTPUT;
         else {
             $output .= <<<OUTPUT
 [config]
+elements.use_homepage_template.name = "use_homepage_template"
+elements.use_homepage_template.type = "Zend\Form\Element\Checkbox"
+elements.use_homepage_template.options.label = "Use Home Page Template"
+elements.use_homepage_template.options.info = "Check this box to use the specific template `view/omeka/site/page/homepage.phtml` for the home page, instead of a standard page."
+elements.use_homepage_template.attributes.value = "1"
+
 elements.nav_depth.name = "nav_depth"
 elements.nav_depth.type = "Number"
 elements.nav_depth.options.label = "Top Navigation Depth"
@@ -787,11 +832,65 @@ OUTPUT;
 // - default theme: themes/default/view/layout/layout.phtml
 // - shared theme: application/view-shared/layout/layout.phtml
 // - admin theme: application/view-admin/layout/layout.phtml
-//
+
+// TODO Upgrade the custom functions into standard helpers for Omeka S.
+$customFunctions = realpath(__DIR__ . '/../../helper/custom.php');
+if (file_exists($customFunctions)) {
+    include_once $customFunctions;
+}
+$customFunctions = realpath(__DIR__ . '/../../helper/functions.php');
+if (file_exists($customFunctions)) {
+    include_once $customFunctions;
+}
+
 // The content of the output of each managed hook is saved in each "view/hook/".
-\$this->trigger('view.layout');
-echo \$this->content;
+
+$this->trigger('view.layout');
+echo $this->content;
+
 ?>
+
+OUTPUT;
+
+            UpgradeToOmekaS_Common::createDir(dirname($destination));
+            $result = file_put_contents($destination, $output);
+        }
+
+        // Add a default template for pages, that will be replaced if the plugin
+        // Simple Pages is enabled and a specific template has been created.
+        $destination = $path
+            . DIRECTORY_SEPARATOR . 'view'
+            . DIRECTORY_SEPARATOR . 'omeka'
+            . DIRECTORY_SEPARATOR . 'site'
+            . DIRECTORY_SEPARATOR . 'page'
+            . DIRECTORY_SEPARATOR . 'show.phtml';
+        if (!file_exists($destination)) {
+            // This is the standard template of Simple Pages (views/public/page/show.php).
+            $output = <<<'OUTPUT'
+<?php
+$bodyclass = 'page simple-page';
+if ($is_home_page):
+    $bodyclass .= ' simple-page-home';
+endif;
+
+echo head(array(
+    'title' => metadata('simple_pages_page', 'title'),
+    'bodyclass' => $bodyclass,
+    'bodyid' => metadata('simple_pages_page', 'slug')
+));
+?>
+<div id="primary">
+    <?php if (!$is_home_page): ?>
+    <p id="simple-pages-breadcrumbs"><?php echo simple_pages_display_breadcrumbs(); ?></p>
+    <h1><?php echo metadata('simple_pages_page', 'title'); ?></h1>
+    <?php endif; ?>
+    <?php
+    $text = metadata('simple_pages_page', 'text', array('no_escape' => true));
+    echo $this->shortcodes($text);
+    ?>
+</div>
+
+<?php echo foot(); ?>
 
 OUTPUT;
 
