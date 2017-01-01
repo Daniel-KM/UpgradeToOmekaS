@@ -16,6 +16,10 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
         'type' => 'integrated',
     );
 
+    public $processMethods = array(
+        '_upgradeData',
+    );
+
     public function convertNavigationPageToLink($page, $args, $site)
     {
         // Check if this is a slug.

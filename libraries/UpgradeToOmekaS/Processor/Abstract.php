@@ -617,6 +617,171 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Wrapper to set a global setting.
+     *
+     * @param string $id The name of the value.
+     * @param var $value The value will be json_encoded().
+     * @return void
+     */
+    protected function _setSetting($id, $value)
+    {
+        $this->_setJsonSetting('setting', $id, $value);
+    }
+
+    /**
+     * Wrapper to set a site setting.
+     *
+     * @param string $id The name of the value.
+     * @param var $value The value will be json_encoded().
+     * @param integer $siteId The main site, or an exhibit.
+     * @return void
+     */
+    protected function _setSiteSetting($id, $value, $siteId = 1)
+    {
+        $this->_setJsonSetting('site_setting', $id, $value, $siteId);
+    }
+
+    /**
+     * Set a setting in json.
+     *
+     * @param string $table "setting" or "site_setting"
+     * @param string $id The name of the value.
+     * @param var $value The value will be json_encoded().
+     * @param integer $siteId The main site, or an exhibit.
+     * @return void
+     */
+    protected function _setJsonSetting($table, $id, $value, $siteId = null)
+    {
+        if (empty($id)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The id of the setting is empty.'));
+        }
+        if (empty($table)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The table is not defined.'));
+        }
+        if (!in_array($table, array('setting', 'site_setting'))) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The table is not managed.'));
+        }
+        if ($table == 'site_setting' && empty($siteId)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The id of the site is empty.'));
+        }
+
+        $value = $this->_toJson($value);
+
+        // Check if there is a value.
+        $targetDb = $this->getTargetDb();
+        $select = $targetDb->select()
+            ->from($table)
+            ->where('id = ?', $id);
+        if ($table == 'site_setting') {
+            $select
+                ->where('site_id = ?', $siteId);
+        }
+        $result = $targetDb->fetchRow($select);
+
+        // Update row.
+        if ($result) {
+            $where = array();
+            $where[] = 'id = ' . $targetDb->quote($id);
+            if ($table == 'site_setting') {
+                $where[] = 'site_id = ' . (integer) $siteId;
+            }
+            $result = $targetDb->update($table, array('value' => $value), $where);
+        }
+        // Insert new row.
+        else {
+            $toInsert = array();
+            $toInsert['id'] = $id;
+            $toInsert['value'] = $value;
+            if ($table == 'site_setting') {
+                $toInsert['site_id'] = $siteId;
+            }
+            $result = $targetDb->insert($table, $toInsert);
+        }
+    }
+
+    /**
+     * Wrapper to get a json_decoded global setting.
+     *
+     * @param string $id The name of the value.
+     * @return var
+     */
+    protected function _getSetting($id)
+    {
+        return $this->_getJsonSetting('setting', $id);
+    }
+
+    /**
+     * Wrapper to get a json_decoded site setting.
+     *
+     * @param string $id The name of the value.
+     * @param integer $siteId The main site, or an exhibit.
+     * @return var
+     */
+    protected function _getSiteSetting($id, $siteId = 1)
+    {
+        return $this->_getJsonSetting('site_setting', $id, $siteId);
+    }
+
+    /**
+     * Get a json_decoded setting.
+     *
+     * @param string $table "setting" or "site_setting"
+     * @param integer $id The name of the value.
+     * @param integer $siteId The main site, or an exhibit.
+     * @return var
+     */
+    protected function _getJsonSetting($table, $id, $siteId = null)
+    {
+        if (empty($id)) {
+            return;
+        }
+        if (empty($table)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The table is not defined.'));
+        }
+        if (!in_array($table, array('setting', 'site_setting'))) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The table is not managed.'));
+        }
+        if ($table == 'site_setting' && empty($siteId)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The id of the site is empty.'));
+        }
+
+        $targetDb = $this->getTargetDb();
+        $select = $targetDb->select()
+            ->from($table, array('value'))
+            ->where('id = ?', $id);
+        if ($table == 'site_setting') {
+            $select
+                ->where('site_id = ?', $siteId);
+        }
+        $result = $targetDb->fetchOne($select);
+        if ($result) {
+            return json_decode($result, true);
+        }
+    }
+
+    /**
+     * Wrapper for json_encode() to get a clean json.
+     *
+     * @internal The database is Unicode and this is allowed since php 5.4.
+     *
+     * @param var $value
+     * @return string
+     */
+    protected function _toJson($value)
+    {
+        return json_encode(
+            $value,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
      * Helper to get an absolute path to a file or a directory inside Omeka S.
      *
      * @param string $path A relative path.
@@ -664,6 +829,9 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The module is already installed and active.'),
                 Zend_Log::DEBUG);
+
+            $this->_upgradeSettings();
+            $this->_upgradeData();
             return;
         }
 
@@ -680,10 +848,14 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             }
             if (!UpgradeToOmekaS_Common::isDirEmpty($dir)) {
                 $this->_log('[' . __FUNCTION__ . ']: '
-                    . __('The file "%s" has already been unzipped.', $filename),
-                    Zend_Log::DEBUG);
+                    . __('The plugin "%s" has already been unzipped.',
+                        $this->_getModuleName()), Zend_Log::DEBUG);
+
+                $this->_upgradeSettings();
+                $this->_upgradeData();
                 return;
             }
+            // This is strange, but proceeds.
         }
         // Create dir.
         else {
@@ -699,11 +871,17 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         // Process the install script.
         $this->_prepareModule();
 
+        // Register the module.
+        $this->_registerModule();
+
         // Activate the module.
         $this->_activateModule();
 
-        // Set options (if converted from the current plugin).
-        $this->_upgradeDataAndFiles();
+        // Upgrade settings.
+        $this->_upgradeSettings();
+
+        // Upgrade data and files.
+        $this->_upgradeData();
     }
 
     /**
@@ -790,7 +968,9 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         else {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dKB, so wait a while.', ceil($this->module['size'] / 1000)),
                 Zend_Log::INFO);
-            $result = file_put_contents($path, fopen($url, 'r'));
+            $handle = fopen($url, 'rb');
+            $result = file_put_contents($path, $handle);
+            @fclose($handle);
             if (empty($result)) {
                 throw new UpgradeToOmekaS_Exception(
                     __('An issue occurred during the file download.')
@@ -825,15 +1005,58 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             throw new UpgradeToOmekaS_Exception(
                 __('Unable to extract the zip file "%s" into the destination "%s".', $path, $dir));
         }
-
     }
 
     /**
      * Process the install script of the module.
+     *
+     * In fact, currently, it executes the sql query of the module if it is set
+     * in the values.
+     *
+     * @internal Generally, just adapt the code inside the method install()
+     * inside "module.php".
+     *
+     * @todo Process the install script of the module, if needed.
      */
     protected function _prepareModule()
     {
-        // TODO Process the install script of the module.
+        if (empty($this->module['install']['sql'])) {
+            return;
+        }
+
+        $targetDb = $this->getTarget()->getDb();
+
+        $result = $targetDb->prepare($this->module['install']['sql'])->execute();
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to create the tables for the module "%s".', $this->_getModuleName()));
+        }
+    }
+
+    /**
+     * Register the module.
+     */
+    protected function _registerModule()
+    {
+        // Normally useless, except if this function is called directly..
+        $module = $this->_getModuleName();
+        $result = $this->_checkInstalledModule($module);
+        if ($result) {
+            return;
+        }
+
+        $targetDb = $this->getTargetDb();
+
+        $toInsert = array();
+        $toInsert['id'] = $module;
+        $toInsert['is_active'] = 0;
+        $toInsert['version'] = $this->module['version'];
+
+        $result = $targetDb->insert('module', $toInsert);
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to register the module.'));
+        }
     }
 
     /**
@@ -841,22 +1064,31 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     protected function _activateModule()
     {
+        $module = $this->_getModuleName();
+        $targetDb = $this->getTargetDb();
         $bind = array();
         $bind['is_active'] = 1;
         $result = $targetDb->update(
             'module',
             $bind,
-            'id = ' . $targetDb->quote($this->_getModuleName()));
+            'id = ' . $targetDb->quote($module));
         if (empty($result)) {
-            $this->_log($baseMessage . __('The module can’t be activated.'),
-                Zend_Log::WARN);
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The module "%s" can’t be activated.',
+                $this->_getModuleName()), Zend_Log::WARN);
         }
     }
 
     /**
-     * Upgrade a module once installed (metadata, files, etc.).
+     * Upgrade settings of a module once installed.
      */
-    protected function _upgradeDataAndFiles()
+    protected function _upgradeSettings()
+    {
+    }
+
+    /**
+     * Upgrade metadata and files of a module once installed.
+     */
+    protected function _upgradeData()
     {
     }
 

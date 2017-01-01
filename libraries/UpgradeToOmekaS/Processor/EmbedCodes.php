@@ -12,17 +12,44 @@ class UpgradeToOmekaS_Processor_EmbedCodes extends UpgradeToOmekaS_Processor_Abs
     public $maxVersion = '1.0';
 
     public $module = array(
-        'type' => 'equivalent',
         'name' => 'Sharing',
-        'version' => 'v1.0.0-beta',
+        'version' => '1.0.0-beta',
+        'url' => 'https://github.com/omeka-s-modules/Sharing/releases/download/v%s/Sharing.zip',
         'size' => 8217,
         'md5' => '442c579734ca64c6f5f011d4e95da914',
-        'url' => 'https://github.com/omeka-s-modules/Sharing/releases/download/%s/Sharing.zip',
+        'type' => 'equivalent',
         'partial' => true,
-        'note' => 'No embedded statistics.'
+        'note' => 'No embedded statistics.',
+        'install' => array(
+            'settings' => array(
+                'sharingServices' => array(
+                    'fb', 'twitter', 'tumblr', 'pinterest', 'email', 'embed',
+                ),
+            ),
+        ),
     );
 
     public $processMethods = array(
         '_installModule',
     );
+
+    protected function _upgradeSettings()
+    {
+        // Get current data.
+        $sharingMethods = $this->_getSiteSetting('sharing_methods');
+        if (is_null($sharingMethods)) {
+            $sharingMethods = array(
+                'embed',
+            );
+        }
+        // There are some values already, so update them.
+        else {
+            $sharingMethods[] = 'embed';
+            $sharingMethods = array_unique($sharingMethods);
+        }
+        $this->_setSiteSetting('sharing_methods', $sharingMethods);
+
+        // Set a second option.
+        $this->_setSiteSetting('sharing_placement', 'view.show.before');
+    }
 }

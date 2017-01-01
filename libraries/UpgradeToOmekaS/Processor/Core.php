@@ -16,10 +16,10 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     public $module = array(
         'type' => 'equivalent',
         'name' => 'Omeka S',
-        'version' => 'v1.0.0-beta2',
+        'version' => '1.0.0-beta2',
         'size' => 11526232,
         'md5' => '45283a20f3a8e13dac1a9cfaeeaa9c51',
-        'url' => 'https://github.com/omeka/omeka-s/releases/download/%s/omeka-s.zip',
+        'url' => 'https://github.com/omeka/omeka-s/releases/download/v%s/omeka-s.zip',
         'requires' => array(
             'minDb' => array(
                 'mariadb' => '5.5.3',
@@ -939,22 +939,18 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::DEBUG);
 
         // See Omeka S ['installer']['tasks']: AddDefaultSettingsTask.php
-        $result = $targetDb->insert('setting', array(
-            'id' => 'version',
-            'value' => json_encode(substr($this->module['version'], 1))));
+        $this->_setSetting('version', $this->module['version']);
 
         // Use the customized value for admin pages if modified.
         $value = get_option('per_page_admin');
         if ($value == 10) {
-            // Default of Omeka S
+            // Default of Omeka S.
             $value = 25;
         } else {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('Omeka S doesn’t use a specific pagination value for public pages.'),
                 Zend_Log::NOTICE);
         }
-        $result = $targetDb->insert('setting', array(
-            'id' => 'pagination_per_page',
-            'value' => $value));
+        $this->_setSetting('pagination_per_page', $value);
 
         $value = get_option('file_mime_type_whitelist');
         if ($value == Omeka_Validate_File_MimeType::DEFAULT_WHITELIST) {
@@ -962,9 +958,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         } else {
             $value = explode(',', $value);
         }
-        $result = $targetDb->insert('setting', array(
-            'id' => 'media_type_whitelist',
-            'value' => json_encode($value)));
+        $this->_setSetting('media_type_whitelist', $value);
         $this->_log('[' . __FUNCTION__ . ']: ' . __('These three media types have been removed from the default white list of Omeka 2: "audio/x-m4a", "video/x-m4v" and "video/webm".'),
             Zend_Log::INFO);
 
@@ -974,9 +968,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         } else {
             $value = explode(',', $value);
         }
-        $result = $targetDb->insert('setting', array(
-            'id' => 'extension_whitelist',
-            'value' => json_encode($value)));
+        $this->_setSetting('extension_whitelist', $value);
         $this->_log('[' . __FUNCTION__ . ']: ' . __('These three extensions have been removed from the default white list of Omeka 2: "m4v", "opus" and "webm".'),
             Zend_Log::INFO);
 
@@ -987,44 +979,19 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
         // Use the option "administrator_email" instead of the current user.
         $value = get_option('administrator_email') ?: $user->email;
-        $result = $targetDb->insert('setting', array(
-            'id' => 'administrator_email',
-            'value' => json_encode($value)));
-
-        $result = $targetDb->insert('setting', array(
-            'id' => 'installation_title',
-            'value' => json_encode($this->getParam('installation_title'))));
-
-        $result = $targetDb->insert('setting', array(
-            'id' => 'time_zone',
-            'value' => json_encode($this->getParam('time_zone'))));
+        $this->_setSetting('administrator_email', $value);
+        $this->_setSetting('installation_title', $this->getParam('installation_title'));
+        $this->_setSetting('time_zone', $this->getParam('time_zone'));
 
         // Settings that are not set when the site is installed.
 
         // Even if the first site is not yet created.
-        $result = $targetDb->insert('setting', array(
-            'id' => 'default_site',
-            'value' => json_encode((string) 1)));
-
-        $result = $targetDb->insert('setting', array(
-            'id' => 'disable_file_validation',
-            'value' => json_encode((string) get_option('disable_default_file_validation'))));
-
-        $result = $targetDb->insert('setting', array(
-            'id' => 'property_label_information',
-            'value' => json_encode('none')));
-
-        $result = $targetDb->insert('setting', array(
-            'id' => 'recaptcha_site_key',
-            'value' => json_encode((string) get_option('recaptcha_public_key'))));
-
-        $result = $targetDb->insert('setting', array(
-            'id' => 'recaptcha_secret_key',
-            'value' => json_encode((string) get_option('recaptcha_private_key'))));
-
-        $result = $targetDb->insert('setting', array(
-            'id' => 'use_htmlpurifier',
-            'value' => json_encode((string) get_option('html_purifier_is_enabled'))));
+        $this->_setSetting('default_site', (string) 1);
+        $this->_setSetting('disable_file_validation', (string) get_option('disable_default_file_validation'));
+        $this->_setSetting('property_label_information', 'none');
+        $this->_setSetting('recaptcha_site_key', (string) get_option('recaptcha_public_key'));
+        $this->_setSetting('recaptcha_secret_key', (string) get_option('recaptcha_private_key'));
+        $this->_setSetting('use_htmlpurifier', (string) get_option('html_purifier_is_enabled'));
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended.', 'Add Default Settings'),
             Zend_Log::DEBUG);
@@ -1457,6 +1424,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             throw new UpgradeToOmekaS_Exception(
                 __('Unable to create the first site.'));
         }
+
+        $this->_setSiteSetting('attachment_link_type', 'item');
+        $this->_setSiteSetting('browse_attached_items', '0');
 
         // An item set for the site will be created later to keep original ids.
 

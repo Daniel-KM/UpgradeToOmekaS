@@ -16,17 +16,71 @@ class UpgradeToOmekaS_Processor_SocialBookmarking extends UpgradeToOmekaS_Proces
     public $maxVersion = '2.2';
 
     public $module = array(
-        'type' => 'equivalent',
         'name' => 'Sharing',
-        'version' => 'v1.0.0-beta',
+        'version' => '1.0.0-beta',
+        'url' => 'https://github.com/omeka-s-modules/Sharing/releases/download/v%s/Sharing.zip',
         'size' => 8217,
         'md5' => '442c579734ca64c6f5f011d4e95da914',
-        'url' => 'https://github.com/omeka-s-modules/Sharing/releases/download/%s/Sharing.zip',
+        'type' => 'equivalent',
         'partial' => true,
-        'note' => 'Only common social networks (Twitter, Pinterest, Tumblr, email) and embed, but not AddThis.',
+        'note' => 'Only common social networks (Facebook, Twitter, Pinterest, Tumblr, email) and embed, but not AddThis.',
+        'install' => array(
+            'settings' => array(
+                'sharingServices' => array(
+                    'fb', 'twitter', 'tumblr', 'pinterest', 'email', 'embed',
+                ),
+            ),
+        ),
     );
 
     public $processMethods = array(
         '_installModule',
     );
+
+    protected function _upgradeSettings()
+    {
+        // Get current options in Omeka Classic.
+        $existingServices = array();
+        $sbServices = unserialize(get_option('social_bookmarking_services'));
+        $sbServices = array_filter($sbServices);
+        if (isset($sbServices['facebook']) || isset($sbServices['facebook_like'])) {
+            $existingServices[] = 'fb';
+        }
+        if (isset($sbServices['twitter'])) {
+            $existingServices[] = 'twitter';
+        }
+        if (isset($sbServices['tumblr'])) {
+            $existingServices[] = 'tumblr';
+        }
+        if (isset($sbServices['pinterest']) || isset($sbServices['pinterest_share'])) {
+            $existingServices[] = 'pinterest';
+        }
+        if (isset($sbServices['email']) || isset($sbServices['mailto'])) {
+            $existingServices[] = 'email';
+        }
+
+        $totalSbServices = count($sbServices);
+        $totalExistingServices = count($existingServices);
+        if ($totalSbServices > $totalExistingServices) {
+            $message = __('Some services (%d) have not been imported.',
+                $totalSbServices - $totalExistingServices);
+            $this->_log('[' . __FUNCTION__ . ']: ' . $message,
+                Zend_Log::NOTICE);
+        }
+
+        // Get current data.
+        $sharingMethods = $this->_getSiteSetting('sharing_methods');
+        if (empty($sharingMethods)) {
+            $sharingMethods = $existingServices;
+        }
+        // There are some values already, so update them.
+        else {
+            $sharingMethods = array_merge($sharingMethods, $existingServices);
+            $sharingMethods = array_unique($sharingMethods);
+        }
+        $this->_setSiteSetting('sharing_methods', $sharingMethods);
+
+        // Set a second option.
+        $this->_setSiteSetting('sharing_placement', 'view.show.before');
+    }
 }
