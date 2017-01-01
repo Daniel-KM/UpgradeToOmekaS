@@ -116,6 +116,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         'Item' => 'item',
         'Collection' => 'item_set',
         'File' => 'media',
+        'ElementText' => 'value',
     );
 
     /**
@@ -2127,6 +2128,108 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     protected function _importMetadata()
     {
+        $recordType = 'ElementText';
+
+        $mappedType = $this->_mappingRecordTypes[$recordType];
+
+        // Prepare a string for the messages.
+        $recordTypeSingular = strtolower(Inflector::humanize(Inflector::underscore($recordType)));
+        $recordTypePlural = strtolower(Inflector::pluralize($recordTypeSingular));
+
+        $db = $this->_db;
+        $targetDb = $this->getTargetDb();
+
+        $totalRecords = total_records($recordType);
+        if (empty($totalRecords)) {
+            return;
+        }
+
+        $siteId = $this->_siteId;
+
+        $table = $db->getTable($recordType);
+
+        $mapping = $this->getMappingElementsToProperties();
+
+        $totalRecordsUnmapped = 0;
+
+        $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
+        for ($page = 1; $page <= $loops; $page++) {
+            $records = $table->findBy(array(), $this->maxChunk, $page);
+
+            $toInserts = array();
+            foreach ($records as $record) {
+                $etRecordType = $record->record_type;
+                $etRecordId = $record->record_id;
+
+                // Check if a mapping is needed (for collections and files).
+                if ($etRecordType == 'Item') {
+                    $resourceId = $etRecordId;
+                }
+                // The record id has changed: check it.
+                else {
+                    if (!isset($this->_mappingIds[$etRecordType][$etRecordId])) {
+                        throw new UpgradeToOmekaS_Exception(
+                            __('The %s #%d can’t be found in Omeka S.',
+                                $etRecordType, $etRecordId));
+                    }
+                    $resourceId = $this->_mappingIds[$etRecordType][$etRecordId];
+                }
+
+                // Check if the element has been mapped to a property.
+                if (empty($mapping[$record->element_id])) {
+                    ++$totalRecordsUnmapped;
+                    continue;
+                }
+
+                $toInsert = array();
+                $toInsert['id'] = null;
+                $toInsert['resource_id'] = $resourceId;
+                $toInsert['property_id'] = $mapping[$record->element_id];
+                $toInsert['value_resource_id'] = null;
+                $toInsert['type'] = 'literal';
+                $toInsert['lang'] = null;
+                $toInsert['value'] = $record->text;
+                $toInsert['uri'] = null;
+                $toInserts[] = $this->_dbQuote($toInsert);
+            }
+
+            $this->_insertRows('value', $toInserts);
+        }
+
+        // A final check, normally useless.
+        $totalRecordsMapped = $totalRecords - $totalRecordsUnmapped;
+        $totalTarget = $this->countTargetTable($mappedType);
+        // Substract the six properties of the default item set for the site.
+        if ($this->_itemSetSiteId) {
+            $totalTarget -= 6;
+        }
+
+        $sql = "SELECT id, resource_id, property_id, value FROM value";
+        $result = $targetDb->fetchAll($sql);
+
+        if ($totalRecordsMapped > $totalTarget) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Only %d/%d %s have been upgraded into "%s".',
+                    $totalTarget, $totalRecordsMapped, $recordTypePlural, $mappedType));
+        }
+        // May be possible with plugins?
+        if ($totalRecords < $totalTarget) {
+            throw new UpgradeToOmekaS_Exception(
+                __('An error occurred: there are %d upgraded "%s" in Omeka S, but only %d %s in Omeka C.',
+                    $totalTarget, $mappedType, $totalRecordsMapped, $recordType)
+                . ' ' . __('Check the processors of the plugins.'));
+        }
+
+        if ($totalRecordsUnmapped) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('%d metadata with not mapped elements were not imported.',
+                $totalRecordsUnmapped), Zend_Log::WARN);
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The other %d metadata have been upgraded as "%s".',
+                $totalRecordsMapped, $mappedType), Zend_Log::INFO);
+        }
+        else {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('All %s (%d) have been upgraded as "%s".',
+                __('metadata'), $totalRecords, $mappedType), Zend_Log::INFO);
+        }
     }
 
     protected function _copyFiles()

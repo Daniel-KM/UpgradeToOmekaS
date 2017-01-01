@@ -769,6 +769,100 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals($itemSet2, $result[0]['item_set_id']);
     }
 
+    public function testImportMetadata()
+    {
+        $this->_checkDownloadedOmekaS();
+
+        // Prepare a list of records:
+        // 1 collections and 2 items (one by default).
+        // Create a missing id.
+        $item = new Item();
+        $item->save();
+        $item->delete();
+
+        $collection1 = insert_collection(array(), array(
+            'Dublin Core' => array(
+                'Title' => array(
+                    array('text' => 'foo collection', 'html' => false),
+                ),
+                'Creator' => array(
+                    array('text' => 'Foo Creator collection', 'html' => false),
+                    array('text' => '<p>Yourself collection', 'html' => true),
+                ),
+                'Description' => array(
+                    array('text' => 'Second description collection</p>', 'html' => true),
+                ),
+            ),
+        ));
+
+        // Create a missing id.
+        $item = new Item();
+        $item->save();
+        $item->delete();
+
+        $item2 = insert_item(
+            array(
+                'collection_id' => $collection1->id,
+                'item_type_name' => 'Still Image',
+                'tags' => 'Tag One, Tag Two, Tag Three',
+            ),
+            array(
+                'Dublin Core' => array(
+                    'Title' => array(
+                        array('text' => 'bar text', 'html' => false),
+                        array('text' => '<p>bar html</p>', 'html' => true),
+                    ),
+                    'Creator' => array(
+                        array('text' => 'Myself', 'html' => false),
+                        array('text' => '<p>Yourself', 'html' => true),
+                    ),
+                    'Description' => array(
+                        array('text' => 'Bar description', 'html' => false),
+                        array('text' => 'Bar description</p>', 'html' => true),
+                    ),
+                    'Date' => array(
+                        array('text' => '2017', 'html' => false),
+                    ),
+                ),
+            )
+        );
+
+        $totalItems = total_records('Item');
+        // $this->assertEquals(2, $totalItems);
+        $totalCollections = total_records('Collection');
+        // $this->assertEquals(1, $totalCollections);
+
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
+                '_importItems', '_importCollections', '_setCollectionsOfItems', '_importMetadata'));
+        $result = $processor->process();
+        $targetDb = $processor->getTargetDb();
+
+        $sql = 'SELECT MAX(id) FROM item_set;';
+        $result = $targetDb->fetchOne($sql);
+        $itemSetId = $result;
+
+        $sql = 'SELECT * FROM value WHERE resource_id = ' . $itemSetId;
+        $result = $targetDb->fetchAll($sql);
+        $this->assertEquals(4, count($result));
+        // 1: Dublin Core Title
+        $this->assertEquals(1, $result[0]['property_id']);
+        $this->assertEquals('<p>Yourself collection', $result[2]['value']);
+
+        $sql = 'SELECT * FROM resource WHERE id = ' . $item2->id;
+        $result = $targetDb->fetchRow($sql);
+        // 33: Still Image
+        $this->assertEquals(33, $result['resource_class_id']);
+
+        $sql = 'SELECT * FROM value WHERE resource_id = ' . $item2->id;
+        $result = $targetDb->fetchAll($sql);
+        $this->assertEquals(7, count($result));
+        // 2: Dublin Core Creator
+        $this->assertEquals(2, $result[3]['property_id']);
+        $this->assertEquals('Myself', $result[2]['value']);
+    }
+
     protected function _prepareProcessor($params = null, $methods = array(), $checkDir = true)
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);

@@ -51,6 +51,8 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
         $this->_removeTableOmekaS();
         $this->_removeRecords('Process');
         $this->_removeRecords('User');
+        $this->_removeRecords('Item');
+        $this->_removeRecords('Collection');
 
         parent::tearDown();
     }
