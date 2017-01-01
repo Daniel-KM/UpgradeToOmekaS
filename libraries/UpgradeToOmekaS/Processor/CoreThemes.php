@@ -224,6 +224,12 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         $specialSubPlugins = array('css', 'font', 'fonts', 'javascripts', 'images', 'common');
 
         $themes = UpgradeToOmekaS_Common::listDirsInDir($source);
+        // Replace the default theme with the Omeka Classic default theme.
+        $keyClassic = array_search('default', $themes);
+        if ($keyClassic !== false) {
+            $themes[$keyClassic] = 'classic';
+        }
+
         $this->_progress(0, count($themes));
 
         $processors = $this->getProcessors();
@@ -278,11 +284,50 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             }
 
             // Third, overwrite them with the true files of the theme.
+            // The copy of the "classic" theme (no source) is silently bypassed.
             UpgradeToOmekaS_Common::copyDir(
                 $source . DIRECTORY_SEPARATOR . $theme,
                 $destinationTheme,
                 true,
                 array('php' => 'phtml'));
+
+            // Add a default theme ini if needed.
+            $destinationIni = $destinationTheme
+                . DIRECTORY_SEPARATOR . 'theme.ini';
+            if (!file_exists($destinationIni)) {
+                $title = ucwords($theme);
+                if ($theme == 'classic') {
+                    $author = 'Roy Rosenzweig Center for History and New Media';
+                    $description = __('Default public theme of Omeka Classic');
+                    $license = 'GPLv3';
+                }
+                // Theme unknown.
+                else {
+                    $author = __('[Unknown]');
+                    $description = __('[No description]');
+                    $license = __('[Unknown]');
+                }
+
+                $output = <<<OUTPUT
+;;;;;;;
+; Theme Settings
+;;;;;;;
+
+[theme]
+author = "$author"
+title = "$title"
+description = "$description"
+license = "$license"
+website = "http://omeka.org"
+support_link = "http://omeka.org/forums/forum/themes-and-public-display"
+omeka_minimum_version="2.0"
+omeka_target_version="2.5"
+version="2.0"
+
+OUTPUT;
+
+                $result = file_put_contents($destinationIni, $output);
+            }
         }
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All themes (%d) have been copied with default scripts into Omeka S.',
@@ -391,15 +436,17 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
      */
     protected function _upgradeConfigTheme($path)
     {
+        $name = basename($path);
         unset($this->_versionTheme);
 
         // "theme.ini" and "config.ini" are merged into "config/theme.ini".
 
-        // No process is done when the destination exists.
+        // No process when the destination exists (default classic theme).
         $destination = $path
             . DIRECTORY_SEPARATOR . 'config'
             . DIRECTORY_SEPARATOR . 'theme.ini';
         if (file_exists($destination)) {
+            $this->_versionTheme = '2.0';
             return;
         }
 
@@ -408,7 +455,6 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             ? new Zend_Config_Ini($source, 'theme')
             : new Zend_Config(array());
 
-        $name = basename($path);
         // Kept for next method.
         $this->_versionTheme = $sourceIni->version;
 
@@ -435,113 +481,143 @@ license = "{$sourceIni->license}"
 helpers[] = ThemeHelperOne
 helpers[] = ThemeHelperTwo
 
+
 OUTPUT;
 
         $source = $path . DIRECTORY_SEPARATOR . 'config.ini';
-        $sourceIni = file_exists($source)
-            ? new Zend_Config_Ini($source, null, true)
-            : new Zend_Config(array());
+        if (file_exists($source)) {
+            $sourceIni = new Zend_Config_Ini($source, null, true);
 
-        $elements = array();
-        $commented = array();
-        $renamed = array();
-        if (isset($sourceIni->config) && $sourceIni->config->count()) {
-            $mappingFormElements = array(
-                'file' => 'Omeka\Form\Element\Asset',
-                'textarea' => 'Omeka\Form\Element\HtmlTextarea',
-                // Zend standard.
-                'checkbox' => 'Zend\Form\Element\Checkbox',
-                'radio' => 'Zend\Form\Element\Radio',
-                'select' => 'Zend\Form\Element\Select',
-                'text' => 'Zend\Form\Element\Text',
-            );
-            foreach ($sourceIni->config as $key => $element) {
-                // Add the name.
-                $element->name = $key;
+            $elements = array();
+            $commented = array();
+            $renamed = array();
+            if (isset($sourceIni->config) && $sourceIni->config->count()) {
+                $mappingFormElements = array(
+                    'file' => 'Omeka\Form\Element\Asset',
+                    'textarea' => 'Omeka\Form\Element\HtmlTextarea',
+                    // Zend standard.
+                    'checkbox' => 'Zend\Form\Element\Checkbox',
+                    'radio' => 'Zend\Form\Element\Radio',
+                    'select' => 'Zend\Form\Element\Select',
+                    'text' => 'Zend\Form\Element\Text',
+                );
+                foreach ($sourceIni->config as $key => $element) {
+                    // Add the name.
+                    $element->name = $key;
 
-                // Convert the description into info (simpler via array).
-                if (isset($element->options->description)) {
-                    $element = $element->toArray();
-                    $element['options']['info'] = $element['options']['description'];
-                    unset($element['options']['description']);
-                    $element = new Zend_Config($element, true);
-                }
-
-                // Convert options values to attributes values.
-                if (isset($element->options->value)) {
-                    $element = $element->toArray();
-                    $element['attributes']['value'] = $element['options']['value'];
-                    unset($element['options']['value']);
-                    $element = new Zend_Config($element, true);
-                }
-
-                $type = $element->type;
-                // Update the class if possible.
-                if (isset($mappingFormElements[$type])) {
-                    // Update type.
-                    $element->type = $mappingFormElements[$type];
-                    // Manage updated elements.
-                    switch ($key) {
-                        case 'logo':
-                            $element->options->label = 'Logo';
-                            unset($element->options->description);
-                            unset($element->options->validators);
-                            break;
-                        case 'footer_text':
-                            $renamed[$key] = 'footer';
-                            $key = $renamed[$key];
-                            $element->type = $mappingFormElements['textarea'];
-                            $element->options->label = 'Footer Content';
-                            $element->options->info = 'HTML content to appear in the footer';
-                            break;
+                    // Convert the description into info (simpler via array).
+                    if (isset($element->options->description)) {
+                        $element = $element->toArray();
+                        $element['options']['info'] = $element['options']['description'];
+                        unset($element['options']['description']);
+                        $element = new Zend_Config($element, true);
                     }
-                    // TODO Check validators and constraints or comment them.
-                    $elements[$key] = $element;
+
+                    // Convert options values to attributes values.
+                    if (isset($element->options->value)) {
+                        $element = $element->toArray();
+                        $element['attributes']['value'] = $element['options']['value'];
+                        unset($element['options']['value']);
+                        $element = new Zend_Config($element, true);
+                    }
+
+                    $type = $element->type;
+                    // Update the class if possible.
+                    if (isset($mappingFormElements[$type])) {
+                        // Update type.
+                        $element->type = $mappingFormElements[$type];
+                        // Manage updated elements.
+                        switch ($key) {
+                            case 'logo':
+                                $element->options->label = 'Logo';
+                                unset($element->options->description);
+                                unset($element->options->validators);
+                                break;
+                            case 'footer_text':
+                                $renamed[$key] = 'footer';
+                                $key = $renamed[$key];
+                                $element->type = $mappingFormElements['textarea'];
+                                $element->options->label = 'Footer Content';
+                                $element->options->info = 'HTML content to appear in the footer';
+                                break;
+                        }
+                        // TODO Check validators and constraints or comment them.
+                        $elements[$key] = $element;
+                    }
+                    // Save as comment.
+                    else {
+                        $commented[$key] = $element;
+                    }
                 }
-                // Save as comment.
+
+                if ($commented) {
+                    $sourceIni->config = new Zend_Config(array(
+                        'elements' => $elements,
+                        ';elements' => $commented,
+                    ));
+                }
+                // No commented.
                 else {
-                    $commented[$key] = $element;
+                    $sourceIni->config = new Zend_Config(array(
+                        'elements' => $elements,
+                    ));
                 }
             }
 
-            if ($commented) {
-                $sourceIni->config = new Zend_Config(array(
-                    'elements' => $elements,
-                    ';elements' => $commented,
-                ));
-            }
-            // No commented.
-            else {
-                $sourceIni->config = new Zend_Config(array(
-                    'elements' => $elements,
-                ));
-            }
-        }
-
-        // Manage next sections.
-        if ($commented && isset($sourceIni->groups)) {
-            foreach ($sourceIni->groups as $key => $element) {
-                foreach ($element->elements as $k => $value) {
-                    if (isset($renamed[$value])) {
-                        $element->elements->$k = $renamed[$value];
-                    }
-                    elseif (isset($commented[$value]) || !isset($elements[$value])) {
-                        unset($element->elements->$k);
+            // Manage next sections.
+            if ($commented && isset($sourceIni->groups)) {
+                foreach ($sourceIni->groups as $key => $element) {
+                    foreach ($element->elements as $k => $value) {
+                        if (isset($renamed[$value])) {
+                            $element->elements->$k = $renamed[$value];
+                        }
+                        elseif (isset($commented[$value]) || !isset($elements[$value])) {
+                            unset($element->elements->$k);
+                        }
                     }
                 }
             }
-        }
 
-        if (isset($sourceIni->plugins)) {
-            $sourceIni->modules = $sourceIni->plugins;
-            unset($sourceIni->plugins);
-        }
+            if (isset($sourceIni->plugins)) {
+                $sourceIni->modules = $sourceIni->plugins;
+                unset($sourceIni->plugins);
+            }
 
-        $writer = new Zend_Config_Writer_Ini(array(
-            'config' => $sourceIni,
-            'renderWithoutSections' => false,
-        ));
-        $output .= $writer->render();
+            $writer = new Zend_Config_Writer_Ini(array(
+                'config' => $sourceIni,
+                'renderWithoutSections' => false,
+            ));
+            $output .= $writer->render();
+        }
+        // Set a default section when there is no config.
+        else {
+            $output .= <<<OUTPUT
+[config]
+elements.nav_depth.name = "nav_depth"
+elements.nav_depth.type = "Number"
+elements.nav_depth.options.label = "Top Navigation Depth"
+elements.nav_depth.options.info = "Maximum number of levels to show in the site's top navigation bar. Set to 0 to show all levels."
+elements.nav_depth.attributes.min = 0
+elements.nav_depth.attributes.value = 0
+
+elements.use_advanced_search.type = "Zend\Form\Element\Checkbox"
+elements.use_advanced_search.options.label = "Use Advanced Site-wide Search"
+elements.use_advanced_search.options.info = "Check this box if you wish to allow users to search your whole site by record (i.e. item, item set, media)."
+elements.use_advanced_search.value = "0"
+elements.use_advanced_search.name = "use_advanced_search"
+
+elements.logo.name = "logo"
+elements.logo.type = "Omeka\Form\Element\Asset"
+elements.logo.options.label = "Logo"
+
+elements.footer.name = "footer"
+elements.footer.type = "Omeka\Form\Element\HtmlTextarea"
+elements.footer.options.label = "Footer Content"
+elements.footer.options.info = "HTML content to appear in the footer"
+elements.footer.attributes.value = "Powered by Omeka S"
+
+OUTPUT;
+        }
 
         $result = UpgradeToOmekaS_Common::createDir(dirname($destination));
         // Check if the output is parsable.
