@@ -37,30 +37,65 @@ class UpgradeToOmekaS_Common
      * @link https://stackoverflow.com/questions/12801370/count-how-many-files-in-directory-php
      *
      * @param string $dir
-     * @return integer
+     * @return integer|null
      */
     public static function countFilesInDir($dir)
     {
+        if (!file_exists($dir)) {
+            return null;
+        }
+        if (!is_dir($dir)) {
+            return null;
+        }
+        if (!is_readable($dir)) {
+            return null;
+        }
         $fi = new FilesystemIterator($dir, FilesystemIterator::SKIP_DOTS);
         return iterator_count($fi);
     }
 
     /**
-     * Determine if a uri is a remote url or a local path.
+     * List files in a directory, not recursively, and without subdirs.
+     *
+     * @param string $dir
+     * @return array
+     */
+    public static function listFilesInDir($dir)
+    {
+        return array_filter(scandir($dir), function($file) use ($dir) {
+            return is_file($dir . DIRECTORY_SEPARATOR . $file);
+        });
+    }
+
+    /**
+     * List directories in a directory, not recursively.
+     *
+     * @param string $dir
+     * @return array
+     */
+    public static function listDirsInDir($dir)
+    {
+        return array_filter(array_diff(scandir($dir), array('.', '..')), function($file) use ($dir) {
+            return is_dir($dir . DIRECTORY_SEPARATOR . $file);
+        });
+    }
+
+    /**
+     * Determine if the uri of a file is a remote url or a local path.
      *
      * @param string $uri
      * @return boolean
      */
     public static function isRemote($uri)
     {
-        return strpos($uri, 'http://') === 0
-        || strpos($uri, 'https://') === 0
-        || strpos($uri, 'ftp://') === 0
-        || strpos($uri, 'sftp://') === 0;
+        $scheme = parse_url($uri, PHP_URL_SCHEME);
+        return in_array($scheme, array(
+            'https', 'http', 'sftp', 'ftps', 'ftp',
+        ));
     }
 
     /**
-     * Check and create a directory.
+     * Check and create a directory recursively.
      *
      * @param string $path
      * @return boolean
@@ -71,14 +106,14 @@ class UpgradeToOmekaS_Common
             return false;
         }
         if (!file_exists($path)) {
-            if (!is_writable(dirname($path))) {
+            $parent = dirname($path);
+            while (!file_exists($parent) && $parent != '/') {
+                $parent = dirname($parent);
+            }
+            if (!is_writable($parent)) {
                 return false;
             }
-            try {
-                return mkdir($path, 0755, true);
-            } catch (Exception $e) {
-                return false;
-            }
+            return mkdir($path, 0755, true);
         }
         elseif (!is_dir($path)) {
             return false;
@@ -88,9 +123,62 @@ class UpgradeToOmekaS_Common
     }
 
     /**
-     * Checks and removes a folder, empty or not.
+     * Copy a directory recursively.
      *
-     * @note Currently, Omeka API doesn't provide a function to remove a folder.
+     * @link https://stackoverflow.com/questions/5707806/recursive-copy-of-directory#7775949
+     *
+     * @param string $source
+     * @param string $destination
+     * @param boolean $overwrite
+     * @return boolean
+     */
+    public static function copyDir($source, $destination, $overwrite = false)
+    {
+        if (empty($source) || empty($destination)) {
+            return false;
+        }
+
+        $result = self::createDir($destination);
+        if (empty($result)) {
+            return false;
+        }
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST);
+
+        foreach ($iterator as $item) {
+            $subpath = $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName();
+            if (file_exists($subpath)) {
+                if (is_dir($subpath)) {
+                    continue;
+                }
+                if (!$overwrite) {
+                    continue;
+                }
+            }
+            // This may be a dir.
+            if ($item->isDir()) {
+                $result = mkdir($subpath, 0755, true);
+            }
+            // This may be a file.
+            elseif ($item->isFile()) {
+                $result = copy($item, $subpath);
+            }
+            // This may be a symbolic link or something else.
+            else {
+                return false;
+            }
+            if (!$result) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks and removes a folder, empty or not.
      *
      * @param string $path Full path of the folder to remove.
      * @param boolean $evenNonEmpty Remove non empty folder.
@@ -116,14 +204,24 @@ class UpgradeToOmekaS_Common
     /**
      * Removes directories recursively.
      *
-     * @param string $dirPath Directory name.
+     * @param string $dir Directory name.
      * @return boolean
      */
-    protected static function _rrmdir($dirPath)
+    protected static function _rrmdir($dir)
     {
-        $files = array_diff(scandir($dirPath), array('.', '..'));
+        if (!file_exists($dir)
+                || !is_dir($dir)
+                || !is_readable($dir)
+            ) {
+            return;
+        }
+        $scandir = scandir($dir);
+        if (!is_array($scandir)) {
+            return;
+        }
+        $files = array_diff($scandir, array('.', '..'));
         foreach ($files as $file) {
-            $path = $dirPath . DIRECTORY_SEPARATOR . $file;
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
             if (is_dir($path)) {
                 self::_rrmDir($path);
             }
@@ -131,7 +229,7 @@ class UpgradeToOmekaS_Common
                 unlink($path);
             }
         }
-        return rmdir($dirPath);
+        return rmdir($dir);
     }
 
     /**
@@ -211,7 +309,9 @@ class UpgradeToOmekaS_Common
         if (self::isRemote($zipFile)) {
             $isTempFile = true;
             $input = tempnam(sys_get_temp_dir(), basename($zipFile));
-            $result = (boolean) file_put_contents($input, fopen($zipFile, 'r'));
+            $handle = fopen($zipFile, 'rb');
+            $result = (boolean) file_put_contents($input, $handle);
+            @fclose($handle);
         }
         // Check the input file.
         else {
@@ -286,7 +386,9 @@ class UpgradeToOmekaS_Common
         if (self::isRemote($zipfile)) {
             $isTempFile = true;
             $input = tempnam(sys_get_temp_dir(), basename($zipFile));
-            $result = file_put_contents($input, fopen($zipFile, 'r'));
+            $handle = fopen($zipFile, 'rb');
+            $result = file_put_contents($input, $handle);
+            @fclose($handle);
         }
         // Check the input file.
         else {
