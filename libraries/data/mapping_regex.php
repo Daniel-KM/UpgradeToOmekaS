@@ -29,7 +29,7 @@ $regexFunctionArguments = array(
         )
         (?= \(.+\))
         \(
-            ( null | \d+ | \'.*\' | ".*" | \[.*\] | (?: \$|\b) [a-z_]\w*\s* (?: \-\>[a-z_]\w*\s* | \(.*\) )* )
+            ( null | \d+ | \'.*?\' | ".*?" | \[.*?\] | (?: \$|\b) [a-z_]\w*\s* (?: \-\>[a-z_]\w*\s* | \(.*?\) )*? )
         \)
         ) ~xi',
     // Check two arguments exactly, of any form, with a group by argument.
@@ -52,7 +52,7 @@ $regexFunctionArguments = array(
                 \s*,\s*
                 (?: null | \d+ | \'.*\' | ".*" | \[.*\] | (?: \$|\b) [a-z_]\w*\s* (?: \-\>[a-z_]\w*\s* | \(.*\) )* )
             )
-            ( null | \d+ | \'.*\' | ".*" | \[.*\] | (?: \$|\b) [a-z_]\w*\s* (?: \-\>[a-z_]\w*\s* | \(.*\) )* )
+            ( null | \d+ | \'.*?\' | ".*?" | \[.*?\] | (?: \$|\b) [a-z_]\w*\s* (?: \-\>[a-z_]\w*\s* | \(.*?\) )*? )
         \)
         ) ~xi',
     // Check three arguments exactly, of any form, with a group by argument.
@@ -84,7 +84,7 @@ $regexFunctionArguments = array(
                 \s*,\s*
                 (?: null | \d+ | \'.*\' | ".*" | \[.*\] | (?: \$|\b) [a-z_]\w*\s* (?: \-\>[a-z_]\w*\s* | \(.*\) )* )
             )
-            ( null | \d+ | \'.*\' | ".*" | \[.*\] | (?: \$|\b) [a-z_]\w*\s* (?: \-\>[a-z_]\w*\s* | \(.*\) )* )
+            ( null | \d+ | \'.*?\' | ".*?" | \[.*?\] | (?: \$|\b) [a-z_]\w*\s* (?: \-\>[a-z_]\w*\s* | \(.*?\) )*? )
         \)
         ) ~xi',
 );
@@ -331,11 +331,6 @@ return array(
     '~\b(browse_sort_links)\(~'                     => '$this->upgrade()->\1(',
     '~\b(body_tag)\(~'                              => '$this->upgrade()->\1(',
     '~\b(item_search_filters)\(~'                   => '$this->searchFilters(',
-
-    // Fixes common double nested before processing metadata.
-    '~array\(\'(.*?)\'.s*\=\>\s*metadata\s*\(\s*(\$.*?),\s*array\((.*?)\),(.*?)\)\)\);~'                                    => 'array(\'\1\' => metadata(\2, array(\3)), \4);',
-    '~link_to_item\(metadata\s*\(\s*(\$.*?),\s*(array\(.*?\)),\s*(array\(\'class.*?permalink\'\))\), (.*?)\);~'             => 'link_to_item(metadata(\1, \2), \3, \4);',
-    '~array\(\'(.*?)\'.s*\=\>\s*metadata\s*\(\s*(\$.*?),\s*array\((.*?)\),\s*\'bodyid\'\s*=>\s*\'(.*?)\'\),\s*(.*?)\)\);~'  => 'array(\'\1\' => metadata(\2, array(\3)), \'bodyid\' => \'\4\', \5));',
 
     // For all records.
     '~\bmetadata\((\$[a-z_]\w*)\s*\,\s*(?:\'|")id(?:\'|")\s*\)~i'                           => '\1->id()',
@@ -715,17 +710,10 @@ return array(
     '~(?:\'|")imageSize(?:\'|")\s*\=\>\s*(?:\'|")square_thumbnail(?:\'|")~i'    => "'imageSize' => 'square'",
 
     // Fixes common double nested for metadata. To be cleaned.
-//      '~metadata.*?\((\$[a-z]\w+),\s*(array\(.*?\)),\s*(\'bodyid|\'.*?)\)\)\)~i'    => 'metadata(\1, \2), \3))',
-//     '~metadata.*?\((\$[a-z]\w+),\s*(array\(.*?\)),\s*(array\(.*?\))\)(,.*?)\)~' => 'metadata(\1, \2), \3))',
-//     '~metadata.*?\((\$[a-z]\w+),\s*(array\(.*?\))\),\s*(.*?)\)\)\)~'            => 'metadata(\1, \2)), \3))',
-//     '~metadata.*?\((\$[a-z]\w+),\s*(array\(.*?\))\),\s*(.*?)\)\).*?\)~'         => 'metadata(\1, \2), \3))',
-    '~metadata(.*?)\((\$[a-z]\w+),\s*(array\(.*?\)),\s*(\'(?:bodyid|bodyclass)\'.*?)\)\)~i'    => 'metadata\1(\2, \3), \4)',
-    '~metadata(.*?)\((\$[a-z]\w+),\s*(array\(.*?\)),\s*array\((\'(?:class)\'.*?\))\)(.*?)\)~i' => 'metadata\1(\2, \3), array(\4\5)',
-    '~metadata(.*?)\((\$[a-z]\w+),\s*(array\(.*?\))\),\s*(array\(\'(?:all|delimiter|index|no_escape|no_filter|snippet)\'.*?\)\))(.*?)\)~i' => 'metadata\1(\2, \3, \4\5)',
-
-// metadata /* TODO Use $itemSet->value(). */ ($itemSet, array('Name'), 'bodyid'=>'collections', 'bodyclass' => 'show')));
-// head(array('title'=>$this->upgrade()->metadata /* TODO Use $itemSet->value(). */ ($itemSet, array('Name'), 'bodyid'=>'collections', 'bodyclass' => 'show')));
-
+    '~metadata(.*?)\((\$[a-z]\w+),\s*(array\(.*?\)),\s*(\'(?:bodyid|bodyclass)\'.*?)\)\)~i'                                                 => 'metadata\1(\2, \3), \4)',
+    '~metadata(.*?)\((\$[a-z]\w+),\s*(array\(.*?\)),\s*(\'bodyid\'.*?)\),\s*(\'bodyclass\'.*?\))~i'                                         => 'metadata\1(\2, \3, \4))',
+    '~metadata(.*?)\((\$[a-z]\w+),\s*(array\(.*?\)),\s*array\((\'(?:class)\'.*?\))\)(.*?)\)~i'                                              => 'metadata\1(\2, \3), array(\4\5)',
+    '~metadata(.*?)\((\$[a-z]\w+),\s*(array\(.*?\))\),\s*(array\(\'(?:all|delimiter|index|no_escape|no_filter|snippet)\'.*?\)\))(.*?)\)~i'  => 'metadata\1(\2, \3, \4\5)',
 
     // Functions of plugins.
     '~\b(exhibit_builder_display_random_featured_exhibit)\(\)~' => '$this->upgrade()->fallback(\1)',
@@ -733,6 +721,9 @@ return array(
     // Functions of themes.
     '~\b(custom_show_item_metadata)\(\)~'               => '$this->upgrade()->fallback(\'\1\')',
     '~\b(rhythm_display_date_added)\(\)~'               => '$this->upgrade()->fallback(\'\1\')',
-    '~\b(santaFe_flash)\(\)~'                           => '$this->upgrade()->fallback(\'\1\')',
+    '~\b(santaFe_flash)\(\)~'                           => '$this->messages()',
 
+    '~if\s*' . preg_quote('($this->upgrade()->has_loop_records') . '.*?\(\'items\'\)\)\s*\:~'                       => '$items = $this->upgrade()->get_loop_records(\'items\', false); if ($items):',
+    '~if\s*' . preg_quote('($this->upgrade()->has_loop_records') . '.*?\(\'(?:collections|item_sets)\'\)\)\s*\:~'   => '$itemSets = $this->upgrade()->get_loop_records(\'itemSets\', false); if ($itemSets):',
+    '~if\s*' . preg_quote('($this->upgrade()->has_loop_records') . '.*?\(\'files\'\)\)\s*\:~'                       => '$medias = $this->upgrade()->get_loop_records(\'medias\', false); if ($medias):',
 );

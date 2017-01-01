@@ -44,6 +44,7 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         '_upgradeThemes',
         '_upgradeFunctionsAndVariables',
         '_upgradeHooks',
+        '_upgradeFiles',
     );
 
     /**
@@ -875,13 +876,8 @@ OUTPUT;
         $path = $this->getParam('base_dir')
             . DIRECTORY_SEPARATOR . 'themes';
 
-        $mappingFunctions = $this->getMerged('mapping_functions');
-        $fromFunctions = array_keys($mappingFunctions);
-        $toFunctions = array_values($mappingFunctions);
-
-        $mappingVariables = $this->getMerged('mapping_variables');
-        $fromVariables = array_keys($mappingVariables);
-        $toVariables = array_values($mappingVariables);
+        $mappingRegex = $this->getMerged('mapping_regex');
+        $mappingReplace = $this->getMerged('mapping_replace');
 
         $files = UpgradeToOmekaS_Common::listFilesInFolder($path, array('php', 'phtml'));
         $this->_progress(0, count($files));
@@ -910,10 +906,10 @@ OUTPUT;
 
             $input = file_get_contents($file);
 
-            $output = preg_replace($fromFunctions, $toFunctions, $input, -1, $count);
+            $output = preg_replace(array_keys($mappingRegex), array_values($mappingRegex), $input, -1, $count);
             $countF = $count;
 
-            $output = str_replace($fromVariables, $toVariables, $output, $count);
+            $output = str_replace(array_keys($mappingReplace), array_values($mappingReplace), $output, $count);
             $countV = $count;
             $totalCalls += $countF + $countV;
 
@@ -981,7 +977,7 @@ OUTPUT;
 
     protected function _upgradeHooks()
     {
-        $hooks = $this->getMerged('list_hooks');
+        $hooks = $this->getMergedList('list_hooks');
         foreach ($hooks as $hook) {
             $method = '_upgradeHook' . inflector::camelize($hook);
             $name;
@@ -1103,5 +1099,17 @@ OUTPUT;
 OUTPUT;
 
         $this->_upgradeSaveContentInThemes($relativePath, $output);
+    }
+
+    protected function _upgradeFiles()
+    {
+        $mapping = $this->getMerged('upgrade_files');
+        $this->_progress(0, count($mapping));
+
+        $i = 0;
+        foreach ($mapping as $relativePath => $upgrade) {
+            $this->_progress(++$i);
+            $this->_upgradeFileInThemes($relativePath, $upgrade);
+        }
     }
 }

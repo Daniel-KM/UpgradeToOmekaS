@@ -9,7 +9,48 @@
 $foot = 'echo $this->upgrade()->foot();';
 $upgrade = array();
 
-$replace = <<<'OUTPUT'
+/**
+ * helper.
+ */
+
+$prepend = <<<'OUTPUT'
+<?php
+// TODO This file of Omeka Classic should be upgraded into a helper for Omeka S.
+
+// This hack allows to use the functions of Omeka Classic "globals.php" upgraded
+// via the module inside custom functions.
+global $thisView;
+$thisView = $this
+
+?>
+
+OUTPUT;
+
+$pregReplace = array(
+    '~(function\s*[a-z_]\w*\s*\(.*\)\s*{)~i' => '\1' . PHP_EOL . '    global $thisView;' . PHP_EOL,
+);
+
+$upgrade['helper/custom.php'] = array(
+    'preg_replace' => $pregReplace,
+    'replace' => array(
+        '$this->' => '$thisView->',
+    ),
+    'prepend' => $prepend,
+);
+
+$upgrade['helper/functions.php'] = array(
+    'preg_replace' => $pregReplace,
+    'replace' => array(
+        '$this->' => '$thisView->',
+    ),
+    'prepend' => $prepend,
+);
+
+/**
+ * view/common.
+ */
+
+ $replace = <<<'OUTPUT'
 foreach ($links as $link) {
     echo $this->hyperlink($link['label'], $link['uri']);
 }
@@ -199,10 +240,17 @@ $append = <<<'OUTPUT'
 <?php // Adapted from application/view-admin/layout/header.phtml and application/view-shared/layout/layout.phtml. ?>
 
 <?php $escape = $this->plugin('escapeHtml'); ?>
-<?php $showAdvanced = isset($options['show_advanced']) ? $options['show_advanced'] : $this->upgrade()->get_option('use_advanced_search'); ?>
+<?php $showAdvanced = isset($options['show_advanced'])
+    ? $options['show_advanced']
+    // It should be set in the settings of the site and available in the theme options.
+    : ($this->upgrade()->get_option('upgrade_use_advanced_search') && $this->themeSetting('use_advanced_search')); ?>
 <?php $searchResourceTypes = $this->upgrade()->get_custom_search_record_types(); ?>
 <?php if ($showAdvanced && $searchResourceTypes): ?>
 <!-- <div id="search"> -->
+<style type="text/css">
+#search-container button#advanced { padding-right: 50px; }
+#search-container button#advanced::after { content: ""; }
+</style>
 <div id="search-container">
     <form action="" id="search-form">
         <?php $searchValue = isset($_GET['property'][0]['in'][0]) ? $_GET['property'][0]['in'][0] : ''; ?>
@@ -286,6 +334,10 @@ $upgrade['view/common/search-main.phtml'] = array(
     'append' => PHP_EOL . $append,
 );
 
+/**
+ * view/error.
+ */
+
 $replace = <<<'OUTPUT'
 ?>
 <pre>
@@ -323,6 +375,7 @@ echo $this->upgrade()->foot();
 OUTPUT;
 
 $upgrade['view/error/404.phtml'] = array(
+    'prepend' => '<?php $badUri = $this->serverUrl() . $_SERVER[\'REQUEST_URI\']; ?>' . PHP_EOL,
     'replace' => array(
         $foot => $replace,
     ),
@@ -333,6 +386,19 @@ $upgrade['view/error/405.phtml'] = array(
         $foot => $replace,
     ),
 );
+
+$upgrade['view/error/index.phtml'] = array(
+    'replace' => array(
+        // TODO Check if in production.
+        '$displayError' => 'true',
+        '($e)' => '($this->exception)',
+        '($e->' => '($this->exception->',
+    ),
+);
+
+/**
+ * view/login.
+ */
 
 $replace = <<<'OUTPUT'
 <?php
@@ -372,10 +438,19 @@ $upgrade['view/omeka/login/login.phtml'] = array(
     ),
 );
 
+/**
+ * view/omeka/site/index.
+ */
+
 $upgrade['view/omeka/site/index/index.phtml'] = array(
-    'prepend' => '<?php echo $this->upgrade()->head(); ?>' . PHP_EOL,
+    'prepend' => '<?php echo $this->upgrade()->head(); ?>' . PHP_EOL
+        . '<p><?php echo $this->translate(\'This site has no pages.\'); ?></p>' . PHP_EOL,
     'append' => '<?php echo $this->upgrade()->foot(); ?>' . PHP_EOL,
 );
+
+/**
+ * view/omeka/site/item.
+ */
 
 $prepend = <<<'OUTPUT'
 <?php
@@ -407,7 +482,7 @@ $pregReplace = <<<'OUTPUT'
     <?php echo $this->pageTitle($itemSet->displayTitle(), 1); ?>
     <h2><?php echo $this->translate('Item Set'); ?></h2>
     <div class="metadata">
-        <?php // echo $itemSet->displayValues(); // TODO Use $itemSet->displayValues(); ?>
+        <?php // echo $itemSet->displayValues(); ?>
         <?php echo $this->upgrade()->all_element_texts($itemSet); ?>
     </div>
     <h2>\1</h2>
@@ -421,12 +496,19 @@ echo $this->hyperlink($this->translate('Advanced search'), $this->url('site/reso
 OUTPUT;
 
 $upgrade['view/omeka/site/item/browse.phtml'] = array(
-    'preg_replace_single' => array(
-        '~(' . preg_quote('echo $this->pagination(') . ')~' => $pregReplaceSingle . ' \1',
-    ),
     'preg_replace' => array(
         '~\<h1\>(.*?)\</h1\>~' => $pregReplace,
+        '~\bwhile\s*' . preg_quote('($this->upgrade()->loop /* TODO Replace by the variable directly. */ ($items)') . '\s*\)\s*(\{|\:)~'
+            => 'foreach ($items as $item) \1 $this->upgrade()->set_current_record(\'item\', $item);',
+        '~\bwhile\s*' . preg_quote('($this->upgrade()->loop($items)') . '\s*\)\s*(\{|\:)~'
+            => 'foreach ($items as $item) \1 $this->upgrade()->set_current_record(\'item\', $item);',
+        '~\bendwhile~' => 'endforeach',
+        '~\btotal_results\(\)~' => '$this->api()->search(\'items\', $query)->getTotalResults()',
+    ),
+    'preg_replace_single' => array(
+        '~(' . preg_quote('echo $this->pagination(') . ')~' => $pregReplaceSingle . ' \1',
         '~\bforeach~' => '$this->trigger(\'view.browse.before\'); foreach',
+        '~(?! .*set_current_record.*)(\bforeach.*(?:\{|\:))~' => '\1 $this->upgrade()->set_current_record(\'item\', $item);',
         '~\bendforeach;~' => 'endforeach; $this->trigger(\'view.browse.after\');',
     ),
     'prepend' => $prepend,
@@ -462,10 +544,17 @@ $upgrade['view/omeka/site/item/search.phtml'] = array(
 
 $upgrade['view/omeka/site/item/show.phtml'] = array(
     'preg_replace' => array(
+        '~\bwhile\s*' . preg_quote('$this->upgrade()->fallback(\'loop_files_for_item\',') . '\s*(.*?)\)\s*(\{|\:)~'
+            => '$i = 0; foreach ($item->media() as $media)\2 if (++$i > \1) break; $this->upgrade()->set_current_record(\'media\', $media);',
+        '~\bendwhile~' => 'endforeach',
         '~\b(' . preg_quote('echo $this->upgrade()->all_element_texts') . ')~' => '$this->trigger(\'view.show.before\'); \1',
         '~(' . preg_quote('$this->upgrade()->fire_plugin_hook(\'public_items_show\'') . '.*?\)\;)~' => '$this->trigger(\'view.show.after\');',
     ),
 );
+
+/**
+ * view/omeka/site/item-set.
+ */
 
 $prepend = <<<'OUTPUT'
 <?php
@@ -476,7 +565,7 @@ $prepend = <<<'OUTPUT'
 // TODO Avoid to repeat the query: get the result from the paginator.
 $query = $this->params()->fromQuery();
 unset($query['page']);
-$total_results = $this->api()->search('item-sets', $query)->getTotalResults();
+$total_results = $this->api()->search('item_sets', $query)->getTotalResults();
 ?>
 
 OUTPUT;
@@ -486,11 +575,18 @@ echo $this->searchFilters(); echo $this->hyperlink($this->translate('Advanced se
 OUTPUT;
 
 $upgrade['view/omeka/site/item-set/browse.phtml'] = array(
+    'preg_replace' => array(
+        '~\bwhile\s*' . preg_quote('($this->upgrade()->loop /* TODO Replace by the variable directly. */ ($itemSets)') . '\s*\)\s*(\{|\:)~'
+            => 'foreach ($itemSets as $itemSet)\1 $this->upgrade()->set_current_record(\'itemSet\', $itemSet);',
+        '~\bwhile\s*' . preg_quote('($this->upgrade()->loop($itemSets)') . '\s*\)\s*(\{|\:)~'
+            => 'foreach ($itemSets as $itemSet)\1 $this->upgrade()->set_current_record(\'itemSet\', $itemSet);',
+        '~\bendwhile~' => 'endforeach',
+        '~\btotal_results\(\)~' => '$this->api()->search(\'item_sets\', $query)->getTotalResults()',
+    ),
     'preg_replace_single' => array(
         '~(' . preg_quote('echo $this->pagination(') . ')~' => $replace . ' \1',
-    ),
-    'preg_replace' => array(
         '~\bforeach~' => '$this->trigger(\'view.browse.before\'); foreach',
+        '~(?! .*set_current_record.*)(\bforeach.*(?:\{|\:))~' => '\1 $this->upgrade()->set_current_record(\'itemSet\', $itemSet);',
         '~\bendforeach;~' => 'endforeach; $this->trigger(\'view.browse.after\');',
     ),
     'prepend' => $prepend,
@@ -507,6 +603,11 @@ OUTPUT;
 
 $upgrade['view/omeka/site/item-set/show.phtml'] = array(
     'preg_replace' => array(
+        '~\bwhile\s*' . preg_quote('($this->upgrade()->fallback(\'loop_items_in_collection\',') . '\s*(\d+)\)\s*\)\s*(\{|\:)~'
+            => 'foreach ($this->api()->search(\'items\', [\'item_set_id\' => $itemSet->id(), \'limit\' => \1])->getContent() as $item)\2 $this->upgrade()->set_current_record(\'item\', $item);',
+        '~\bwhile\s*' . preg_quote('($this->upgrade()->loop /* TODO Replace by the variable directly. */ ($items)') . '\s*\)\s*(\{|\:)~'
+            => 'foreach ($items as $item)\2 $this->upgrade()->set_current_record(\'item\', $item);',
+        '~\bendwhile~' => 'endforeach',
         '~\b(' . preg_quote('echo $this->upgrade()->all_element_texts') . ')~' => '$this->trigger(\'view.show.before\'); \1',
         '~(' . preg_quote('$this->upgrade()->fire_plugin_hook(\'public_collections_show\'') . '.*?\)\;)~' => '$this->trigger(\'view.show.after\');',
     ),

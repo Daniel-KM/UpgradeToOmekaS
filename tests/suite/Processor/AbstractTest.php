@@ -113,6 +113,20 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
         $this->assertEquals('site_admin', $result['admin']);
     }
 
+    public function testGetMergedTables()
+    {
+        $processor = $this->getMockForAbstractClass('UpgradeToOmekaS_Processor_Abstract');
+        $result = $processor->getMergedList('tables');
+        $this->assertEquals(27, count($result));
+    }
+
+    public function testGetMergedHooks()
+    {
+        $processor = $this->getMockForAbstractClass('UpgradeToOmekaS_Processor_Abstract');
+        $result = $processor->getMergedList('list_hooks');
+        $this->assertEquals(3, count($result));
+    }
+
     public function filterUpgradeOmekas($processors)
     {
         $processors['AbstractMock'] = get_class($this->_processorMock);

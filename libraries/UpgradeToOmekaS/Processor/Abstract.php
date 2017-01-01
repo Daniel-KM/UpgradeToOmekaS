@@ -98,18 +98,18 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $mapping_theme_files = array();
 
     /**
-     * Mapping of each functions used by themes between Omeka C and Omeka S.
+     * Mapping to replace strings via regex in converted themes of Omeka S.
      *
      * @var array
      */
-    public $mapping_functions = array();
+    public $mapping_regex = array();
 
     /**
-     * Mapping of each variables used by themes between Omeka C and Omeka S.
+     * Mapping to replace strings in converted themes of Omeka S.
      *
      * @var array
      */
-    public $mapping_variables = array();
+    public $mapping_replace = array();
 
     /**
      * List of each hook used by themes in Omeka C.
@@ -117,6 +117,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @var array
      */
     public $list_hooks = array();
+
+    /**
+     * List of each file to upgrade individualy in themes of Omeka S.
+     *
+     * @var array
+     */
+    public $upgrade_files = array();
 
     /**
      * Maximum rows to process by loop.
@@ -280,9 +287,10 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             // Themes.
             'mapping_theme_folders',
             'mapping_theme_files',
-            'mapping_functions',
-            'mapping_variables',
+            'mapping_regex',
+            'mapping_replace',
             'list_hooks',
+            'upgrade_files',
         );
 
         $underscoreName = $this->isCore() ? '' : ('_' . Inflector::underscore($this->pluginName));
@@ -532,10 +540,36 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 if (!isset($processor->$name) || empty($processor->$name)) {
                     continue;
                 }
+                $this->_merged[$name] = $processor->$name + $this->_merged[$name];
+            }
+        }
+        return $this->_merged[$name];
+    }
+
+    /**
+     * Get a specific list of simple string values from all processors.
+     *
+     * @param string $name The name of the values to fetch.
+     * @return array
+     */
+    public function getMergedList($name)
+    {
+        if (empty($name)) {
+            return;
+        }
+        if (!isset($this->_merged[$name])) {
+            $this->_merged[$name] = array();
+            $processors = $this->getProcessors();
+            foreach ($processors as $processor) {
+                if (!isset($processor->$name) || empty($processor->$name)) {
+                    continue;
+                }
                 $this->_merged[$name] = array_merge(
                     $this->_merged[$name],
-                    $processor->$name);
+                    array_values($processor->$name));
             }
+            // Remove duplicates.
+            $this->_merged[$name] = array_values(array_flip(array_flip($this->_merged[$name])));
         }
         return $this->_merged[$name];
     }
@@ -902,7 +936,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         $databaseParams = $this->getParam('database');
         $target->setDatabaseParams($databaseParams);
 
-        $omekasTables = $this->getMerged('tables');
+        $omekasTables = $this->getMergedList('tables');
         $target->setTables($omekasTables);
 
         $target->setIsProcessing($this->isProcessing());
@@ -1206,6 +1240,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     protected function _upgradeFiles()
     {
+        $this->_progress(0, count($this->upgrade_files));
+
+        $i = 0;
+        foreach ($this->upgrade_files as $relativePath => $upgrade) {
+            $this->_progress(++$i);
+            $this->_upgradeFileInThemes($relativePath, $upgrade);
+        }
     }
 
     /**
@@ -1390,6 +1431,109 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
             UpgradeToOmekaS_Common::createDir(dirname($destination));
             $result = file_put_contents($destination, $content);
+        }
+    }
+
+    /**
+     * Helper to prepend and/or append some code after content of a file.
+     *
+     * @param string $relativePath The file should exists to be updated.
+     * @param string $args
+     * @return void
+     */
+    protected function _upgradeFileInThemes($relativePath, $args = array())
+    {
+        $path = $this->getParam('base_dir') . DIRECTORY_SEPARATOR . 'themes';
+
+        $defaultArgs = array(
+            'remove' => false,
+            'comment' => false,
+            'file' => '',
+            'preg_replace' => array(),
+            'preg_replace_single' => array(),
+            'replace' => array(),
+            'prepend' => '',
+            'append' => '',
+        );
+        $args = $args + $defaultArgs;
+
+        $comment = array(
+            '~\*/~' => '*_/',
+            '~^(.+)$~m' => '<?php /* \1 */ ?>',
+        );
+
+        $baseDir = $this->getParam('base_dir');
+
+        $themes = UpgradeToOmekaS_Common::listDirsInDir($path);
+        $defaultKey = array_search('default', $themes);
+        if ($defaultKey !== false) {
+            unset($themes[$defaultKey]);
+        }
+
+        $flag = false;
+        foreach ($themes as $theme) {
+            $destination = $path
+                . DIRECTORY_SEPARATOR . $theme
+                . DIRECTORY_SEPARATOR . $relativePath;
+            $destinationExists = file_exists($destination);
+            $input = $destinationExists
+                ? file_get_contents($destination)
+                : '';
+            if ($args['remove']) {
+                $input = '';
+            }
+            if ($args['comment']) {
+                $input = preg_replace(
+                    array_keys($comment),
+                    array_values($comment),
+                    $input);
+            }
+            if ($args['file']) {
+                $file = $baseDir . DIRECTORY_SEPARATOR . $args['file'];
+                if (file_exists($file)) {
+                    $input .= PHP_EOL
+                        . '<?php // ' . __('Included from "%s".', $args['file']) . ' ?>' . PHP_EOL
+                        . '<?php // ' . __('Remove this file if not customized.') . ' ?>' . PHP_EOL
+                        . PHP_EOL
+                        . file_get_contents($file);
+                }
+            }
+            if (!empty($args['preg_replace'])) {
+                $emptyInput = empty($input);
+                $input = preg_replace(
+                    array_keys($args['preg_replace']),
+                    array_values($args['preg_replace']),
+                    $input);
+                if (!$emptyInput && empty($input)) {
+                    $flag = true;
+                }
+            }
+            if (!empty($args['preg_replace_single'])) {
+                $emptyInput = empty($input);
+                $input = preg_replace(
+                    array_keys($args['preg_replace_single']),
+                    array_values($args['preg_replace_single']),
+                    $input,
+                    1);
+                if (!$emptyInput && empty($input)) {
+                    $flag = true;
+                }
+            }
+            if (!empty($args['replace'])) {
+                $input = str_replace(
+                    array_keys($args['replace']),
+                    array_values($args['replace']),
+                    $input);
+            }
+            $output = $args['prepend'] . $input . $args['append'];
+            if (!(empty($output) && !$destinationExists)) {
+                $result = file_put_contents($destination, $output);
+            }
+        }
+
+        if ($flag) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('There is probably an error in the regex used for each file, because there is no output.'),
+                Zend_Log::WARN);
         }
     }
 }

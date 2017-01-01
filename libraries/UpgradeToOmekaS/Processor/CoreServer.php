@@ -409,7 +409,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
                 }
 
                 // Check conflicts of table names.
-                $tablesOmekas = $this->getMerged('tables');
+                $tablesOmekas = $this->getMergedList('tables');
                 if (array_intersect($result, $tablesOmekas)) {
                     $this->_checks[] = __('Some names of tables of Omeka S or its modules are existing in the database of Omeka Classic.');
                 }
