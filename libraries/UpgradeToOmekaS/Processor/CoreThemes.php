@@ -43,6 +43,7 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         '_upgradeThemesParams',
         '_upgradeThemes',
         '_upgradeFunctionsAndVariables',
+        '_upgradeHooks',
     );
 
     /**
@@ -74,6 +75,13 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
     // public $mapping_variables = array();
 
     /**
+     * Initialized during init via libraries/data/list_hooks.php.
+     *
+     * @var array
+     */
+    // public $list_hooks = array();
+
+    /**
      * Store the translated files from Omeka C to Omeka S.
      *
      * @var array
@@ -101,6 +109,10 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             $script = $dataDir
                 . DIRECTORY_SEPARATOR . 'mapping_variables.php';
             $this->mapping_variables = require $script;
+
+            $script = $dataDir
+                . DIRECTORY_SEPARATOR . 'list_hooks.php';
+            $this->list_hooks = require $script;
         }
 
     /**
@@ -759,8 +771,8 @@ OUTPUT;
                 'gulpfile.js',
                 // "helper/ThemeHelperOne.php" is an example.
                 'helper' . DIRECTORY_SEPARATOR . 'ThemeHelperOne.php',
-                'view' . DIRECTORY_SEPARATOR . 'layout'
-                    . DIRECTORY_SEPARATOR . 'layout.phtml',
+                // 'view' . DIRECTORY_SEPARATOR . 'layout'
+                //     . DIRECTORY_SEPARATOR . 'layout.phtml',
             ) as $filepath) {
             $destination = $path
                 . DIRECTORY_SEPARATOR . $filepath;
@@ -771,6 +783,38 @@ OUTPUT;
                 $result = UpgradeToOmekaS_Common::createDir(dirname($destination));
                 $result = copy($source, $destination);
             }
+        }
+
+        // Create a default "layout.phtml".
+        $destination = $path
+            . DIRECTORY_SEPARATOR . 'view'
+            . DIRECTORY_SEPARATOR . 'layout'
+            . DIRECTORY_SEPARATOR . 'layout.phtml';
+        if (!file_exists($destination)) {
+            $output = <<<OUTPUT
+<?php
+/**
+ * Theme "{$name}" of Omeka Classic upgraded on {$this->getDatetime()}.
+ *
+ * @link https://github.com/Daniel-KM/UpgradeToOmekaS
+ * @link https://github.com/Daniel-KM/UpgradeFromOmekaClassic
+ */
+
+// See the original "layout.phtml" files to rewrite this and to separate header,
+// content and footer.
+// - default theme: themes/default/view/layout/layout.phtml
+// - shared theme: application/view-shared/layout/layout.phtml
+// - admin theme: application/view-admin/layout/layout.phtml
+//
+// The content of the output of each managed hook is saved in each "view/hook/".
+\$this->trigger('view.layout');
+echo \$this->content;
+?>
+
+OUTPUT;
+
+            UpgradeToOmekaS_Common::createDir(dirname($destination));
+            $result = file_put_contents($destination, $output);
         }
     }
 
@@ -995,5 +1039,131 @@ OUTPUT;
             return '';
         }
         return $output;
+    }
+
+    protected function _upgradeHooks()
+    {
+        $hooks = $this->getMerged('list_hooks');
+        foreach ($hooks as $hook) {
+            $method = '_upgradeHook' . inflector::camelize($hook);
+            $name;
+            if (!method_exists($this, $method)) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('Method "%s" for hook "%s" doesn’t exist.', $method, $hook));
+            }
+            $this->$method();
+        }
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('A total of %d hooks have been upgraded.',
+            count($hooks)), Zend_Log::INFO);
+    }
+
+    protected function _upgradeHookPublicHead()
+    {
+        $hookName = 'public_head';
+        $relativePath = 'view'
+            . DIRECTORY_SEPARATOR . 'omeka'
+            . DIRECTORY_SEPARATOR . 'hook'
+            . DIRECTORY_SEPARATOR . $hookName . '.phtml';
+
+        // $args = array('view' => null);
+        // $output = $this->_upgradeGetOutputHook($hookName, $args);
+        $output = '';
+
+        // The default js are added here to avoid issues with the order of js.
+        $output = <<<'OUTPUT'
+<?php // TODO Use only css and js assets of Omeka S (jquery and jqueryUI). ?>
+<?php // From Omeka Semantic. ?>
+<?php $this->headLink()->prependStylesheet($this->assetUrl('css/style.css')); ?>
+<?php $this->headLink()->prependStylesheet($this->assetUrl('css/iconfonts.css', 'Omeka')); ?>
+<?php // $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,700italic,700'); ?>
+<?php $this->headScript()->prependFile($this->assetUrl('js/jquery.js', 'Omeka')); ?>
+<?php // From Omeka Classic. ?>
+
+OUTPUT;
+
+        set_theme_base_url('public');
+        $helper = new Zend_View_Helper_HeadScript();
+        $helper->prependScript('jQuery.noConflict();')
+            ->prependScript('window.jQuery.ui || document.write(' . js_escape(js_tag('vendor/jquery-ui')) . ')')
+            ->prependFile('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js')
+            ->prependScript('window.jQuery || document.write(' . js_escape(js_tag('vendor/jquery')) . ')')
+            ->prependFile('//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js');
+        $outputPublicHead = $helper->headScript();
+        revert_theme_base_url();
+        $this->_outputPublicHead = $outputPublicHead;
+        $output .= $this->_outputPublicHead;
+
+        $this->_upgradeSaveContentInThemes($relativePath, $output);
+    }
+
+    protected function _upgradeHookHeadCss()
+    {
+        $hookName = 'head_css';
+        $relativePath = 'view'
+            . DIRECTORY_SEPARATOR . 'omeka'
+            . DIRECTORY_SEPARATOR . 'hook'
+            . DIRECTORY_SEPARATOR . $hookName . '.phtml';
+
+        // TODO Avoid to include the links of the plugins.
+        $output = <<<OUTPUT
+<?php
+// TODO Remove links of the plugins.
+?>
+
+OUTPUT;
+
+        // Add the output of head_css().
+        set_theme_base_url('public');
+        $helper = new Zend_View_Helper_HeadLink();
+        $output .= $helper->headLink();
+        $helper = new Zend_View_Helper_HeadStyle();
+        $output .= $helper->headStyle();
+        revert_theme_base_url();
+
+        $output .= <<<'OUTPUT'
+<?php echo $this->headLink(); ?>
+<?php echo $this->headStyle(); ?>
+
+OUTPUT;
+
+        $this->_upgradeSaveContentInThemes($relativePath, $output);
+    }
+
+    protected function _upgradeHookHeadJs()
+    {
+        $hookName = 'head_js';
+        $relativePath = 'view'
+            . DIRECTORY_SEPARATOR . 'omeka'
+            . DIRECTORY_SEPARATOR . 'hook'
+            . DIRECTORY_SEPARATOR . $hookName . '.phtml';
+
+        // TODO Avoid to include the links of the plugins.
+        $output = <<<OUTPUT
+<?php
+// TODO Remove links of the plugins.
+// TODO Use js assets of Omeka S (jquery and jqueryUI).
+?>
+
+OUTPUT;
+
+        set_theme_base_url('public');
+        $helper = new Zend_View_Helper_HeadScript();
+        // Default js are included during the hook "public_head".
+        $outputHeadJs = $helper->headScript();
+        revert_theme_base_url();
+
+        if (trim($outputHeadJs) == trim($this->_outputPublicHead)) {
+            $outputHeadJs = '';
+        }
+        $this->_outputPublicHead = '';
+        $output .= $outputHeadJs;
+
+        $output .= <<<'OUTPUT'
+<?php echo $this->headScript(); ?>
+
+OUTPUT;
+
+        $this->_upgradeSaveContentInThemes($relativePath, $output);
     }
 }

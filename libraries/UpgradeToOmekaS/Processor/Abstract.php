@@ -112,6 +112,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $mapping_variables = array();
 
     /**
+     * List of each hook used by themes in Omeka C.
+     *
+     * @var array
+     */
+    public $list_hooks = array();
+
+    /**
      * Maximum rows to process by loop.
      *
      * @var integer
@@ -369,6 +376,45 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             return $processors[$name];
         }
     }
+
+    /**
+     * Get the list of name of current processors.
+     *
+     * @return array
+     */
+    public function getProcessorNames()
+    {
+        static $processorNames;
+
+        if (is_null($processorNames)) {
+            $processors = $this->getProcessors();
+            $processorNames = array_keys($processors);
+        }
+
+        return $processorNames;
+    }
+
+    /**
+     * Get the list of name of current processors for plugins.
+     *
+     * @return array
+     */
+    public function getPluginNames()
+    {
+        static $pluginNames;
+
+        if (is_null($pluginNames)) {
+            $processors = $this->getProcessors();
+            $pluginNames = array();
+            foreach ($processors as $processor) {
+                if (!$processor->isCore()) {
+                    $pluginNames[] = $processor->pluginName;
+                }
+            }
+        }
+        return $pluginNames;
+    }
+
 
     /**
      * Set the datetime.
@@ -669,6 +715,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
             // Missing method.
             if (!method_exists($this, $method)) {
+                // Avoid a issue when there is a bug during process of themes.
+                revert_theme_base_url();
                 throw new UpgradeToOmekaS_Exception(
                     $baseMessage . __('Method "%s" does not exist.', $method));
             }
@@ -686,6 +734,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                     throw new UpgradeToOmekaS_Exception($result);
                 }
             } catch (Exception $e) {
+                // Avoid a issue when there is a bug during process of themes.
+                revert_theme_base_url();
                 throw new UpgradeToOmekaS_Exception($baseMessage . $e->getMessage());
             }
             $this->_log($baseMessage . __('Ended.'), Zend_Log::DEBUG);
@@ -1236,5 +1286,75 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         return json_encode(
             $value,
             JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
+    /* Methods for the theme conversion, to be refactored. */
+
+    /**
+     * Helper to get the output of a hook for upgraded plugicn.
+     *
+     * @internal The output of the upgraded plugins is useless, because they are
+     * upgraded.
+     *
+     * @param unknown $hookName
+     * @param unknown $args
+     */
+    protected function _upgradeGetOutputHook($hookName, $args)
+    {
+        set_theme_base_url('public');
+
+        // Anyway, the process is done in the background.
+        if (isset($args['view'])) {
+            try {
+                $view = get_view();
+            } catch (Exception $e) {
+            }
+            $args['view'] = is_object($view) ? $view : new Zend_View();
+        }
+
+        // The output is processed one by one, because only upgraded plugin
+        // should be fired. See get_specific_plugin_hook_output().
+        $pluginNames = $this->getPluginNames();
+
+        $output = '';
+        foreach ($pluginNames as $pluginName) {
+            try {
+                $output .= get_specific_plugin_hook_output($pluginName, $hookName, $args);
+            } catch (Exception $e) {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The hook "%s" threw an exception when fired for the plugin "%s".',
+                    $hookName, $pluginName), Zend_Log::WARN);
+            }
+        }
+
+        revert_theme_base_url();
+
+        return $output;
+    }
+
+    /**
+     * Helper to create a file or to replace it content.
+     *
+     * @param string $relativePath The file may not exist.
+     * @param string $content
+     * @return void
+     */
+    protected function _upgradeSaveContentInThemes($relativePath, $content)
+    {
+        $path = $this->getParam('base_dir')
+            . DIRECTORY_SEPARATOR . 'themes';
+
+        $themes = UpgradeToOmekaS_Common::listDirsInDir($path);
+        $defaultKey = array_search('default', $themes);
+        if ($defaultKey !== false) {
+            unset($themes[$defaultKey]);
+        }
+        foreach ($themes as $theme) {
+            $destination = $path
+            . DIRECTORY_SEPARATOR . $theme
+            . DIRECTORY_SEPARATOR . $relativePath;
+
+            UpgradeToOmekaS_Common::createDir(dirname($destination));
+            $result = file_put_contents($destination, $content);
+        }
     }
 }
