@@ -908,7 +908,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // imports rdf vocabularies in application/data/vocabularies).
         $script = dirname(dirname(dirname(dirname(__FILE__))))
             . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'scripts'
+            . DIRECTORY_SEPARATOR . 'data'
             . DIRECTORY_SEPARATOR . 'rdf_vocabularies.sql';
         $sql = file_get_contents($script);
         $result = $targetDb->prepare($sql)->execute();
@@ -923,7 +923,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // Same note than vocabularies above.
         $script = dirname(dirname(dirname(dirname(__FILE__))))
             . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'scripts'
+            . DIRECTORY_SEPARATOR . 'data'
             . DIRECTORY_SEPARATOR . 'default_templates.sql';
         $sql = file_get_contents($script);
         $result = $targetDb->prepare($sql)->execute();
