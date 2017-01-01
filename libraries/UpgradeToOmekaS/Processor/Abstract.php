@@ -572,7 +572,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Process the true import.
+     * Process the true upgrade.
      *
      * @todo Move this in the job processor.
      *

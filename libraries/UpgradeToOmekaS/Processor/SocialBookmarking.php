@@ -62,7 +62,7 @@ class UpgradeToOmekaS_Processor_SocialBookmarking extends UpgradeToOmekaS_Proces
         $totalSbServices = count($sbServices);
         $totalExistingServices = count($existingServices);
         if ($totalSbServices > $totalExistingServices) {
-            $message = __('Some services (%d) have not been imported.',
+            $message = __('Some services (%d) have not been upgraded.',
                 $totalSbServices - $totalExistingServices);
             $this->_log('[' . __FUNCTION__ . ']: ' . $message,
                 Zend_Log::NOTICE);

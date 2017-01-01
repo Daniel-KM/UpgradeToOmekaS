@@ -167,7 +167,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
         $form->reset();
 
-        $this->_launchProcess();
+        $this->_launchUpgradeProcess();
         $this->_helper->redirector->goto('logs');
     }
 
@@ -176,7 +176,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      *
      * @return void
      */
-    protected function _launchProcess()
+    protected function _launchUpgradeProcess()
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_STARTING);
 
@@ -206,8 +206,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             // The current user will be the global administrator.
             'user' => current_user(),
         );
-        $jobDispatcher->setQueueName(UpgradeToOmekaS_Job_Process::QUEUE_NAME);
-        $jobDispatcher->sendLongRunning('UpgradeToOmekaS_Job_Process', $options);
+        $jobDispatcher->setQueueName(UpgradeToOmekaS_Job_Upgrade::QUEUE_NAME);
+        $jobDispatcher->sendLongRunning('UpgradeToOmekaS_Job_Upgrade', $options);
         $message = __('The upgrade process is launched.')
             . ' ' . __('This may take a while.');
         $this->_helper->flashMessenger($message, 'success');

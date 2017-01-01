@@ -437,7 +437,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_convertLocalConfig'));
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeLocalConfig'));
         $result = $processor->process();
 
         $localConfigPhp = $processor->getFullPath('config/local.config.php');
@@ -447,7 +447,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         // $this->assertContains('fr_QC', $localConfig);
     }
 
-    public function testImportUsers()
+    public function testUpgradeUsers()
     {
         $user = new User;
         $user->name = 'foo';
@@ -460,7 +460,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers'));
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers'));
         $result = $processor->process();
 
         $targetDb = $processor->getTargetDb();
@@ -478,7 +478,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers'));
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers'));
         $result = $processor->process();
         $targetDb = $processor->getTargetDb();
 
@@ -495,13 +495,13 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         }
     }
 
-    public function testImportSite()
+    public function testUpgradeSite()
     {
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
-            '_importSite'));
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
+            '_upgradeSite'));
         $result = $processor->process();
 
         $targetDb = $processor->getTargetDb();
@@ -539,15 +539,15 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         return $nav;
     }
 
-    public function testImportSiteNavigationMain()
+    public function testUpgradeSiteNavigationMain()
     {
         add_filter('public_navigation_main', array($this, 'hookPublicNavigationMain'));
 
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
-            '_importSite'));
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
+            '_upgradeSite'));
         $result = $processor->process();
         $targetDb = $processor->getTargetDb();
         $slug = $processor->getSiteSlug();
@@ -566,23 +566,23 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals('https://example.org/path/to/bar?a=z&b=y#', $nav[4]['data']['url']);
     }
 
-    public function testImportItemTypes()
+    public function testUpgradeItemTypes()
     {
         $this->markTestIncomplete();
     }
 
-    public function testImportElements()
+    public function testUpgradeElements()
     {
         $this->markTestIncomplete();
     }
 
-    public function testImportItems()
+    public function testUpgradeItems()
     {
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
-            '_importItems'));
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
+            '_upgradeItems'));
         $result = $processor->process();
         $targetDb = $processor->getTargetDb();
 
@@ -600,7 +600,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_createItemSetForSite'));
         $result = $processor->process();
         $targetDb = $processor->getTargetDb();
@@ -654,13 +654,13 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals($properties, $result[5]);
     }
 
-    public function testImportCollections()
+    public function testUpgradeCollections()
     {
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
-                '_importCollections'));
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
+                '_upgradeCollections'));
         $result = $processor->process();
         $targetDb = $processor->getTargetDb();
 
@@ -672,7 +672,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals($totalRecords, $result);
     }
 
-    public function testImportItemsCollections()
+    public function testUpgradeItemsCollections()
     {
         $this->_checkDownloadedOmekaS();
 
@@ -731,8 +731,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
-                '_importItems', '_importCollections', '_setCollectionsOfItems'));
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
+                '_upgradeItems', '_upgradeCollections', '_setCollectionsOfItems'));
         $result = $processor->process();
         $targetDb = $processor->getTargetDb();
 
@@ -769,7 +769,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals($itemSet2, $result[0]['item_set_id']);
     }
 
-    public function testImportMetadata()
+    public function testUpgradeMetadata()
     {
         $this->_checkDownloadedOmekaS();
 
@@ -834,8 +834,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
-            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
-                '_importItems', '_importCollections', '_setCollectionsOfItems', '_importMetadata'));
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
+                '_upgradeItems', '_upgradeCollections', '_setCollectionsOfItems', '_upgradeMetadata'));
         $result = $processor->process();
         $targetDb = $processor->getTargetDb();
 

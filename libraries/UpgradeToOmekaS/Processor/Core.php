@@ -61,20 +61,20 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         '_unzipOmekaS',
         '_configOmekaS',
         '_installOmekaS',
-        '_convertLocalConfig',
+        '_upgradeLocalConfig',
 
         // Database.
-        '_importUsers',
-        '_importSite',
-        '_importItemTypes',
-        '_importElements',
-        // Items are imported before collections in order to keep their ids.
-        '_importItems',
+        '_upgradeUsers',
+        '_upgradeSite',
+        '_upgradeItemTypes',
+        '_upgradeElements',
+        // Items are upgraded before collections in order to keep their ids.
+        '_upgradeItems',
         '_createItemSetForSite',
-        '_importCollections',
+        '_upgradeCollections',
         '_setCollectionsOfItems',
-        '_importFiles',
-        '_importMetadata',
+        '_upgradeFiles',
+        '_upgradeMetadata',
 
         // Files.
         '_copyFiles',
@@ -493,7 +493,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
         $unmanagedUsers = $table->fetchPairs($select);
         if ($unmanagedUsers) {
-            $this->_prechecks[] = __('Some users (%d/%d) have an unmanaged role ("%s") and can’t be imported.',
+            $this->_prechecks[] = __('Some users (%d/%d) have an unmanaged role ("%s") and can’t be upgraded.',
                 count($unmanagedUsers), $totalRecords, implode('", "', array_unique($unmanagedUsers)))
                 . ' ' . __('This precheck can be bypassed via security.ini.');
         }
@@ -1053,7 +1053,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::INFO);
     }
 
-    protected function _convertLocalConfig()
+    protected function _upgradeLocalConfig()
     {
         // Convert config.ini into local.config.php with reasonable assertions.
         $config = Zend_Registry::get('bootstrap')->config;
@@ -1330,7 +1330,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             . ' ' . __('Check if you modified them.'), Zend_Log::NOTICE);
     }
 
-    protected function _importUsers()
+    protected function _upgradeUsers()
     {
         $recordType = 'User';
         $db = $this->_db;
@@ -1343,9 +1343,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // Check if there are already records.
         $totalExisting = $this->countTargetTable('user');
         if ($totalExisting) {
-            // TODO Allow to import without ids (need a temp mapping of source and destination ids)?
+            // TODO Allow to upgrade without ids (need a temp mapping of source and destination ids)?
             throw new UpgradeToOmekaS_Exception(
-                __('Some users(%d) have been imported, so ids won’t be kept.',
+                __('Some users(%d) have been upgraded, so ids won’t be kept.',
                     $totalExisting)
                 . ' ' . __('Check the processors of the plugins.'));
         }
@@ -1369,7 +1369,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             }
             $this->_mappingIds[$recordType][$user->id] = $id;
 
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('No user to import: only the global administrator has been created from the current user.'),
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('No user to upgrade: only the global administrator has been created from the current user.'),
                 Zend_Log::WARN);
         }
         // There is one or more users, at least the current one.
@@ -1423,14 +1423,14 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             }
 
             $totalUnmanaged = array_sum($unmanagedRoles);
-            $totalImported = $totalRecords - $totalUnmanaged;
+            $totalUpgraded = $totalRecords - $totalUnmanaged;
             if ($totalUnmanaged) {
                 // Plural needs v2.3.1.
                 $unknownRolesString = implode('", "', array_keys($unmanagedRoles));
                 $message = function_exists('plural')
-                    ? __(plural('%d user not imported (role: "%s").', '%d users not imported (roles: "%s").',
+                    ? __(plural('%d user not upgraded (role: "%s").', '%d users not upgraded (roles: "%s").',
                         $totalUnmanaged), $totalUnmanaged, $unknownRolesString)
-                    : __('%d users not imported (roles: "%s").', $totalUnmanaged, $unknownRolesString);
+                    : __('%d users not upgraded (roles: "%s").', $totalUnmanaged, $unknownRolesString);
                 $this->_log('[' . __FUNCTION__ . ']: ' . $message,
                     Zend_Log::WARN);
             }
@@ -1445,8 +1445,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             }
             // Plural needs v2.3.1.
             $message = function_exists('plural')
-                ? __(plural('%d user imported.', '%d users imported.', $totalImported), $totalImported)
-                : __('%d users imported.', $totalImported);
+                ? __(plural('%d user upgraded.', '%d users upgraded.', $totalUpgraded), $totalUpgraded)
+                : __('%d users upgraded.', $totalUpgraded);
             $this->_log('[' . __FUNCTION__ . ']: ' . $message,
                 Zend_Log::NOTICE);
         }
@@ -1465,7 +1465,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::NOTICE);
     }
 
-    protected function _importSite()
+    protected function _upgradeSite()
     {
         // Settings of Omeka Classic: create the first site.
         $db = $this->_db;
@@ -1506,7 +1506,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         $totalVisibleLinks = $this->_countNavigationPages(true);
         if ($totalVisibleLinks) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('%d navigation links have been imported.',
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('%d navigation links have been upgraded.',
                 $totalVisibleLinks), Zend_Log::INFO);
         }
         $totalInvisibleLinks = $this->_countNavigationPages(false);
@@ -1514,10 +1514,10 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             // Plural needs v2.3.1.
             $message = function_exists('plural')
                 ? __(plural(
-                    'Omeka S doesn’t allow to hide/show navigation links, so %d link has not been imported.',
-                    'Omeka S doesn’t allow to hide/show navigation links, so %d links have not been imported.',
+                    'Omeka S doesn’t allow to hide/show navigation links, so %d link has not been upgraded.',
+                    'Omeka S doesn’t allow to hide/show navigation links, so %d links have not been upgraded.',
                     $totalInvisibleLinks), $totalInvisibleLinks)
-                : __('Omeka S doesn’t allow to hide/show navigation links, so %d links have not been imported.',
+                : __('Omeka S doesn’t allow to hide/show navigation links, so %d links have not been upgraded.',
                     $totalInvisibleLinks);
             $this->_log('[' . __FUNCTION__ . ']: ' . $message,
                 Zend_Log::NOTICE);
@@ -1567,7 +1567,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::INFO);
     }
 
-    protected function _importItemTypes()
+    protected function _upgradeItemTypes()
     {
         $customItemTypes = $this->_getCustomItemTypes();
         $message = '[' . __FUNCTION__ . ']: '
@@ -1597,9 +1597,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 return $v->name;
             }, $unmappedItemTypes));
             $this->_log($message . (count($unmappedItemTypes) <= 1
-                ? __('One used item type ("%s") is not mapped and won’t be imported.',
+                ? __('One used item type ("%s") is not mapped and won’t be upgraded.',
                     $list)
-                : __('%d used item types ("%s") are not mapped and won’t be imported.',
+                : __('%d used item types ("%s") are not mapped and won’t be upgraded.',
                     count($unmappedItemTypes), $list)),
                 Zend_Log::WARN);
         }
@@ -1614,7 +1614,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // TODO The resource templates can contains only the truly used elements.
     }
 
-    protected function _importElements()
+    protected function _upgradeElements()
     {
         $unmappedElements = $this->_getUnmappedElements();
         $message = '[' . __FUNCTION__ . ']: '
@@ -1628,9 +1628,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     . ':' . $v->name;
             }, $unmappedElements));
             $this->_log($message . (count($unmappedElements) <= 1
-                    ? __('One used element ("%s") is not mapped and won’t be imported.',
+                    ? __('One used element ("%s") is not mapped and won’t be upgraded.',
                         $list)
-                    : __('%d used elements ("%s") are not mapped and won’t be imported.',
+                    : __('%d used elements ("%s") are not mapped and won’t be upgraded.',
                         count($unmappedElements), $list)),
                 Zend_Log::WARN);
         }
@@ -1644,12 +1644,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // TODO Allow to create properties in a custom ontology, or list more than the default ones.
     }
 
-    protected function _importItems()
+    protected function _upgradeItems()
     {
-        // Because items are the first resource imported, their ids are kept.
-        // This implies that files are imported separately and that the
+        // Because items are the first resource upgraded, their ids are kept.
+        // This implies that files are upgraded separately and that the
         // collection id of all items are set in a second step.
-        $this->_importRecords('Item');
+        $this->_upgradeRecords('Item');
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The record status "Featured" doesn’t exist in Omeka S.'),
             Zend_Log::INFO);
@@ -1739,9 +1739,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::INFO);
     }
 
-    protected function _importCollections()
+    protected function _upgradeCollections()
     {
-        $this->_importRecords('Collection');
+        $this->_upgradeRecords('Collection');
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The status "Is Open" has been added to item sets.'),
             Zend_Log::INFO);
@@ -1829,22 +1829,22 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::INFO);
     }
 
-    protected function _importFiles()
+    protected function _upgradeFiles()
     {
-        $this->_importRecords('File');
+        $this->_upgradeRecords('File');
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, each attached files can be hidden/shown separately.'),
             Zend_Log::INFO);
     }
 
     /**
-     * Helper to import standard records of Omeka C (items, collections, files).
+     * Helper to upgrade standard records of Omeka C (items, collections, files).
      *
      * @param string $recordType
      * @throws UpgradeToOmekaS_Exception
      * @return void
      */
-    protected function _importRecords($recordType)
+    protected function _upgradeRecords($recordType)
     {
         if (!isset($this->_mappingRecordTypes[$recordType])) {
             return;
@@ -1857,7 +1857,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         $totalRecords = total_records($recordType);
         if (empty($totalRecords)) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('No %s to import.',
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('No %s to upgrade.',
                 $recordTypeSingular), Zend_Log::INFO);
             return;
         }
@@ -1892,9 +1892,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 // Check if there are already records.
                 $totalExisting = $this->countTargetTable('resource');
                 if ($totalExisting) {
-                    // TODO Allow to import without ids (need the last inserted id and a temp mapping of source and destination ids)?
+                    // TODO Allow to upgrade without ids (need the last inserted id and a temp mapping of source and destination ids)?
                     throw new UpgradeToOmekaS_Exception(
-                        __('Some items (%d) have been imported, so ids won’t be kept.',
+                        __('Some items (%d) have been upgraded, so ids won’t be kept.',
                             $totalExisting)
                         . ' ' . __('Check the processors of the plugins.'));
                 }
@@ -2044,7 +2044,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         if (in_array($recordType, array('Item', 'Collection'))) {
             // The roles are checked, because at this point, all users were
-            // imported according to the role and there is no option to set a
+            // upgraded according to the role and there is no option to set a
             // default role to the users without an existing role.
             $lostOwners = $this->countRecordsWithoutOwner($recordType, 'owner_id', true);
             if ($lostOwners) {
@@ -2126,7 +2126,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $this->_mappingIds[$recordType] += array_combine($remapIds, $result);
     }
 
-    protected function _importMetadata()
+    protected function _upgradeMetadata()
     {
         $recordType = 'ElementText';
 
@@ -2221,7 +2221,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
 
         if ($totalRecordsUnmapped) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('%d metadata with not mapped elements were not imported.',
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('%d metadata with not mapped elements were not upgraded.',
                 $totalRecordsUnmapped), Zend_Log::WARN);
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The other %d metadata have been upgraded as "%s".',
                 $totalRecordsMapped, $mappedType), Zend_Log::INFO);
@@ -2744,12 +2744,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     /**
      * Helper to get the count of lost owners for a record type.
      *
-     * The user may be removed or not importable (no role).
+     * The user may be removed or not upgradable (no role).
      *
      * @param string $recordType
      * @param string $columnName
      * @param boolean $checkRoles Check only for records whose owner has an
-     * role importable in Omeka S.
+     * role upgradable in Omeka S.
      * @return integer
      */
     public function countRecordsWithoutOwner($recordType, $columnName = 'owner_id', $checkRoles = false)

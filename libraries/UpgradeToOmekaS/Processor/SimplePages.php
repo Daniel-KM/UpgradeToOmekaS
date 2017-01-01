@@ -26,7 +26,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
 
         $totalRecords = total_records($recordType);
         if (empty($totalRecords)) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('No simple page to import.'),
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('No simple page to upgrade.'),
                 Zend_Log::INFO);
             return;
         }
@@ -46,7 +46,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
         $totalExisting = $this->countTargetTable('site_page');
         $previousRecordsExists = (boolean) $totalExisting;
         if ($previousRecordsExists) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('Some simple pages (%d) have been imported, so ids will change and the main menu should be checked.',
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('Some simple pages (%d) have been upgraded, so ids will change and the main menu should be checked.',
                 $totalExisting), Zend_Log::INFO);
         }
 
@@ -94,7 +94,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
             $this->_insertRowsInTables($toInserts);
         }
 
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('All simple pages (%d) have been imported.',
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('All simple pages (%d) have been upgraded.',
             $totalRecords), Zend_Log::INFO);
         $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, the pages can be hidden or shown via the navigation menu.')
                 . ' ' . __('Furthermore, shortcodes are not available.'),

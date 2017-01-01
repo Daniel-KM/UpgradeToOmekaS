@@ -464,7 +464,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 . ' ' . __('So, %sused%s elements of Omeka C should be mapped to the %d properties of these vocabularies.',
                     '<em>', '</em>', 184)
                 . ' ' . __('The preset is the one used by the module Omeka2Importer.')
-                . ' ' . __('Elements that are not mapped won’t be imported.')
+                . ' ' . __('Elements that are not mapped won’t be upgraded.')
                 . '<br />' . __('Currently, no new vocabulary can be added during the upgrade process.')
                 . '<br /><br /><button id="display-mapped-elements" class="green button" name="display-mapped-elements" type="button" value="show">' . __('Hide/show mapped elements'). '</button>';
         }

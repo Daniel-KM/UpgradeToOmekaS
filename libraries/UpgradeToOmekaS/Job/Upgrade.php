@@ -1,20 +1,20 @@
 <?php
 
 /**
- * UpgradeToOmekaS_Job_Process class
+ * UpgradeToOmekaS_Job_Upgrade class
  *
  * @todo Manage status via the main process object, not via an internal option.
  *
  * @package UpgradeToOmekaS
  */
-class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
+class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
 {
     const QUEUE_NAME = 'upgrade_to_omeka_s';
 
     protected $_params;
 
     /**
-     * Performs the import task.
+     * Performs the upgrade task.
      */
     public function perform()
     {
