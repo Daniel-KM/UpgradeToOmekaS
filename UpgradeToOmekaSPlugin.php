@@ -142,11 +142,12 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
         $baseProcessors['Core'] = 'UpgradeToOmekaS_Processor_Core';
 
         // Integrated plugins.
+        // The first plugin to convert in order to keep ids and navigation.
+        $baseProcessors['SimplePages'] = 'UpgradeToOmekaS_Processor_SimplePages';
         // $processors['Dropbox'] = 'UpgradeToOmekaS_Processor_Dropbox';
         // $processors['ExhibitBuilder'] = 'UpgradeToOmekaS_Processor_ExhibitBuilder';
         // $processors['ItemRelations'] = 'UpgradeToOmekaS_Processor_ItemRelations';
         $processors['MoreUserRoles'] = 'UpgradeToOmekaS_Processor_MoreUserRoles';
-        $processors['SimplePages'] = 'UpgradeToOmekaS_Processor_SimplePages';
 
         // Upgraded or equivalent plugins in Omeka S.
         // $processors['CsvImport'] = 'UpgradeToOmekaS_Processor_CsvImport';

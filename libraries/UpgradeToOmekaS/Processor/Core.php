@@ -1451,9 +1451,40 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The conversion of the navigation is currently partial and some false links may exist.',
             $totalInvisibleLinks), Zend_Log::INFO);
 
-        // TODO Keep these values inside a block of a page?
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('The "author", the "description" and the "copyright" of the site are not managed by Omeka S.'),
-            Zend_Log::NOTICE);
+        // Check if SimplePages is active to add the default page or not.
+        $processors = $this->getProcessors();
+        if (!isset($processors['SimplePages'])) {
+            $title = __('Welcome');
+            $slug = $this->_slugify($title);
+            $record = array();
+            $record['id'] = 1;
+            $record['site_id'] = 1;
+            $record['slug'] = substr($slug, 0, 190);
+            $record['title'] = substr($title, 0, 190);
+            $record['created'] = $this->getDatetime();
+            $result = $targetDb->insert('site_page', $record);
+
+            $data = array(
+                'html' => __('Welcome to your new site. This is an example page.')
+                    . '<p>' . get_option('description') . '</p>'
+                    . '<p>' . __('Author: %s', get_option('author')) . '</p>'
+                    . '<p>' . __('Copyright: %s', get_option('copyright')) . '</p>',
+            );
+            $record = array();
+            $record['page_id'] = 1;
+            $record['layout'] = 'html';
+            $record['data'] = $this->_toJson($data);
+            $record['position'] = 1;
+            $result = $targetDb->insert('site_page_block', $record);
+
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The "author", the "description" and the "copyright" of the site are not managed by Omeka S and have been moved to a page.'),
+                Zend_Log::INFO);
+        }
+        // TODO Keep these values inside a page in all cases (and keep ids)?
+        else {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The "author", the "description" and the "copyright" of the site are not managed by Omeka S.'),
+                Zend_Log::NOTICE);
+        }
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The first site has been created.'),
             Zend_Log::INFO);
