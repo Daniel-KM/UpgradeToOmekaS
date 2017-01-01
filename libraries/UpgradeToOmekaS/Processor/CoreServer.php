@@ -121,6 +121,9 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         if (!$this->isProcessing()) {
             $this->_precheckJobs();
         }
+        if ($settings->precheck->symlinks) {
+            $this->_precheckSymlinks();
+        }
     }
 
     protected function _checkConfig()
@@ -257,6 +260,23 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
                     $totalRunningJobs), $totalRunningJobs)
                 : __('%d jobs are running.', $totalRunningJobs);
             $this->_prechecks[] = $message . ' ' . __('See below to kill them.');
+        }
+    }
+
+    protected function _precheckSymlinks()
+    {
+        $result = UpgradeToOmekaS_Common::containsSymlinks(FILES_DIR);
+        if ($result) {
+            $this->_prechecks[] = __('There are symbolic links inside the directory of files.')
+                . ' ' . __('They cannot be managed.')
+                . ' ' . __('This precheck may be bypassed via "security.ini".');
+        }
+
+        $result = UpgradeToOmekaS_Common::containsSymlinks(PUBLIC_THEME_DIR);
+        if ($result) {
+            $this->_prechecks[] = __('There are symbolic links inside the directory of themes.')
+                . ' ' . __('They cannot be managed.')
+                . ' ' . __('This precheck may be bypassed via "security.ini".');
         }
     }
 

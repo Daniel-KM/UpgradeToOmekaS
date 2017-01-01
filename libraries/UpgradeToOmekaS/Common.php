@@ -55,6 +55,34 @@ class UpgradeToOmekaS_Common
     }
 
     /**
+     * Determines if a directory contains symbolic links.
+     *
+     * @param string $dir
+     * @return boolean|null
+     */
+    public static function containsSymlinks($dir)
+    {
+        if (!file_exists($dir)) {
+            return null;
+        }
+        if (!is_dir($dir)) {
+            return null;
+        }
+        if (!is_readable($dir)) {
+            return null;
+        }
+        $recDirIterator = new recursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS | FilesystemIterator::UNIX_PATHS);
+        $iterator = new recursiveIteratorIterator($recDirIterator);
+        while ($iterator->valid()) {
+            if ($iterator->isLink()) {
+                return true;
+            }
+            $iterator->next();
+        }
+        return false;
+    }
+
+    /**
      * List files in a directory, not recursively, and without subdirs.
      *
      * @param string $dir

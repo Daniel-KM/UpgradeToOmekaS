@@ -23,6 +23,7 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
     public $processMethods = array(
         '_copyAssets',
         '_copyThemes',
+        '_upgradeThemesParams',
         '_downloadCompatibilityModule',
         '_unzipCompatibiltyModule',
         '_installCompatibiltyModule',
@@ -104,7 +105,110 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
 
     protected function _copyThemes()
     {
-        // with theme media uploaded.
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, the home page is the first of the navigation links.'),
+            Zend_Log::INFO);
+
+        $source = PUBLIC_THEME_DIR;
+        $destination = $this->getParam('base_dir')
+            . DIRECTORY_SEPARATOR . 'themes';
+
+        // Recheck for the symlinks, that can be bypassed.
+        $result = UpgradeToOmekaS_Common::containsSymlinks(PUBLIC_THEME_DIR);
+        if ($result) {
+            if ($settings->precheck->symlinks) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('There are symbolic links inside the directory of themes.')
+                        . ' ' . __('They cannot be managed.')
+                        . ' ' . __('This precheck may be bypassed via "security.ini".'));
+            }
+            // Bypass the copy.
+            else {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The themes were not copied, because there are symbolic links.')
+                    . ' ' . __('You can find new ones on %shttps://omeka.org/s%s.', '<a href="omeka.org/s" target="_blank">', '</a>'),
+                    Zend_Log::INFO);
+                return;
+            }
+        }
+
+        // First, copy the default scripts from Omeka in each theme, since they
+        // are used when there is no script with the same name in the theme.
+        $sourceDefaultTheme = BASE_DIR
+            . DIRECTORY_SEPARATOR . 'application'
+            . DIRECTORY_SEPARATOR . 'views'
+            . DIRECTORY_SEPARATOR . 'scripts';
+        $themes = UpgradeToOmekaS_Common::listDirsInDir($source);
+        foreach ($themes as $theme) {
+            $result = UpgradeToOmekaS_Common::copyDir(
+                $sourceDefaultTheme,
+                $destination . DIRECTORY_SEPARATOR . $theme,
+                true);
+            if (!$result) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('An error occurred during the copy of the default directory of themes.'));
+            }
+        }
+
+        // Second, overwrite the default scripts with the themes ones.
+        $result = UpgradeToOmekaS_Common::copyDir($source, $destination, true);
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('An error occurred during the copy of the directory of themes.'));
+        }
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('All themes have been copied with default scripts into Omeka S.')
+                . ' ' . __('You can find new ones on %shttps://omeka.org/s%s.', '<a href="omeka.org/s" target="_blank">', '</a>'),
+            Zend_Log::INFO);
+    }
+
+    protected function _upgradeThemesParams()
+    {
+        $siteId = $this->getSiteId();
+
+        $db = $this->_db;
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
+
+        $select = $db->getTable('Option')->getSelect()
+            ->reset(Zend_Db_Select::COLUMNS)
+            ->from(array(), array('name', 'value'))
+            ->where('`name` LIKE "theme_%_options"')
+            ->order('name');
+        $options = $db->fetchPairs($select);
+
+        $select = $targetDb->select()
+            ->from('asset', array(
+                'name' => new Zend_Db_Expr('CONCAT(`storage_id`, ".", `extension`)'),
+                'id' => 'id',
+            ))
+            ->order('name');
+        $assets = $targetDb->fetchPairs($select);
+
+        // Extract the name and the values.
+        $toInserts = array();
+        foreach ($options as $key => $values) {
+            $name = substr($key, strlen('theme_'), strlen($key) - strlen('theme__options'));
+            if (empty($name)) {
+                continue;
+            }
+
+            $values = unserialize($values);
+            if (empty($values)) {
+                continue;
+            }
+
+            // Check if there is an asset to upgrade the logo, else remove.
+            if (!empty($values['logo'])) {
+                $values['logo'] = isset($assets[$values['logo']])
+                    ? $assets[$values['logo']]
+                    : '';
+            }
+
+            $nameSetting = 'theme_settings_' . $name;
+            $target->saveSiteSetting($nameSetting, $values, $siteId);
+        }
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The options of the themes have been upgraded as site settings.'),
+            Zend_Log::INFO);
     }
 
     protected function _downloadCompatibilityModule()
