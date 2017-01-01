@@ -25,4 +25,8 @@ class UpgradeToOmekaS_Processor_SocialBookmarking extends UpgradeToOmekaS_Proces
         'partial' => true,
         'note' => 'Only common social networks (Twitter, Pinterest, Tumblr, email) and embed, but not AddThis.',
     );
+
+    public $processMethods = array(
+        '_installModule',
+    );
 }

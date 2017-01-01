@@ -19,6 +19,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         'version' => 'v1.0.0-beta2',
         'size' => 11526232,
         'md5' => '45283a20f3a8e13dac1a9cfaeeaa9c51',
+        'url' => 'https://github.com/omeka/omeka-s/releases/download/%s/omeka-s.zip',
         'requires' => array(
             'minDb' => array(
                 'mariadb' => '5.5.3',
@@ -101,13 +102,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // 'contribution-anonymous' => 'anonymous',
         // 'contribution_anonymous' => 'anonymous',
     );
-
-    /**
-     * The url of the Omeka S package, minus version.
-     *
-     * @var string
-     */
-    protected $_urlPackage = 'https://github.com/omeka/omeka-s/releases/download/%s/omeka-s.zip';
 
     /**
      * Default tables of Omeka S.
@@ -746,64 +740,14 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     /* Methods for the upgrade. */
 
-    protected function _createDirectory()
-    {
-        $path = $this->getParam('base_dir');
-        $result = UpgradeToOmekaS_Common::createDir($path);
-        if (!$result) {
-            throw new UpgradeToOmekaS_Exception(
-                __('Unable to create the directory %s.', $path));
-        }
-    }
-
     protected function _downloadOmekaS()
     {
-        $url = sprintf($this->_urlPackage, $this->module['version']);
-        $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'omeka-s.zip';
-        if (file_exists($path)) {
-            // Check if the file is empty, in particular for network issues.
-            if (!filesize($path)) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('An empty file "omeka-s.zip" exists in the temp directory.')
-                    . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url));
-            }
-            if (filesize($path) != $this->module['size']
-                    || md5_file($path) != $this->module['md5']
-                ) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('A file "omeka-s.zip" exists in the temp directory and this is not the release %s.',
-                        $this->module['version']));
-            }
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The file is already downloaded.'), Zend_Log::INFO);
-        }
-        // Download the file.
-        else {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dMB, so wait a while.', $this->module['size'] / 1000000), Zend_Log::INFO);
-            $result = file_put_contents($path, fopen($url, 'r'));
-            if (empty($result)) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('An issue occured during the file download.')
-                    . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path));
-            }
-            if (filesize($path) != $this->module['size']
-                    || md5_file($path) != $this->module['md5']
-                ) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('The downloaded file is corrupted.')
-                    . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path));
-            }
-        }
+        $this->_downloadModule();
     }
 
     protected function _unzipOmekaS()
     {
-        $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'omeka-s.zip';
-        $baseDir = $this->getParam('base_dir');
-        $result = UpgradeToOmekaS_Common::extractZip($path, $baseDir);
-        if (!$result) {
-            throw new UpgradeToOmekaS_Exception(
-                __('Unable to extract the zip file "%s" into the destination "%s".', $path, $baseDir));
-        }
+        $this->_unzipModule();
     }
 
     protected function _configOmekaS()

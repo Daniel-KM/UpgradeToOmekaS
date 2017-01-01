@@ -22,5 +22,7 @@ class UpgradeToOmekaS_Processor_EmbedCodes extends UpgradeToOmekaS_Processor_Abs
         'note' => 'No embedded statistics.'
     );
 
-    // Nothing to do.
+    public $processMethods = array(
+        '_installModule',
+    );
 }
