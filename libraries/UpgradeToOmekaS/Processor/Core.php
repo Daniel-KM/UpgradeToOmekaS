@@ -1442,7 +1442,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $settings = $this->_getSecurityIni();
         $user = $this->getParam('user');
 
-        $title = get_option('site_title') ?: __('Site %s', WEB_ROOT);
+        $title = $this->getSiteTitle();
         $slug = $this->getSiteSlug();
         $theme = !empty($settings->default->site->theme)
             ? $settings->default->site->theme

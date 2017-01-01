@@ -141,6 +141,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_datetime;
 
     /**
+     * The title of the first site on Omeka S.
+     *
+     * @var string
+     */
+    protected $_siteTitle;
+
+    /**
      * The slug of the first site on Omeka S.
      *
      * @var string
@@ -306,6 +313,21 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Helper to get the site title.
+     *
+     * @return string
+     */
+    public function getSiteTitle()
+    {
+        if (empty($this->_siteTitle)) {
+            $title = get_option('site_title') ?: __('Site %s', WEB_ROOT);
+            $title = substr($title, 0, 190);
+            $this->_siteTitle = $title;
+        }
+        return $this->_siteTitle;
+    }
+
+    /**
      * Helper to get the site slug.
      *
      * @return string
@@ -313,10 +335,9 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public function getSiteSlug()
     {
         if (empty($this->_siteSlug)) {
-            $title = get_option('site_title') ?: __('Site %s', WEB_ROOT);
+            $title = $this->getSiteTitle();
             $slug = substr($this->_slugify($title), 0, 190);
             $this->_siteSlug = $slug;
-            $this->setParam('siteSlug', $slug);
         }
         return $this->_siteSlug;
     }
