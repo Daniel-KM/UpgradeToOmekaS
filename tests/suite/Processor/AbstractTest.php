@@ -48,7 +48,7 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
         $processor->minVersion = '2.2.2';
         $processor->maxVersion = '2.1.2';
         $result = $processor->precheckProcessorPlugin();
-        $this->assertEquals('The processor for Stub requires version between 2.2.2 and 2.1.2 (current is 2.2).', $result);
+        $this->assertEquals('The processor for Stub requires a version between 2.2.2 and 2.1.2 (current is 2.2).', $result);
         $result = $processor->precheckConfig();
         $this->assertEquals(1, count($result));
         $this->assertEquals('The plugin is not installed or not active.', $result[0]);
@@ -92,10 +92,7 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
 
     public function filterUpgradeOmekas($processors)
     {
-        $processors['AbstractMock'] = array(
-            'class' => get_class($this->_processorMock),
-            'description' => __('Abstract Mock'),
-        );
+        $processors['AbstractMock'] = get_class($this->_processorMock);
         return $processors;
     }
 

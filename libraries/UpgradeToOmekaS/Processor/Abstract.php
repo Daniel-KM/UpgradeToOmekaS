@@ -30,6 +30,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $maxVersion = '0';
 
     /**
+     * Infos about the module for Omeka S, if any.
+     *
+     * @var array
+     */
+    public $module = array();
+
+    /**
      * List of methods to process for the upgrade.
      *
      * @var array
@@ -240,8 +247,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             $activePlugins[] = 'Core';
 
             // Check processors to prevents possible issues with external plugins.
-            foreach ($allProcessors as $name => $processor) {
-                $class = $processor['class'];
+            foreach ($allProcessors as $name => $class) {
                 if (class_exists($class)) {
                     if (is_subclass_of($class, 'UpgradeToOmekaS_Processor_Abstract')) {
                         if (in_array($name, $activePlugins)) {
@@ -374,14 +380,14 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         if ($version) {
             if ($this->minVersion) {
                 if (version_compare($this->minVersion, $version, '>')) {
-                    return __('The processor for %s requires version between %s and %s (current is %s).',
+                    return __('The processor for %s requires a version between %s and %s (current is %s).',
                         $this->pluginName, $this->minVersion, $this->maxVersion, $version);
                 }
             }
 
             if ($this->maxVersion) {
                 if (version_compare($this->maxVersion, $version, '<')) {
-                    return __('The processor for %s requires version between %s and %s (current is %s).',
+                    return __('The processor for %s requires a version between %s and %s (current is %s).',
                         $this->pluginName, $this->minVersion, $this->maxVersion, $version);
                 }
             }

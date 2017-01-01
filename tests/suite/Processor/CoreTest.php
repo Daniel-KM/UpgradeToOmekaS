@@ -45,13 +45,13 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
     public function testPrecheckConfigBadDatabaseVersions()
     {
         $processor = new UpgradeToOmekaS_Processor_Core();
-        $processor->omekaSemanticMinDb = array(
-            'mariadb' => '1005.5.3',
-            'mysql' => '1005.5.3',
+        $processor->module['requires']['minDb'] = array(
+            'mariadb' => '1234.5.3',
+            'mysql' => '5678.5.3',
         );
         $result = $processor->precheckConfig();
         $this->assertEquals(1, count($result));
-        $this->assertContains('The current release requires at least MariaDB 1005.5.3 or Mysql 1005.5.3', $result[0]);
+        $this->assertContains('The current release requires at least MariaDB 1234.5.3 or Mysql 5678.5.3', $result[0]);
     }
 
     public function testPrecheckConfigExistingJob()
@@ -370,8 +370,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             if (filesize($path) == 0) {
                 $this->markTestIncomplete(__('An empty file "%s" exists: replace it by the true omeka-s.zip.', $path));
             }
-            elseif (filesize($path) != $processor->omekaSemantic['size']
-                    || md5_file($path) != $processor->omekaSemantic['md5']
+            elseif (filesize($path) != $processor->module['size']
+                    || md5_file($path) != $processor->module['md5']
                 ) {
                 $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));
             }
@@ -585,8 +585,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         // Check correct file.
         else {
             $processor = new UpgradeToOmekaS_Processor_Core();
-            if (filesize($path) != $processor->omekaSemantic['size']
-                    || md5_file($path) != $processor->omekaSemantic['md5']
+            if (filesize($path) != $processor->module['size']
+                    || md5_file($path) != $processor->module['md5']
                 ) {
                 $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));
             }

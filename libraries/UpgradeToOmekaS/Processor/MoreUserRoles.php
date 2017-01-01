@@ -11,6 +11,10 @@ class UpgradeToOmekaS_Processor_MoreUserRoles extends UpgradeToOmekaS_Processor_
     public $minVersion = '1.0';
     public $maxVersion = '1.0.1';
 
+    public $module = array(
+        'type' => 'integrated',
+    );
+
     public $mappingRoles = array(
         'editor' => 'editor',
         'reviewer' => 'reviewer',
@@ -19,6 +23,4 @@ class UpgradeToOmekaS_Processor_MoreUserRoles extends UpgradeToOmekaS_Processor_
         'fulladmin' => 'site_admin',
         'documentalist' => 'editor',
     );
-
-    // Nothing to do: included in the Core.
 }

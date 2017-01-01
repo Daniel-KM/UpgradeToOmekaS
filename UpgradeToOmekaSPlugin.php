@@ -137,146 +137,49 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
      */
     public function filterUpgradeOmekas($processors)
     {
-        // Keep the core at first place to keep order.
+        // Keep the core at first place to keep order or processing.
         $baseProcessors = array();
-        $baseProcessors['Core'] = array(
-            'class' => 'UpgradeToOmekaS_Processor_Core',
-            'description' => __('Omeka Core'),
-        );
+        $baseProcessors['Core'] = 'UpgradeToOmekaS_Processor_Core';
 
         // Integrated plugins.
-//         $processors['Dropbox'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Dropbox',
-//             'description' => __('Dropbox'),
-//         );
-//         $processors['Geolocation'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Geolocation',
-//             'description' => __('Geolocation'),
-//         );
-//         $processors['ExhibitBuilder'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_ExhibitBuilder',
-//             'description' => __('Exhibit Builder'),
-//         );
-//         $processors['ItemRelations'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_ItemRelations',
-//             'description' => __('Item Relations'),
-//         );
-        $processors['MoreUserRoles'] = array(
-            'class' => 'UpgradeToOmekaS_Processor_MoreUserRoles',
-            'description' => __('More User Roles'),
-        );
-        $processors['SimplePages'] = array(
-            'class' => 'UpgradeToOmekaS_Processor_SimplePages',
-            'description' => __('Simple Pages'),
-        );
-        $processors['SocialBookmarking'] = array(
-            'class' => 'UpgradeToOmekaS_Processor_SocialBookmarking',
-            'description' => __('Social Bookmarking'),
-        );
+        // $processors['Dropbox'] = 'UpgradeToOmekaS_Processor_Dropbox';
+        // $processors['ExhibitBuilder'] = 'UpgradeToOmekaS_Processor_ExhibitBuilder';
+        // $processors['ItemRelations'] = 'UpgradeToOmekaS_Processor_ItemRelations';
+        $processors['MoreUserRoles'] = 'UpgradeToOmekaS_Processor_MoreUserRoles';
+        $processors['SimplePages'] = 'UpgradeToOmekaS_Processor_SimplePages';
 
         // Upgraded or equivalent plugins in Omeka S.
-//         $processors['CsvImport'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_CsvImport',
-//             'description' => __('Csv Import'),
-//         );
-//         $processors['SimpleVocab'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_SimpleVocab',
-//             'description' => __('Simple Vocab'),
-//         );
-//         $processors['ZoteroImport'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_ZoteroImport',
-//             'description' => __('Zotero Import'),
-//         );
+        // $processors['CsvImport'] = 'UpgradeToOmekaS_Processor_CsvImport';
+        $processors['EmbedCodes'] = 'UpgradeToOmekaS_Processor_EmbedCodes';
+        // $processors['Geolocation'] = 'UpgradeToOmekaS_Processor_Geolocation';
+        // $processors['SimpleVocab'] = 'UpgradeToOmekaS_Processor_SimpleVocab';
+        $processors['SocialBookmarking'] = 'UpgradeToOmekaS_Processor_SocialBookmarking';
+        // $processors['ZoteroImport'] = 'UpgradeToOmekaS_Processor_ZoteroImport';
 
-//         // Specific plugins not yet upgraded under Omeka S.
-//         $processors['ArchiveFolder'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_ArchiveFolder',
-//             'description' => __('ArchiveFolder'),
-//         );
-//         $processors['Ark'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Ark',
-//             'description' => __('Ark & Noid'),
-//         );
-//         $processors['BeamMeUpToInternetArchive'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_BeamMeUpToInternerArchive',
-//             'description' => __('Beam Me Up To Internet Archive'),
-//         );
-//         $processors['BeamMeUpToSoundcloud'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_BeamMeUpToSoundCloud',
-//             'description' => __('Beam Me Up To Sound Cloud'),
-//         );
-//         $processors['CleanUrl'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_CleanUrl',
-//             'description' => __('CleanUrl'),
-//         );
-//         $processors['Coins'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_CollectionTree',
-//             'description' => __('Collection Tree'),
-//         );
-//         $processors['CollectionTree'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_CollectionTree',
-//             'description' => __('Collection Tree'),
-//         );
-//         $processors['Commenting'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Commenting',
-//             'description' => __('Commenting'),
-//         );
-//         $processors['Contribution'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Contribution',
-//             'description' => __('Contribution'),
-//         );
-//         $processors['CsvImportPlus'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_CsvImportPlus',
-//             'description' => __('Csv Import Plus'),
-//         );
-//         $processors['GuestUser'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_GuestUser',
-//             'description' => __('Guest User'),
-//         );
-//         $processors['HistoryLog'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_HistoryLog',
-//             'description' => __('History Log'),
-//         );
-//         $processors['MultiCollections'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_MultiCollections',
-//             'description' => __('Multi Collections'),
-//         );
-//         $processors['NeatlineTime'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_NeatlineTime',
-//             'description' => __('Neatline Time'),
-//         );
-//         $processors['OpenlayersZoom'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_OpenLayersZoom',
-//             'description' => __('Open Layers Zoom'),
-//         );
-//         $processors['Rating'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Rating',
-//             'description' => __('Rating'),
-//         );
-//         $processors['Scripto'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Scripto',
-//             'description' => __('Scripto'),
-//         );
-//         $processors['SimpleContact'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_SimpleContact',
-//             'description' => __('Simple Contact'),
-//         );
-//         $processors['SimpleVocabPlus'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_SimpleVocabPlus',
-//             'description' => __('Simple Vocab Plus'),
-//         );
-//         $processors['Stats'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Stats',
-//             'description' => __('Stats'),
-//         );
-//         $processors['Tagging'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Tagging',
-//             'description' => __('Tagging'),
-//         );
-//         $processors['Taxonomy'] = array(
-//             'class' => 'UpgradeToOmekaS_Processor_Taxonomy',
-//             'description' => __('Taxonomy'),
-//         );
+        // Specific plugins not yet upgraded under Omeka S.
+        // $processors['ArchiveFolder'] = 'UpgradeToOmekaS_Processor_ArchiveFolder';
+        // $processors['Ark'] = 'UpgradeToOmekaS_Processor_Ark';
+        // $processors['BeamMeUpToInternetArchive'] = 'UpgradeToOmekaS_Processor_BeamMeUpToInternerArchive';
+        // $processors['BeamMeUpToSoundcloud'] = 'UpgradeToOmekaS_Processor_BeamMeUpToSoundCloud';
+        // $processors['CleanUrl'] = 'UpgradeToOmekaS_Processor_CleanUrl';
+        // $processors['Coins'] = 'UpgradeToOmekaS_Processor_CollectionTree';
+        // $processors['CollectionTree'] = 'UpgradeToOmekaS_Processor_CollectionTree';
+        // $processors['Commenting'] = 'UpgradeToOmekaS_Processor_Commenting';
+        // $processors['Contribution'] = 'UpgradeToOmekaS_Processor_Contribution';
+        // $processors['CsvImportPlus'] = 'UpgradeToOmekaS_Processor_CsvImportPlus';
+        // $processors['GuestUser'] = 'UpgradeToOmekaS_Processor_GuestUser';
+        // $processors['HistoryLog'] = 'UpgradeToOmekaS_Processor_HistoryLog';
+        // $processors['MultiCollections'] = 'UpgradeToOmekaS_Processor_MultiCollections';
+        // $processors['NeatlineTime'] = 'UpgradeToOmekaS_Processor_NeatlineTime';
+        // $processors['OpenlayersZoom'] = 'UpgradeToOmekaS_Processor_OpenLayersZoom';
+        // $processors['Rating'] = 'UpgradeToOmekaS_Processor_Rating';
+        // $processors['Scripto'] = 'UpgradeToOmekaS_Processor_Scripto';
+        // $processors['SimpleContact'] = 'UpgradeToOmekaS_Processor_SimpleContact';
+        // $processors['SimpleVocabPlus'] = 'UpgradeToOmekaS_Processor_SimpleVocabPlus';
+        // $processors['Stats'] = 'UpgradeToOmekaS_Processor_Stats';
+        // $processors['Tagging'] = 'UpgradeToOmekaS_Processor_Tagging';
+        // $processors['Taxonomy'] = 'UpgradeToOmekaS_Processor_Taxonomy';
+        // $processors['UniversalViewer'] = 'UpgradeToOmekaS_Processor_UniversalViewer';
 
         return array_merge($baseProcessors, $processors);
     }

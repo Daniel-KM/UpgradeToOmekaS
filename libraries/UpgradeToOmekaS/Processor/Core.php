@@ -13,15 +13,18 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
 
-    public $omekaSemantic = array(
+    public $module = array(
+        'type' => 'equivalent',
+        'name' => 'Omeka S',
         'version' => 'v1.0.0-beta2',
         'size' => 11526232,
         'md5' => '45283a20f3a8e13dac1a9cfaeeaa9c51',
-    );
-
-    public $omekaSemanticMinDb = array(
-        'mariadb' => '5.5.3',
-        'mysql' => '5.5.3',
+        'requires' => array(
+            'minDb' => array(
+                'mariadb' => '5.5.3',
+                'mysql' => '5.5.3',
+            ),
+        ),
     );
 
     /**
@@ -373,15 +376,15 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $mariadb = strpos($result, '-mariadb');
             $version = strtok($result, '-');
             if ($mariadb) {
-                $result = version_compare($this->omekaSemanticMinDb['mariadb'], $version, '>');
+                $result = version_compare($this->module['requires']['minDb']['mariadb'], $version, '>');
             }
             // Probably a mysql database.
             else {
-                $result = version_compare($this->omekaSemanticMinDb['mysql'], $version, '>');
+                $result = version_compare($this->module['requires']['minDb']['mysql'], $version, '>');
             }
             if ($result) {
                 $this->_prechecks[] = __('The current release requires at least MariaDB %s or Mysql %s, current is only %s.',
-                    $this->omekaSemanticMinDb['mariadb'], $this->omekaSemanticMinDb['mysql'], ($mariadb ? 'MariaDB' : 'MySQL') . ' ' . $version);
+                    $this->module['requires']['minDb']['mariadb'], $this->module['requires']['minDb']['mysql'], ($mariadb ? 'MariaDB' : 'MySQL') . ' ' . $version);
             }
         }
     }
@@ -755,7 +758,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     protected function _downloadOmekaS()
     {
-        $url = sprintf($this->_urlPackage, $this->omekaSemantic['version']);
+        $url = sprintf($this->_urlPackage, $this->module['version']);
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'omeka-s.zip';
         if (file_exists($path)) {
             // Check if the file is empty, in particular for network issues.
@@ -764,26 +767,26 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     __('An empty file "omeka-s.zip" exists in the temp directory.')
                     . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url));
             }
-            if (filesize($path) != $this->omekaSemantic['size']
-                    || md5_file($path) != $this->omekaSemantic['md5']
+            if (filesize($path) != $this->module['size']
+                    || md5_file($path) != $this->module['md5']
                 ) {
                 throw new UpgradeToOmekaS_Exception(
                     __('A file "omeka-s.zip" exists in the temp directory and this is not the release %s.',
-                        $this->omekaSemantic['version']));
+                        $this->module['version']));
             }
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The file is already downloaded.'), Zend_Log::INFO);
         }
         // Download the file.
         else {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dMB, so wait a while.', $this->omekaSemantic['size'] / 1000000), Zend_Log::INFO);
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dMB, so wait a while.', $this->module['size'] / 1000000), Zend_Log::INFO);
             $result = file_put_contents($path, fopen($url, 'r'));
             if (empty($result)) {
                 throw new UpgradeToOmekaS_Exception(
                     __('An issue occured during the file download.')
                     . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path));
             }
-            if (filesize($path) != $this->omekaSemantic['size']
-                    || md5_file($path) != $this->omekaSemantic['md5']
+            if (filesize($path) != $this->module['size']
+                    || md5_file($path) != $this->module['md5']
                 ) {
                 throw new UpgradeToOmekaS_Exception(
                     __('The downloaded file is corrupted.')
@@ -994,7 +997,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // See Omeka S ['installer']['tasks']: AddDefaultSettingsTask.php
         $result = $targetDb->insert('setting', array(
             'id' => 'version',
-            'value' => json_encode(substr($this->omekaSemantic['version'], 1))));
+            'value' => json_encode(substr($this->module['version'], 1))));
 
         // Use the customized value for admin pages if modified.
         $value = get_option('per_page_admin');

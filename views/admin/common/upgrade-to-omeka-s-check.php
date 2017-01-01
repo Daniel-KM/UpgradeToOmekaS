@@ -55,8 +55,9 @@ endif;
             $rowClass .= ' ' . (++$key % 2 ? 'odd' : 'even');
             $error = $plugin['processor'] && $plugin['installed'] && $plugin['active'] && !$plugin['upgradable'];
             $pluginProcessor = !empty($plugin['processor']) ? $plugin['processor'] : null;
-            $pluginProcessorNote = $pluginProcessor ? $pluginProcessor->precheckProcessorPlugin() : null;
-            $note = !empty($prechecks[$name]) || !empty($checks[$name]) || !empty($pluginProcessorNote);
+            $pluginProcessorPrecheck = $pluginProcessor ? $pluginProcessor->precheckProcessorPlugin() : null;
+            $pluginProcessorNote = $pluginProcessor && !empty($pluginProcessor->module['note']) ? $pluginProcessor->module['note'] : null;
+            $note = !empty($prechecks[$name]) || !empty($checks[$name]) || !empty($pluginProcessorPrecheck) || $pluginProcessorNote;
         ?>
         <tr class="<?php echo $rowClass; ?>">
             <td<?php echo $error || $note ? ' rowspan="2"' : ''; ?>><?php echo $plugin['name']; ?></td>
@@ -65,15 +66,19 @@ endif;
             <td><?php echo $plugin['version']; ?></td>
             <td><?php echo $pluginProcessor ? $pluginProcessor->minVersion : ''; ?></td>
             <td><?php echo $pluginProcessor ? $pluginProcessor->maxVersion : ''; ?></td>
-            <td><?php echo $pluginProcessor && !$pluginProcessorNote ? __('Yes') : __('No'); ?></td>
+            <td><?php echo $pluginProcessor && !$pluginProcessorPrecheck ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['upgradable'] ? __('Yes') : __('No'); ?></td>
         </tr>
         <?php if ($error || $note): ?>
         <tr>
             <td colspan="7">
                 <?php
+                // Processor prechecks are done via the main prechecks too.
+                if (!empty($pluginProcessorPrecheck) && empty($prechecks[$name])):
+                    echo '<div class="check-warn">' . $pluginProcessorPrecheck . '</div>';
+                endif;
                 if (!empty($pluginProcessorNote)):
-                    echo '<div>' . $pluginProcessorNote . '</div>';
+                    echo '<div class="processor-note">' . __('Upgrade note: %s', __($pluginProcessorNote)) . '</div>';
                 endif;
                 if (!empty($prechecks[$name])):
                     echo '<div class="check-error">' . implode ('</div><div class="check-error">', $prechecks[$name]) . '</div>';

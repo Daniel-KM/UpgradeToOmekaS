@@ -12,6 +12,10 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
     public $minVersion = '3.0.8';
     public $maxVersion = '3.0.8';
 
+    public $module = array(
+        'type' => 'integrated',
+    );
+
     public function convertNavigationPageToLink($page, $args, $site)
     {
         // Check if this is a slug.

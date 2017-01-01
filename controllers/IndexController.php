@@ -508,8 +508,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             $installedPlugins[] = 'Core';
 
             // Check processors to prevents possible issues with external plugins.
-            foreach ($processors as $name => $processor) {
-                $class = $processor['class'];
+            foreach ($processors as $name => $class) {
                 // Check if class exists.
                 if (!class_exists($class)) {
                     $this->_prechecks[$name][] = __('Processor class "%s" is missing.', $class);
