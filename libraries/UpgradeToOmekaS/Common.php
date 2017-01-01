@@ -205,11 +205,13 @@ class UpgradeToOmekaS_Common
                         continue;
                     }
                 }
+                // Recreate the dir, that may be skipped by a symbolic link.
+                self::createDir(dirname($subpath));
                 $result = copy($item, $subpath);
             }
             // This may be a symbolic link or something else.
             else {
-                return false;
+                continue;
             }
             if (!$result) {
                 return false;

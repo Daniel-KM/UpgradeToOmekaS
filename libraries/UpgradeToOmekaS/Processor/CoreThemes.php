@@ -131,15 +131,15 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             if (!empty($checks['symlinks'])) {
                 throw new UpgradeToOmekaS_Exception(
                     __('There are symbolic links inside the directory "files/themes_uploads".')
-                    . ' ' . __('They cannot be managed.')
-                    . ' ' . __('This precheck may be bypassed via "security.ini".'));
+                        . ' ' . __('Some errors may occur in some cases.')
+                        . ' ' . __('This precheck may be bypassed via "security.ini".'));
             }
-            // Bypass the copy.
+            // Warn about the copy.
             else {
-                $this->_log('[' . __FUNCTION__ . ']: ' . __('The assets inside the directory "files/themes_uploads" were not copied, because there are symbolic links.')
-                    . ' ' . __('You can find new ones on %shttps://omeka.org/s%s.', '<a href="omeka.org/s" target="_blank">', '</a>'),
-                    Zend_Log::INFO);
-                return;
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The directory "files/themes_uploads" contain symbolic links.')
+                        . ' ' . __('Some errors may occur in some cases.')
+                        . ' ' . __('You need to check yourself if all files were copied.'),
+                    Zend_Log::WARN);
             }
         }
 
@@ -204,15 +204,15 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             if (!empty($checks['symlinks'])) {
                 throw new UpgradeToOmekaS_Exception(
                     __('There are symbolic links inside the directory of themes.')
-                        . ' ' . __('They cannot be managed.')
+                        . ' ' . __('Some errors may occur in some cases.')
                         . ' ' . __('This precheck may be bypassed via "security.ini".'));
             }
-            // Bypass the copy.
+            // Warn about the copy.
             else {
-                $this->_log('[' . __FUNCTION__ . ']: ' . __('The themes were not copied, because there are symbolic links.')
-                    . ' ' . __('You can find new ones on %shttps://omeka.org/s%s.', '<a href="omeka.org/s" target="_blank">', '</a>'),
-                    Zend_Log::INFO);
-                return;
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The themes contains symbolic links.')
+                        . ' ' . __('Some errors may occur in some cases.')
+                        . ' ' . __('You need to check yourself if all files were copied.'),
+                    Zend_Log::WARN);
             }
         }
 
