@@ -1486,15 +1486,20 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // Settings of Omeka Classic: create the first site.
         $db = $this->_db;
         $targetDb = $this->getTargetDb();
+        $settings = $this->_getSecurityIni();
         $user = $this->getParam('user');
 
         $title = get_option('site_title') ?: __('Site %s', WEB_ROOT);
         $slug = $this->getSiteSlug();
+        $theme = !empty($settings->default->site->theme)
+            ? $settings->default->site->theme
+            : get_option('public_theme');
+
         $toInsert = array();
         $toInsert['id'] = 1;
         $toInsert['owner_id'] = $user->id;
         $toInsert['slug'] = $slug;
-        $toInsert['theme'] = substr(get_option('public_theme') ?: 'default', 0,190);
+        $toInsert['theme'] = substr($theme ?: 'default', 0,190);
         $toInsert['title'] = substr($title, 0, 190);
         $toInsert['navigation'] = json_encode($this->_convertNavigation());
         $toInsert['item_pool'] = json_encode(array());
