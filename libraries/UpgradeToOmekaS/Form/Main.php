@@ -114,6 +114,15 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'errorMessages' => array(__('A time zone is required for Omeka S.')),
         ));
 
+        $this->addElement('text', 'first_user_password', array(
+            'label' => __('First User Password'),
+            'description'   => __('The password of users will be lost and they have to request a new one on the login form.')
+                . ' ' . __('You may enter the password of the first user here to access directly to admin board of Omeka S.'),
+            'required' => false,
+            'value' => '',
+            'filters' => array('StringTrim'),
+        ));
+
         $this->addElement('radio', 'database_type', array(
             'label' => __('Database'),
             'description'   => __('Define the database Omeka S will be using.'),
@@ -191,21 +200,24 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             $multiOptions['hard_link'] = __('Hard Link');
             $multiOptions['dummy'] = __('Dummy files');
             $multiOptions['dummy_hard'] = __('Dummy files (hard link)');
+            $description = __('Define what to do with files of the archive (original files, thumbnails, etc.).')
+                . ' ' . __('To create hard links avoids to waste space and to speed copy.')
+                . ' ' . __('The dummy files can be used for testing purposes.')
+                . ' ' . __('Original files are never modified or deleted.')
+                . ' ' . __('It seems the server allows hard links, but a second check will be done to avoid issues with mounted volumes.');
         }
         // No hard link.
         else {
             $multiOptions['copy'] = __('Copy');
             $multiOptions['dummy'] = __('Dummy files');
+            $description = __('Define what to do with files of the archive (original files, thumbnails, etc.).')
+                . ' ' . __('The dummy files can be used for testing purposes.')
+                . ' ' . __('Original files are never modified or deleted.')
+                . ' ' . __('The server does not support hard linking.');
         }
         $this->addElement('radio', 'files_type', array(
             'label' => __('Files'),
-            'description'   => __('Define what to do with files of the archive (original files, thumbnails, etc.).')
-                . ' ' . __('To create hard links avoids to waste space and to speed copy.')
-                . ' ' . __('The dummy files can be used for testing purposes.')
-                . ' ' . __('Original files are never modified or deleted.')
-                . ' ' . ($allowHardLink
-                    ? __('It seems the server allows hard links (a second check will be done to avoid issues with mounted volumes).')
-                    : __('The server does not support hard linking.')),
+            'description' => $description,
             'multiOptions' => $multiOptions,
             'required' => true,
             'value' => $allowHardLink ? 'hard_link' : 'copy',
@@ -456,6 +468,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 'base_dir',
                 'installation_title',
                 'time_zone',
+                'first_user_password',
             ),
             'general',
             array(

@@ -733,10 +733,10 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $this->_log('[' . __FUNCTION__ . ']: ' . $message,
             Zend_Log::INFO);
 
-        $settings = $this->getSecurityIni();
-        if (!empty($settings->default->global_admin_password)) {
+        $firstUserPassword = $this->getParam('first_user_password');
+        if (!empty($firstUserPassword)) {
             $bind = array();
-            $bind['password_hash'] = $settings->default->global_admin_password;
+            $bind['password_hash'] = $firstUserPassword;
             $bind['modified'] = $this->getDatetime();
             $result = $targetDb->update('user', $bind, 'id = ' . $user->id);
         }

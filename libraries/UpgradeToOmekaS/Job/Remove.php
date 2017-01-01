@@ -93,7 +93,7 @@ class UpgradeToOmekaS_Job_Remove extends UpgradeToOmekaS_Job_Abstract
             Zend_Log::DEBUG);
 
         // Clean the options.
-        set_option('upgrade_to_omeka_s_process_params', '[]');
+        set_option('upgrade_to_omeka_s_process_params', json_encode(array()));
         set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
         set_option('upgrade_to_omeka_s_process_status', null);
 

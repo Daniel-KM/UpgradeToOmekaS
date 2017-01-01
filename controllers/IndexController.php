@@ -243,6 +243,11 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
         $params = $this->_cleanParams();
 
+        if (!empty($params['first_user_password'])) {
+            $firstUserPassword = password_hash($params['first_user_password'], PASSWORD_DEFAULT);
+            $params['first_user_password'] = $firstUserPassword;
+        }
+
         // Keep old params when processing themes only.
         if ($upgradeType == 'themes') {
             $baseDir = $params['base_dir'];
@@ -290,8 +295,6 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->_helper->flashMessenger($message, 'info');
         $message = __('Please reload this page for progress status.');
         $this->_helper->flashMessenger($message, 'info');
-
-        // TODO Clean the password from the table of process when ended.
     }
 
     public function logsAction()
@@ -355,6 +358,24 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             set_option('upgrade_to_omeka_s_process_status', UpgradeToOmekaS_Processor_Abstract::STATUS_RESET);
             set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
             $message = __('The status of the process has been reset (was "%s").', $status);
+            $this->_helper->flashMessenger($message, 'success');
+        }
+
+        $this->_helper->redirector->goto('logs');
+    }
+
+    public function clearAction()
+    {
+        if ($this->_isProcessing()) {
+            $message = __('The process should be stopped before clear of its parameters.');
+            $this->_helper->flashMessenger($message, 'error');
+        }
+        // No process.
+        else {
+            set_option('upgrade_to_omeka_s_process_params', json_encode(array()));
+            set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
+            set_option('upgrade_to_omeka_s_process_status', null);
+            $message = __('Parameters of the previous upgrade have been cleared.');
             $this->_helper->flashMessenger($message, 'success');
         }
 
@@ -540,8 +561,6 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->_helper->flashMessenger($message, 'info');
         $message = __('Only logs will be kept.');
         $this->_helper->flashMessenger($message, 'info');
-
-        // TODO Clean the password from the table of process when ended.
     }
 
     /**
