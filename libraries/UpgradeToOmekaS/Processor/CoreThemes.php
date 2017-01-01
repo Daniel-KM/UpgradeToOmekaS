@@ -56,12 +56,14 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             unset($files[$key]);
         }
 
-        $totalAssets = count($files);
-        if (empty($totalAssets)) {
+        $totalRecords = count($files);
+        if (empty($totalRecords)) {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The current site has no asset.'),
                 Zend_Log::INFO);
             return;
         }
+
+        $this->_progress(0, $totalRecords);
 
         // Prepare the destination directory.
         $destinationDir = $this->getParam('base_dir')
@@ -73,7 +75,9 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         $targetDb = $this->getTarget()->getDb();
 
         // Process copy.
+        $i = 0;
         foreach ($files as $filename) {
+            $this->_progress(++$i);
             // Do a true copy, because they are not an archive and may change.
             $source = $sourceDir . DIRECTORY_SEPARATOR . $filename;
             $destination = $destinationDir . DIRECTORY_SEPARATOR . $filename;
@@ -97,15 +101,15 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             $targetDb->insert('asset', $toInsert);
         }
 
-        $this->_log('[' . __FUNCTION__ . ']: ' . ($totalAssets <= 1
+        $this->_log('[' . __FUNCTION__ . ']: ' . ($totalRecords <= 1
                 ? __('One asset has been upgraded.')
-                : __('%d assets have been upgraded.', $totalAssets)),
+                : __('%d assets have been upgraded.', $totalRecords)),
             Zend_Log::INFO);
     }
 
     protected function _copyThemes()
     {
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, the home page is the first of the navigation links.'),
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, the home page is the first navigation link.'),
             Zend_Log::INFO);
 
         $source = PUBLIC_THEME_DIR;

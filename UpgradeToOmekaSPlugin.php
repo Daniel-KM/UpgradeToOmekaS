@@ -43,6 +43,7 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
         'upgrade_to_omeka_s_process_params' => '[]',
         'upgrade_to_omeka_s_process_status' => null,
         'upgrade_to_omeka_s_process_logs' => '[]',
+        'upgrade_to_omeka_s_process_progress' => '[]',
     );
 
     /**
@@ -84,7 +85,9 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
      */
     public function hookUninstallMessage()
     {
-        $status = get_option('upgrade_to_omeka_s_process_status');
+        $processor = new UpgradeToOmekaS_Processor_Base();
+        $status = $processor->getStatus();
+
         $isReset = $status == UpgradeToOmekaS_Processor_Abstract::STATUS_RESET;
         $previousParams = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
         $hasPreviousUpgrade = !empty($previousParams);

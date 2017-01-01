@@ -219,6 +219,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         if (empty($totalRecords)) {
             return;
         }
+        $this->_progress(0, $totalRecords);
 
         $siteId = $this->getSiteId();
 
@@ -229,6 +230,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
 
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
         for ($page = 1; $page <= $loops; $page++) {
+            $this->_progress(($page - 1) * $this->maxChunk);
             $records = $table->findBy(array(), $this->maxChunk, $page);
 
             $toInserts = array();
@@ -321,6 +323,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                 $recordTypeSingular), Zend_Log::INFO);
             return;
         }
+        $this->_progress(0, $totalRecords);
 
         $siteId = $this->getSiteId();
 
@@ -366,6 +369,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
 
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
         for ($page = 1; $page <= $loops; $page++) {
+            $this->_progress(($page - 1) * $this->maxChunk);
             $records = $table->findBy(array(), $this->maxChunk, $page);
 
             // Initialize the array to map ids of collections and files.
@@ -605,6 +609,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         if (empty($totalRecords)) {
             return;
         }
+        $this->_progress(0, $totalRecords);
 
         $siteId = $this->getSiteId();
 
@@ -617,6 +622,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
 
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
         for ($page = 1; $page <= $loops; $page++) {
+            $this->_progress(($page - 1) * $this->maxChunk);
             $records = $table->findBy(array(), $this->maxChunk, $page);
 
             $toInserts = array();

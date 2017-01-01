@@ -30,6 +30,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
                 Zend_Log::INFO);
             return;
         }
+        $this->_progress(0, $totalRecords);
 
         $db = $this->_db;
         $target = $this->getTarget();
@@ -52,6 +53,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
 
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
         for ($page = 1; $page <= $loops; $page++) {
+            $this->_progress(($page - 1) * $this->maxChunk);
             $records = $table->findBy(array(), $this->maxChunk, $page);
 
             $baseId = 0;

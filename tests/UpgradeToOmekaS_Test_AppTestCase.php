@@ -14,6 +14,7 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
 {
     const PLUGIN_NAME = 'UpgradeToOmekaS';
 
+    protected $_tmpdir;
     protected $_zippath;
     protected $_baseDir;
     protected $_isBaseDirCreated = false;
@@ -30,8 +31,12 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
         // Set Omeka dir the base dir of the server.
         // $_SERVER['DOCUMENT_ROOT'] = sys_get_temp_dir();
 
+        $this->_tmpdir = sys_get_temp_dir()
+            . DIRECTORY_SEPARATOR . 'UpgradeToOmekaS_unit_test';
+
         //This is where the install test will be done by default.
-        $this->_baseDir = BASE_DIR . DIRECTORY_SEPARATOR . 'Semantic';
+        $this->_baseDir = $this->_tmpdir
+            . DIRECTORY_SEPARATOR . 'Semantic';
         $test = file_exists($this->_baseDir)
             ? __('The test base dir %s must not exist.', $this->_baseDir)
             : __('You should remove it.');
@@ -39,7 +44,7 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
 
         // This is where the downloaded package omeka-s.zip is saved.
         // TODO Move it in the main setup of the tests.
-        $this->_zippath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'omeka-s.zip';
+        $this->_zippath = $this->_tmpdir . DIRECTORY_SEPARATOR . 'omeka-s.zip';
 
         // To clear cache after a crash.
         $this->_removeStubPlugin();
@@ -133,7 +138,7 @@ PLUGIN;
 
     protected function _removeTableOmekaS()
     {
-        $processor = new UpgradeToOmekaS_Processor_CoreSite();
+        $processor = new UpgradeToOmekaS_Processor_Base();
         // $target = $processor->getTarget();
         // $result = $target->removeTables();
         $omekasTables = $processor->getMerged('_tables_omekas');
@@ -177,7 +182,7 @@ PLUGIN;
             $params = array_merge($defaultParams, $params);
         }
 
-        $processor = new UpgradeToOmekaS_Processor_CoreServer();
+        $processor = new UpgradeToOmekaS_Processor_Base();
         $processors = $processor->getProcessors();
         $this->assertTrue(isset($processors[$processorName]));
 
@@ -188,6 +193,9 @@ PLUGIN;
             $this->_isBaseDirCreated = true;
         }
 
+        set_option('upgrade_to_omeka_s_process_status',
+            $isProcessing ? Process::STATUS_IN_PROGRESS : '');
+
         if ($methods) {
             foreach ($methods as $method) {
                 foreach ($processors as $name => $processor) {
@@ -195,14 +203,13 @@ PLUGIN;
                         $defaultmethods = $processor->processMethods;
                         $processor->processMethods = array($method);
                         $processor->setParams($params);
-                        $processor->setIsProcessing($isProcessing);
                         $processor->process();
                         $processor->processMethods = $defaultmethods;
                     }
                 }
             }
         }
-        // in the case there is no method.
+        // In the case there is no method.
         else {
             $processor = $processors[$processorName];
             $processor->setParams($params);
@@ -212,7 +219,6 @@ PLUGIN;
                 $this->assertTrue($result);
                 $this->_isBaseDirCreated = true;
             }
-            $processor->setIsProcessing($isProcessing);
         }
 
         return $processors[$processorName];

@@ -132,12 +132,14 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
 
         $path = key($mapping['original']);
         $totalFiles = UpgradeToOmekaS_Common::countFilesInDir($path);
+        $this->_progress(0, $totalFiles);
 
         $totalCopied = 0;
 
         // Copy only the files that are referenced inside the database.
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
         for ($page = 1; $page <= $loops; $page++) {
+            $this->_progress($totalCopied);
             $records = $table->findBy(array(), $this->maxChunk, $page);
             foreach ($records as $record) {
                 foreach ($mapping as $type => $map) {

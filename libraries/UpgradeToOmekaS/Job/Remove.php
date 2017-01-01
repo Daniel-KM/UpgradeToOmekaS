@@ -23,8 +23,10 @@ class UpgradeToOmekaS_Job_Remove extends Omeka_Job_AbstractJob
 
         // Reset the status of the site.
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);
+        set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
 
-        $this->_log(__('Starting remove of Omeka Semantic.'), Zend_Log::WARN);
+        $this->_log(__('Starting remove of Omeka Semantic.'),
+            Zend_Log::WARN);
 
         $user = $this->getUser();
         $params = $this->_params;
@@ -33,9 +35,6 @@ class UpgradeToOmekaS_Job_Remove extends Omeka_Job_AbstractJob
         defined('OMEKA_PATH') or define('OMEKA_PATH', $params['base_dir']);
 
         $processor = new UpgradeToOmekaS_Processor_CoreSite();
-        // Some tools can't be processed at running time, so they
-        // can be bypassed with this check.
-        $processor->setIsProcessing(true);
 
         // The params should be set now, because there is the processing
         // parameter.
@@ -82,18 +81,22 @@ class UpgradeToOmekaS_Job_Remove extends Omeka_Job_AbstractJob
                 $e->getMessage()));
             return;
         }
-        $this->_log(__('The Omeka Semantic tables of the database have been removed successfully.'), Zend_Log::INFO);
+        $this->_log(__('The Omeka Semantic tables of the database have been removed successfully.'),
+            Zend_Log::DEBUG);
 
         // Remove the dir.
         UpgradeToOmekaS_Common::removeDir($baseDir, true);
 
-        $this->_log(__('The files of Omeka Semantic have been removed successfully.'), Zend_Log::INFO);
+        $this->_log(__('The files of Omeka Semantic have been removed successfully.'),
+            Zend_Log::DEBUG);
 
         // Clean the options.
         set_option('upgrade_to_omeka_s_process_params', '[]');
+        set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
         set_option('upgrade_to_omeka_s_process_status', null);
 
-        $this->_log(__('The remove process of Omeka Semantic ended successfully.'), Zend_Log::WARN);
+        $this->_log(__('The remove process of Omeka Semantic ended successfully.'),
+            Zend_Log::INFO);
     }
 
     public function setParams($params)

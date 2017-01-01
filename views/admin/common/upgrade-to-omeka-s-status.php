@@ -1,5 +1,12 @@
+<?php if ($isStopped): ?>
+<h2><?php echo __('Previous Upgrade'); ?></h2>
+<h3><?php echo __('Stopped'); ?></h3>
+<p><?php echo __('The previous upgrade was stopped.'); ?></p>
+<?php endif; ?>
+
 <?php if ($isCompleted): ?>
-<h2><?php echo __('Completed!'); ?></h2>
+<h2><?php echo __('Previous Upgrade'); ?></h2>
+<h3><?php echo __('Completed!'); ?></h3>
 <p><?php echo __('The previous upgrade finished successfully!'); ?></p>
 <p><?php echo __('Go to your %snew site%s built on Omeka Semantic and %slogin%s to see the new world.',
     '<a href="' . $previousParams['url'] . '" target="_blank">', '</a>',
@@ -8,7 +15,8 @@
 <?php endif; ?>
 
 <?php if ($isError): ?>
-<h2><?php echo __('Error!'); ?></h2>
+<h2><?php echo __('Previous Upgrade'); ?></h2>
+<h3><?php echo __('Error!'); ?></h3>
 <p><?php
     echo __('An error occurred during the previous upgrade.');
     echo ' ' . __('Check the logs and clean your install if needed.');
@@ -16,13 +24,14 @@
 <p><?php echo __('Your current install is never modified.'); ?></p>
 <?php endif; ?>
 
-<?php if ($isError || $isCompleted): ?>
+<?php if ($isStopped || $isCompleted || $isError): ?>
 <p><?php echo __('You may want to reset the main status of the upgrade to retry it with different parameters.'); ?></p>
 <p><?php echo __('To reset the process is required if you want to remove automatically the created tables and the copied files.'); ?></p>
 <a class="medium blue button" href="<?php echo url('/upgrade-to-omeka-s/index/reset'); ?>"><?php echo __('Reset Status'); ?></a>
 <?php endif; ?>
 
 <?php if ($isReset && $hasPreviousUpgrade): ?>
+<h2><?php echo __('Previous Upgrade'); ?></h2>
 <p><?php echo __('You can safely remove automatically the created tables (%s), the Omeka S folder (%s) and the copied files of the previous process, if wished.',
     $previousParams['database']['type'] == 'shared'
         ? __('shared database')

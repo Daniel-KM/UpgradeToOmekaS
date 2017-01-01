@@ -8,12 +8,14 @@ echo head(array(
     'bodyclass' => 'upgrade form' . ($isConfirmation ? ' confirm' : ''),
 ));
 ?>
+<?php echo common('upgrade-to-omeka-s-nav', array('isProcessing' => $isProcessing)); ?>
 <div id="primary">
     <?php echo flash(); ?>
 
     <?php
         echo common('upgrade-to-omeka-s-status', array(
             'isProcessing' => $isProcessing,
+            'isStopped' => $isStopped,
             'isCompleted' => $isCompleted,
             'isError' => $isError,
             'isReset' => $isReset,
@@ -46,12 +48,9 @@ echo head(array(
         <?php endif; ?>
     <?php endif;?>
 
-    <h2><?php echo __('Logs'); ?></h2>
-    <p><?php echo __('You may want to see the logs.'); ?></p>
     <?php if (!$isLogEnabled): ?>
     <p class="explanation note"><?php echo __('Omeka logs are not enabled with the minimum level of "info", so previous messages won’t be kept in case of a new process.'); ?></p>
     <?php endif; ?>
-    <a class="medium green button" href="<?php echo url('/upgrade-to-omeka-s/index/logs'); ?>"><?php echo __('Display Logs'); ?></a>
 
     <h2><?php echo __('Maintenance mode'); ?></h2>
     <?php if ($isSiteDown): ?>

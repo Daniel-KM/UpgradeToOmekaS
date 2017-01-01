@@ -15,6 +15,13 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     protected $_processors;
 
     /**
+     * The base processor for generic features.
+     *
+     * @var array
+     */
+    protected $_processorBase;
+
+    /**
      * The list of precheck messages. Empty if no error.
      *
      * @var array
@@ -196,6 +203,9 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_STARTING);
 
+        // Reset the progression.
+        set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
+
         // Update the document root, that will be required during the background
         // process.
         set_option('upgrade_to_omeka_s_document_root', $this->_getDocumentRoot());
@@ -204,7 +214,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         set_option('upgrade_to_omeka_s_service_down', true);
 
         // Reset the logs here to hide them in the log view.
-        set_option('upgrade_to_omeka_s_process_logs', '[]');
+        set_option('upgrade_to_omeka_s_process_logs', json_encode(array()));
 
         $params = $this->_cleanParams();
         $params['isProcessing'] = true;
@@ -230,9 +240,9 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             . ' ' . __('This may take a while.');
         $this->_helper->flashMessenger($message, 'success');
         $message = __('Your site will be available at %s.', $url);
-        $this->_helper->flashMessenger($message, 'success');
+        $this->_helper->flashMessenger($message, 'info');
         $message = __('Please reload this page for progress status.');
-        $this->_helper->flashMessenger($message, 'success');
+        $this->_helper->flashMessenger($message, 'info');
 
         // TODO Clean the password from the table of process when ended.
     }
@@ -244,6 +254,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $isError = $this->_isError();
         $isStopped = $this->_isStopped();
         $isReset = $this->_isReset();
+        $progress = $this->_checkProgress();
         $hasPreviousUpgrade = $this->_hasPreviousUpgrade();
         $previousParams = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
 
@@ -255,6 +266,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->isError = $isError;
         $this->view->isStopped = $isStopped;
         $this->view->isReset = $isReset;
+        $this->view->progress = $progress;
         $this->view->hasPreviousUpgrade = $hasPreviousUpgrade;
         $this->view->previousParams = $previousParams;
         $this->view->isLogEnabled = $isLogEnabled;
@@ -277,10 +289,11 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         // No process.
         else {
             $message = __('No process to stop.');
-            $this->_helper->flashMessenger($message, 'info');
+            $this->_helper->flashMessenger($message, 'error');
         }
+        set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
 
-        $this->_helper->redirector->goto('index');
+        $this->_helper->redirector->goto('logs');
     }
 
     public function resetAction()
@@ -291,13 +304,14 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         }
         // No process.
         else {
-            $status = get_option('upgrade_to_omeka_s_process_status');
+            $status = $this->_getProcessorBase()->getStatus();
             set_option('upgrade_to_omeka_s_process_status', UpgradeToOmekaS_Processor_Abstract::STATUS_RESET);
+            set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
             $message = __('The status of the process has been reset (was "%s").', $status);
             $this->_helper->flashMessenger($message, 'success');
         }
 
-        $this->_helper->redirector->goto('index');
+        $this->_helper->redirector->goto('logs');
     }
 
     public function wakeUpAction()
@@ -456,6 +470,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     protected function _launchRemoveProcess()
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_STARTING);
+        set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
 
         $params = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
         $params['isProcessing'] = true;
@@ -475,9 +490,9 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $message = __('The remove process is launched.');
         $this->_helper->flashMessenger($message, 'success');
         $message = __('Your site %s will be removed in a while.', $params['url']);
-        $this->_helper->flashMessenger($message, 'success');
+        $this->_helper->flashMessenger($message, 'info');
         $message = __('Only logs will be kept.');
-        $this->_helper->flashMessenger($message, 'success');
+        $this->_helper->flashMessenger($message, 'info');
 
         // TODO Clean the password from the table of process when ended.
     }
@@ -485,16 +500,11 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     /**
      * Check if the process is running.
      *
-     * @todo Uses the status of the process object.
-     *
      * @return boolean
      */
     protected function _isProcessing()
     {
-        return in_array(get_option('upgrade_to_omeka_s_process_status'), array(
-            Process::STATUS_STARTING,
-            Process::STATUS_IN_PROGRESS,
-        ));
+        return $this->_getProcessorBase()->isProcessing();
     }
 
     /**
@@ -506,7 +516,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      */
     protected function _isCompleted()
     {
-        return get_option('upgrade_to_omeka_s_process_status') == Process::STATUS_COMPLETED;
+        $status = $this->_getProcessorBase()->getStatus();
+        return $status == Process::STATUS_COMPLETED;
     }
 
     /**
@@ -518,7 +529,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      */
     protected function _isStopped()
     {
-        return get_option('upgrade_to_omeka_s_process_status') == Process::STATUS_STOPPED;
+        $status = $this->_getProcessorBase()->getStatus();
+        return $status == Process::STATUS_STOPPED;
     }
 
     /**
@@ -530,7 +542,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      */
     protected function _isError()
     {
-        return get_option('upgrade_to_omeka_s_process_status') == Process::STATUS_ERROR;
+        $status = $this->_getProcessorBase()->getStatus();
+        return $status == Process::STATUS_ERROR;
     }
 
     /**
@@ -542,7 +555,18 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      */
     protected function _isReset()
     {
-        return get_option('upgrade_to_omeka_s_process_status') == UpgradeToOmekaS_Processor_Abstract::STATUS_RESET;
+        $status = $this->_getProcessorBase()->getStatus();
+        return $status == UpgradeToOmekaS_Processor_Abstract::STATUS_RESET;
+    }
+
+    /**
+     * Get the current value and the total of the progression of the process.
+     *
+     * @return array|null The current and the total values of the current task.
+     */
+    protected function _checkProgress()
+    {
+        return $this->_getProcessorBase()->checkProgress();
     }
 
     /**
@@ -592,6 +616,19 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             'Zend_Log::INFO',
             'Zend_Log::DEBUG',
         ));
+    }
+
+    /**
+     * Get the base processor.
+     *
+     * @return UpgradeToOmekaS_Processor_Base
+     */
+    protected function _getProcessorBase()
+    {
+        if (empty($this->_processorBase)) {
+            $this->_processorBase = new UpgradeToOmekaS_Processor_Base();
+        }
+        return $this->_processorBase;
     }
 
     /**

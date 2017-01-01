@@ -147,11 +147,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_checks = array();
 
     /**
-     * Define is the process is the real one.
+     * Save the task currently processing.
      *
-     * @var boolean
+     * @var string
      */
-    protected $_isProcessing;
+    protected $_currentTask;
 
     /**
      * Single datetime for whole process.
@@ -271,16 +271,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Set if the process is real.
-     *
-     * @param boolean
-     */
-    public function setIsProcessing($value)
-    {
-        $this->_isProcessing = (boolean) $value;
-    }
-
-    /**
      * Get the list of all active processors with current params.
      *
      * @internal Not very clean to set processors inside a processor, even if
@@ -324,7 +314,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                             if ($result) {
                                 $processor->setParams($this->getParams());
                                 $processor->setDatetime($this->getDatetime());
-                                $processor->setIsProcessing($this->isProcessing());
                                 $processors[$name] = $processor;
                             }
                         }
@@ -495,7 +484,28 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     public function isProcessing()
     {
-        return $this->_isProcessing;
+        $status = $this->getStatus();
+        return in_array($status, array(
+            Process::STATUS_STARTING,
+            Process::STATUS_IN_PROGRESS,
+        ));
+    }
+
+    /**
+     * Return the status of the process.
+     *
+     * @return boolean
+     */
+    public function getStatus()
+    {
+        // A direct call, since the options are cached.
+        // $status = get_option('upgrade_to_omeka_s_process_status');
+        $db = $this->_db;
+        $select = 'SELECT `value`
+        FROM ' . $db->prefix . 'options
+        WHERE `name` = "upgrade_to_omeka_s_process_status";';
+        $status = $db->fetchOne($select);
+        return $status;
     }
 
     /**
@@ -633,6 +643,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             }
 
             $this->_log($baseMessage . __('Started.'), Zend_Log::DEBUG);
+
+            // Initialize progression.
+            $this->_currentTask = $method;
+            $this->_progress();
+
             try {
                 $result = $this->$method();
                 // Needed for prechecks and checks.
@@ -646,6 +661,84 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         }
 
         $this->_log(__('End processing.'), Zend_Log::DEBUG);
+    }
+
+    /**
+     * Save the current state of progress of the current task.
+     *
+     * @todo Create a specific class for progress (with display) and log.
+     * @todo Some glitches may occur because options are cached.
+     *
+     * @param integer $current
+     * @param integer $total
+     * @return array
+     */
+    protected function _progress($current = null, $total = null)
+    {
+        // This is a task to reset.
+        if (!$this->isProcessing()) {
+            $progress= array();
+        }
+        // This is a task to pre-init.
+        elseif (is_null($current) && is_null($total)) {
+            $progress = array(
+                'processor' => $this->pluginName,
+                'task' => $this->_currentTask,
+                'start' => date('Y-m-d H:i:s'),
+                'current' => null,
+                'total' => null,
+            );
+        }
+        // This may be an update or an init.
+        else {
+            $progress = json_decode(get_option('upgrade_to_omeka_s_process_progress'), true);
+            if (empty($progress)) {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The progress variable is not set.'),
+                    Zend_Log::WARN);
+                return $this->_progress($current, 0);
+            }
+            //This may be an update.
+            if (!is_null($current)) {
+                $progress['current'] = $current;
+            }
+            // This may be a first init of the total.
+            if (!is_null($total)) {
+                $progress['total'] = $total;
+            }
+        }
+        set_option('upgrade_to_omeka_s_process_progress', json_encode($progress));
+        return $progress;
+    }
+
+    /**
+     * Update the current state of progress of a download task and return it.
+     *
+     * @param integer $current
+     * @param integer $total
+     * @return array
+     */
+    public function checkProgress()
+    {
+        // This is a task to reset.
+        if (!$this->isProcessing()) {
+            return $this->_progress();
+        }
+
+        $progress = json_decode(get_option('upgrade_to_omeka_s_process_progress'), true);
+        if (empty($progress)) {
+            return $progress;
+        }
+
+        // Check if this is a task managed internally.
+        if (!in_array($progress['task'], array('_downloadOmekaS', '_downloadModule'))) {
+            return $progress;
+        }
+
+        $processor = $this->getProcessor($progress['processor']);
+        $filename = basename($processor->module['url']);
+        $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
+        $current = file_exists($path) ? filesize($path) : 0;
+        return $this->_progress($current);
     }
 
     /**
@@ -835,6 +928,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     protected function _downloadModule()
     {
+        $this->_progress(0, $this->module['size']);
+
         $url = sprintf($this->module['url'], $this->module['version']);
         $filename = basename($url);
 

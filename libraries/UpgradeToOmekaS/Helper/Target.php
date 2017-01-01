@@ -69,6 +69,8 @@ class UpgradeToOmekaS_Helper_Target
     /**
      * Set if the process is running.
      *
+     * @todo Remove this status.
+     *
      * @param boolean $isProcessing
      */
     public function setIsProcessing($isProcessing)

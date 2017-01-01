@@ -663,6 +663,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $user = $this->getParam('user');
 
         $totalRecords = total_records($recordType);
+        $this->_progress(0, $totalRecords);
 
         // Check if there are already records.
         $totalExisting = $target->totalRows('user');
@@ -693,6 +694,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
         for ($page = 1; $page <= $loops; $page++) {
+            $this->_progress(($page - 1) * $this->maxChunk);
             $records = $table->findBy(array(), $this->maxChunk, $page);
 
             $toInserts = array();

@@ -12,6 +12,7 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
     const QUEUE_NAME = 'upgrade_to_omeka_s_upgrade';
 
     protected $_params;
+    protected $_processorBase;
 
     /**
      * Performs the upgrade task.
@@ -24,12 +25,14 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
         // Reset the status of the site.
         set_option('upgrade_to_omeka_s_service_down', true);
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);
+        set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
 
         // Reset existing logs. They are available in the logs of Omeka if
         // enabled (level default).
         set_option('upgrade_to_omeka_s_process_logs', '[]');
 
-        $this->_log(__('Starting upgrade from Omeka Classic to Omeka Semantic.'), Zend_Log::INFO);
+        $this->_log(__('Starting upgrade from Omeka Classic to Omeka Semantic.'),
+            Zend_Log::INFO);
 
         $user = $this->getUser();
         $params = $this->_params;
@@ -71,9 +74,6 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
         foreach ($processors as $name => $processor) {
             if ($this->_isProcessing()) {
                 try {
-                    // Some tools can't be processed at running time, so they
-                    // can be bypassed with this check.
-                    $processor->setIsProcessing(true);
                     // The params should be set now, because there is the processing
                     // parameter.
                     $processor->setParams($params);
@@ -151,9 +151,11 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
         $this->_log(__('Process ended successfully.'), Zend_Log::DEBUG);
 
         // No error.
-        $this->_log(__('End of the upgrade from Omeka Classic to Omeka Semantic.'), Zend_Log::INFO);
+        $this->_log(__('End of the upgrade from Omeka Classic to Omeka Semantic.'),
+            Zend_Log::INFO);
 
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_COMPLETED);
+        set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
         set_option('upgrade_to_omeka_s_service_down', false);
     }
 
@@ -163,14 +165,26 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
     }
 
     /**
+     * Get the base processor.
+     *
+     * @return UpgradeToOmekaS_Processor_Base
+     */
+    protected function _getProcessorBase()
+    {
+        if (empty($this->_processorBase)) {
+            $this->_processorBase = new UpgradeToOmekaS_Processor_Base();
+        }
+        return $this->_processorBase;
+    }
+
+    /**
      * List and check processors for active plugins.
      *
      * @return array
      */
     protected function _listProcessors()
     {
-        $processor = new UpgradeToOmekaS_Processor_CoreSite();
-        return $processor->getProcessors();
+        return $this->_getProcessorBase()->getProcessors();
     }
 
     /**
@@ -182,10 +196,7 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
      */
     protected function _isProcessing()
     {
-        return in_array(get_option('upgrade_to_omeka_s_process_status'), array(
-            Process::STATUS_STARTING,
-            Process::STATUS_IN_PROGRESS,
-        ));
+        return $this->_getProcessorBase()->isProcessing();
     }
 
     /**
