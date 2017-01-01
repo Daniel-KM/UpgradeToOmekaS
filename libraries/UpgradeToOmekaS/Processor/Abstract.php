@@ -102,21 +102,14 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_db;
 
     /**
-     * Short to the database of Omeka Semantic.
+     * Short to the tools to use on Omeka Semantic, in particular the database.
      *
      * Even if the database is shared, this is not an alias of $_db since it has
      * a direct access to the database without the Zend layers of Omeka Classic.
      *
      * @var object
      */
-    protected $_targetDb;
-
-    /**
-     * List of columns of tables of the database of Omeka Semantic.
-     *
-     * @var
-     */
-    protected $_targetDbTablesColumns = array();
+    protected $_target;
 
     /**
      * Flat list of properties as an associative array of names to ids.
@@ -292,6 +285,16 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Set if the process is real.
+     *
+     * @param boolean
+     */
+    public function setIsProcessing($value)
+    {
+        $this->_isProcessing = (boolean) $value;
+    }
+
+    /**
      * Get the list of all active processors.
      *
      * @internal Not very clean to set processors inside a processor, even if
@@ -421,7 +424,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      *
      * @return Zend_Config_Ini
      */
-    protected function _getSecurityIni()
+    public function getSecurityIni()
     {
         if (is_null($this->_securityIni)) {
             $iniFile = dirname(dirname(dirname(dirname(__FILE__))))
@@ -455,6 +458,16 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         }
         $plugin = get_record('Plugin', array('name' => $this->pluginName));
         return $plugin && $plugin->isActive();
+    }
+
+    /**
+     * Return the status of the process.
+     *
+     * @return boolean
+     */
+    public function isProcessing()
+    {
+        return $this->_isProcessing;
     }
 
     /**
@@ -568,30 +581,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Set if the process is real.
-     *
-     * @todo Replace by the check of the main process or by isProcessing().
-     *
-     * @param boolean
-     */
-    public function setIsProcessing($value)
-    {
-        $this->_isProcessing = (boolean) $value;
-    }
-
-    /**
-     * Set the process id.
-     *
-     * @param Process|integer $process
-     */
-    public function setProcessId($process)
-    {
-        $this->_processId = is_object($process)
-            ? (integer) $process->id
-            : (integer) $process;
-    }
-
-    /**
      * Process the true upgrade.
      *
      * @todo Move this in the job processor.
@@ -613,7 +602,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         foreach ($this->processMethods as $i => $method) {
             $baseMessage = '[' . $method . ']: ';
             // Process stopped externally.
-            if (!$this->_isProcessing()) {
+            if (!$this->isProcessing()) {
                 $this->_log($baseMessage . __('The process has been stopped outside of the processor.'),
                     Zend_Log::WARN);
                 return;
@@ -642,296 +631,57 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Helper to get the Omeka S database object.
+     * Helper to get an absolute path to a file or a directory inside Omeka S.
+     *
+     * @param string $path A relative path.
+     * @param boolean $check Check if exists and is readable.
+     * @return string
+     */
+    public function getFullPath($path, $check = true)
+    {
+        $baseDir = $this->getParam('base_dir');
+        if (empty($baseDir)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Base dir undefined.'));
+        }
+        $file = $baseDir . DIRECTORY_SEPARATOR . ltrim($path, '/');
+        if ($check) {
+            if (!file_exists($file)) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('The file "%s" doesn’t exist.', $path));
+            }
+            if (!is_readable($file)) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('The file "%s" is not readable.', $path));
+            }
+        }
+        return $file;
+    }
+
+    /**
+     * Wrapper to get the target tools on Omeka S.
      *
      * @throws UpgradeToOmekaS_Exception
-     * @return Db|null
+     * @return UpgradeToOmekaS_Helper_Target|null
      */
-    public function getTargetDb()
+    public function getTarget()
     {
-        if (!empty($this->_targetDb)) {
-            return $this->_targetDb;
+        if (!empty($this->_target)) {
+            return $this->_target;
         }
 
-        $params = $this->getParams();
-        if (empty($params)) {
-            throw new UpgradeToOmekaS_Exception(
-                __('The params of the processor are not defined.'));
-        }
+        $target = new UpgradeToOmekaS_Helper_TargetOmekaS();
 
-        $database = $this->getParam('database');
-        if (!isset($database['type'])) {
-            throw new UpgradeToOmekaS_Exception(
-                __('The type of the database is not defined.'));
-        }
-        $type = $database['type'];
-        switch ($type) {
-            case 'separate':
-                $host = isset($database['host']) ? $database['host'] : '';
-                $port = isset($database['port']) ? $database['port'] : '';
-                $dbname = isset($database['dbname']) ? $database['dbname'] : '';
-                $username = isset($database['username']) ? $database['username'] : '';
-                $password = isset($database['password']) ? $database['password'] : '';
-                break;
-            // The default connection can't be reused, because there are the
-            // application layers.
-            case 'share':
-                $db = $this->_db;
-                $config = $db->getAdapter()->getConfig();
-                $host = isset($config['host']) ? $config['host'] : '';
-                $port = isset($config['port']) ? $config['port'] : '';
-                $dbname = isset($config['dbname']) ? $config['dbname'] : '';
-                $username = isset($config['username']) ? $config['username'] : '';
-                $password = isset($config['password']) ? $config['password'] : '';
-                break;
-            default:
-                throw new UpgradeToOmekaS_Exception(
-                    __('The type "%s" is not possible for the database.', $type));
-        }
+        $databaseParams = $this->getParam('database');
+        $target->setDatabaseParams($databaseParams);
 
-        // The connection should be checked even for a shared database.
-        $params = array(
-            'host' => $host,
-            'username' => $username,
-            'password' => $password,
-            'dbname' => $dbname,
-        );
-        if ($port) {
-            $params['port'] = $port;
-        }
-
-        try {
-            $targetDb = Zend_Db::Factory('PDO_MYSQL', $params);
-            if (empty($targetDb)) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('Database is null.'));
-            }
-        } catch (Exception $e) {
-            throw new UpgradeToOmekaS_Exception(
-                __('Cannot access to the database "%s": %s', $dbname, $e->getMessage()));
-        }
-
-        // Another check.
-        switch ($type) {
-            case 'separate':
-                if (!$this->_isProcessing()) {
-                    $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "' . $dbname . '";';
-                    $result = $targetDb->fetchOne($sql);
-                    if ($result) {
-                        throw new UpgradeToOmekaS_Exception(
-                            __('The target database "%s" should be empty when using a separate database.', $dbname));
-                    }
-                }
-                break;
-
-            case 'share':
-                $sql = 'SHOW TABLES;';
-                $result = $targetDb->fetchCol($sql);
-                $omekasTables = $this->getMerged('_tables_omekas');
-                if (array_intersect($result, $omekasTables)) {
-                    throw new UpgradeToOmekaS_Exception(
-                        __('Some names of tables of Omeka S are existing in the database of Omeka Classic.'));
-                }
-                break;
-        }
-
-        $this->_targetDb = $targetDb;
-        return $this->_targetDb;
-    }
-
-    /**
-     * Helper to quote a value before insertion of multiple rows in database.
-     *
-     * It safely quotes a value for an SQL statement. If an array is passed as
-     * the value, the array values are quoted and then returned as a
-     * comma-separated string.
-     *
-     * @internal Unlike Zend_Db_Adapter_Abstract::quote(), it takes care of
-     * the value "null", kept as NULL, not "".
-     * @internal Moreover, it allows not to quote some keys for an array of values.
-     *
-     * @param mixed $value If array, it should be a *flat* one.
-     * @param array $skipQuoteKeys Keys of the values to not quote; it requires an
-     * associative array in $value.
-     * @return string A database quoted string, according to the value type. The
-     * separator is a comma + a tabulation.
-     */
-    protected function _dbQuote($value, $skipQuoteKeys = array())
-    {
-        if (is_null($value)) {
-            return 'NULL';
-        }
-
-        if (is_array($value)) {
-            if ($skipQuoteKeys) {
-                if (!is_array($skipQuoteKeys)) {
-                    $skipQuoteKeys = array($skipQuoteKeys);
-                }
-                $result = $value;
-                foreach ($result as $key => &$val) {
-                    if (!in_array($key, $skipQuoteKeys)) {
-                        $val = $this->_dbQuote($val);
-                    }
-                }
-            }
-            else {
-                $result = array_map(array($this, '_dbQuote'), $value);
-            }
-            return implode(",\t", $result);
-        }
-
-        return $this->_db->quote($value);
-    }
-
-    /**
-     * Return the list of the columns for a table of the target.
-     *
-     * @param string $table
-     * @return array|null Null if target database is not loaded or not a table.
-     */
-    public function getTargetTableColumns($table)
-    {
-        if (!isset($this->_targetDbTablesColumns[$table])) {
-            $targetDb = $this->getTargetDb();
-            $sql = '
-            SELECT COLUMN_NAME
-            FROM INFORMATION_SCHEMA.COLUMNS
-            WHERE TABLE_NAME = ' . $targetDb->quote($table) . ';';
-            $result = $targetDb->fetchCol($sql);
-            $this->_targetDbTablesColumns[$table] = $result;
-        }
-
-        return $this->_targetDbTablesColumns[$table];
-    }
-
-    /**
-     * Helper to insert multiple quoted rows in a table of the target database.
-     *
-     * @uses self::_insertRowsInTables()
-     *
-     * @param string $table
-     * @param array $rows
-     * @param array $columns
-     * @param boolean $areQuoted
-     */
-    protected function _insertRows($table, $rows, $columns = array(), $areQuoted = true)
-    {
-        if (empty($rows) || empty($table)) {
-            return;
-        }
-
-        $rowsByTable = array($table => $rows);
-        $columnsByTable = $columns ? array($table => $columns) : array();
-
-        $this->_insertRowsInTables($rowsByTable, $columnsByTable, $areQuoted);
-    }
-
-    /**
-     * Insert multiple rows in multiple tables of the target database.
-     *
-     * @internal An early quotation of rows may save memory with big chunks.
-     * @internal This method uses sql transaction to manage auto-increment ids
-     * as long as the "LAST_INSERT_ID() + ' . $baseId" is well formed in rows.
-     * The last inserted id is the *first* autoincremented value of the previous
-     * successfull insert, i.e. the first inserted id of the second table for
-     * the third table. Finally, if the id is set manually, it is not an
-     * autoincremented one, so it is not recommended to mix auto and manual ids.
-     *
-     * @internal There is no error or warning when the number of columns and
-     * values are different. The query is simply skipped.
-     *
-     * @param array $rowsByTable The rows for each table.
-     * @param array $columnsByTable The columns for each table.
-     * @param boolean $areQuoted
-     * @throws UpgradeToOmekaS_Exception
-     */
-    protected function _insertRowsInTables($rowsByTable, $columnsByTable = array(), $areQuoted = true)
-    {
-        if (empty($rowsByTable)) {
-            return;
-        }
-
-        // Get the columns of each table.
-        foreach ($rowsByTable as $table => $rows) {
-            if (!isset($columns[$table])) {
-                $columns[$table] = $this->getTargetTableColumns($table);
-                if (empty($columns[$table])) {
-                    return;
-                }
-            }
-        }
-
-        if (!$areQuoted) {
-            foreach ($rowsByTable as $table => &$rows) {
-                $rows = array_map(array($this, '_dbQuote'), $rows);
-            }
-            unset($rows);
-        }
-
-        // Prepare the transaction.
-        $sql = 'BEGIN;' . PHP_EOL;
-        foreach ($rowsByTable as $table => $rows) {
-            $sql .= sprintf('INSERT INTO `%s` (`%s`) VALUES ', $table, implode('`, `', $columns[$table])) . PHP_EOL;
-            $sql .= '(' . implode('),' . PHP_EOL . '(', $rows) . ');' . PHP_EOL;
-        }
-        $sql .= 'COMMIT;' . PHP_EOL;
-
-        $targetDb = $this->getTargetDb();
-        $result = $targetDb->prepare($sql)->execute();
-        if (!$result) {
-            throw new UpgradeToOmekaS_Exception(
-                __('Unable to insert data in table %s.', $table));
-        }
-    }
-
-    /**
-     * Helper to get the total rows of a target table.
-     *
-     * @param string $table
-     * @return integer
-     */
-    public function countTargetTable($table)
-    {
-        $targetDb = $this->getTargetDb();
-        $select = $targetDb->select()
-            ->from($table, array(new Zend_Db_Expr('COUNT(*)')));
-        $result = $targetDb->fetchOne($select);
-        return $result;
-    }
-
-    /**
-     * Remove the tables of the database.
-     *
-     * @return boolean
-     */
-    public function removeTables()
-    {
-        $isRemoving = $this->getParam('isRemoving');
-        if (!$isRemoving) {
-            return false;
-        }
-
-        $targetDb = $this->getTargetDb();
         $omekasTables = $this->getMerged('_tables_omekas');
-        if (empty($omekasTables)) {
-            return true;
-        }
-        $sql = '
-            BEGIN;
-            SET foreign_key_checks = 0;
-            DROP TABLE IF EXISTS `' . implode('`, `', $omekasTables) . '`;
-            SET foreign_key_checks = 1;
-            COMMIT;
-        ';
-        try {
-            $targetDb->prepare($sql)->execute();
-        } catch (Exception $e) {
-            throw new UpgradeToOmekaS_Exception(
-                __('An unknown error occurred during the drop of tables of the database: %s.',
-                $e->getMessage()));
-        }
+        $target->setTables($omekasTables);
 
-        return true;
+        $target->setIsProcessing($this->isProcessing());
+
+        $this->_target = $target;
+        return $this->_target;
     }
 
     /**
@@ -1207,199 +957,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Wrapper to set a global setting.
-     *
-     * @param string $id The name of the value.
-     * @param var $value The value will be json_encoded().
-     * @return void
-     */
-    protected function _setSetting($id, $value)
-    {
-        $this->_setJsonSetting('setting', $id, $value);
-    }
-
-    /**
-     * Wrapper to set a site setting.
-     *
-     * @param string $id The name of the value.
-     * @param var $value The value will be json_encoded().
-     * @param integer $siteId The main site, or an exhibit.
-     * @return void
-     */
-    protected function _setSiteSetting($id, $value, $siteId = 1)
-    {
-        $this->_setJsonSetting('site_setting', $id, $value, $siteId);
-    }
-
-    /**
-     * Set a setting in json.
-     *
-     * @param string $table "setting" or "site_setting"
-     * @param string $id The name of the value.
-     * @param var $value The value will be json_encoded().
-     * @param integer $siteId The main site, or an exhibit.
-     * @return void
-     */
-    protected function _setJsonSetting($table, $id, $value, $siteId = null)
-    {
-        if (empty($id)) {
-            throw new UpgradeToOmekaS_Exception(
-                __('The id of the setting is empty.'));
-        }
-        if (empty($table)) {
-            throw new UpgradeToOmekaS_Exception(
-                __('The table is not defined.'));
-        }
-        if (!in_array($table, array('setting', 'site_setting'))) {
-            throw new UpgradeToOmekaS_Exception(
-                __('The table is not managed.'));
-        }
-        if ($table == 'site_setting' && empty($siteId)) {
-            throw new UpgradeToOmekaS_Exception(
-                __('The id of the site is empty.'));
-        }
-
-        $value = $this->_toJson($value);
-
-        // Check if there is a value.
-        $targetDb = $this->getTargetDb();
-        $select = $targetDb->select()
-            ->from($table)
-            ->where('id = ?', $id);
-        if ($table == 'site_setting') {
-            $select
-                ->where('site_id = ?', $siteId);
-        }
-        $result = $targetDb->fetchRow($select);
-
-        // Update row.
-        if ($result) {
-            $where = array();
-            $where[] = 'id = ' . $targetDb->quote($id);
-            if ($table == 'site_setting') {
-                $where[] = 'site_id = ' . (integer) $siteId;
-            }
-            $result = $targetDb->update($table, array('value' => $value), $where);
-        }
-        // Insert new row.
-        else {
-            $toInsert = array();
-            $toInsert['id'] = $id;
-            $toInsert['value'] = $value;
-            if ($table == 'site_setting') {
-                $toInsert['site_id'] = $siteId;
-            }
-            $result = $targetDb->insert($table, $toInsert);
-        }
-    }
-
-    /**
-     * Wrapper to get a json_decoded global setting.
-     *
-     * @param string $id The name of the value.
-     * @return var
-     */
-    protected function _getSetting($id)
-    {
-        return $this->_getJsonSetting('setting', $id);
-    }
-
-    /**
-     * Wrapper to get a json_decoded site setting.
-     *
-     * @param string $id The name of the value.
-     * @param integer $siteId The main site, or an exhibit.
-     * @return var
-     */
-    protected function _getSiteSetting($id, $siteId = 1)
-    {
-        return $this->_getJsonSetting('site_setting', $id, $siteId);
-    }
-
-    /**
-     * Get a json_decoded setting.
-     *
-     * @param string $table "setting" or "site_setting"
-     * @param integer $id The name of the value.
-     * @param integer $siteId The main site, or an exhibit.
-     * @return var
-     */
-    protected function _getJsonSetting($table, $id, $siteId = null)
-    {
-        if (empty($id)) {
-            return;
-        }
-        if (empty($table)) {
-            throw new UpgradeToOmekaS_Exception(
-                __('The table is not defined.'));
-        }
-        if (!in_array($table, array('setting', 'site_setting'))) {
-            throw new UpgradeToOmekaS_Exception(
-                __('The table is not managed.'));
-        }
-        if ($table == 'site_setting' && empty($siteId)) {
-            throw new UpgradeToOmekaS_Exception(
-                __('The id of the site is empty.'));
-        }
-
-        $targetDb = $this->getTargetDb();
-        $select = $targetDb->select()
-            ->from($table, array('value'))
-            ->where('id = ?', $id);
-        if ($table == 'site_setting') {
-            $select
-                ->where('site_id = ?', $siteId);
-        }
-        $result = $targetDb->fetchOne($select);
-        if ($result) {
-            return json_decode($result, true);
-        }
-    }
-
-    /**
-     * Wrapper for json_encode() to get a clean json.
-     *
-     * @internal The database is Unicode and this is allowed since php 5.4.
-     *
-     * @param var $value
-     * @return string
-     */
-    protected function _toJson($value)
-    {
-        return json_encode(
-            $value,
-            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-    }
-
-    /**
-     * Helper to get an absolute path to a file or a directory inside Omeka S.
-     *
-     * @param string $path A relative path.
-     * @param boolean $check Check if exists and is readable.
-     * @return string
-     */
-    public function getFullPath($path, $check = true)
-    {
-        $baseDir = $this->getParam('base_dir');
-        if (empty($baseDir)) {
-            throw new UpgradeToOmekaS_Exception(
-                __('Base dir undefined.'));
-        }
-        $file = $baseDir . DIRECTORY_SEPARATOR . ltrim($path, '/');
-        if ($check) {
-            if (!file_exists($file)) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('The file "%s" doesn’t exist.', $path));
-            }
-            if (!is_readable($file)) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('The file "%s" is not readable.', $path));
-            }
-        }
-        return $file;
-    }
-
-    /**
      * Process all steps to install a module: dir, download, unzip, enable.
      */
     protected function _installModule()
@@ -1481,7 +1038,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     protected function _checkInstalledModule($module)
     {
-        $targetDb = $this->getTargetDb();
+        $targetDb = $this->getTarget()->getDb();
         $sql = 'SELECT * FROM module WHERE id = ' . $targetDb->quote($module);
         $result = $targetDb->fetchRow($sql);
         return $result;
@@ -1635,7 +1192,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             return;
         }
 
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         $toInsert = array();
         $toInsert['id'] = $module;
@@ -1655,7 +1213,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected function _activateModule()
     {
         $module = $this->_getModuleName();
-        $targetDb = $this->getTargetDb();
+        $targetDb = $this->getTarget()->getDb();
         $bind = array();
         $bind['is_active'] = 1;
         $result = $targetDb->update(
@@ -1690,24 +1248,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @param array $site Some data for the url of the site.
      * @return array|null The Omeka S formatted nav link, or null.
      */
-    public function convertNavigationPageToLink($page, $args, $site)
+    protected function _convertNavigationPageToLink($page, $args, $site)
     {
-    }
-
-    /**
-     * Return the status of the process.
-     *
-     * @todo Uses the status of the process object.
-     *
-     * @return boolean
-     */
-    protected function _isProcessing()
-    {
-        $status = get_option('upgrade_to_omeka_s_process_status');
-        return in_array($status, array(
-            Process::STATUS_STARTING,
-            Process::STATUS_IN_PROGRESS,
-        ));
     }
 
     /**
@@ -1779,5 +1321,20 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         $slug = preg_replace('/-{2,}/', '-', $slug);
         $slug = preg_replace('/-*$/', '', $slug);
         return $slug;
+    }
+
+    /**
+     * Wrapper for json_encode() to get a clean json.
+     *
+     * @internal The database is Unicode and this is allowed since php 5.4.
+     *
+     * @param var $value
+     * @return string
+     */
+    protected function _toJson($value)
+    {
+        return json_encode(
+            $value,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 }

@@ -35,8 +35,9 @@ class UpgradeToOmekaS_Processor_EmbedCodes extends UpgradeToOmekaS_Processor_Abs
 
     protected function _upgradeSettings()
     {
+        $target = $this->getTarget();
         // Get current data.
-        $sharingMethods = $this->_getSiteSetting('sharing_methods');
+        $sharingMethods = $target->selectSiteSetting('sharing_methods');
         if (is_null($sharingMethods)) {
             $sharingMethods = array(
                 'embed',
@@ -47,9 +48,9 @@ class UpgradeToOmekaS_Processor_EmbedCodes extends UpgradeToOmekaS_Processor_Abs
             $sharingMethods[] = 'embed';
             $sharingMethods = array_unique($sharingMethods);
         }
-        $this->_setSiteSetting('sharing_methods', $sharingMethods);
+        $target->saveSiteSetting('sharing_methods', $sharingMethods);
 
         // Set a second option.
-        $this->_setSiteSetting('sharing_placement', 'view.show.before');
+        $target->saveSiteSetting('sharing_placement', 'view.show.before');
     }
 }

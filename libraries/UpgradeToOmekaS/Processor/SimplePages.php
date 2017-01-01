@@ -32,7 +32,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
         }
 
         $db = $this->_db;
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
 
         $user = $this->getParam('user');
 
@@ -43,7 +43,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
         $siteId = 1;
 
         // Check if there are already records for a warn.
-        $totalExisting = $this->countTargetTable('site_page');
+        $totalExisting = $target->totalRows('site_page');
         $previousRecordsExists = (boolean) $totalExisting;
         if ($previousRecordsExists) {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('Some simple pages (%d) have been upgraded, so ids will change and the main menu should be checked.',
@@ -65,7 +65,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
                 $toInsert['title'] = substr($record->title, 0, 190);
                 $toInsert['created'] = $record->inserted;
                 $toInsert['modified'] = $record->updated;
-                $toInserts['site_page'][] = $this->_dbQuote($toInsert);
+                $toInserts['site_page'][] = $target->cleanQuote($toInsert);
 
                 if ($previousRecordsExists) {
                     $id = 'LAST_INSERT_ID() + ' . $baseId;
@@ -76,22 +76,22 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
                 $toInsert['id'] = null;
                 $toInsert['page_id'] = $id;
                 $toInsert['layout'] = 'pageTitle';
-                $toInsert['data'] = $this->_toJson(array());
+                $toInsert['data'] = $target->toJson(array());
                 $toInsert['position'] = 1;
-                $toInserts['site_page_block'][] = $this->_dbQuote($toInsert, 'page_id');
+                $toInserts['site_page_block'][] = $target->cleanQuote($toInsert, 'page_id');
 
                 $toInsert = array();
                 $toInsert['id'] = null;
                 $toInsert['page_id'] = $id;
                 $toInsert['layout'] = 'html';
-                $toInsert['data'] = $this->_toJson(array(
+                $toInsert['data'] = $target->toJson(array(
                     'html' => $record->text,
                 ));
                 $toInsert['position'] = 2;
-                $toInserts['site_page_block'][] = $this->_dbQuote($toInsert, 'page_id');
+                $toInserts['site_page_block'][] = $target->cleanQuote($toInsert, 'page_id');
             }
 
-            $this->_insertRowsInTables($toInserts);
+            $target->insertRowsInTables($toInserts);
         }
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All simple pages (%d) have been upgraded.',
@@ -101,7 +101,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
             Zend_Log::INFO);
     }
 
-    public function convertNavigationPageToLink($page, $args, $site)
+    protected function _convertNavigationPageToLink($page, $args, $site)
     {
         // Check if this is a slug.
         $slug = ltrim($args['path'], '/');

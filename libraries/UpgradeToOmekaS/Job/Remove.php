@@ -43,10 +43,10 @@ class UpgradeToOmekaS_Job_Remove extends Omeka_Job_AbstractJob
 
         //Check the database before.
         try {
-            $targetDb = $processor->getTargetDb();
-            if (empty($targetDb)) {
+            $target = $processor->getTarget();
+            if (empty($target)) {
                 throw new UpgradeToOmekaS_Exception(
-                    __('Unable to access to the database (%s).',
+                    __('Unable to access to the target database (%s).',
                         $params['database']['type'] == 'shared'
                             ? __('shared database')
                             : $params['database']['host'] . (empty($params['database']['port']) ? '' : ':' . $params['database']['port']) . ' / ' . $params['database']['dbname'],
@@ -71,7 +71,7 @@ class UpgradeToOmekaS_Job_Remove extends Omeka_Job_AbstractJob
 
         // Remove the tables of the database.
         try {
-            $result = $processor->removeTables();
+            $result = $target->removeTables();
         } catch (Exception $e) {
             $this->_processError(__('An unknown error occurred during the drop of tables of the database: %s.',
                 $e->getMessage()));

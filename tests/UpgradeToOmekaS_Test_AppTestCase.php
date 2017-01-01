@@ -135,6 +135,8 @@ PLUGIN;
     protected function _removeTableOmekaS()
     {
         $processor = new UpgradeToOmekaS_Processor_Core();
+        // $target = $processor->getTarget();
+        // $result = $target->removeTables();
         $omekasTables = $processor->getMerged('_tables_omekas');
         $sql = 'SET foreign_key_checks = 0;';
         $result = get_db()->query($sql);

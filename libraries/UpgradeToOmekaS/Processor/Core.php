@@ -309,12 +309,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _precheckConfig()
     {
         $this->_precheckVersion();
-        $settings = $this->_getSecurityIni();
+        $settings = $this->getSecurityIni();
         if ($settings->precheck->background_dispatcher) {
             $this->_precheckBackgroundDispatcher();
         }
         // During the background process, the server is not Apache.
-        if (!$this->_isProcessing) {
+        if (!$this->isProcessing()) {
             $this->_precheckServer();
         }
         // See Omeka S ['installer']['pre_tasks']: CheckEnvironmentTask.php
@@ -324,7 +324,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $this->_precheckDatabaseServer();
         $this->_precheckZip();
         // Don't check the jobs during true process.
-        if (!$this->_isProcessing) {
+        if (!$this->isProcessing()) {
             $this->_precheckJobs();
         }
     }
@@ -467,7 +467,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     protected function _precheckIntegrity()
     {
-        $settings = $this->_getSecurityIni();
+        $settings = $this->getSecurityIni();
         if ($settings->precheck->integrity->users) {
             $this->_precheckIntegrityUsers();
         }
@@ -833,7 +833,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _configOmekaS()
     {
         // Load and check the database.
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         // Create database.ini.
         $database = $this->getParam('database');
@@ -898,7 +899,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
      */
     protected function _installOmekaS()
     {
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         // See Omeka S ['installer']['tasks']: DestroySessionTask.php
         // Nothing to do: there is no session by default in the tables and no
@@ -983,7 +985,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::DEBUG);
 
         // See Omeka S ['installer']['tasks']: AddDefaultSettingsTask.php
-        $this->_setSetting('version', $this->module['version']);
+        $target->saveSetting('version', $this->module['version']);
 
         // Use the customized value for admin pages if modified.
         $value = get_option('per_page_admin');
@@ -994,7 +996,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $this->_log('[' . __FUNCTION__ . ']: ' . __('Omeka S doesn’t use a specific pagination value for public pages.'),
                 Zend_Log::NOTICE);
         }
-        $this->_setSetting('pagination_per_page', $value);
+        $target->saveSetting('pagination_per_page', $value);
 
         $value = get_option('file_mime_type_whitelist');
         if ($value == Omeka_Validate_File_MimeType::DEFAULT_WHITELIST) {
@@ -1002,7 +1004,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         } else {
             $value = explode(',', $value);
         }
-        $this->_setSetting('media_type_whitelist', $value);
+        $target->saveSetting('media_type_whitelist', $value);
         $this->_log('[' . __FUNCTION__ . ']: ' . __('These three media types have been removed from the default white list of Omeka 2: "audio/x-m4a", "video/x-m4v" and "video/webm".'),
             Zend_Log::INFO);
 
@@ -1012,7 +1014,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         } else {
             $value = explode(',', $value);
         }
-        $this->_setSetting('extension_whitelist', $value);
+        $target->saveSetting('extension_whitelist', $value);
         $this->_log('[' . __FUNCTION__ . ']: ' . __('These three extensions have been removed from the default white list of Omeka 2: "m4v", "opus" and "webm".'),
             Zend_Log::INFO);
 
@@ -1023,19 +1025,19 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
         // Use the option "administrator_email" instead of the current user.
         $value = get_option('administrator_email') ?: $user->email;
-        $this->_setSetting('administrator_email', $value);
-        $this->_setSetting('installation_title', $this->getParam('installation_title'));
-        $this->_setSetting('time_zone', $this->getParam('time_zone'));
+        $target->saveSetting('administrator_email', $value);
+        $target->saveSetting('installation_title', $this->getParam('installation_title'));
+        $target->saveSetting('time_zone', $this->getParam('time_zone'));
 
         // Settings that are not set when the site is installed.
 
         // Even if the first site is not yet created.
-        $this->_setSetting('default_site', (string) 1);
-        $this->_setSetting('disable_file_validation', (string) get_option('disable_default_file_validation'));
-        $this->_setSetting('property_label_information', 'none');
-        $this->_setSetting('recaptcha_site_key', (string) get_option('recaptcha_public_key'));
-        $this->_setSetting('recaptcha_secret_key', (string) get_option('recaptcha_private_key'));
-        $this->_setSetting('use_htmlpurifier', (string) get_option('html_purifier_is_enabled'));
+        $target->saveSetting('default_site', (string) 1);
+        $target->saveSetting('disable_file_validation', (string) get_option('disable_default_file_validation'));
+        $target->saveSetting('property_label_information', 'none');
+        $target->saveSetting('recaptcha_site_key', (string) get_option('recaptcha_public_key'));
+        $target->saveSetting('recaptcha_secret_key', (string) get_option('recaptcha_private_key'));
+        $target->saveSetting('use_htmlpurifier', (string) get_option('html_purifier_is_enabled'));
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended.', 'Add Default Settings'),
             Zend_Log::DEBUG);
@@ -1325,14 +1327,15 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     {
         $recordType = 'User';
         $db = $this->_db;
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         $user = $this->getParam('user');
 
         $totalRecords = total_records($recordType);
 
         // Check if there are already records.
-        $totalExisting = $this->countTargetTable('user');
+        $totalExisting = $target->totalRows('user');
         if ($totalExisting) {
             // TODO Allow to upgrade without ids (need a temp mapping of source and destination ids)?
             throw new UpgradeToOmekaS_Exception(
@@ -1405,12 +1408,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     $toInsert['password_hash'] = null;
                     $toInsert['role'] = $role;
                     $toInsert['is_active'] = (integer) (boolean) $record->active;
-                    $toInserts[] = $this->_dbQuote($toInsert);
+                    $toInserts[] = $target->cleanQuote($toInsert);
 
                     $this->_mappingIds[$recordType][$record->id] = $id;
                 }
 
-                $this->_insertRows('user', $toInserts);
+                $target->insertRows('user', $toInserts);
             }
 
             $totalUnmanaged = array_sum($unmanagedRoles);
@@ -1442,7 +1445,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 Zend_Log::NOTICE);
         }
 
-        $settings = $this->_getSecurityIni();
+        $settings = $this->getSecurityIni();
         if (!empty($settings->default->global_admin_password)) {
             $bind = array();
             $bind['password_hash'] = $settings->default->global_admin_password;
@@ -1460,8 +1463,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     {
         // Settings of Omeka Classic: create the first site.
         $db = $this->_db;
-        $targetDb = $this->getTargetDb();
-        $settings = $this->_getSecurityIni();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
+        $settings = $this->getSecurityIni();
         $user = $this->getParam('user');
 
         $title = $this->getSiteTitle();
@@ -1490,8 +1494,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         $this->_siteId = $id;
 
-        $this->_setSiteSetting('attachment_link_type', 'item');
-        $this->_setSiteSetting('browse_attached_items', '0');
+        $target->saveSiteSetting('attachment_link_type', 'item');
+        $target->saveSiteSetting('browse_attached_items', '0');
 
         // An item set for the site will be created later to keep original ids.
 
@@ -1532,7 +1536,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $toInsert = array();
             $toInsert['page_id'] = 1;
             $toInsert['layout'] = 'pageTitle';
-            $toInsert['data'] = $this->_toJson(array());
+            $toInsert['data'] = $target->toJson(array());
             $toInsert['position'] = 1;
             $result = $targetDb->insert('site_page_block', $toInsert);
 
@@ -1545,7 +1549,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $toInsert = array();
             $toInsert['page_id'] = 1;
             $toInsert['layout'] = 'html';
-            $toInsert['data'] = $this->_toJson($data);
+            $toInsert['data'] = $target->toJson($data);
             $toInsert['position'] = 2;
             $result = $targetDb->insert('site_page_block', $toInsert);
         }
@@ -1576,9 +1580,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $toInsert['role'] = isset($mapping[$user['role']])
                 ? $mapping[$user['role']]
                 : 'viewer';
-            $toInserts[] = $this->_dbQuote($toInsert);
+            $toInserts[] = $target->cleanQuote($toInsert);
         }
-        $this->_insertRows('site_permission', $toInserts);
+        $target->insertRows('site_permission', $toInserts);
 
         $this->_log('[' . __FUNCTION__ . ']: '
                 . __('The "author", the "description" and the "copyright" of the site have been moved to the collection created for the site.'),
@@ -1680,7 +1684,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _createItemSetForSite()
     {
         $db = $this->_db;
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         $user = $this->getParam('user');
 
@@ -1689,7 +1694,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $siteId = $this->_siteId;
 
         // This should be the first item set to simplify next processes.
-        $totalTarget= $this->countTargetTable('item_set');
+        $totalTarget= $target->totalRows('item_set');
         if ($totalTarget) {
             throw new UpgradeToOmekaS_Exception(
                 __('The item set created for the site should be the first one.'));
@@ -1711,14 +1716,14 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $toInsert['created'] = $this->getDatetime();
         $toInsert['modified'] = $this->getDatetime();
         $toInsert['resource_type'] = $this->_mappingRecordClasses[$recordType];
-        $toInserts['resource'][] = $this->_dbQuote($toInsert);
+        $toInserts['resource'][] = $target->cleanQuote($toInsert);
 
         $id = 'LAST_INSERT_ID()';
 
         $toInsert = array();
         $toInsert['id'] = $id;
         $toInsert['is_open'] = 1;
-        $toInserts['item_set'][] = $this->_dbQuote($toInsert, 'id');
+        $toInserts['item_set'][] = $target->cleanQuote($toInsert, 'id');
 
         // Give it some metadata (6).
         $properties = array();
@@ -1734,7 +1739,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         );
         $toInserts['value'] = $this->_prepareRowsForProperties($id, $properties);
 
-        $this->_insertRowsInTables($toInserts);
+        $target->insertRowsInTables($toInserts);
 
         // Save the item set id of the site. This is the first item set.
         $select = $targetDb->select()
@@ -1754,8 +1759,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $toInsert['site_id'] = $siteId;
         $toInsert['item_set_id'] = $itemSetSiteId;
         $toInsert['position'] = 1;
-        $toInserts[] = $this->_dbQuote($toInsert);
-        $this->_insertRows('site_item_set', $toInserts);
+        $toInserts[] = $target->cleanQuote($toInsert);
+        $target->insertRows('site_item_set', $toInserts);
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('A private item set has been set for the site.'),
             Zend_Log::INFO);
@@ -1769,7 +1774,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $itemSetSiteId = $this->_itemSetSiteId;
 
         // Attach all the collections to the site.
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         $select = $targetDb->select()
             ->from('item_set', array('id'));
@@ -1787,9 +1793,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             $toInsert['site_id'] = $siteId;
             $toInsert['item_set_id'] = (integer) $id;
             $toInsert['position'] = ++$position;
-            $toInserts[] = $this->_dbQuote($toInsert);
+            $toInserts[] = $target->cleanQuote($toInsert);
         }
-        $this->_insertRows('site_item_set', $toInserts);
+        $target->insertRows('site_item_set', $toInserts);
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The status "Is Open" has been added to collections.'),
             Zend_Log::INFO);
@@ -1801,7 +1807,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $mappedType = 'item_item_set';
 
         $db = $this->_db;
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         $totalRecords = total_records($recordType);
         if (empty($totalRecords)) {
@@ -1832,18 +1839,18 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     $toInsert = array();
                     $toInsert['item_id'] = $record->id;
                     $toInsert['item_set_id'] = $this->_mappingIds['Collection'][$record->collection_id];
-                    $toInserts[] = $this->_dbQuote($toInsert);
+                    $toInserts[] = $target->cleanQuote($toInsert);
                 }
 
                 if ($itemSetSiteId) {
                     $toInsert = array();
                     $toInsert['item_id'] = $record->id;
                     $toInsert['item_set_id'] = $itemSetSiteId;
-                    $toInserts[] = $this->_dbQuote($toInsert);
+                    $toInserts[] = $target->cleanQuote($toInsert);
                 }
             }
 
-            $this->_insertRows($mappedType, $toInserts);
+            $target->insertRows($mappedType, $toInserts);
         }
 
         // A final check, normally useless.
@@ -1855,7 +1862,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             ->where('items.collection_id IS NOT NULL');
         $totalItemsWithCollection = $db->fetchOne($select);
 
-        $totalTarget = $this->countTargetTable($mappedType);
+        $totalTarget = $target->totalRows($mappedType);
         if ($itemSetSiteId) {
             $totalTarget -= $totalRecords;
         }
@@ -1913,7 +1920,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $siteId = $this->_siteId;
 
         $db = $this->_db;
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         $user = $this->getParam('user');
 
@@ -1938,7 +1946,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         switch ($recordType) {
             case 'Item':
                 // Check if there are already records.
-                $totalExisting = $this->countTargetTable('resource');
+                $totalExisting = $target->totalRows('resource');
                 if ($totalExisting) {
                     // TODO Allow to upgrade without ids (need the last inserted id and a temp mapping of source and destination ids)?
                     throw new UpgradeToOmekaS_Exception(
@@ -2010,7 +2018,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 $toInsert['created'] = $record->added;
                 $toInsert['modified'] = $record->modified;
                 $toInsert['resource_type'] = $this->_mappingRecordClasses[$recordType];
-                $toInserts['resource'][] = $this->_dbQuote($toInsert);
+                $toInserts['resource'][] = $target->cleanQuote($toInsert);
 
                 // Check if this is an autoinserted id.
                 if (empty($id)) {
@@ -2057,10 +2065,10 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                         $toInsert['lang'] = null;
                         break;
                 }
-                $toInserts[$mappedType][] = $this->_dbQuote($toInsert, 'id');
+                $toInserts[$mappedType][] = $target->cleanQuote($toInsert, 'id');
             }
 
-            $this->_insertRowsInTables($toInserts);
+            $target->insertRowsInTables($toInserts);
 
             // Remaps only if needed.
             if (!empty($remapIds[$recordType])) {
@@ -2069,7 +2077,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
 
         // A final check, normally useless.
-        $totalTarget = $this->countTargetTable($mappedType);
+        $totalTarget = $target->totalRows($mappedType);
 
         // Substract the default item set for the site beforechecks, if any.
         if ($recordType == 'Collection' && $this->_itemSetSiteId) {
@@ -2125,7 +2133,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _remapIds($remapIds, $recordType)
     {
         $db = $this->_db;
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         $mappedType = $this->_mappingRecordTypes[$recordType];
 
@@ -2185,7 +2194,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $recordTypePlural = strtolower(Inflector::pluralize($recordTypeSingular));
 
         $db = $this->_db;
-        $targetDb = $this->getTargetDb();
+        $target = $this->getTarget();
+        $targetDb = $target->getDb();
 
         $totalRecords = total_records($recordType);
         if (empty($totalRecords)) {
@@ -2238,15 +2248,15 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 $toInsert['lang'] = null;
                 $toInsert['value'] = $record->text;
                 $toInsert['uri'] = null;
-                $toInserts[] = $this->_dbQuote($toInsert);
+                $toInserts[] = $target->cleanQuote($toInsert);
             }
 
-            $this->_insertRows('value', $toInserts);
+            $target->insertRows('value', $toInserts);
         }
 
         // A final check, normally useless.
         $totalRecordsMapped = $totalRecords - $totalRecordsUnmapped;
-        $totalTarget = $this->countTargetTable($mappedType);
+        $totalTarget = $target->totalRows($mappedType);
         // Substract the six properties of the default item set for the site.
         if ($this->_itemSetSiteId) {
             $totalTarget -= 6;
@@ -2435,53 +2445,55 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $output[] = '<?php';
         $output[] = 'return [';
 
-        function nestOutput($output, $array, $depth = 0, $indent = '    ') {
-            $indentString = str_repeat($indent, $depth);
-            foreach ($array as $key => $value) {
-                // Manage an exception: no quote for a string.
-                if ($key == 'priority') {
-                    $output[] = $indentString . "'" . $key . "' => " . $value . ',';
-                }
-                elseif (is_array($value)) {
-                    if (count($value) == 0) {
-                        $output[] = $indentString . "'" . $key . "' => [],";
-                    } elseif (count($value) == 1 && $key == 'constraint') {
-                        $v = reset($value);
-                        $output[] = $indentString . "'" . $key . "' => ['" . key($value) . "' => " . printValue($v) . '],';
-                    } else {
-                        $output[] = $indentString . "'" . $key . "' => [";
-                        $output = nestOutput($output, $value, ($depth + 1), $indent);
-                        $output[] = $indentString . '],';
-                    }
-                }
-                else {
-                    $output[] = $indentString . "'" . $key . "' => " . printValue($value) . ',';
-                }
-            }
-            return $output;
-        }
-
-        function printValue($value) {
-            $type = gettype($value);
-            switch ($type) {
-                case 'NULL':
-                    return 'null';
-                case 'boolean':
-                    return $value ? 'true' : 'false';
-                case 'integer':
-                    return $value;
-                case 'string':
-                    return "'" . str_replace ("'", "\\'", $value) . "'";
-                default:
-                    return (string) $value;
-            }
-        }
-
-        $output = nestOutput($output, $nestedArray, 1, $indent);
+        $output = $this->_nestOutput($output, $nestedArray, 1, $indent);
 
         $output[] = '];';
         $result = implode(PHP_EOL, $output) . PHP_EOL;
         return $result;
+    }
+
+    private function _nestOutput($output, $array, $depth = 0, $indent = '    ')
+    {
+        $indentString = str_repeat($indent, $depth);
+        foreach ($array as $key => $value) {
+            // Manage an exception: no quote for a string.
+            if ($key == 'priority') {
+                $output[] = $indentString . "'" . $key . "' => " . $value . ',';
+            }
+            elseif (is_array($value)) {
+                if (count($value) == 0) {
+                    $output[] = $indentString . "'" . $key . "' => [],";
+                } elseif (count($value) == 1 && $key == 'constraint') {
+                    $v = reset($value);
+                    $output[] = $indentString . "'" . $key . "' => ['" . key($value) . "' => " . $this->_printValue($v) . '],';
+                } else {
+                    $output[] = $indentString . "'" . $key . "' => [";
+                    $output = $this->_nestOutput($output, $value, ($depth + 1), $indent);
+                    $output[] = $indentString . '],';
+                }
+            }
+            else {
+                $output[] = $indentString . "'" . $key . "' => " . $this->_printValue($value) . ',';
+            }
+        }
+        return $output;
+    }
+
+    private function _printValue($value)
+    {
+        $type = gettype($value);
+        switch ($type) {
+            case 'NULL':
+                return 'null';
+            case 'boolean':
+                return $value ? 'true' : 'false';
+            case 'integer':
+                return $value;
+            case 'string':
+                return "'" . str_replace ("'", "\\'", $value) . "'";
+            default:
+                return (string) $value;
+        }
     }
 
     protected function _convertNavigation()
@@ -2564,7 +2576,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         $processors = $this->getProcessors();
         foreach ($processors as $processor) {
-            $result = $processor->convertNavigationPageToLink(
+            $result = $processor->_convertNavigationPageToLink(
                 $page,
                 $parsed,
                 array(
@@ -2587,7 +2599,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         ));
     }
 
-    public function convertNavigationPageToLink($page, $parsed, $site)
+    protected function _convertNavigationPageToLink($page, $parsed, $site)
     {
         $omekaSPath = $site['omekaSPath'];
         $omekaSSitePath = $site['omekaSSitePath'];
@@ -2953,7 +2965,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     {
         // Because there are constraints in the database of Omeka S, a simple
         //check on null is enough.
-        $targetDb = $this->getTargetDb();
+        $targetDb = $this->getTarget()->getDb();
         $sql = "
         SELECT
             COUNT(record.`id`) AS total
@@ -2973,6 +2985,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
      */
     protected function _prepareRowsForProperties($resourceId, $properties)
     {
+        $target = $this->getTarget();
+
         // Get the flat list of properties to get the id of each property.
         $propertiesIds = $this->getPropertyIds();
 
@@ -3005,7 +3019,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     $toInsert = $toInsertBase;
                     $toInsert['value'] = $value;
                 }
-                $toInserts[] = $this->_dbQuote($toInsert, 'resource_id');
+                $toInserts[] = $target->cleanQuote($toInsert, 'resource_id');
             }
         }
 
@@ -3025,6 +3039,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _insertProperties($resourceId, $properties)
     {
         $toInserts = $this->_prepareRowsForProperties($resourceId, $properties);
-        $this->_insertRows('value', $toInserts);
+        $target->insertRows('value', $toInserts);
     }
 }

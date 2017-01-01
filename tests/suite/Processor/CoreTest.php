@@ -426,8 +426,9 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(null, array('_unzipOmekaS'));
         $result = $processor->process();
-        $baseDir = $processor->getParam('base_dir');
         $this->assertEmpty($result);
+
+        $baseDir = $processor->getParam('base_dir');
         $indexFile = $baseDir . DIRECTORY_SEPARATOR . 'index.php';
         $this->assertEquals('13ceb3fef1651b438721315340702ce4', md5_file($indexFile));
     }
@@ -448,7 +449,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS'));
         $result = $processor->process();
 
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
         $sql = 'SELECT COUNT(*) FROM resource_class;';
         $result = $targetDb->fetchOne($sql);
         $this->assertEquals(105, $result);
@@ -495,7 +497,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers'));
         $result = $processor->process();
 
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
 
         // There are 4 users by default, 2 supers, 1 admin, 1 "none".
         $totalRecords = total_records('User');
@@ -512,7 +515,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers'));
         $result = $processor->process();
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
 
         $sqls = array();
         $sqls[] = "
@@ -536,7 +540,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
                 '_upgradeSite'));
         $result = $processor->process();
 
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
 
         $sql = 'SELECT COUNT(*) FROM site;';
         $result = $targetDb->fetchOne($sql);
@@ -581,7 +586,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeSite'));
         $result = $processor->process();
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
         $slug = $processor->getSiteSlug();
         $sql = 'SELECT * FROM site;';
         $result = $targetDb->fetchRow($sql);
@@ -616,14 +622,15 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeItems'));
         $result = $processor->process();
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
 
         // There is one item by default.
         $totalRecords = total_records('Item');
 
-        $result = $processor->countTargetTable('item');
+        $result = $target->totalRows('item');
         $this->assertEquals($totalRecords, $result);
-        $result = $processor->countTargetTable('resource');
+        $result = $target->totalRows('resource');
         $this->assertEquals($totalRecords, $result);
     }
 
@@ -635,16 +642,17 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_createItemSetForSite'));
         $result = $processor->process();
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
 
         // There are no collection by default.
-        $result = $processor->countTargetTable('item_set');
+        $result = $target->totalRows('item_set');
         $this->assertEquals(1, $result);
         $sql = 'SELECT * FROM item_set;';
         $result = $targetDb->fetchRow($sql);
         $itemSetId = (integer) $result['id'];
 
-        $result = $processor->countTargetTable('resource');
+        $result = $target->totalRows('resource');
         $this->assertEquals(1, $result);
         $sql = 'SELECT * FROM resource WHERE id = ' . $itemSetId;
         $result = $targetDb->fetchRow($sql);
@@ -659,7 +667,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $result = array_intersect_key($result, $itemSet);
         $this->assertEquals($itemSet, $result);
 
-        $result = $processor->countTargetTable('value');
+        $result = $target->totalRows('value');
         $this->assertEquals(6, $result);
         $sql = 'SELECT * FROM value';
         $result = $targetDb->fetchAll($sql);
@@ -694,13 +702,14 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeCollections'));
         $result = $processor->process();
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
 
         // There are no collection by default.
         $totalRecords = total_records('Collection');
-        $result = $processor->countTargetTable('item_set');
+        $result = $target->totalRows('item_set');
         $this->assertEquals($totalRecords, $result);
-        $result = $processor->countTargetTable('resource');
+        $result = $target->totalRows('resource');
         $this->assertEquals($totalRecords, $result);
     }
 
@@ -766,13 +775,14 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeItems', '_upgradeCollections', '_setCollectionsOfItems'));
         $result = $processor->process();
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
 
-        $result = $processor->countTargetTable('item');
+        $result = $target->totalRows('item');
         $this->assertEquals($totalItems, $result);
-        $result = $processor->countTargetTable('item_set');
+        $result = $target->totalRows('item_set');
         $this->assertEquals($totalCollections, $result);
-        $result = $processor->countTargetTable('resource');
+        $result = $target->totalRows('resource');
         $this->assertEquals($totalItems + $totalCollections, $result);
 
         $sql = 'SELECT * FROM resource;';
@@ -790,7 +800,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEmpty($result[5]['is_public']);
         $this->assertEquals($this->user->id, $result[5]['owner_id']);
 
-        $result = $processor->countTargetTable('item_item_set');
+        $result = $target->totalRows('item_item_set');
         $this->assertEquals(3, $result);
 
         $sql = 'SELECT MAX(id) FROM item_set;';
@@ -869,7 +879,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers',
                 '_upgradeItems', '_upgradeCollections', '_setCollectionsOfItems', '_upgradeMetadata'));
         $result = $processor->process();
-        $targetDb = $processor->getTargetDb();
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
 
         $sql = 'SELECT MAX(id) FROM item_set;';
         $result = $targetDb->fetchOne($sql);
@@ -895,8 +906,12 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals('Myself', $result[2]['value']);
     }
 
-    protected function _prepareProcessor($params = null, $methods = array(), $checkDir = true)
-    {
+    protected function _prepareProcessor(
+        $params = null,
+        $methods = array(),
+        $checkDir = true,
+        $isProcessing = true
+    ) {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);
         $defaultParams = array(
             'database' => array(
@@ -927,6 +942,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             $this->assertTrue($result);
             $this->_isBaseDirCreated = true;
         }
+
+        $processor->setIsProcessing($isProcessing);
 
         return $processor;
     }

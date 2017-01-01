@@ -39,6 +39,8 @@ class UpgradeToOmekaS_Processor_SocialBookmarking extends UpgradeToOmekaS_Proces
 
     protected function _upgradeSettings()
     {
+        $target = $this->getTarget();
+
         // Get current options in Omeka Classic.
         $existingServices = array();
         $sbServices = unserialize(get_option('social_bookmarking_services'));
@@ -69,7 +71,7 @@ class UpgradeToOmekaS_Processor_SocialBookmarking extends UpgradeToOmekaS_Proces
         }
 
         // Get current data.
-        $sharingMethods = $this->_getSiteSetting('sharing_methods');
+        $sharingMethods = $target->selectSiteSetting('sharing_methods');
         if (empty($sharingMethods)) {
             $sharingMethods = $existingServices;
         }
@@ -78,9 +80,9 @@ class UpgradeToOmekaS_Processor_SocialBookmarking extends UpgradeToOmekaS_Proces
             $sharingMethods = array_merge($sharingMethods, $existingServices);
             $sharingMethods = array_unique($sharingMethods);
         }
-        $this->_setSiteSetting('sharing_methods', $sharingMethods);
+        $target->saveSiteSetting('sharing_methods', $sharingMethods);
 
         // Set a second option.
-        $this->_setSiteSetting('sharing_placement', 'view.show.before');
+        $target->saveSiteSetting('sharing_placement', 'view.show.before');
     }
 }
