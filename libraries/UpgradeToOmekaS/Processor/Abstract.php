@@ -279,7 +279,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             $baseMessage = '[' . $method . ']: ';
             // Process stopped externally.
             if (!$this->_isProcessing()) {
-                $this->_log($baseMessage . __('The process has been stopped outside of the processor.'), Zend_Log::WARN);
+                $this->_log($baseMessage . __('The process has been stopped outside of the processor.'),
+                    Zend_Log::WARN);
                 return;
             }
 

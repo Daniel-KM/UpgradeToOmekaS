@@ -54,7 +54,7 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
 
         $processors = $this->_listProcessors();
 
-        // Reprocess the checks, because some time may have been occured and
+        // Reprocess the checks, because some time may have been occurred and
         // this is not a problem in a background process. Above all, the config
         // of the php cli is generally different from the php web one.
         $this->_log(__('Prechecks start.'), Zend_Log::INFO);
@@ -67,13 +67,13 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
                     $processor->setParams($params);
                     $result = $processor->precheckConfig();
                     if (!empty($result)) {
-                        $this->_processError(__('An error occured during precheck of "%s".',
+                        $this->_processError(__('An error occurred during precheck of "%s".',
                             $processor->pluginName), $result);
                         return;
                     }
                 } catch (Exception $e) {
                     $message = $e->getMessage();
-                    $this->_processError(__('A recoverable error occured during precheck of "%s".',
+                    $this->_processError(__('An error occurred during precheck of "%s".',
                         $processor->pluginName), array($e->getMessage()));
                     return;
                 }
@@ -92,13 +92,13 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
                 try {
                     $result = $processor->checkConfig();
                     if (!empty($result)) {
-                        $this->_processError(__('An error occured during check of "%s".',
+                        $this->_processError(__('An issue occurred during check of "%s".',
                             $processor->pluginName), $result);
                         return;
                     }
                 } catch (Exception $e) {
                     $message = $e->getMessage();
-                    $this->_processError(__('A recoverable error occured during check of "%s".',
+                    $this->_processError(__('An error occurred during check of "%s".',
                         $processor->pluginName), array($e->getMessage()));
                     return;
                 }
@@ -123,12 +123,12 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
                     }
                 } catch (UpgradeToOmekaS_Exception $e) {
                         $message = $e->getMessage();
-                        $this->_processError(__('A recoverable error occured during process of "%s".',
+                        $this->_processError(__('An error occurred during process of "%s".',
                             $processor->pluginName), array('[' . $processor->pluginName . ']' . $e->getMessage()));
                         return;
                 } catch (Exception $e) {
                     $message = $e->getMessage();
-                    $this->_processError(__('An unknown recoverable error occured during process of "%s".',
+                    $this->_processError(__('An unknown error occurred during process of "%s".',
                         $processor->pluginName), array('[' . $processor->pluginName . ']' . $e->getMessage()));
                     return;
                 }

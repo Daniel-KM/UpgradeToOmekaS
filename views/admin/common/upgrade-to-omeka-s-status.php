@@ -8,7 +8,7 @@
 <?php if ($isError): ?>
 <h2><?php echo __('Error!'); ?></h2>
 <p><?php
-    echo __('An error occured during the previous upgrade.');
+    echo __('An error occurred during the previous upgrade.');
     echo ' ' . __('Check the logs and clean your install if needed.');
 ?></p>
 <p><?php echo __('Your current install is never modified.'); ?></p>

@@ -581,7 +581,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
                 } catch (UpgradeToOmekaS_Exception $e) {
                     $result = array($e->getMessage());
                 } catch (Exception $e) {
-                    $message = __('A recoverable error occured during precheck of "%s".',
+                    $message = __('An error occurred during precheck of "%s".',
                         $processor->pluginName);
                     $result = array($message, $e->getMessage());
                 }
@@ -614,7 +614,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             } catch (UpgradeToOmekaS_Exception $e) {
                 $result = array($e->getMessage());
             } catch (Exception $e) {
-                $message = __('A recoverable error occured during precheck of "%s".',
+                $message = __('An error occurred during precheck of "%s".',
                     $processor->pluginName);
                 $result = array($message, $e->getMessage());
             }
