@@ -107,8 +107,16 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $form->setAction($this->_helper->url('index'));
         $this->view->form = $form;
 
+        // Simple display of the form if no post.
         if (!$this->getRequest()->isPost()) {
-            // Simple display of the form.
+            // Set default parameters if set.
+            $iniFile = dirname(dirname(__FILE__))
+                . DIRECTORY_SEPARATOR . 'security.ini';
+            $settings = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
+            $defaults = $settings->default;
+            if ($defaults) {
+                $form->setDefaults($defaults->toArray());
+            }
             return;
         }
 
@@ -151,8 +159,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         // Display the confirmation check boxes.
         $form->setConfirmation(true);
         $this->view->isConfirmation = true;
-        $confirm = $this->getParam('check_database_confirm')
-            && $this->getParam('check_backup_confirm');
+        $confirm = $this->getParam('check_confirm_backup')
+            && $this->getParam('check_confirm_license');
         if (!$confirm) {
             $message = __('Parameters are fine.') . ' ' . __('Confirm the upgrade below.');
             $this->_helper->_flashMessenger($message, 'success');
@@ -645,7 +653,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $unsetParams = array(
             'admin', 'module', 'controller', 'action',
             'check_backup_metadata', 'check_backup_files', 'check_backup_check',
-            'check_database_confirm', 'check_backup_confirm',
+            'check_confirm_backup', 'check_confirm_license',
             'database_type_note_separate',
             'csrf_token', 'submit', 'check_params',
         );

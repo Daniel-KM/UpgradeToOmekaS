@@ -149,8 +149,13 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _precheckConfig()
     {
         $this->_checkVersion();
-        // May be disabled during debug.
-        $this->_checkBackgroundJob();
+        // The check of the dispatcher may be disabled.
+        $iniFile = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'security.ini';
+        $settings = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
+        if ($settings->check->background_dispatcher == '1') {
+            $this->_checkBackgroundDispatcher();
+        }
         // During the background process, the server is not Apache.
         if (!$this->_isProcessing) {
             $this->_checkServer();
@@ -190,13 +195,14 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
     }
 
-    protected function _checkBackgroundJob()
+    protected function _checkBackgroundDispatcher()
     {
         $config = Zend_Registry::get('bootstrap')->config;
         if ($config) {
             if (isset($config->jobs->dispatcher->longRunning)) {
                 if ($config->jobs->dispatcher->longRunning == 'Omeka_Job_Dispatcher_Adapter_Synchronous') {
-                    $this->_prechecks[] = __('The process should be done in the background: modify the setting "jobs.dispatcher.longRunning" in the config of Omeka Classic.');
+                    $this->_prechecks[] = __('The process should be done in the background: modify the setting "jobs.dispatcher.longRunning" in the config of Omeka Classic.')
+                        . ' ' . __('This check may be bypassed in "security.ini".');
                 }
             }
             // No long job.

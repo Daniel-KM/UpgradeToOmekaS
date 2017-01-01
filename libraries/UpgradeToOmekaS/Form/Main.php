@@ -199,7 +199,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         ));
 
         if ($this->_isConfirmation) {
-            $this->addElement('checkbox', 'check_database_confirm', array(
+            $this->addElement('checkbox', 'check_confirm_backup', array(
                 'label' => __('Check of database size'),
                 'description' => __('I confirm that the file system where the database is can manage %dMB of new data (two times the Omeka Classic one).', ceil($sizeDatabase * 2 / 1024 / 1024)),
                 // 'required' => true,
@@ -208,7 +208,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 'errorMessages' => array(__('This check is required to confirm that you understand that some checks cannot be done automatically with some configurations.')),
             ));
 
-            $this->addElement('checkbox', 'check_backup_confirm', array(
+            $this->addElement('checkbox', 'check_confirm_license', array(
                 'label' => __('Confirm'),
                 'description' => __('I read the license (see the readme), I agree to it, and, like for any proprietary software, I confirm that I am solely and entirely responsible of what I do.'),
                 // 'required' => true,
@@ -271,8 +271,8 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         if ($this->_isConfirmation) {
             $this->addDisplayGroup(
                 array(
-                    'check_database_confirm',
-                    'check_backup_confirm',
+                    'check_confirm_backup',
+                    'check_confirm_license',
                 ),
                 'confirm',
                 array(

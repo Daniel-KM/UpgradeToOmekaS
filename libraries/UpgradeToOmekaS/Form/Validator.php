@@ -91,9 +91,10 @@ class UpgradeToOmekaS_Form_Validator extends Zend_Validate_Callback
         }
 
         // Check realpath (generally useless).
-        $iniFile = dirname(dirname(dirname(dirname(__FILE__)))) . DIRECTORY_SEPARATOR . 'security.ini';
+        $iniFile = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'security.ini';
         $settings = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
-        if ($settings->check_realpath == '1') {
+        if ($settings->check->realpath == '1') {
             // Check if this is a true path.
             $absolutePath = realpath($path);
             if (empty($absolutePath) || $absolutePath != $path) {
