@@ -46,6 +46,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $processMethods = array();
 
     /**
+     * The mapping of derivative files between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    public  $mapping_derivatives = array();
+
+    /**
      * Mapping of roles mapped from Omeka C to Omeka S.
      *
      * @var array

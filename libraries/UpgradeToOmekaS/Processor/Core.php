@@ -87,6 +87,13 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     );
 
     /**
+     * Initialized during init via libraries/data/mapping_files.php.
+     *
+     * @var array
+     */
+    // public  $mapping_files = array();
+
+    /**
      * Initialized during init via libraries/data/mapping_roles.php.
      *
      * @var array
@@ -262,6 +269,10 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
             . DIRECTORY_SEPARATOR . 'libraries'
             . DIRECTORY_SEPARATOR . 'data';
+
+        $script = $dataDir
+            . DIRECTORY_SEPARATOR . 'mapping_files.php';
+        $this->mapping_files = require $script;
 
         $script = $dataDir
             . DIRECTORY_SEPARATOR . 'mapping_roles.php';
@@ -460,6 +471,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         if ($settings->precheck->integrity->users) {
             $this->_precheckIntegrityUsers();
         }
+        if ($settings->precheck->integrity->files) {
+            $this->_precheckIntegrityFiles();
+        }
     }
 
     protected function _precheckIntegrityUsers()
@@ -482,6 +496,25 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         if ($unmanagedUsers) {
             $this->_prechecks[] = __('Some users (%d/%d) have an unmanaged role ("%s") and can’t be upgraded.',
                 count($unmanagedUsers), $totalRecords, implode('", "', array_unique($unmanagedUsers)))
+                . ' ' . __('This precheck can be bypassed via security.ini.');
+        }
+    }
+
+    protected function _precheckIntegrityFiles()
+    {
+        // TODO Get the path from the config.
+        $path = FILES_DIR . DIRECTORY_SEPARATOR . 'original';
+        $totalFiles = UpgradeToOmekaS_Common::countFilesInDir($path);
+
+        $totalRecords = total_records('File');
+        if ($totalFiles > $totalRecords) {
+            $this->_prechecks[] = __('There are %d files in the directory "files/original", but only %d are referenced in the database.',
+                $totalFiles, $totalRecords)
+                . ' ' . __('This precheck can be bypassed via security.ini.');
+        }
+        elseif ($totalFiles < $totalRecords) {
+            $this->_prechecks[] = __('There are only %d files in the directory "files/original", but %d are referenced in the database.',
+                $totalFiles, $totalRecords)
                 . ' ' . __('This precheck can be bypassed via security.ini.');
         }
     }
@@ -2192,7 +2225,121 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     protected function _copyFiles()
     {
+        $recordType = 'File';
 
+        // Check the total of records.
+        $totalRecords = total_records($recordType);
+        if (empty($totalRecords)) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('No file to copy.'),
+                Zend_Log::DEBUG);
+            return;
+        }
+
+        // Get and check the type.
+        $filesType = $this->getParam('files_type');
+        if (!in_array($filesType, array('hard_link', 'copy', 'dummy'))) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The type "%s" is not supported.', $type));
+        }
+
+        // Check the mapping of files.
+        $destDir = $this->getParam('base_dir') . DIRECTORY_SEPARATOR . 'files';
+        $mapping = $this->getMerged('mapping_files');
+        if (empty($mapping)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The mapping of files is empty.'));
+        }
+
+        // Prepare the mapping with the full paths
+        foreach ($mapping as $type => $map) {
+            $sourceDir = key($map);
+            $destinationDir = reset($map);
+            // Check if the path exists and absolute.
+            $path = realpath($sourceDir);
+            if ($path != $sourceDir) {
+                $sourceDir = FILES_DIR . DIRECTORY_SEPARATOR . $sourceDir;
+            }
+            if (!file_exists($sourceDir) || !is_dir($sourceDir) || !is_readable($sourceDir)) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('The source directory "%s" is not readable.', $sourceDir));
+            }
+            $path = realpath($destinationDir);
+            if ($path != $destinationDir) {
+                $destinationDir = $destDir . DIRECTORY_SEPARATOR . $destinationDir;
+            }
+            // The destination dirs are not included in the source, but created
+            // dynamically. That what is done here.
+            $result = UpgradeToOmekaS_Common::createDir($destinationDir);
+            if (!$result) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('The destination directory "%s" is not writable.', $destinationDir));
+            }
+            $mapping[$type] = array($sourceDir => $destinationDir);
+        }
+
+        $db = $this->_db;
+        $table = $db->getTable($recordType);
+
+        $path = key($mapping['original']);
+        $totalFiles = UpgradeToOmekaS_Common::countFilesInDir($path);
+
+        $totalCopied = 0;
+
+        // Copy only the files that are referenced inside the database.
+        $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
+        for ($page = 1; $page <= $loops; $page++) {
+            $records = $table->findBy(array(), $this->maxChunk, $page);
+            foreach ($records as $record) {
+                foreach ($mapping as $type => $map) {
+                    // Original is an exception: the extension is the original
+                    // one and may  be in uppercase or not.
+                    $filename = $type == 'original'
+                        ? $record->filename
+                        : $record->getDerivativeFilename($type);
+                    $sourceDir = key($map);
+                    $destinationDir = reset($map);
+                    $source = $sourceDir . DIRECTORY_SEPARATOR . $filename;
+                    $destination = $destinationDir . DIRECTORY_SEPARATOR . $filename;
+
+                    // A check is done to manage the plugin Archive Repertory,
+                    // that creates a relative dir for each record.
+                    if (strpos($filename, DIRECTORY_SEPARATOR) !== false) {
+                        $result = UpgradeToOmekaS_Common::createDir(dirname($destination));
+                        if (!$result) {
+                            throw new UpgradeToOmekaS_Exception(
+                                __('Unable to create the directory "%s".', dirname($destination)));
+                        }
+                    }
+
+                    switch ($filesType) {
+                        case 'hard link':
+                            break;
+                        case 'copy':
+                            $result = copy($source, $destination);
+                            break;
+                        case 'dummy':
+                            break;
+                    }
+                    if (!$result) {
+                        throw new UpgradeToOmekaS_Exception(
+                            __('The copy of the file "%s" to the directory "%s" failed.',
+                                $source, dirname($destination)));
+                    }
+                }
+                // Count only one copy by record.
+                ++$totalCopied;
+            }
+        }
+
+        if ($totalCopied != $totalFiles) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('All %d files of records have been copied (%s) into Omeka S, but there are %d files in Omeka C.',
+                $totalCopied, $filesType, $totalFiles), Zend_Log::WARN);
+        }
+        // Fine.
+        else {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('All %d files have been copied (%s) into Omeka S.',
+                $totalCopied, $filesType), Zend_Log::INFO);
+        }
     }
 
     protected function _copyThemes()
