@@ -470,7 +470,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
         $sql = 'SELECT COUNT(*) FROM user;';
         $result = $targetDb->fetchOne($sql);
-        $this->assertEquals($totalRecords - 1, $result);
+        $this->assertEquals($totalRecords, $result + 1);
     }
 
     public function testImportSite()

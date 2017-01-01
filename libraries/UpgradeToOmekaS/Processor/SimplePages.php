@@ -40,9 +40,6 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
         // only good records and to manage filters.
         $table = $db->getTable($recordType);
 
-        $columnsPage = array('id', 'site_id', 'slug', 'title', 'created', 'modified');
-        $columnsPageBlock = array('page_id', 'layout', 'data', 'position');
-
         $siteId = 1;
 
         // Check if there are already records for a warn.
@@ -90,8 +87,8 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
             }
 
             if ($toInsertPages) {
-                $this->_insertRows('site_page', $columnsPage, $toInsertPages);
-                $this->_insertRows('site_page_block', $columnsPageBlock, $toInsertPageBlocks);
+                $this->_insertRows('site_page', $toInsertPages);
+                $this->_insertRows('site_page_block', $toInsertPageBlocks);
             }
         }
 

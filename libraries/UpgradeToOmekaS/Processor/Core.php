@@ -108,7 +108,29 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     // public $mapping_elements = array();
 
     /**
-     * Default tables of Omeka S.
+     * The mapping of record types between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    protected $_mappingRecordTypes = array(
+        'Item' => 'item',
+        'Collection' => 'item_set',
+        'File' => 'media',
+    );
+
+    /**
+     * The mapping between classes between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    protected $_mappingRecordClasses = array(
+        'Item' => 'Omeka\Entity\Item',
+        'Collection' => 'Omeka\Entity\ItemSet',
+        'File' => 'Omeka\Entity\Media',
+    );
+
+    /**
+     * Default tables of Omeka S to check the names when the database is shared.
      *
      * @var array
      */
@@ -1330,10 +1352,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // This case is possible with an external identification (ldap...).
         if (empty($totalRecords)) {
             $toInsert = array();
-            $toInsert['id'] = 1;
+            $toInsert['id'] = $user->id;
             $toInsert['email'] = substr($user->email, 0, 190);
             $toInsert['name'] = substr($user->name, 0, 190);
             $toInsert['created'] = $this->getDatetime();
+            $toInsert['modified'] = null;
+            $toInsert['password_hash'] = null;
             $toInsert['role'] = 'global_admin';
             $toInsert['is_active'] = 1;
             $result = $targetDb->insert('user', $toInsert);
@@ -1351,8 +1375,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             // The process uses the regular queries of Omeka in order to keep
             // only good records.
             $table = $db->getTable('User');
-
-            $columnsRecord = array('id', 'email', 'name', 'created', 'role', 'is_active');
 
             $totalSupers = 0;
             $totalAdmins = 0;
@@ -1381,13 +1403,15 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     $toInsert['email'] = substr($record->email, 0, 190);
                     $toInsert['name'] = substr($record->name, 0, 190);
                     $toInsert['created'] = $this->getDatetime();
+                    $toInsert['modified'] = null;
+                    $toInsert['password_hash'] = null;
                     $toInsert['role'] = $role;
                     $toInsert['is_active'] = (integer) (boolean) $record->active;
                     $toInserts[] = $this->_dbQuote($toInsert);
                 }
 
                 if ($toInserts) {
-                    $this->_insertRows('user', $columnsRecord, $toInserts);
+                    $this->_insertRows('user', $toInserts);
                 }
             }
 
@@ -1495,13 +1519,20 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         if (!isset($processors['SimplePages'])) {
             $title = __('Welcome');
             $slug = $this->_slugify($title);
-            $record = array();
-            $record['id'] = 1;
-            $record['site_id'] = 1;
-            $record['slug'] = substr($slug, 0, 190);
-            $record['title'] = substr($title, 0, 190);
-            $record['created'] = $this->getDatetime();
-            $result = $targetDb->insert('site_page', $record);
+            $toInsert = array();
+            $toInsert['id'] = 1;
+            $toInsert['site_id'] = 1;
+            $toInsert['slug'] = substr($slug, 0, 190);
+            $toInsert['title'] = substr($title, 0, 190);
+            $toInsert['created'] = $this->getDatetime();
+            $result = $targetDb->insert('site_page', $toInsert);
+
+            $toInsert = array();
+            $toInsert['page_id'] = 1;
+            $toInsert['layout'] = 'pageTitle';
+            $toInsert['data'] = $this->_toJson(array());
+            $toInsert['position'] = 1;
+            $result = $targetDb->insert('site_page_block', $toInsert);
 
             $data = array(
                 'html' => __('Welcome to your new site. This is an example page.')
@@ -1509,12 +1540,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     . '<p>' . __('Author: %s', get_option('author')) . '</p>'
                     . '<p>' . __('Copyright: %s', get_option('copyright')) . '</p>',
             );
-            $record = array();
-            $record['page_id'] = 1;
-            $record['layout'] = 'html';
-            $record['data'] = $this->_toJson($data);
-            $record['position'] = 1;
-            $result = $targetDb->insert('site_page_block', $record);
+            $toInsert = array();
+            $toInsert['page_id'] = 1;
+            $toInsert['layout'] = 'html';
+            $toInsert['data'] = $this->_toJson($data);
+            $toInsert['position'] = 2;
+            $result = $targetDb->insert('site_page_block', $toInsert);
 
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The "author", the "description" and the "copyright" of the site are not managed by Omeka S and have been moved to a page.'),
                 Zend_Log::INFO);
@@ -1659,25 +1690,14 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
      */
     protected function _importRecords($recordType)
     {
-        $mappingRecordTypes = array(
-            'Item' => 'item',
-            'Collection' => 'item_set',
-            'File' => 'media',
-        );
-        if (!isset($mappingRecordTypes[$recordType])) {
+        if (!isset($this->_mappingRecordTypes[$recordType])) {
             return;
         }
-        $mappedType = $mappingRecordTypes[$recordType];
-
-        $resourceTypes = array(
-            'Item' => 'Omeka\Entity\Item',
-            'Collection' => 'Omeka\Entity\ItemSet',
-            'File' => 'Omeka\Entity\Media',
-        );
+        $mappedType = $this->_mappingRecordTypes[$recordType];
 
         // Prepare a string for the messages.
-        $recordTypeSingular = Inflector::humanize(Inflector::underscore($recordType));
-        $recordTypePlural = Inflector::pluralize($recordTypeSingular);
+        $recordTypeSingular = strtolower(Inflector::humanize(Inflector::underscore($recordType)));
+        $recordTypePlural = strtolower(Inflector::pluralize($recordTypeSingular));
 
         $totalRecords = total_records($recordType);
         if (empty($totalRecords)) {
@@ -1694,19 +1714,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // The process uses the regular queries of Omeka in order to keep
         // only good records and to manage filters.
         $table = $db->getTable($recordType);
-
-        $columnsResource = array(
-            'id', 'owner_id', 'resource_class_id', 'resource_template_id',
-            'is_public', 'created', 'modified', 'resource_type');
-
-        $columnsRecords = array(
-            'item' => array('id'),
-            'item_set' => array('id', 'is_open'),
-            'media' => array('id', 'item_id', 'ingester', 'renderer', 'data',
-                'source', 'media_type', 'storage_id', 'extension', 'sha256',
-                'has_original', 'has_thumbnails', 'position', 'lang',
-            ),
-        );
 
         // The list of user ids allows to check if the owner of a record exists.
         // The id of users are kept between Omeka C and Omeka S.
@@ -1790,7 +1797,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 $toInsert['is_public'] = $isPublic;
                 $toInsert['created'] = $record->added;
                 $toInsert['modified'] = $record->modified;
-                $toInsert['resource_type'] = $resourceTypes[$recordType];
+                $toInsert['resource_type'] = $this->_mappingRecordClasses[$recordType];
                 $toInsertResources[] = $this->_dbQuote($toInsert);
 
                 $toInsert = array();
@@ -1832,8 +1839,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             }
 
             if ($toInsertResources) {
-                $this->_insertRows('resource', $columnsResource, $toInsertResources);
-                $this->_insertRows($mappedType, $columnsRecords[$mappedType], $toInsertRecords);
+                $this->_insertRows('resource', $toInsertResources);
+                $this->_insertRows($mappedType, $toInsertRecords);
             }
         }
 

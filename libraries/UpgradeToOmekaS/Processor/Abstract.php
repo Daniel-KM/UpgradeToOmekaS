@@ -92,6 +92,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_targetDb;
 
     /**
+     * List of columns of tables of the database of Omeka Semantic.
+     *
+     * @var
+     */
+    protected $_targetDbTablesColumns = array();
+
+    /**
      * Short to the security.ini.
      *
      * @var Zend_Ini
@@ -690,27 +697,60 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Return the list of the columns for a table of the target.
+     *
+     * @param string $table
+     * @return array|null Null if target database is not loaded or not a table.
+     */
+    public function getTargetTableColumns($table)
+    {
+        if (!isset($this->_targetDbTablesColumns[$table])) {
+            $targetDb = $this->getTargetDb();
+            $sql = '
+            SELECT COLUMN_NAME
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_NAME = ' . $targetDb->quote($table) . ';';
+            $result = $targetDb->fetchCol($sql);
+            $this->_targetDbTablesColumns[$table] = $result;
+        }
+
+        return $this->_targetDbTablesColumns[$table];
+    }
+
+    /**
      * Helper to insert multiple quoted rows in a table of the target database.
      *
      * @internal An early quotation of rows may save memory with big chunks.
      *
      * @param string $table
-     * @param array $columns
      * @param array $rows
+     * @param array $columns
      * @param boolean $areQuoted
      * @throws UpgradeToOmekaS_Exception
      */
-    protected function _insertRows($table, $columns, $rows, $areQuoted = true)
+    protected function _insertRows($table, $rows, $columns = null, $areQuoted = true)
     {
         $targetDb = $this->getTargetDb();
 
-        $sql = sprintf('INSERT INTO `%s` (`%s`) VALUES ', $table, implode('`, `', $columns));
+        if (!count($rows) || empty($table)) {
+            return;
+        }
+
+        if (empty($columns)) {
+            $columns = $this->getTargetTableColumns($table);
+            if (empty($columns)) {
+                return;
+            }
+        }
+
         if (!$areQuoted) {
             foreach ($rows as &$values) {
                 $values = $this->_dbQuote($values);
             }
         }
-        $sql .= PHP_EOL . '(' . implode('),' . PHP_EOL . '(', $rows) . ');';
+
+        $sql = sprintf('INSERT INTO `%s` (`%s`) VALUES ', $table, implode('`, `', $columns)) . PHP_EOL;
+        $sql .= '(' . implode('),' . PHP_EOL . '(', $rows) . ');' . PHP_EOL;
         $result = $targetDb->prepare($sql)->execute();
         if (!$result) {
             throw new UpgradeToOmekaS_Exception(
