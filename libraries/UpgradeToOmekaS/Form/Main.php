@@ -186,19 +186,25 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
 
         $multiOptions = array();
         if ($allowHardLink) {
-            $multiOptions['hard_link'] = __('Hard Link (recommended)');
+            $multiOptions['copy'] = __('Copy');
+            $multiOptions['hard_link'] = __('Hard Link');
+            $multiOptions['dummy'] = __('Dummy files');
+            $multiOptions['dummy_hard'] = __('Dummy files (hard link)');
         }
-        $multiOptions['copy'] = __('Copy');
-        $multiOptions['dummy'] = __('Dummy files');
+        // No hard link.
+        else {
+            $multiOptions['copy'] = __('Copy');
+            $multiOptions['dummy'] = __('Dummy files');
+        }
         $this->addElement('radio', 'files_type', array(
             'label' => __('Files'),
             'description'   => __('Define what to do with files of the archive (original files, thumbnails, etc.).')
-            . ' ' . __('It is recommended to hard link them to avoid to waste space and to speed copy.')
-            . ' ' . __('The dummy files can be used for testing purposes for common formats only.')
-            . ' ' . __('Original files are never modified or deleted.')
-            . ' ' . ($allowHardLink
-                ? __('It seems the server allows hard links (a second check will be done to avoid issues with mounted volumes).')
-                : __('The server does not support hard linking.')),
+                . ' ' . __('To create hard links avoids to waste space and to speed copy.')
+                . ' ' . __('The dummy files can be used for testing purposes.')
+                . ' ' . __('Original files are never modified or deleted.')
+                . ' ' . ($allowHardLink
+                    ? __('It seems the server allows hard links (a second check will be done to avoid issues with mounted volumes).')
+                    : __('The server does not support hard linking.')),
             'multiOptions' => $multiOptions,
             'required' => true,
             'value' => $allowHardLink ? 'hard_link' : 'copy',

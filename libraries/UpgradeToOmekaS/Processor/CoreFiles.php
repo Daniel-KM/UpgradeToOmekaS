@@ -68,13 +68,30 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
 
         // Get and check the type.
         $filesType = $this->getParam('files_type');
-        if (!in_array($filesType, array('hard_link', 'copy', 'dummy'))) {
+        if (!in_array($filesType, array('hard_link', 'copy', 'dummy_hard', 'dummy'))) {
             throw new UpgradeToOmekaS_Exception(
                 __('The type "%s" is not supported.', $type));
         }
+        $copyMode = in_array($filesType, array('hard_link', 'dummy_hard')) ? 'hard_link' : 'copy';
+        $isDummy = in_array($filesType, array('dummy_hard', 'dummy'));
+
+        // Prepare the dummies if needed.
+        $dummies = array();
+        if ($isDummy) {
+            $dummiesPath = dirname(dirname(dirname(dirname(__FILE__))))
+                . DIRECTORY_SEPARATOR . 'views'
+                . DIRECTORY_SEPARATOR . 'admin'
+                . DIRECTORY_SEPARATOR . 'images'
+                . DIRECTORY_SEPARATOR;
+            $dummies = array(
+                'audio' => $dummiesPath . 'fallback-audio.png',
+                'image' => $dummiesPath . 'fallback-image.png',
+                'video' => $dummiesPath . 'fallback-video.png',
+                'file' => $dummiesPath . 'fallback-file.png',
+            );
+        }
 
         // Check the mapping of derivative files.
-        $destDir = $this->getParam('base_dir') . DIRECTORY_SEPARATOR . 'files';
         $mapping = $this->getMerged('mapping_derivatives');
         if (empty($mapping)) {
             throw new UpgradeToOmekaS_Exception(
@@ -82,6 +99,8 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
         }
 
         // Prepare the mapping with the full paths
+        $destinationFilesDir = $this->getParam('base_dir')
+            . DIRECTORY_SEPARATOR . 'files';
         foreach ($mapping as $type => $map) {
             $sourceDir = key($map);
             $destinationDir = reset($map);
@@ -96,7 +115,7 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
             }
             $path = realpath($destinationDir);
             if ($path != $destinationDir) {
-                $destinationDir = $destDir . DIRECTORY_SEPARATOR . $destinationDir;
+                $destinationDir = $destinationFilesDir . DIRECTORY_SEPARATOR . $destinationDir;
             }
             // The destination dirs are not included in the source, but created
             // dynamically. That what is done here.
@@ -127,9 +146,22 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
                     $filename = $type == 'original'
                         ? $record->filename
                         : $record->getDerivativeFilename($type);
-                    $sourceDir = key($map);
+
+                    // Clean the filename to manage broken filenames if needed.
+                    $filename = trim($filename, '/\\');
+
+                    if ($isDummy) {
+                        $mainMimeType = strtok($record->mime_type, '/');
+                        $source = isset($dummies[$mainMimeType])
+                            ? $dummies[$mainMimeType]
+                            : $dummies['file'];
+                    }
+                    // Use the true file.
+                    else {
+                        $sourceDir = key($map);
+                        $source = $sourceDir . DIRECTORY_SEPARATOR . $filename;
+                    }
                     $destinationDir = reset($map);
-                    $source = $sourceDir . DIRECTORY_SEPARATOR . $filename;
                     $destination = $destinationDir . DIRECTORY_SEPARATOR . $filename;
 
                     // A check is done to manage the plugin Archive Repertory,
@@ -142,19 +174,17 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
                         }
                     }
 
-                    switch ($filesType) {
-                        case 'hard link':
-                            break;
-                        case 'copy':
-                            $result = copy($source, $destination);
-                            break;
-                        case 'dummy':
-                            break;
+                    if ($copyMode == 'hard_link') {
+                        $result = link($source, $destination);
+                    }
+                    // Standard copy.
+                    else {
+                        $result = copy($source, $destination);
                     }
                     if (!$result) {
                         throw new UpgradeToOmekaS_Exception(
-                            __('The copy of the file "%s" to the directory "%s" failed.',
-                                $source, dirname($destination)));
+                            __('The copy of the file "%s" to the directory "%s" failed (%s).',
+                                $source, dirname($destination) . DIRECTORY_SEPARATOR, $filesType));
                     }
                 }
                 // Count only one copy by record.

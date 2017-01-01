@@ -446,7 +446,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         // Check hard linking if needed. This is important when the dir is
         // different from the Omeka Classic one.
         $type = $this->getParam('files_type');
-        if ($type == 'hard_link') {
+        if (in_array($type, array('hard_link', 'dummy_hard'))) {
             $testLink = $testDir . DIRECTORY_SEPARATOR . md5(rtrim(strtok(substr(microtime() + 1, 2), ' '), '0'));
             $result = link($testFile, $testLink);
             if (empty($result)) {
@@ -526,6 +526,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
                 $minDestinationSize = 1.2 * $archiveSize + $this->minOmekaSemanticSize;
                 break;
             case 'hard_link':
+            case 'dummy_hard':
                 $numberFiles = UpgradeToOmekaS_Common::countFilesInDir(FILES_DIR);
                 $minDestinationSize = 5000 * $numberFiles + $this->minOmekaSemanticSize;
                 break;
