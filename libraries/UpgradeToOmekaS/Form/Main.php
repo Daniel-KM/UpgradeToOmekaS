@@ -167,6 +167,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         ));
         $this->addElement('password', 'database_password', array(
             'label' => __('Password'),
+            'description' => __('You may have to repeat the password in the second step.'),
             // TODO Clean the form for separate database.
             // 'errorMessages' => array(__('The password is asked twice.')),
         ));

@@ -1467,6 +1467,14 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 Zend_Log::NOTICE);
         }
 
+        $settings = $this->_getSecurityIni();
+        if (!empty($settings->default->global_admin_password)) {
+            $bind = array();
+            $bind['password_hash'] = $settings->default->global_admin_password;
+            $bind['modified'] = $this->getDatetime();
+            $result = $targetDb->update('user', $bind, 'id = ' . $user->id);
+        }
+
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The username of users has been removed; the displayed name is unchanged.'),
             Zend_Log::NOTICE);
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All users must request a new password in the login page.'),
