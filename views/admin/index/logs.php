@@ -12,14 +12,23 @@ echo head(array(
     <?php echo flash(); ?>
 
     <?php if ($isProcessing): ?>
+        <?php if (empty($previousParams['isRemoving'])): ?>
         <p><?php echo __('An upgrade is processing in the background.'); ?></p>
         <a class="medium red button" href="<?php echo url('/upgrade-to-omeka-s/index/stop'); ?>"><?php echo __('Stop Upgrade'); ?></a>
+        <?php else: ?>
+        <p><?php echo __('The previous upgrade is being removed.'); ?></p>
+        <p><?php echo __('If it’s too long, stop the process to reset it.'); ?></p>
+        <a class="medium red button" href="<?php echo url('/upgrade-to-omeka-s/index/stop'); ?>"><?php echo __('End Removing'); ?></a>
+        <?php endif; ?>
     <?php else: ?>
         <?php
             echo common('upgrade-to-omeka-s-status', array(
                 'isProcessing' => $isProcessing,
                 'isCompleted' => $isCompleted,
                 'isError' => $isError,
+                'isReset' => $isReset,
+                'hasPreviousUpgrade' => $hasPreviousUpgrade,
+                'previousParams' => $previousParams,
             ));
         ?>
         <p><?php echo __('Go back to %supgrade to Omeka Semantic%s.', '<a href="' . url('/upgrade-to-omeka-s') . '">', '</a>'); ?></p>

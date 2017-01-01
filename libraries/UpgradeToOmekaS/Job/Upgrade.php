@@ -9,7 +9,7 @@
  */
 class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
 {
-    const QUEUE_NAME = 'upgrade_to_omeka_s';
+    const QUEUE_NAME = 'upgrade_to_omeka_s_upgrade';
 
     protected $_params;
 
@@ -42,18 +42,18 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
         $startMessage .= __('Base dir: %s', $params['base_dir']) . PHP_EOL;
         $startMessage .= __('Installation Title: %s', $params['installation_title']) . PHP_EOL;
         $startMessage .= __('Time Zone: %s', $params['time_zone']) . PHP_EOL;
-        $startMessage .= __('Database type: %s', $params['database_type']) . PHP_EOL;
-        if ($params['database_type'] == 'separate') {
-            $startMessage .= __('Database host: %s', $params['database_host']) . PHP_EOL;
-            $startMessage .= __('Database port: %s', $params['database_port']) . PHP_EOL;
-            // $startMessage .= __('Database prefix: %s', $params['database_prefix']) . PHP_EOL;
-            $startMessage .= __('Database name: %s', $params['database_name']) . PHP_EOL;
-            $startMessage .= __('Database username: %s', $params['database_username']) . PHP_EOL;
+        $startMessage .= __('Database type: %s', $params['database']['type']) . PHP_EOL;
+        if ($params['database']['type'] == 'separate') {
+            $startMessage .= __('Database host: %s', $params['database']['host']) . PHP_EOL;
+            $startMessage .= __('Database port: %s', isset($params['database']['port']) ? $params['database']['port'] : '') . PHP_EOL;
+            // $startMessage .= __('Database prefix: %s', $params['database']['prefix']) . PHP_EOL;
+            $startMessage .= __('Database name: %s', $params['database']['dbname']) . PHP_EOL;
+            $startMessage .= __('Database username: %s', $params['database']['username']) . PHP_EOL;
             $startMessage .= __('Database password: %s', 'xxxxxxxxxxxxxxxx') . PHP_EOL;
         }
         // Database is shared.
         else {
-            // $startMessage .= __('Database prefix: %s', $params['database_prefix']) . PHP_EOL;
+            // $startMessage .= __('Database prefix: %s', $params['database']['prefix']) . PHP_EOL;
         }
         $startMessage .= __('Files type: %s', $params['files_type']) . PHP_EOL;
         $startMessage .= __('Url: %s', $params['url']) . PHP_EOL;
@@ -67,6 +67,7 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
         // this is not a problem in a background process. Above all, the config
         // of the php cli is generally different from the php web one.
         $this->_log(__('Prechecks start.'), Zend_Log::DEBUG);
+
         foreach ($processors as $name => $processor) {
             if ($this->_isProcessing()) {
                 try {
@@ -84,7 +85,6 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
                         return;
                     }
                 } catch (Exception $e) {
-                    $message = $e->getMessage();
                     $this->_processError(__('An error occurred during precheck of "%s".',
                         $processor->pluginName), array($e->getMessage()));
                     return;
@@ -96,7 +96,7 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
                 return;
             }
         }
-        $this->_log(__('Prechecks end successfully.'), Zend_Log::DEBUG);
+        $this->_log(__('Prechecks ended successfully.'), Zend_Log::DEBUG);
 
         $this->_log(__('Checks start.'), Zend_Log::DEBUG);
         foreach ($processors as $name => $processor) {
@@ -109,7 +109,6 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
                         return;
                     }
                 } catch (Exception $e) {
-                    $message = $e->getMessage();
                     $this->_processError(__('An error occurred during check of "%s".',
                         $processor->pluginName), array($e->getMessage()));
                     return;
@@ -121,7 +120,7 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
                 return;
             }
         }
-        $this->_log(__('Checks end successfully.'), Zend_Log::DEBUG);
+        $this->_log(__('Checks ended successfully.'), Zend_Log::DEBUG);
 
         // Launch process.
         $this->_log(__('Process start.'), Zend_Log::DEBUG);
@@ -134,12 +133,10 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
                         throw new UpgradeToOmekaS_Exception($result);
                     }
                 } catch (UpgradeToOmekaS_Exception $e) {
-                        $message = $e->getMessage();
                         $this->_processError(__('An error occurred during process of "%s".',
                             $processor->pluginName), array('[' . $processor->pluginName . ']' . $e->getMessage()));
                         return;
                 } catch (Exception $e) {
-                    $message = $e->getMessage();
                     $this->_processError(__('An unknown error occurred during process of "%s".',
                         $processor->pluginName), array('[' . $processor->pluginName . ']' . $e->getMessage()));
                     return;
@@ -151,7 +148,7 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
                 return;
             }
         }
-        $this->_log(__('Process end successfully.'), Zend_Log::DEBUG);
+        $this->_log(__('Process ended successfully.'), Zend_Log::DEBUG);
 
         // No error.
         $this->_log(__('End of the upgrade from Omeka Classic to Omeka Semantic.'), Zend_Log::INFO);

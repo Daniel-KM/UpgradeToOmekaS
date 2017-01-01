@@ -73,6 +73,9 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $deadRunningJobs = $this->_getDeadRunningJobs();
         $livingRunningJobs = $this->_getLivingRunningJobs();
         $isLogEnabled = $this->_isLogEnabled();
+        $isReset = $this->_isReset();
+        $hasPreviousUpgrade = $this->_hasPreviousUpgrade();
+        $previousParams = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
         $isConfirmation = false;
         $processors = $this->_listProcessors();
         $prechecks = $this->_precheckConfig();
@@ -86,6 +89,9 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->deadRunningJobs = $deadRunningJobs;
         $this->view->livingRunningJobs = $livingRunningJobs;
         $this->view->isLogEnabled = $isLogEnabled;
+        $this->view->isReset = $isReset;
+        $this->view->hasPreviousUpgrade = $hasPreviousUpgrade;
+        $this->view->previousParams = $previousParams;
         $this->view->isConfirmation = $isConfirmation;
         $this->view->processors = $processors;
         $this->view->prechecks = $prechecks;
@@ -195,7 +201,9 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
         $url = $this->_determineUrl($params['base_dir']);
         $params['url'] = $url;
-        set_option('upgrade_to_omeka_s_process_url', $url);
+        set_option('upgrade_to_omeka_s_process_params', version_compare(phpversion(), '5.4.0', '<')
+            ? json_encode($params)
+            : json_encode($params, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 
         // TODO Set a single id in options and in an option to find the process?
 
@@ -225,6 +233,9 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $isCompleted = $this->_isCompleted();
         $isError = $this->_isError();
         $isStopped = $this->_isStopped();
+        $isReset = $this->_isReset();
+        $hasPreviousUpgrade = $this->_hasPreviousUpgrade();
+        $previousParams = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
 
         $isLogEnabled = $this->_isLogEnabled();
         $isSiteDown = $this->_isSiteDown();
@@ -233,6 +244,9 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->isCompleted = $isCompleted;
         $this->view->isError = $isError;
         $this->view->isStopped = $isStopped;
+        $this->view->isReset = $isReset;
+        $this->view->hasPreviousUpgrade = $hasPreviousUpgrade;
+        $this->view->previousParams = $previousParams;
         $this->view->isLogEnabled = $isLogEnabled;
         $this->view->isSiteDown = $isSiteDown;
 
@@ -252,7 +266,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         }
         // No process.
         else {
-            $message = __('No upgrade process to stop.');
+            $message = __('No process to stop.');
             $this->_helper->flashMessenger($message, 'info');
         }
 
@@ -268,7 +282,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         // No process.
         else {
             $status = get_option('upgrade_to_omeka_s_process_status');
-            set_option('upgrade_to_omeka_s_process_status', null);
+            set_option('upgrade_to_omeka_s_process_status', UpgradeToOmekaS_Processor_Abstract::STATUS_RESET);
             $message = __('The status of the process has been reset (was "%s").', $status);
             $this->_helper->flashMessenger($message, 'success');
         }
@@ -280,7 +294,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     {
         // Check if a wake up is possible.
         if ($this->_isProcessing()) {
-            $message = __('The site can’t be woken up when an upgrade process is running.');
+            $message = __('The site can’t be woken up when a process is running.');
             $this->_helper->flashMessenger($message, 'error');
         }
         // Wake up the site.
@@ -397,6 +411,68 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     }
 
     /**
+     * Remove all created tables and copied files of the previous process.
+     */
+    public function removeAction()
+    {
+        if ($this->_isProcessing()) {
+            $message = __('The process should be stopped before remove.');
+            $this->_helper->flashMessenger($message, 'error');
+        }
+        // No process.
+        elseif (!$this->_isReset()) {
+            $message = __('The process should be reset before remove.');
+            $this->_helper->flashMessenger($message, 'error');
+        }
+        // Check if there was a previous upgrade.
+        elseif (!$this->_hasPreviousUpgrade()) {
+            $message = __('No previous upgrade to remove.');
+            $this->_helper->flashMessenger($message, 'info');
+        }
+        // No process, and the status is reset.
+        else {
+            $this->_launchRemoveProcess();
+            $this->_helper->redirector->goto('logs');
+        }
+
+        $this->_helper->redirector->goto('index');
+    }
+
+    /**
+     * Launch the remove process.
+     *
+     * @return void
+     */
+    protected function _launchRemoveProcess()
+    {
+        set_option('upgrade_to_omeka_s_process_status', Process::STATUS_STARTING);
+
+        $params = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
+        $params['isProcessing'] = true;
+        $params['isRemoving'] = true;
+        set_option('upgrade_to_omeka_s_process_params', version_compare(phpversion(), '5.4.0', '<')
+            ? json_encode($params)
+            : json_encode($params, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+
+        // Launch the job.
+        $jobDispatcher = Zend_Registry::get('bootstrap')->getResource('jobs');
+        $options = array(
+            'params' => $params,
+            'user' => current_user(),
+        );
+        $jobDispatcher->setQueueName(UpgradeToOmekaS_Job_Remove::QUEUE_NAME);
+        $jobDispatcher->sendLongRunning('UpgradeToOmekaS_Job_Remove', $options);
+        $message = __('The remove process is launched.');
+        $this->_helper->flashMessenger($message, 'success');
+        $message = __('Your site %s will be removed in a while.', $params['url']);
+        $this->_helper->flashMessenger($message, 'success');
+        $message = __('Only logs will be kept.');
+        $this->_helper->flashMessenger($message, 'success');
+
+        // TODO Clean the password from the table of process when ended.
+    }
+
+    /**
      * Check if the process is running.
      *
      * @todo Uses the status of the process object.
@@ -436,7 +512,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     }
 
     /**
-     * Check if the process is completed.
+     * Check if the process is error.
      *
      * @todo Uses the status of the process object.
      *
@@ -445,6 +521,29 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     protected function _isError()
     {
         return get_option('upgrade_to_omeka_s_process_status') == Process::STATUS_ERROR;
+    }
+
+    /**
+     * Check if the process is reset.
+     *
+     * @todo Uses the status of the process object.
+     *
+     * @return boolean
+     */
+    protected function _isReset()
+    {
+        return get_option('upgrade_to_omeka_s_process_status') == UpgradeToOmekaS_Processor_Abstract::STATUS_RESET;
+    }
+
+    /**
+     * Check if there was a previous process not removed.
+     *
+     * @return boolean
+     */
+    protected function _hasPreviousUpgrade()
+    {
+        $previousParams = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
+        return !empty($previousParams);
     }
 
     protected function _isSiteDown()
@@ -621,7 +720,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      */
     protected function _checkConfig()
     {
-        $params = $this->getAllParams();
+        $params = $this->_cleanListParams();
         foreach ($this->_processors as $name => $processor) {
             $processor->setParams($params);
             try {
@@ -663,15 +762,20 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
         // Create an array for some data.
         foreach (array(
-                // 'database_' => 'database',
+                'database_' => 'database',
                 'mapping_item_type_' => 'mapping_item_types',
                 'mapping_element_' => 'mapping_elements',
             ) as $name => $set) {
-            $params[$set] = array();
+            if (!isset($params[$set])) {
+                $params[$set] = array();
+            }
             foreach ($params as $key => $value) {
                 if (strpos($key, $name) === 0) {
-                    $id = (integer) substr($key, strlen($name));
-                    $params[$set][$id] = $value;
+                    $subname = substr($key, strlen($name));
+                    if (is_numeric($subname)) {
+                        $subname = (integer) $subname;
+                    }
+                    $params[$set][$subname] = $value;
                     unset($params[$key]);
                 }
             }

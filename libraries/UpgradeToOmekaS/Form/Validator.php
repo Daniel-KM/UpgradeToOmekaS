@@ -2,6 +2,7 @@
 
 class UpgradeToOmekaS_Form_Validator extends Zend_Validate_Callback
 {
+
     /**
      * Callback to check if a value is set and not empty.
      *
@@ -38,12 +39,64 @@ class UpgradeToOmekaS_Form_Validator extends Zend_Validate_Callback
      * Callback to check the base dir (inside the server directory, different
      * from the Omeka Classic one, writable and empty).
      *
+     * The checks are the same to create or to remove the dir, except that there
+     * is an additionnal check to verify if it is empty.
+     *
      * @internal Throw errors via flash.
      *
      * @param string $value The value to check.
      * @return boolean
      */
     static public function validateBaseDir($value)
+    {
+        $result = self::_validateBaseDir($value);
+
+        if (!$result) {
+            return false;
+        }
+
+        $flash = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
+
+        $path = rtrim($value, DIRECTORY_SEPARATOR);
+
+        // Check if empty.
+        // If the path doesn't exist, it can be created if needed, so no check.
+        if (file_exists($path)) {
+            $result = UpgradeToOmekaS_Common::isDirEmpty($path);
+            if (!$result) {
+                $flash->addMessage(__('The destination should be empty.'), 'error');
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Callback to check the base dir (inside the server directory, different
+     * from the Omeka Classic one and writable).
+     *
+     * @internal Throw errors via flash.
+     *
+     * @param string $value The value to check.
+     * @return boolean
+     */
+    static public function validateBaseDirToRemove($value)
+    {
+        $result = self::_validateBaseDir($value);
+        return $result;
+    }
+
+    /**
+     * Helper to check the base dir (inside the server directory, different from
+     * the Omeka Classic one and writable).
+     *
+     * @internal Throw errors via flash.
+     *
+     * @param string $value The value to check.
+     * @return boolean
+     */
+    static protected function _validateBaseDir($value)
     {
         $flash = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
 
@@ -78,7 +131,6 @@ class UpgradeToOmekaS_Form_Validator extends Zend_Validate_Callback
                 $flash->addMessage(__('The base dir should be a directory.'), 'error');
                 return false;
             }
-            $isCreated = false;
         }
         // The path doesn't exist, so try to create it temporary.
         else {
@@ -87,7 +139,14 @@ class UpgradeToOmekaS_Form_Validator extends Zend_Validate_Callback
                 $flash->addMessage(__('The base dir should be writable.'), 'error');
                 return false;
             }
-            $isCreated = true;
+            // A security in case the user plays.
+            if (realpath($path) == $path
+                    && UpgradeToOmekaS_Common::isDirEmpty($path)
+                ) {
+                UpgradeToOmekaS_Common::removeDir($path, true);
+            }
+            // Next checks are useless since a dir can be created..
+            return true;
         }
 
         // Check realpath (generally useless).
@@ -98,9 +157,6 @@ class UpgradeToOmekaS_Form_Validator extends Zend_Validate_Callback
             // Check if this is a true path.
             $absolutePath = realpath($path);
             if (empty($absolutePath) || $absolutePath != $path) {
-                if ($isCreated) {
-                    UpgradeToOmekaS_Common::removeDir($path, true);
-                }
                 $flash->addMessage(__('The base dir should be an absolute real path.'), 'error');
                 return false;
             }
@@ -112,25 +168,8 @@ class UpgradeToOmekaS_Form_Validator extends Zend_Validate_Callback
 
         // Check rights.
         if (!is_writable($absolutePath)) {
-            if ($isCreated) {
-                UpgradeToOmekaS_Common::removeDir($path, true);
-            }
             $flash->addMessage(__('The base dir should be writable.'), 'error');
             return false;
-        }
-
-        // Check if empty.
-        if (!$isCreated) {
-            $result = UpgradeToOmekaS_Common::isDirEmpty($path);
-            if (!$result) {
-                $flash->addMessage(__('The destination should be empty.'), 'error');
-                return false;
-            }
-        }
-
-        // The directory will be created during the true process.
-        if ($isCreated) {
-            UpgradeToOmekaS_Common::removeDir($path, true);
         }
 
         return true;

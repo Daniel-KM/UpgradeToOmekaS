@@ -8,6 +8,8 @@
 abstract class UpgradeToOmekaS_Processor_Abstract
 {
 
+    CONST STATUS_RESET = 'reset';
+
     /**
      * The name of the plugin.
      *
@@ -52,13 +54,24 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
     /**
      * Mapping of item types from Omeka C to classes of Omeka S.
+     *
+     * @var array
      */
     public $mapping_item_types = array();
 
     /**
      * Mapping of elements from Omeka C to properties of Omeka S.
+     *
+     * @var array
      */
     public $mapping_elements = array();
+
+    /**
+     * List of tables of Omeka S, mergeable with those from modules.
+     *
+     * @var array
+     */
+    protected $_tables_omekas = array();
 
     /**
      * Maximum rows to process by loop.
@@ -639,14 +652,19 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 __('The params of the processor are not defined.'));
         }
 
-        $type = $this->getParam('database_type');
+        $database = $this->getParam('database');
+        if (!isset($database['type'])) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The type of the database is not defined.'));
+        }
+        $type = $database['type'];
         switch ($type) {
             case 'separate':
-                $host = $this->getParam('database_host');
-                $port = $this->getParam('database_port');
-                $dbname = $this->getParam('database_name');
-                $username = $this->getParam('database_username');
-                $password = $this->getParam('database_password');
+                $host = isset($database['host']) ? $database['host'] : '';
+                $port = isset($database['port']) ? $database['port'] : '';
+                $dbname = isset($database['dbname']) ? $database['dbname'] : '';
+                $username = isset($database['username']) ? $database['username'] : '';
+                $password = isset($database['password']) ? $database['password'] : '';
                 break;
             // The default connection can't be reused, because there are the
             // application layers.
@@ -664,7 +682,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                     __('The type "%s" is not possible for the database.', $type));
         }
 
-        // Check the connection.
+        // The connection should be checked even for a shared database.
         $params = array(
             'host' => $host,
             'username' => $username,
@@ -678,11 +696,36 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         try {
             $targetDb = Zend_Db::Factory('PDO_MYSQL', $params);
             if (empty($targetDb)) {
-                throw new UpgradeToOmekaS_Exception();
+                throw new UpgradeToOmekaS_Exception(
+                    __('Database is null.'));
             }
         } catch (Exception $e) {
             throw new UpgradeToOmekaS_Exception(
-                __('Cannot access to the database "%s".', $dbname));
+                __('Cannot access to the database "%s": %s', $dbname, $e->getMessage()));
+        }
+
+        // Another check.
+        switch ($type) {
+            case 'separate':
+                if (!$this->_isProcessing()) {
+                    $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "' . $dbname . '";';
+                    $result = $targetDb->fetchOne($sql);
+                    if ($result) {
+                        throw new UpgradeToOmekaS_Exception(
+                            __('The target database "%s" should be empty when using a separate database.', $dbname));
+                    }
+                }
+                break;
+
+            case 'share':
+                $sql = 'SHOW TABLES;';
+                $result = $targetDb->fetchCol($sql);
+                $omekasTables = $this->getMerged('_tables_omekas');
+                if (array_intersect($result, $omekasTables)) {
+                    throw new UpgradeToOmekaS_Exception(
+                        __('Some names of tables of Omeka S are existing in the database of Omeka Classic.'));
+                }
+                break;
         }
 
         $this->_targetDb = $targetDb;
@@ -847,6 +890,41 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             ->from($table, array(new Zend_Db_Expr('COUNT(*)')));
         $result = $targetDb->fetchOne($select);
         return $result;
+    }
+
+    /**
+     * Remove the tables of the database.
+     *
+     * @return boolean
+     */
+    public function removeTables()
+    {
+        $isRemoving = $this->getParam('isRemoving');
+        if (!$isRemoving) {
+            return false;
+        }
+
+        $targetDb = $this->getTargetDb();
+        $omekasTables = $this->getMerged('_tables_omekas');
+        if (empty($omekasTables)) {
+            return true;
+        }
+        $sql = '
+            BEGIN;
+            SET foreign_key_checks = 0;
+            DROP TABLE IF EXISTS `' . implode('`, `', $omekasTables) . '`;
+            SET foreign_key_checks = 1;
+            COMMIT;
+        ';
+        try {
+            $targetDb->prepare($sql)->execute();
+        } catch (Exception $e) {
+            throw new UpgradeToOmekaS_Exception(
+                __('An unknown error occurred during the drop of tables of the database: %s.',
+                $e->getMessage()));
+        }
+
+        return true;
     }
 
     /**

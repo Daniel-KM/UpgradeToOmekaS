@@ -107,6 +107,15 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
      */
     // public $mapping_elements = array();
 
+    protected $_tables_omekas = array(
+        'api_key', 'asset', 'item', 'item_item_set', 'item_set', 'job', 'media',
+        'migration', 'module', 'password_creation', 'property', 'resource',
+        'resource_class', 'resource_template', 'resource_template_property',
+        'session', 'setting', 'site', 'site_block_attachment', 'site_item_set',
+        'site_page', 'site_page_block', 'site_permission', 'site_setting',
+        'user', 'value', 'vocabulary',
+    );
+
     /**
      * The mapping of record types between Omeka C and Omeka S.
      *
@@ -128,20 +137,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         'Item' => 'Omeka\Entity\Item',
         'Collection' => 'Omeka\Entity\ItemSet',
         'File' => 'Omeka\Entity\Media',
-    );
-
-    /**
-     * Default tables of Omeka S to check the names when the database is shared.
-     *
-     * @var array
-     */
-    protected $_omekaSTables = array(
-        'api_key', 'asset', 'item', 'item_item_set', 'item_set', 'job', 'media',
-        'migration', 'module', 'password_creation', 'property', 'resource',
-        'resource_class', 'resource_template', 'resource_template_property',
-        'session', 'setting', 'site', 'site_block_attachment', 'site_item_set',
-        'site_page', 'site_page_block', 'site_permission', 'site_setting',
-        'user', 'value', 'vocabulary',
     );
 
     /**
@@ -291,14 +286,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     public function isPluginReady()
     {
         return true;
-    }
-
-    /**
-     * Return the default Omeka S tables.
-     */
-    public function getOmekaSDefaultTables()
-    {
-        return $this->_omekaSTables;
     }
 
     /**
@@ -503,30 +490,32 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     protected function _checkDatabase()
     {
+        // TODO Merge with the checks of getTargetDb().
+
         // Get the database name.
         $db = $this->_db;
         $config = $db->getAdapter()->getConfig();
-        $dbName = $config['dbname'];
-        if (empty($dbName)) {
-            $this->_checks[] = __('Unable to get the database name.');
+        $currentDbName = $config['dbname'];
+        if (empty($currentDbName)) {
+            $this->_checks[] = __('Unable to get the current database name.');
             return;
         }
-        $dbHost = $config['host'];
-        if (empty($dbHost)) {
-            $this->_checks[] = __('Unable to get the database host.');
+        $currentDbHost = $config['host'];
+        if (empty($currentDbHost)) {
+            $this->_checks[] = __('Unable to get the current database host.');
             return;
         }
 
         // Get size of the current database.
         $sql = 'SELECT SUM(data_length + index_length) AS "Size"
         FROM information_schema.TABLES
-        WHERE table_schema = "' . $dbName . '";';
+        WHERE table_schema = "' . $currentDbName . '";';
         $sizeDatabase = $db->fetchOne($sql);
 
         // Get snaky free size of the current database.
         $sql = 'SELECT SUM(data_free) AS "Free Size"
         FROM information_schema.TABLES
-        WHERE table_schema = "' . $dbName . '";';
+        WHERE table_schema = "' . $currentDbName . '";';
         $freeSizeDatabase = $db->fetchOne($sql);
 
         $databaseSize = $sizeDatabase + $freeSizeDatabase;
@@ -536,24 +525,28 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
 
         // Check if matching params.
-        $type = $this->getParam('database_type');
+        $database = $this->getParam('database');
+        if (!isset($database['type'])) {
+            $this->_checks[] = __('The type of the database is not defined.');
+        }
+        $type = $database['type'];
         switch ($type) {
             case 'separate':
-                $host = $this->getParam('database_host');
-                $port = $this->getParam('database_port');
-                $username = $this->getParam('database_username');
-                $password = $this->getParam('database_password');
-                $name = $this->getParam('database_name');
+                $host = isset($database['host']) ? $database['host'] : '';
+                $port = isset($database['port']) ? $database['port'] : '';
+                $username = isset($database['username']) ? $database['username'] : '';
+                $password = isset($database['password']) ? $database['password'] : '';
+                $dbname = isset($database['dbname']) ? $database['dbname'] : '';
                 if (empty($host)) {
                     $this->_checks[] = __('The param "%s" should be set when the databases are separate.', 'host');
                 }
                 if (empty($username)) {
                     $this->_checks[] = __('The param "%s" should be set when the databases are separate.', 'username');
                 }
-                if (empty($name)) {
-                    $this->_checks[] = __('The param "%s" should be set when the databases are separate.', 'name');
+                if (empty($dbname)) {
+                    $this->_checks[] = __('The param "%s" should be set when the databases are separate.', 'dbname');
                 }
-                if ($name == $dbName && $host == $dbHost) {
+                if ($dbname == $currentDbName && $host == $currentDbHost) {
                     $this->_checks[] = __('The database name should be different from the Omeka Classic one when the databases are separate, but on the same server.');
                 }
 
@@ -562,7 +555,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     'host' => $host,
                     'username' => $username,
                     'password' => $password,
-                    'dbname' => $name,
+                    'dbname' => $dbname,
                 );
                 if ($port) {
                     $params['port'] = $port;
@@ -571,24 +564,24 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 try {
                     $targetDb = Zend_Db::Factory('PDO_MYSQL', $params);
                     if (empty($targetDb)) {
-                        $this->_checks[] = __('Can’t get access to the database "%s": %s', $name, $e->getMessage());
+                        $this->_checks[] = __('Can’t get access to the database "%s": %s', $dbname, $e->getMessage());
                     }
                 } catch (Exception $e) {
-                    $this->_checks[] = __('Cannot access to the database "%s": %s', $name, $e->getMessage());
+                    $this->_checks[] = __('Cannot access to the database "%s": %s', $dbname, $e->getMessage());
                     return;
                 }
 
-                $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "' . $name . '";';
+                $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "' . $dbname . '";';
                 $result = $targetDb->fetchOne($sql);
                 if ($result) {
-                    $this->_checks[] = __('The database "%s" should be empty.', $name);
+                    $this->_checks[] = __('The database "%s" should be empty.', $dbname);
                     return;
                 }
                 break;
 
                 // The database is shared; so the prefix should be different.
             case 'share':
-                $prefix = $this->getParam('database_prefix');
+                $prefix = $database['prefix'];
                 if (empty($prefix)) {
                     $this->_checks[] = __('A database prefix is required when the database is shared.');
                     return;
@@ -614,8 +607,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 }
 
                 // Check conflicts of table names.
-                if (array_intersect($result, $this->getOmekaSDefaultTables())) {
-                    $this->_checks[] = __('Some names of tables of Omeka S are existing in the database of Omeka Classic.');
+                $tablesOmekas = $this->getMerged('_tables_omekas');
+                if (array_intersect($result, $tablesOmekas)) {
+                    $this->_checks[] = __('Some names of tables of Omeka S or its modules are existing in the database of Omeka Classic.');
                 }
                 break;
 
@@ -805,16 +799,24 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     protected function _configOmekaS()
     {
+        // Load and check the database.
+        $targetDb = $this->getTargetDb();
+
         // Create database.ini.
-        $type = $this->getParam('database_type');
+        $database = $this->getParam('database');
+        if (!isset($database['type'])) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The type of the database is not defined.', $type));
+        }
+        $type = $database['type'];
         switch ($type) {
             case 'separate':
-                $host = $this->getParam('database_host');
-                $port = $this->getParam('database_port');
-                $dbname = $this->getParam('database_name');
-                $username = $this->getParam('database_username');
-                $password = $this->getParam('database_password');
-                // $prefix = $this->getParam('database_prefix');
+                $host = isset($database['host']) ? $database['host'] : '';
+                $port = isset($database['port']) ? $database['port'] : '';
+                $username = isset($database['username']) ? $database['username'] : '';
+                $password = isset($database['password']) ? $database['password'] : '';
+                $dbname = isset($database['dbname']) ? $database['dbname'] : '';
+                // $prefix = isset($database['prefix']) ? $database['prefix'] : '';
                 break;
 
             case 'share':
@@ -855,50 +857,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The file "config/database.ini" has been updated successfully.'),
             Zend_Log::INFO);
-
-        // The connection should be checked even for a shared database.
-        $params = array(
-            'host' => $host,
-            'username' => $username,
-            'password' => $password,
-            'dbname' => $dbname,
-        );
-        if ($port) {
-            $params['port'] = $port;
-        }
-
-        try {
-            $targetDb = Zend_Db::Factory('PDO_MYSQL', $params);
-            if (empty($targetDb)) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('Database is null.'));
-            }
-        } catch (Exception $e) {
-            throw new UpgradeToOmekaS_Exception(
-                __('Cannot access to the database "%s": %s', $dbname, $e->getMessage()));
-        }
-
-        // Another check.
-        switch ($type) {
-            case 'separate':
-                $sql = 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = "' . $dbname . '";';
-                $result = $targetDb->fetchOne($sql);
-                if ($result) {
-                    throw new UpgradeToOmekaS_Exception(
-                        __('The target database "%s" should be empty when using a separate database.', $dbname));
-                }
-                break;
-            case 'share':
-                $sql = 'SHOW TABLES;';
-                $result = $targetDb->fetchCol($sql);
-                if (array_intersect($result, $this->getOmekaSDefaultTables())) {
-                    throw new UpgradeToOmekaS_Exception(
-                        __('Some names of tables of Omeka S are existing in the database of Omeka Classic.'));
-                }
-                break;
-        }
-
-        $this->_targetDb = $targetDb;
     }
 
     /**

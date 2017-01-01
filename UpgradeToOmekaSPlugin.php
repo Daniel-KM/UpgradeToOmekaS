@@ -40,9 +40,9 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
     protected $_options = array(
         'upgrade_to_omeka_s_document_root' => BASE_DIR,
         'upgrade_to_omeka_s_service_down' => false,
+        'upgrade_to_omeka_s_process_params' => '[]',
         'upgrade_to_omeka_s_process_status' => null,
         'upgrade_to_omeka_s_process_logs' => '[]',
-        'upgrade_to_omeka_s_process_url' => '',
     );
 
     /**
@@ -84,8 +84,41 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
      */
     public function hookUninstallMessage()
     {
+        $status = get_option('upgrade_to_omeka_s_process_status');
+        $isReset = $status == UpgradeToOmekaS_Processor_Abstract::STATUS_RESET;
+        $previousParams = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
+        $hasPreviousUpgrade = !empty($previousParams);
+
         echo '<p>' . __('Nothing will be changed when this plugin will be uninstalled.') . '</p>';
-        echo '<p>' . __('You may need to clean the database and the files or to restore a backup.') . '</p>';
+
+        if ($hasPreviousUpgrade) {
+            echo '<p>';
+            echo __('The remove of created tables and copied files can be safely and automatically done before uninstall, if wished.');
+            echo '</p>';
+            echo '<p>';
+            echo __('The database itself won’t be removed.');
+            echo '</p>';
+            echo '<p>';
+            if (!$isReset || empty($status)) {
+                echo ' ' . __('%sReset the status%s, then click the button "Remove" that will appear.',
+                    '<a class="medium blue button" href="' . url('/upgrade-to-omeka-s/index/reset') . '">', '</a>');
+            }
+            // The reset is already done.
+            else {
+                echo '<a class="medium red button" href="' . url('/upgrade-to-omeka-s/index/remove') . '" onclick="return confirm(' . "'" . __('Are you sure to remove all tables and files of Omeka S?') . "'" . ');">'
+                    . __('Remove Tables and Files of Omeka Semantic')
+                    . '</a>';
+            }
+            echo '</p>';
+        }
+
+        echo '<p>';
+        echo  __('You can check the database (%s) and the directory (%s), or restore a backup.',
+            $previousParams['database']['type'] == 'shared'
+                ? __('shared database')
+                : $previousParams['database']['host'] . (empty($previousParams['database']['port']) ? '' : ':' . $previousParams['database']['port']) . ' / ' . $previousParams['database']['dbname'],
+            $previousParams['base_dir']);
+        echo '</p>';
     }
 
     /**

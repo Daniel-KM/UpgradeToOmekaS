@@ -16,6 +16,9 @@ echo head(array(
             'isProcessing' => $isProcessing,
             'isCompleted' => $isCompleted,
             'isError' => $isError,
+            'isReset' => $isReset,
+            'hasPreviousUpgrade' => $hasPreviousUpgrade,
+            'previousParams' => $previousParams,
         ));
     ?>
 

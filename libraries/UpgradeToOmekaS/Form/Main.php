@@ -113,34 +113,13 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'errorMessages' => array(__('A time zone is required for Omeka S.')),
         ));
 
-        $multiOptions = array();
-        if ($allowHardLink) {
-            $multiOptions['hard_link'] = __('Hard Link (recommended)');
-        }
-        $multiOptions['copy'] = __('Copy');
-        $multiOptions['dummy'] = __('Dummy files');
-        $this->addElement('radio', 'files_type', array(
-            'label' => __('Files'),
-            'description'   => __('Define what to do with files of the archive (original files, thumbnails, etc.).')
-                . ' ' . __('It is recommended to hard link them to avoid to waste space and to speed copy.')
-                . ' ' . __('The dummy files can be used for testing purposes for common formats only.')
-                . ' ' . __('Original files are never modified or deleted.')
-                . ' ' . ($allowHardLink
-                    ? __('It seems the server allows hard links (a second check will be done to avoid issues with mounted volumes).')
-                    : __('The server does not support hard linking.')),
-            'multiOptions' => $multiOptions,
-            'required' => true,
-            'value' => $allowHardLink ? 'hard_link' : 'copy',
-            'class' => 'offset two columns',
-        ));
-
         $this->addElement('radio', 'database_type', array(
             'label' => __('Database'),
             'description'   => __('Define the database Omeka S will be using.'),
             'multiOptions' => array(
                 'separate' => __('Use a separate database (recommended)'),
                 // 'share' => __('Share the database with a different prefix'),
-                'share' => __('Share the database'),
+                'share' => __('Share the database with Omeka Classic'),
             ),
             'required' => true,
             'value' => 'separate',
@@ -148,8 +127,12 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         ));
         $this->addElement('note', 'database_type_note_separate', array(
             'description' => __('When the database is separated, it should be created before process, then the parameters should be set below.')
-            // . ' ' . __('"Port" and "prefix" are optional.'),
-            . ' ' . __('"Port" is optional.'),
+                // . ' ' . __('"Port" and "prefix" are optional.'),
+                . ' ' . __('"Port" is optional.'),
+        ));
+        $this->addElement('note', 'database_type_note_share', array(
+            'description' => __('The tables can coexist in the same database, because Omeka 2 uses a prefix by default and plural names for tables, unlike Omeka S.')
+                . ' ' . __('In all cases, a check is done for non standard tables.'),
         ));
         $this->addElement('text', 'database_host', array(
             'label' => __('Host'),
@@ -159,7 +142,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'label' => __('Port'),
             'filters' => array(array('StringTrim', '/\\\s')),
         ));
-        $this->addElement('text', 'database_name', array(
+        $this->addElement('text', 'database_dbname', array(
             'label' => __('Name'),
             'filters' => array(array('StringTrim', '/\\\s')),
         ));
@@ -199,6 +182,27 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         ));
         $this->addElement('note', 'database_prefix_note', array(
             'description' => __('Currently, Omeka S doesn’t allow to use a prefix.'),
+        ));
+
+        $multiOptions = array();
+        if ($allowHardLink) {
+            $multiOptions['hard_link'] = __('Hard Link (recommended)');
+        }
+        $multiOptions['copy'] = __('Copy');
+        $multiOptions['dummy'] = __('Dummy files');
+        $this->addElement('radio', 'files_type', array(
+            'label' => __('Files'),
+            'description'   => __('Define what to do with files of the archive (original files, thumbnails, etc.).')
+            . ' ' . __('It is recommended to hard link them to avoid to waste space and to speed copy.')
+            . ' ' . __('The dummy files can be used for testing purposes for common formats only.')
+            . ' ' . __('Original files are never modified or deleted.')
+            . ' ' . ($allowHardLink
+                ? __('It seems the server allows hard links (a second check will be done to avoid issues with mounted volumes).')
+                : __('The server does not support hard linking.')),
+            'multiOptions' => $multiOptions,
+            'required' => true,
+            'value' => $allowHardLink ? 'hard_link' : 'copy',
+            'class' => 'offset two columns',
         ));
 
         $usedItemTypes = $this->_getUsedItemTypes();
@@ -418,10 +422,11 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             array(
                 'database_type',
                 'database_type_note_separate',
+                'database_type_note_share',
                 'database_prefix_note',
                 'database_host',
                 'database_port',
-                'database_name',
+                'database_dbname',
                 'database_username',
                 'database_password',
                 'database_prefix',
@@ -563,7 +568,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 foreach (array(
                         'database_host' => __('host'),
                         'database_username' => __('user name'),
-                        'database_name' => __('name'),
+                        'database_dbname' => __('name'),
                     ) as $name => $text) {
                     $element = $this->getElement($name);
                     $value = $element->getValue();

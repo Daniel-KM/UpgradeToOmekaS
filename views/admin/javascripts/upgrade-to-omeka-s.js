@@ -11,15 +11,27 @@ jQuery(document).ready(function () {
     function shareDatabase() {
         var inputs = $('#fieldset-database .field');
         $(inputs).each(function() {
-            if (!$(this).find('.inputs.radio').length && !$(this).find('#database_prefix').length && !$(this).find('#database_prefix_note-label').length) {
+            if (!$(this).find('.inputs.radio').length
+                    && !$(this).find('#database_prefix').length
+                    && !$(this).find('#database_type_note_share-label').length
+                    && !$(this).find('#database_prefix_note-label').length
+                ) {
                 $(this).hide(300);
+            } else {
+                $(this).show(300);
             }
         });
     }
     function separateDatabase() {
         var inputs = $('#fieldset-database .field');
         $(inputs).each(function() {
-            if (!$(this).find('.inputs.radio').length && !$(this).find('#database_prefix').length) {
+            if (!$(this).find('.inputs.radio').length
+                    && !$(this).find('#database_prefix').length
+                    && !$(this).find('#database_type_note_separate-label').length
+                    && !$(this).find('input').length
+                ) {
+                $(this).hide(300);
+            } else {
                 $(this).show(300);
             }
         });

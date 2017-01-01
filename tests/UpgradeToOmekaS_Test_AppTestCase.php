@@ -87,7 +87,7 @@ PLUGIN;
         $path = PLUGIN_DIR . DIRECTORY_SEPARATOR . 'Stub' . DIRECTORY_SEPARATOR . 'plugin.ini';
         $path = dirname($path);
         if (file_exists($path)) {
-            $this->_delTree($path);
+            UpgradeToOmekaS_Common::removeDir($path, true);
         }
     }
 
@@ -102,14 +102,17 @@ PLUGIN;
 
     protected function _removeBaseDir()
     {
+        $path = rtrim($this->_baseDir, '/ ');
         // An important internal check.
-        if (empty($this->_isBaseDirCreated) || $this->_isBaseDirCreated != $this->_baseDir) {
+        if (empty($this->_isBaseDirCreated)
+                || $path == BASE_DIR
+                || $path == dirname(BASE_DIR)
+            ) {
             return;
         }
-        $path = $this->_baseDir;
         if (file_exists($path)) {
-            chmod($this->_baseDir, 0755);
-            $this->_delTree($path);
+            chmod($path, 0755);
+            UpgradeToOmekaS_Common::removeDir($path, true);
         }
     }
 
@@ -123,11 +126,13 @@ PLUGIN;
 
     protected function _removeTableOmekaS()
     {
+        $processor = new UpgradeToOmekaS_Processor_Core();
+        $omekasTables = $processor->getMerged('_tables_omekas');
         $sql = 'SET foreign_key_checks = 0;';
         $result = get_db()->query($sql);
-        $processor = new UpgradeToOmekaS_Processor_Core();
-        $tables = $processor->getOmekaSDefaultTables();
-        $sql = 'DROP TABLE IF EXISTS `' . implode('`, `', $tables) . '`;';
+        $sql = 'DROP TABLE IF EXISTS `' . implode('`, `', $omekasTables) . '`;';
+        $result = get_db()->query($sql);
+        $sql = 'SET foreign_key_checks = 1;';
         $result = get_db()->query($sql);
     }
 
@@ -137,22 +142,5 @@ PLUGIN;
         foreach ($records as $record) {
             $record->delete();
         }
-    }
-
-    /**
-     * Recursively delete a folder.
-     *
-     * @link https://php.net/manual/en/function.rmdir.php#110489
-     * @param string $dir
-     */
-    protected function _delTree($dir)
-    {
-        $dir = realpath($dir);
-        $files = array_diff(scandir($dir), array('.', '..'));
-        foreach ($files as $file) {
-            $path = $dir . DIRECTORY_SEPARATOR . $file;
-            (is_dir($path)) ? $this->_delTree($path) : unlink($path);
-        }
-        return rmdir($dir);
     }
 }
