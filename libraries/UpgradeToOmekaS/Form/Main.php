@@ -200,6 +200,45 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'description' => __('Currently, Omeka S doesn’t allow to use a prefix.'),
         ));
 
+        $usedItemTypes = $this->_getUsedItemTypes();
+        $classes = $this->_getClassesByVocabulary();
+        $mapping = $this->_getMappingItemTypesToClasses();
+        $itemTypeNames = array();
+        $i = 0;
+        foreach ($usedItemTypes as $usedItemType) {
+            $itemTypeName = 'item_type_' . $usedItemType['item_type_id'];
+            $itemTypeNames[] = $itemTypeName;
+
+            if ($usedItemType['total_items'] > 0) {
+                $descriptionLink = '<a href="' . url('/items/browse', array(
+                    'type' => $usedItemType['item_type_id'],
+                )) . '">';
+                $description = $usedItemType['total_items'] == 1
+                    ? __('%sOne item%s uses this item type.', $descriptionLink, '</a>')
+                    : __('%s%d items%s use this item type.', $descriptionLink, $usedItemType['total_items'], '</a>');
+            }
+            // Not used (so useless here).
+            else {
+                $description = __('This item type is not used.');
+            }
+
+            $this->addElement('select', $itemTypeName, array(
+                'label' => __($usedItemType['item_type_name']),
+                'multiOptions' => $classes,
+                'value' => isset($mapping[$usedItemType['item_type_id']]) ? $mapping[$usedItemType['item_type_id']]: '',
+                'description' => $description,
+            ));
+        }
+        // Add a note for empty used item types. It simplifies the display group too
+        // and is required for testing purpose.
+        if (empty($usedItemTypes)) {
+            $itemTypeName = 'item_types_note';
+            $this->addElement('note', $itemTypeName, array(
+                'description' => __('This site doesn’t use item types.'),
+            ));
+            $itemTypeNames[] = $itemTypeName;
+        }
+
         $usedElements = $this->_getUsedElements();
         $itemTypesByUsedElements = $this->_getItemTypesByUsedElement();
         $properties = $this->_getPropertiesByVocabulary();
@@ -303,6 +342,14 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             ));
             $previousElementSetName = $usedElement['element_set_name'];
         }
+        // Add a note for empty elements. It simplifies the display group too.
+        if (empty($usedElements)) {
+            $elementName = 'elements_note';
+            $this->addElement('note', $elementName, array(
+                'description' => __('This site doesn’t use any element.'),
+            ));
+            $elementNames[] = $elementName;
+        }
 
         // TODO Replace by a checkbox to skip any plugins.
         if (empty($this->_unupgradablePlugins)) {
@@ -392,18 +439,40 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 'legend' => __('Files for Omeka Semantic'),
         ));
 
+        $description = '';
+        if (count($usedItemTypes)) {
+            $description = __('By default, Omeka S uses four vocabularies to define classes: "Dublin Core", "Dublin Core Type", "Bibliographic Ontology" and  "Friend of a Friend".')
+                . ' ' . __('So, %sused%s item types of Omeka C should be mapped to the %d classes of these vocabularies.',
+                    '<em>', '</em>', 105)
+                . ' ' . __('The preset is the one used by the module Omeka2Importer.')
+                . ' ' . __('The items with an item type that is not mapped won’t have a class.')
+                . '<br />' . __('Currently, no new class can be added during the upgrade process.')
+                . '<br /><br /><button id="display-mapped-item-types" class="green button" name="display-mapped-item-types" type="button" value="show">' . __('Hide/show mapped item types') . '</button>';
+        }
+        $this->addDisplayGroup(
+            $itemTypeNames,
+            'item_types',
+            array(
+                'legend' => __('Mapping of item types to classes'),
+                'description' => $description,
+        ));
+
+        $description = '';
+        if (count($usedElements)) {
+            $description = __('By default, Omeka S allows only these semantic vocabularies: "Dublin Core", "Bibliographic Ontology" and  "Friend of a Friend".')
+                . ' ' . __('So, %sused%s elements of Omeka C should be mapped to the %d properties of these vocabularies.',
+                    '<em>', '</em>', 184)
+                . ' ' . __('The preset is the one used by the module Omeka2Importer.')
+                . ' ' . __('Elements that are not mapped won’t be imported.')
+                . '<br />' . __('Currently, no new vocabulary can be added during the upgrade process.')
+                . '<br /><br /><button id="display-mapped-elements" class="green button" name="display-mapped-elements" type="button" value="show">' . __('Hide/show mapped elements'). '</button>';
+        }
         $this->addDisplayGroup(
             $elementNames,
             'elements',
             array(
                 'legend' => __('Mapping of elements to properties'),
-                'description' => __('By default, Omeka S allows only these semantic vocabularies: "Dublin Core", "Bibliographic Ontology" and  "Friend of a Friend".')
-                    . ' ' . __('So, %sused%s elements of Omeka C should be mapped to the %d properties of these vocabularies.',
-                        '<em>', '</em>', 184)
-                    . ' ' . __('The preset is the one used by the module Omeka2Importer.')
-                    . ' ' . __('Elements that are not mapped won’t be imported.')
-                    . '<br />' . __('Currently, no new vocabulary can be added during the upgrade process.')
-                    . '<br /><br /><button id="display-mapped-elements" class="green button" name="display-mapped-elements" type="button" value="show">' . __('Hide/show mapped elements'). '</button>'
+                'description' => $description,
         ));
 
         $this->addDisplayGroup(
@@ -578,6 +647,55 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         }
     }
 
+
+    /**
+     * Get an array containing all used item types with total.
+     *
+     * @return array.
+     */
+    protected function _getUsedItemTypes()
+    {
+        $db = get_db();
+        $sql = "
+        SELECT item_types.id AS item_type_id,
+            item_types.name AS item_type_name,
+            COUNT(items.id) AS total_items
+        FROM {$db->ItemType} item_types
+        JOIN {$db->Item} items
+            ON items.item_type_id = item_types.id
+        GROUP BY item_types.id
+        ORDER BY item_types.name
+        ;";
+        $itemTypes = $db->fetchAll($sql);
+        return $itemTypes;
+    }
+
+    /**
+     * Get the list of classes of all vocabularies of Omeka S.
+     *
+     * @internal To use Omeka S is not possible, since it's not installed yet.
+     *
+     * @return array Array of values suitable for a dropdown menu.
+     */
+    protected function _getClassesByVocabulary()
+    {
+        $processor = new UpgradeToOmekaS_Processor_Core();
+        $classes = $processor->getClasses();
+        return $this->_getSelectOptionsForVocabularies($classes);
+    }
+
+    /**
+     * Get the mapping from Omeka C element ids to Omeka S property ids.
+     *
+     * @return array
+     */
+    protected function _getMappingItemTypesToClasses()
+    {
+        $processor = new UpgradeToOmekaS_Processor_Core();
+        $result = $processor->getMappingItemTypesToClasses('id', 'prefix:name');
+        return $result;
+    }
+
     /**
      * Get an array containing all used elements with total by record type.
      *
@@ -664,20 +782,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
     {
         $processor = new UpgradeToOmekaS_Processor_Core();
         $properties = $processor->getProperties();
-        $result = array();
-        foreach ($properties as $vocabularyLabel => $vocabulary) {
-            // Use only the prefix of the vocabulary.
-            $prefix = trim(substr($vocabularyLabel, strpos($vocabularyLabel, '[')), '[] ');
-            // Preformat the properties.
-            foreach ($vocabulary as $propertyId => $property) {
-                $label = reset($property);
-                $name = key($property);
-                $result[$vocabularyLabel][$prefix . ':' . $name] = $label;
-            }
-            asort($result[$vocabularyLabel], SORT_NATURAL | SORT_FLAG_CASE);
-        }
-        $properties = array_merge(array('' => ''), $result);
-        return $properties;
+        return $this->_getSelectOptionsForVocabularies($properties);
     }
 
     /**
@@ -689,6 +794,30 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
     {
         $processor = new UpgradeToOmekaS_Processor_Core();
         $result = $processor->getMappingElementsToProperties('id', 'prefix:name', true);
+        return $result;
+    }
+
+    /**
+     * Helper to get a list of values suitable for a two levels dropdown menu.
+     *
+     * @param array $source
+     * @return array
+     */
+    protected function _getSelectOptionsForVocabularies($source)
+    {
+        $result = array();
+        foreach ($source as $vocabularyLabel => $vocabulary) {
+            // Use only the prefix of the vocabulary.
+            $prefix = trim(substr($vocabularyLabel, strpos($vocabularyLabel, '[')), '[] ');
+            // Preformat the source.
+            foreach ($vocabulary as $id => $value) {
+                $label = reset($value);
+                $name = key($value);
+                $result[$vocabularyLabel][$prefix . ':' . $name] = $label;
+            }
+            asort($result[$vocabularyLabel], SORT_NATURAL | SORT_FLAG_CASE);
+        }
+        $result = label_table_options($result, '');
         return $result;
     }
 }

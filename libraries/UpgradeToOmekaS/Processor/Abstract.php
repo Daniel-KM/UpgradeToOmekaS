@@ -51,6 +51,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $mapping_roles = array();
 
     /**
+     * Mapping of item types from Omeka C to classes of Omeka S.
+     */
+    public $mapping_item_types = array();
+
+    /**
      * Mapping of elements from Omeka C to properties of Omeka S.
      */
     public $mapping_elements = array();
@@ -633,6 +638,106 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
         $this->_targetDb = $targetDb;
         return $this->_targetDb;
+    }
+
+    /**
+     * Get the mapping from Omeka C item types to Omeka S classes.
+     *
+     * This method doesn't use the database of Omeka S, but the file "classes.php".
+     *
+     * @param string $itemTypeFormat "name" (default) or "id".
+     * @param string $classFormat "prefix:name" (default), "label" or "id".
+     * @return array
+     */
+    public function getMappingItemTypesToClasses($itemTypeFormat = 'name', $classFormat = 'prefix:name')
+    {
+        static $itemTypes;
+        static $classes;
+        static $mapping;
+
+        if (empty($itemTypes)) {
+            // Get the flat list of item types truly installed in Omeka.
+            $select = $this->_db->getTable('ItemType')->getSelect()
+                ->reset(Zend_Db_Select::COLUMNS)
+                ->from(array(), array(
+                    'id' => 'item_types.id',
+                    'name' => 'item_types.name',
+                ))
+                ->order('item_types.id');
+            $itemTypes = $this->_db->fetchAll($select);
+
+            // Get the flat list of classes ids and prefix:name by prefix:name.
+            $classes = $this->getClasses();
+            $result = array();
+            foreach ($classes as $vocabularyLabel => $vocabulary) {
+                // Use only the prefix of the vocabulary.
+                $prefix = trim(substr($vocabularyLabel, strpos($vocabularyLabel, '[')), '[] ');
+                // Preformat the class.
+                foreach ($vocabulary as $classId => $class) {
+                    $label = reset($class);
+                    $name = key($class);
+                    $result[$prefix . ':' . $name] = array(
+                        'id' => $classId,
+                        'name' => $name,
+                        'prefix:name' => $prefix . ':' . $name,
+                        'label' => $label,
+                        'prefix' => $prefix,
+                    );
+                }
+            }
+            $classes = $result;
+
+            // Get the mapping of item types with classes as prefix:name.
+            $mapping = $this->getMerged('mapping_item_types');
+            $mapping = array_map(function ($v) {
+                return key($v) . ':' . reset($v);
+            } , $mapping);
+        }
+
+        // Process the requested format.
+        $result = array();
+        foreach ($itemTypes as $itemType) {
+            $mappedClass = null;
+            // Get the map of the element if any.
+            if (!empty($mapping[$itemType['name']])) {
+                $map = $mapping[$itemType['name']];
+                if (isset($classes[$map])) {
+                    $mappedClass = $classes[$map][$classFormat];
+                }
+            }
+            // Format the result.
+            // Set the mapping, even if not mapped.
+            switch ($itemTypeFormat) {
+                case 'id':
+                    $result[$itemType['id']] = $mappedClass;
+                    break;
+                case 'name':
+                default:
+                    $result[$itemType['name']] = $mappedClass;
+                    break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the list of classes of all vocabularies of Omeka S.
+     *
+     * This method doesn't use the database of Omeka S, but the file "classes.php".
+     *
+     * @todo Add an option to fetch the list from the database when possible.
+     *
+     * @return array
+     */
+    public function getClasses()
+    {
+        $script = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'libraries'
+            . DIRECTORY_SEPARATOR . 'data'
+            . DIRECTORY_SEPARATOR . 'classes.php';
+        $classes = require $script;
+        return $classes;
     }
 
     /**

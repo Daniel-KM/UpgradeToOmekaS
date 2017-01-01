@@ -25,6 +25,29 @@ jQuery(document).ready(function () {
         });
     }
 
+    // Display the mapped item types.
+    hideshowMappedItemTypes();
+    $('#display-mapped-item-types').click(function () {
+        hideshowMappedItemTypes();
+    });
+    function hideshowMappedItemTypes() {
+        var button = $('#display-mapped-item-types');
+        if (button.val() == 'show') {
+            $('#fieldset-item_types .field').each(function() {
+                $(this).show(300);
+            });
+            button.val('hide');
+            button.text('Hide mapped item types');
+        } else {
+            $($('#fieldset-item_types .field')).each(function() {
+                if ($(this).find('select').val())
+                    $(this).hide(300);
+            });
+            button.val('show');
+            button.text('Show all item types');
+        }
+    }
+
     // Display the mapped elements.
     hideshowMappedElements();
     $('#display-mapped-elements').click(function () {

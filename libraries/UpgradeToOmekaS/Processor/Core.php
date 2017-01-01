@@ -66,8 +66,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // Database.
         '_importUsers',
         '_importSite',
-        '_importElements',
         '_importItemTypes',
+        '_importElements',
         '_importCollections',
         '_importItems',
         '_importFiles',
@@ -88,6 +88,13 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
      * @var array
      */
     // public $mapping_roles = array();
+
+    /**
+     * Initialized during init via libraries/data/mapping_item_types.php.
+     *
+     * @var array
+     */
+    // public $mapping_item_types = array();
 
     /**
      * Initialized during init via libraries/data/mapping_elements.php.
@@ -230,6 +237,10 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $script = $dataDir
             . DIRECTORY_SEPARATOR . 'mapping_roles.php';
         $this->mapping_roles = require $script;
+
+        $script = $dataDir
+        . DIRECTORY_SEPARATOR . 'mapping_item_types.php';
+        $this->mapping_item_types = require $script;
 
         $script = $dataDir
             . DIRECTORY_SEPARATOR . 'mapping_elements.php';
@@ -1498,12 +1509,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             Zend_Log::INFO);
     }
 
-    protected function _importElements()
+    protected function _importItemTypes()
     {
 
     }
 
-    protected function _importItemTypes()
+    protected function _importElements()
     {
 
     }
