@@ -393,7 +393,7 @@ OUTPUT;
         // TODO Remove empty folders (simple-pages...).
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All files have been moved and renamed according to Omeka S views.')
-            . ' ' . __('There is now a main file, "layout.phtml".'),
+            . ' ' . __('The header and the footer have been merged into "layout.phtml".'),
             Zend_Log::INFO);
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All themes (%d) were upgraded.', count($themes))
@@ -584,12 +584,6 @@ elements.nav_depth.options.info = "Maximum number of levels to show in the site'
 elements.nav_depth.attributes.min = 0
 elements.nav_depth.attributes.value = 0
 
-elements.use_advanced_search.type = "Zend\Form\Element\Checkbox"
-elements.use_advanced_search.options.label = "Use Advanced Site-wide Search"
-elements.use_advanced_search.options.info = "Check this box if you wish to allow users to search your whole site by record (i.e. item, item set, media)."
-elements.use_advanced_search.value = "0"
-elements.use_advanced_search.name = "use_advanced_search"
-
 elements.logo.name = "logo"
 elements.logo.type = "Omeka\Form\Element\Asset"
 elements.logo.options.label = "Logo"
@@ -703,21 +697,23 @@ OUTPUT;
                 'gulpfile.js',
                 // "helper/ThemeHelperOne.php" is an example.
                 'helper' . DIRECTORY_SEPARATOR . 'ThemeHelperOne.php',
-                // 'view' . DIRECTORY_SEPARATOR . 'layout'
-                //     . DIRECTORY_SEPARATOR . 'layout.phtml',
+                // If any, the header and the footer will replace it.
+                'view' . DIRECTORY_SEPARATOR . 'layout'
+                    . DIRECTORY_SEPARATOR . 'layout.phtml',
             ) as $filepath) {
+            $source = $pathDefault
+                . DIRECTORY_SEPARATOR . $filepath;
             $destination = $path
                 . DIRECTORY_SEPARATOR . $filepath;
             // No process is done when the destination exists.
-            if (!file_exists($destination)) {
-                $source = $pathDefault
-                    . DIRECTORY_SEPARATOR . $filepath;
+            if (file_exists($source) && !file_exists($destination)) {
                 $result = UpgradeToOmekaS_Common::createDir(dirname($destination));
                 $result = copy($source, $destination);
             }
         }
 
-        // Create a default "layout.phtml".
+        // Create a default "layout.phtml". It will be replaced by the merge
+        // of the header and the footer, if any.
         $destination = $path
             . DIRECTORY_SEPARATOR . 'view'
             . DIRECTORY_SEPARATOR . 'layout'
@@ -727,6 +723,8 @@ OUTPUT;
 <?php
 /**
  * Theme "{$name}" of Omeka Classic upgraded on {$this->getDatetime()}.
+OUTPUT;
+            $output .= <<<'OUTPUT'
  *
  * @link https://github.com/Daniel-KM/UpgradeToOmekaS
  * @link https://github.com/Daniel-KM/UpgradeFromOmekaClassic
@@ -838,6 +836,80 @@ OUTPUT;
                         basename($source), $name));
             }
         }
+
+        // Merge header.phtml and footer.phtml in layout.phtml, with content.
+        $pathLayout = $path
+            . DIRECTORY_SEPARATOR . 'view'
+            . DIRECTORY_SEPARATOR . 'layout';
+        $pathHeader = $pathLayout . DIRECTORY_SEPARATOR . 'header.phtml';
+        $pathFooter = $pathLayout . DIRECTORY_SEPARATOR . 'footer.phtml';
+        $pathLayout = $pathLayout . DIRECTORY_SEPARATOR . 'layout.phtml';
+        if (file_exists($pathHeader) && file_exists($pathFooter)) {
+            $base = <<<OUTPUT
+<?php
+/**
+ * Theme "{$name}" of Omeka Classic upgraded on {$this->getDatetime()}.
+OUTPUT;
+            $base .= <<<'OUTPUT'
+ *
+ * @link https://github.com/Daniel-KM/UpgradeToOmekaS
+ * @link https://github.com/Daniel-KM/UpgradeFromOmekaClassic
+ */
+
+// See the original "layout.phtml" files to rewrite this and to separate header,
+// content and footer.
+// - default theme: themes/default/view/layout/layout.phtml
+// - shared theme: application/view-shared/layout/layout.phtml
+// - admin theme: application/view-admin/layout/layout.phtml
+
+// TODO Upgrade the custom functions into standard helpers for Omeka S.
+$customFunctions = realpath(__DIR__ . '/../../helper/custom.php');
+if (file_exists($customFunctions)) {
+    include_once $customFunctions;
+}
+$customFunctions = realpath(__DIR__ . '/../../helper/functions.php');
+if (file_exists($customFunctions)) {
+    include_once $customFunctions;
+}
+
+// The content of the output of each managed hook is saved in each "view/hook/".
+
+$this->trigger('view.layout');
+
+?>
+
+OUTPUT;
+
+            $header = file_get_contents($pathHeader);
+
+            // Add the possible missing "?_>" to the header to avoid issues.
+            $header = rtrim($header);
+            if (substr($header, -2) != '?>') {
+                $header .= '?>';
+            }
+
+            $content = <<<'OUTPUT'
+            <?php // echo $this->messages(); ?>
+            <?php echo $this->content; ?>
+OUTPUT;
+
+            $footer = file_get_contents($pathFooter);
+
+            $output = $base
+                . $header . PHP_EOL
+                . $content . PHP_EOL
+                . rtrim($footer) . PHP_EOL;
+
+            $result = file_put_contents($pathLayout, $output);
+            if (!$result) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('An error occurred when saving "%s" in themes/%s.',
+                        'layout.phtml', $name));
+            }
+
+            unlink($pathHeader);
+            unlink($pathFooter);
+        }
     }
 
     /**
@@ -947,24 +1019,33 @@ OUTPUT;
         $output = '';
 
         // The default js are added here to avoid issues with the order of js.
+
         $output = <<<'OUTPUT'
-<?php // TODO Use only css and js assets of Omeka S (jquery and jqueryUI). ?>
+<?php
+// TODO Move "public_head" in the layout.
+// TODO Use only css and js assets of Omeka S (jquery and jqueryUI).
+?>
+<?php $upgrade = $this->upgrade(); ?>
+
 <?php // From Omeka Semantic. ?>
 <?php $this->headLink()->prependStylesheet($this->assetUrl('css/style.css')); ?>
 <?php $this->headLink()->prependStylesheet($this->assetUrl('css/iconfonts.css', 'Omeka')); ?>
 <?php // $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,700italic,700'); ?>
 <?php $this->headScript()->prependFile($this->assetUrl('js/jquery.js', 'Omeka')); ?>
-<?php // From Omeka Classic. ?>
+
+<?php // From Omeka Classic.
+$this->headScript()
+    ->prependScript('jQuery.noConflict();')
+    ->prependScript('window.jQuery.ui || document.write(' . json_encode($upgrade->js_tag('vendor/jquery-ui')) . ')')
+    ->prependFile('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js')
+    ->prependScript('window.jQuery || document.write(' . json_encode($upgrade->js_tag('vendor/jquery')) . ')')
+    ->prependFile('//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js');
+?>
 
 OUTPUT;
 
         set_theme_base_url('public');
         $helper = new Zend_View_Helper_HeadScript();
-        $helper->prependScript('jQuery.noConflict();')
-            ->prependScript('window.jQuery.ui || document.write(' . js_escape(js_tag('vendor/jquery-ui')) . ')')
-            ->prependFile('//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js')
-            ->prependScript('window.jQuery || document.write(' . js_escape(js_tag('vendor/jquery')) . ')')
-            ->prependFile('//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js');
         $outputPublicHead = $helper->headScript();
         revert_theme_base_url();
         $this->_outputPublicHead = $outputPublicHead;
@@ -997,12 +1078,6 @@ OUTPUT;
         $output .= $helper->headStyle();
         revert_theme_base_url();
 
-        $output .= <<<'OUTPUT'
-<?php echo $this->headLink(); ?>
-<?php echo $this->headStyle(); ?>
-
-OUTPUT;
-
         $this->_upgradeSaveContentInThemes($relativePath, $output);
     }
 
@@ -1018,7 +1093,6 @@ OUTPUT;
         $output = <<<OUTPUT
 <?php
 // TODO Remove links of the plugins.
-// TODO Use js assets of Omeka S (jquery and jqueryUI).
 ?>
 
 OUTPUT;
@@ -1034,11 +1108,6 @@ OUTPUT;
         }
         $this->_outputPublicHead = '';
         $output .= $outputHeadJs;
-
-        $output .= <<<'OUTPUT'
-<?php echo $this->headScript(); ?>
-
-OUTPUT;
 
         $this->_upgradeSaveContentInThemes($relativePath, $output);
     }
