@@ -1055,6 +1055,33 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             'id' => 'time_zone',
             'value' => json_encode($this->getParam('time_zone'))));
 
+        // Settings that are not set when the site is installed.
+
+        // Even if the first site is not yet created.
+        $result = $targetDb->insert('setting', array(
+            'id' => 'default_site',
+            'value' => json_encode((string) 1)));
+
+        $result = $targetDb->insert('setting', array(
+            'id' => 'disable_file_validation',
+            'value' => json_encode((string) get_option('disable_default_file_validation'))));
+
+        $result = $targetDb->insert('setting', array(
+            'id' => 'property_label_information',
+            'value' => json_encode('none')));
+
+        $result = $targetDb->insert('setting', array(
+            'id' => 'recaptcha_site_key',
+            'value' => json_encode((string) get_option('recaptcha_public_key'))));
+
+        $result = $targetDb->insert('setting', array(
+            'id' => 'recaptcha_secret_key',
+            'value' => json_encode((string) get_option('recaptcha_private_key'))));
+
+        $result = $targetDb->insert('setting', array(
+            'id' => 'use_htmlpurifier',
+            'value' => json_encode((string) get_option('html_purifier_is_enabled'))));
+
         $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended.', 'Add Default Settings'),
             Zend_Log::DEBUG);
 
