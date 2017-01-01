@@ -169,6 +169,10 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
             'class' => 'UpgradeToOmekaS_Processor_SimplePages',
             'description' => __('Simple Pages'),
         );
+        $processors['SocialBookmarking'] = array(
+            'class' => 'UpgradeToOmekaS_Processor_SocialBookmarking',
+            'description' => __('Social Bookmarking'),
+        );
 
         // Upgraded or equivalent plugins in Omeka S.
 //         $processors['CsvImport'] = array(
