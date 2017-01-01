@@ -2,6 +2,7 @@
 
 class UpgradeToOmekaS_Form_Main extends Omeka_Form
 {
+    protected $_unupgradablePlugins = 0;
     protected $_isConfirmation = false;
 
     public function init()
@@ -199,6 +200,23 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'description' => __('Currently, Omeka S doesn’t allow to use a prefix.'),
         ));
 
+        if (empty($this->_unupgradablePlugins)) {
+            $this->addElement('hidden', 'plugins_confirm_unupgradable', array(
+                'value' => true,
+            ));
+        }
+        // Some plugins are not upgradable.
+        else {
+            $this->addElement('checkbox', 'plugins_confirm_unupgradable', array(
+                'label' => __('Skip unupgradable plugins'),
+                'description' => __('Check this option to process the upgrade without unupgradable plugins.'),
+                'required' => true,
+                'value' => false,
+                'validators' => $validateTrue,
+                'errorMessages' => array(__('You should confirm that you want to upgrade Omeka even with unupgradable plugins.')),
+            ));
+        }
+
         if ($this->_isConfirmation) {
             $this->addElement('checkbox', 'check_confirm_backup', array(
                 'label' => __('Check of database size'),
@@ -269,6 +287,18 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 'legend' => __('Files for Omeka Semantic'),
         ));
 
+        $this->addDisplayGroup(
+            array(
+                'plugins_confirm_unupgradable',
+            ),
+            'modules',
+            array(
+                'legend' => __('Modules of Omeka Semantic'),
+                'description' => $this->_unupgradablePlugins
+                    ? __('Some plugins (%d) are not upgradable.', $this->_unupgradablePlugins)
+                    : __('All plugins are upgradable.'),
+        ));
+
         if ($this->_isConfirmation) {
             $this->addDisplayGroup(
                 array(
@@ -295,7 +325,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                     array('HtmlTag', array('tag' => 'div', 'class' => 'field')))),
             ));
         }
-        // SImple check.
+        // Simple check.
         else {
             $this->addElement('submit', 'check_params', array(
                 'label' => __('Check Parameters'),
@@ -308,9 +338,19 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
     }
 
     /**
+     * Set the param "unupgradablePlugins".
+     *
+     * @param boolean $value
+     */
+    public function setUnupgradablePlugins($value)
+    {
+        $this->_unupgradablePlugins = $value;
+    }
+
+    /**
      * Set if the form is a confirmation one.
      */
-    public function setConfirmation($value)
+    public function setIsConfirmation($value)
     {
         $this->_isConfirmation = (boolean) $value;
     }

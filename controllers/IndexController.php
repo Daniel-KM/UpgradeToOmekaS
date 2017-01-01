@@ -63,7 +63,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
     protected function _prepare()
     {
-        // Here, no process is running.
+        // Here, no process is running (else the logs are displayed).
 
         $isProcessing = $this->_isProcessing();
         $isCompleted = $this->_isCompleted();
@@ -74,6 +74,9 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $livingRunningJobs = $this->_getLivingRunningJobs();
         $isLogEnabled = $this->_isLogEnabled();
         $isConfirmation = false;
+        $processors = $this->_listProcessors();
+        $prechecks = $this->_precheckConfig();
+        $plugins = $this->_listPlugins();
 
         $this->view->isProcessing = $isProcessing;
         $this->view->isCompleted = $isCompleted;
@@ -84,26 +87,24 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->livingRunningJobs = $livingRunningJobs;
         $this->view->isLogEnabled = $isLogEnabled;
         $this->view->isConfirmation = $isConfirmation;
-        $this->view->hasErrors = 'none';
-
-        $processors = $this->_listProcessors();
-        $prechecks = $this->_precheckConfig();
-        $plugins = $this->_listPlugins();
-
         $this->view->processors = $processors;
         $this->view->prechecks = $prechecks;
         $this->view->plugins = $plugins;
         $this->view->checks = array();
         $this->view->form = null;
+        $this->view->hasErrors = empty($prechecks) ? 'none' : 'precheck';
 
-        if (!empty($prechecks)) {
+        if (!empty($prechecks['Core'])) {
             $message = __('Some requirements are not met.');
             $this->_helper->_flashMessenger($message, 'error');
-            $this->view->hasErrors = 'precheck';
             return;
         }
 
-        $form = new UpgradeToOmekaS_Form_Main();
+        $unupgradablePrechecks = $prechecks;
+        unset($unupgradablePrechecks['Core']);
+        $form = new UpgradeToOmekaS_Form_Main(array(
+            'unupgradablePlugins' => count($unupgradablePrechecks),
+        ));
         $form->setAction($this->_helper->url('index'));
         $this->view->form = $form;
 
@@ -157,7 +158,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         }
 
         // Display the confirmation check boxes.
-        $form->setConfirmation(true);
+        $form->setIsConfirmation(true);
         $this->view->isConfirmation = true;
         $confirm = $this->getParam('check_confirm_backup')
             && $this->getParam('check_confirm_license');

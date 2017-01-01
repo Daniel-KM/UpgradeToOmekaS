@@ -26,8 +26,8 @@ if ($prechecksPlugins or $checksPlugins):
     :  __('%d plugins can’t be upgraded.', $totalErrorsPlugins); ?>
 </p>
 <p><?php echo function_exists('plural')
-    ? __(plural('Fix it before upgrade.', 'Fix them before upgrade.', $totalErrorsPlugins), $totalErrorsPlugins)
-    : __('Fix them before upgrade.', $totalErrorsPlugins);
+    ? __(plural('Fix it before upgrade or skip it.', 'Fix them before upgrade or skip them.', $totalErrorsPlugins), $totalErrorsPlugins)
+    : __('Fix them before upgrade or skip them.', $totalErrorsPlugins);
 ?></p>
 <?php else:
     echo '<p>' . __('The precheck processor deems that all active plugins with an available processor can be upgraded.') . '</p>';

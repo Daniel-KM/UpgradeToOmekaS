@@ -29,7 +29,7 @@ echo head(array(
         ));
     ?>
 
-    <?php if (empty($prechecks)): ?>
+    <?php if (empty($prechecks['Core'])): ?>
         <h2><?php echo __('Set Options'); ?></h2>
         <?php echo $form; ?>
         <?php if ($isConfirmation): ?>
