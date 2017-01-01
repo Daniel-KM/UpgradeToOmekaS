@@ -465,61 +465,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         }
     }
 
-    protected function _precheckIntegrity()
-    {
-        $settings = $this->getSecurityIni();
-        // TODO To be removed since it's included in the form.
-        // if ($settings->precheck->integrity->users) {
-        //    $this->_precheckIntegrityUsers();
-        // }
-        if ($settings->precheck->integrity->files) {
-            $this->_precheckIntegrityFiles();
-        }
-    }
-
-    protected function _precheckIntegrityUsers()
-    {
-        $db = $this->_db;
-        $mappingRoles = $this->getMerged('mapping_roles');
-        $roles = array_keys($mappingRoles);
-        $table = $db->getTable('User');
-        $totalRecords = total_records('User');
-        $select = $table->getSelect()
-            ->reset(Zend_Db_Select::COLUMNS)
-            ->columns(array('id', 'role'))
-            ->order('role')
-            ->distinct();
-        if ($roles) {
-            $select
-                ->where('role NOT IN (?)', $roles);
-        }
-        $unmanagedUsers = $table->fetchPairs($select);
-        if ($unmanagedUsers) {
-            $this->_prechecks[] = __('Some users (%d/%d) have an unmanaged role ("%s") and can’t be upgraded.',
-                count($unmanagedUsers), $totalRecords, implode('", "', array_unique($unmanagedUsers)))
-                . ' ' . __('This precheck can be bypassed via security.ini.');
-        }
-    }
-
-    protected function _precheckIntegrityFiles()
-    {
-        // TODO Get the path from the config.
-        $path = FILES_DIR . DIRECTORY_SEPARATOR . 'original';
-        $totalFiles = UpgradeToOmekaS_Common::countFilesInDir($path);
-
-        $totalRecords = total_records('File');
-        if ($totalFiles > $totalRecords) {
-            $this->_prechecks[] = __('There are %d files in the directory "files/original", but only %d are referenced in the database.',
-                $totalFiles, $totalRecords)
-                . ' ' . __('This precheck can be bypassed via security.ini.');
-        }
-        elseif ($totalFiles < $totalRecords) {
-            $this->_prechecks[] = __('There are only %d files in the directory "files/original", but %d are referenced in the database.',
-                $totalFiles, $totalRecords)
-                . ' ' . __('This precheck can be bypassed via security.ini.');
-        }
-    }
-
     /* Checks. */
 
     protected function _checkDatabase()

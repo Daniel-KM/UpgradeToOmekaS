@@ -16,8 +16,6 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
     protected $_baseDir;
     protected $_isBaseDirCreated = false;
 
-    protected $_totalPrecheck = 0;
-
     public function setUp()
     {
         parent::setUp();
@@ -48,7 +46,6 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
         // So a precheck is done to get the total default of answers.
         $path = FILES_DIR . DIRECTORY_SEPARATOR . 'original';
         $totalFiles = UpgradeToOmekaS_Common::countFilesInDir($path);
-        $this->_totalPrecheck = $totalFiles ? 1 : 0;
     }
 
     public function tearDown()

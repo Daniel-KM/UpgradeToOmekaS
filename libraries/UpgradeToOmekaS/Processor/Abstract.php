@@ -528,7 +528,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             // The processor is fine for the plugin.
             else {
                 $this->_precheckConfig();
-                $this->_precheckIntegrity();
             }
         }
         //  Not installed or disabled.
@@ -545,15 +544,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @return void
      */
     protected function _precheckConfig()
-    {
-    }
-
-    /**
-     * Specific precheck of the integrity of the base and the files.
-     *
-     * @return void
-     */
-    protected function _precheckIntegrity()
     {
     }
 

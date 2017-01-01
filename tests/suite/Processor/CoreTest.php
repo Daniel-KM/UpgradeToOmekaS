@@ -20,7 +20,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
     {
         $processor = new UpgradeToOmekaS_Processor_Core();
         $result = $processor->precheckConfig();
-        $this->assertEquals($this->_totalPrecheck + 0, count($result));
+        $this->assertEmpty($result);
     }
 
     public function testPrecheckConfigServer()
@@ -28,7 +28,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $_SERVER['SERVER_SOFTWARE'] = 'Windows XP';
         $processor = new UpgradeToOmekaS_Processor_Core();
         $result = $processor->precheckConfig();
-        $this->assertEquals($this->_totalPrecheck + 1, count($result));
+        $this->assertEquals(1, count($result));
         $this->assertContains('According to the readme of Omeka Semantic, the server should be an Apache one.', $result[0]);
     }
 
@@ -38,7 +38,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $processor->minVersion = '3.6';
         $processor->maxVersion = '1.5';
         $result = $processor->precheckConfig();
-        $this->assertEquals($this->_totalPrecheck + 2, count($result));
+        $this->assertEquals(2, count($result));
         $this->assertContains('The current release requires at most Omeka 1.5, current is', $result[1]);
     }
 
@@ -50,7 +50,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
             'mysql' => '5678.5.3',
         );
         $result = $processor->precheckConfig();
-        $this->assertEquals($this->_totalPrecheck + 1, count($result));
+        $this->assertEquals(1, count($result));
         $this->assertContains('The current release requires at least MariaDB 1234.5.3 or Mysql 5678.5.3', $result[0]);
     }
 
@@ -64,13 +64,13 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
         $processor = new UpgradeToOmekaS_Processor_Core();
         $result = $processor->precheckConfig();
-        $this->assertEquals($this->_totalPrecheck + 1, count($result));
+        $this->assertEquals(1, count($result));
         $this->assertEquals('1 job is running.', $result[0]);
 
         $job->delete();
         $processor = new UpgradeToOmekaS_Processor_Core();
         $result = $processor->precheckConfig();
-        $this->assertEquals($this->_totalPrecheck + 0, count($result));
+        $this->assertEmpty($result);
     }
 
     public function testCheckConfigDatabase()
@@ -226,7 +226,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $processor->setParams($params);
         $this->assertEquals('copy', $processor->getParam('files_type'));
         $result = $processor->precheckConfig();
-        $this->assertEquals($this->_totalPrecheck + 0, count($result));
+        $this->assertEmpty($result);
         $result = $processor->checkConfig();
         $this->assertEmpty($result);
     }
