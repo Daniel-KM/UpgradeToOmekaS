@@ -19,6 +19,6 @@ class UpgradeToOmekaS_Processor_SimplePagesTest extends UpgradeToOmekaS_Test_App
 
     public function testPrecheckConfig()
     {
-        // TODO
+        $this->markTestIncomplete();
     }
 }
