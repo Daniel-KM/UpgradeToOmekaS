@@ -69,7 +69,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $isCompleted = $this->_isCompleted();
         $isError = $this->_isError();
         $isSiteDown = $this->_isSiteDown();
-        $runningJobs = $this->_getDeadRunningJobs();
+        $deadRunningJobs = $this->_getDeadRunningJobs();
+        $livingRunningJobs = $this->_getLivingRunningJobs();
         $isLogEnabled = $this->_isLogEnabled();
         $isConfirmation = false;
 
@@ -77,7 +78,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->isCompleted = $isCompleted;
         $this->view->isError = $isError;
         $this->view->isSiteDown = $isSiteDown;
-        $this->view->runningJobs = $runningJobs;
+        $this->view->deadRunningJobs = $deadRunningJobs;
+        $this->view->livingRunningJobs = $livingRunningJobs;
         $this->view->isLogEnabled = $isLogEnabled;
         $this->view->isConfirmation = $isConfirmation;
         $this->view->hasErrors = 'none';
@@ -320,6 +322,39 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     }
 
     /**
+     * Get the list of living running jobs.
+     *
+     * @param integer $limit
+     * @return array The list of process objects.
+     */
+    protected function _getLivingRunningJobs($limit = 10)
+    {
+        $processes = array();
+        $table = $this->_helper->db->getTable('Process');
+        $alias = $table->getTableAlias();
+        $select = $table->getSelectForFindBy(array(
+            'status' => array(Process::STATUS_STARTING, Process::STATUS_IN_PROGRESS),
+            'sort_field' => 'id',
+            'sort_dir' => 'd',
+        ));
+        $select->where($alias . '.pid IS NOT NULL');
+        $result = $table->fetchObjects($select);
+
+        // Unselect processes with a non existing pid.
+        foreach ($result as $process) {
+            // TODO The check of the pid works only with Linux.
+            if (file_exists('/proc/' . $process->pid)) {
+                $processes[] = $process;
+                if (count($processes) >= $limit) {
+                    break;
+                }
+            }
+        }
+
+        return $processes;
+    }
+
+    /**
      * Get the list of dead running jobs.
      *
      * @param integer $limit
@@ -391,7 +426,12 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         return (boolean) get_option('upgrade_to_omeka_s_service_down');
     }
 
-    protected function _hasRunningJobs()
+    protected function _hasLivingRunningJobs()
+    {
+        return (boolean) $this->_getLivingRunningJobs(1);
+    }
+
+    protected function _hasDeadRunningJobs()
     {
         return (boolean) $this->_getDeadRunningJobs(1);
     }

@@ -62,8 +62,8 @@ echo head(array(
     <p>
         <?php echo __('The service is open.'); ?>
         <?php echo __('You can put it down now.'); ?>
-    <p>
     </p>
+    <p>
         <?php echo __('The site will be automatically down when the process will be launched.'); ?>
     </p>
     <p class="explanation note"><?php echo __('Warning') . ': ' . __('All users will be logged out and the site will be set in maintenance mode, except for the super user.'); ?></p>
@@ -71,9 +71,16 @@ echo head(array(
     <?php endif; ?>
 
     <?php
-        if ($runningJobs):
+        if ($livingRunningJobs):
             echo common('upgrade-to-omeka-s-running-jobs', array(
-                'runningJobs' => $runningJobs,
+                'type' => 'living',
+                'runningJobs' => $livingRunningJobs,
+            ));
+        endif;
+        if ($deadRunningJobs):
+            echo common('upgrade-to-omeka-s-running-jobs', array(
+                'type' => 'dead',
+                'runningJobs' => $deadRunningJobs,
             ));
         endif;
     ?>

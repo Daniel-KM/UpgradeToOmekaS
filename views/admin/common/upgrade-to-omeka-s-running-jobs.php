@@ -1,4 +1,4 @@
-<h2><?php echo __('Running Jobs'); ?></h2>
+<h2><?php echo $type == 'living' ? __('Living Running Jobs') : __('Dead Running Jobs'); ?></h2>
 <table>
     <thead>
         <tr>
@@ -32,9 +32,18 @@
     </tbody>
 </table>
 
-<p><?php echo __('This button sets the status "error" to processes without a true process id (pid).'); ?></p>
 <?php if (count($runningJobs) == 10): ?>
-<p><?php echo __('Only the first ten running jobs are displayed and will be processed.'); ?></p>
+<p><?php echo __('Only the first ten running jobs are displayed.'); ?></p>
 <?php endif; ?>
+<?php switch ($type):
+case 'living': ?>
+<p><?php echo __('The upgrade process can’t be launch while jobs are processing.'); ?></p>
+<?php
+    break;
+case 'dead': ?>
+<p><?php echo __('This button sets the status "error" to the processes without a true process id (pid) above.'); ?></p>
 <p><strong><?php echo __('Warning'); ?></strong>: <?php echo __('Before clicking this button, check all your background processes and the ones of the other users manually.'); ?></p>
 <a class="medium blue button" href="<?php echo url('/upgrade-to-omeka-s/index/clean-jobs'); ?>"><?php echo __('Clean all the running jobs above'); ?></a>
+<?php
+    break;
+endswitch;
