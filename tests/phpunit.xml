@@ -1,0 +1,9 @@
+<phpunit bootstrap="bootstrap.php"
+         convertErrorsToExceptions="true"
+         convertWarningsToExceptions="true">
+    <testsuites>
+        <testsuite name="UpgradeToOmekaS Tests">
+            <directory>suite</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

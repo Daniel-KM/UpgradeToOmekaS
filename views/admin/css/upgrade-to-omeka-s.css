@@ -1,0 +1,41 @@
+.inputs.radio ul.error {
+    padding-top: 60px;
+}
+p.explanation.note {
+    font-style: italic;
+}
+@media only screen and (min-width: 768px) {
+    .inputs.radio .explanation {
+        padding-left: 160px;
+        padding-right: 240px;
+    }
+    .container .inputs.radio input {
+        padding-right: 240px;
+        width: 40px;
+    }
+    .container .inputs.radio label {
+        padding-left: 140px;
+        padding-right: 240px;
+    }
+}
+#upgrade-logs .emergency,
+#upgrade-logs .alert,
+#upgrade-logs .critical {
+    color: red;
+    font-size: 16px;
+    font-weight: bold;
+}
+#upgrade-logs .error,
+#upgrade-logs .warning {
+    color: red;
+    font-weight: bold;
+}
+#upgrade-logs .notice {
+    color: green;
+}
+#upgrade-logs .info {
+    color: black;
+}
+#upgrade-logs .debug {
+    color: grey;
+}
