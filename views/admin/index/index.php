@@ -45,6 +45,9 @@ echo head(array(
             <?php endif;?>
         <?php else: ?>
         <p class="explanation note"><?php echo __('A confirmation will be required in the next step.'); ?></p>
+            <?php if ($allowThemesOnly): ?>
+            <p class="explanation note"><?php echo __('For themes, all files of the sub-folder "themes" of the destination set above will be removed.'); ?></p>
+            <?php endif; ?>
         <?php endif; ?>
     <?php endif;?>
 

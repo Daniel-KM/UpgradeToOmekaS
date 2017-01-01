@@ -62,10 +62,12 @@ class UpgradeToOmekaS_Job_Remove extends UpgradeToOmekaS_Job_Abstract
 
         // Check the dir of the files.
         $baseDir = $params['base_dir'];
-        $result = UpgradeToOmekaS_Form_Validator::validateBaseDirToRemove($baseDir);
-        if (empty($result)) {
-            $this->_processError(__('The base dir %s cannot be deleted.'));
-            return;
+        if (file_exists($baseDir)) {
+            $result = UpgradeToOmekaS_Form_Validator::validateBaseDirToRemove($baseDir);
+            if (empty($result)) {
+                $this->_processError(__('The base dir %s cannot be deleted.'));
+                return;
+            }
         }
 
         // Remove the tables of the database.
@@ -85,7 +87,7 @@ class UpgradeToOmekaS_Job_Remove extends UpgradeToOmekaS_Job_Abstract
             Zend_Log::DEBUG);
 
         // Remove the dir.
-        UpgradeToOmekaS_Common::removeDir($baseDir, true);
+        $result = UpgradeToOmekaS_Common::removeDir($baseDir, true);
 
         $this->_log(__('The files of Omeka Semantic have been removed successfully.'),
             Zend_Log::DEBUG);

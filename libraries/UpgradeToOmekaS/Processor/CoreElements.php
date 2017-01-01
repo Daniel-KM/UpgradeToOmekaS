@@ -15,11 +15,6 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
         'type' => 'integrated',
     );
 
-    /**
-     * List of methods to process for the upgrade.
-     *
-     * @var array
-     */
     public $processMethods = array(
         '_upgradeItemTypes',
         '_upgradeElements',
@@ -39,13 +34,6 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
      */
     protected $_propertyIds = array();
 
-    /**
-     * Check if the plugin is installed.
-     *
-     * @internal Always true for the Core.
-     *
-     * @return boolean
-     */
     public function isPluginReady()
     {
         return true;

@@ -87,6 +87,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $processors = $this->_listProcessors();
         $prechecks = $this->_precheckConfig();
         $plugins = $this->_listPlugins();
+        $allowThemesOnly = $this->_allowThemesOnly();
+        $upgradeType = ($allowThemesOnly && $this->getParam('submit_themes')) ? 'themes' : 'full';
 
         $prechecksPlugins = array_filter($prechecks, function ($k) {
             return strpos($k, 'Core/') !== 0;
@@ -113,6 +115,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->checksPlugins = array();
         $this->view->form = null;
         $this->view->hasErrors = empty($prechecks) ? 'none' : 'precheck';
+        $this->view->allowThemesOnly = $allowThemesOnly;
 
         if ($prechecksCore) {
             $message = __('Some requirements are not met.');
@@ -122,6 +125,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
         $form = new UpgradeToOmekaS_Form_Main(array(
             'unupgradablePlugins' => count($prechecksPlugins),
+            'allowThemesOnly' => (integer) $allowThemesOnly,
         ));
         $form->setAction($this->_helper->url('index'));
         $this->view->form = $form;
@@ -156,48 +160,69 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             // return;
         }
 
-        // Launch the check of the config with params.
-        $checks = $this->_checkConfig();
-        $checksPlugins = array_filter($checks, function ($k) {
-            return strpos($k, 'Core/') !== 0;
-        }, ARRAY_FILTER_USE_KEY);
-        $checksCore = array_diff_key($checks, $checksPlugins);
-        $this->view->checksCore = $checksCore;
-        $this->view->checksPlugins = $checksPlugins;
-        if (!empty($checks)) {
-            $this->view->hasErrors = 'checks';
-            $message = __('Some requirements or some parameters are not good.');
-            $this->_helper->_flashMessenger($message, 'error');
-            return;
+        // Launch the check of the config with params for themes.
+        if ($upgradeType == 'themes') {
+            $baseDir = $this->getParam('base_dir');
+            if (empty($baseDir)
+                    || !file_exists($baseDir)
+                    || !is_dir($baseDir)
+                    || !is_writable($baseDir)
+                ) {
+                $message = __('To upgrade only themes, the base dir should be set and should contain a folder for themes.');
+                $this->view->checksCore = array('Core/Server' => array($message));
+                $this->view->checksPlugins = array();
+                $this->view->hasErrors = 'checks';
+                $message = __('The base dir should be set and should contain a folder for themes.');
+                $this->_helper->_flashMessenger($message, 'error');
+                return;
+            }
         }
+        // Launch the check of the config with params for a full upgrade.
+        else {
+            $checks = $this->_checkConfig();
+            $checksPlugins = array_filter($checks, function ($k) {
+                return strpos($k, 'Core/') !== 0;
+            }, ARRAY_FILTER_USE_KEY);
+            $checksCore = array_diff_key($checks, $checksPlugins);
+            $this->view->checksCore = $checksCore;
+            $this->view->checksPlugins = $checksPlugins;
+            if (!empty($checks)) {
+                $this->view->hasErrors = 'checks';
+                $message = __('Some requirements or some parameters are not good.');
+                $this->_helper->_flashMessenger($message, 'error');
+                return;
+            }
 
-        if ($this->view->hasErrors != 'none') {
-            return;
-        }
+            if ($this->view->hasErrors != 'none') {
+                return;
+            }
 
-        // Display the confirmation check boxes.
-        $form->setIsConfirmation(true);
-        $this->view->isConfirmation = true;
-        $confirm = $this->getParam('check_confirm_backup')
-            && $this->getParam('check_confirm_license');
-        if (!$confirm) {
-            $message = __('Parameters are fine.') . ' ' . __('Confirm the upgrade below.');
-            $this->_helper->_flashMessenger($message, 'success');
-            return;
+            // Display the confirmation check boxes.
+            $form->setIsConfirmation(true);
+            $this->view->isConfirmation = true;
+            $confirm = $this->getParam('check_confirm_backup')
+                && $this->getParam('check_confirm_license');
+            if (!$confirm) {
+                $message = __('Parameters are fine.') . ' ' . __('Confirm the upgrade below.');
+                $this->_helper->_flashMessenger($message, 'success');
+                return;
+            }
         }
 
         $form->reset();
 
-        $this->_launchUpgradeProcess();
+        $this->_launchUpgradeProcess($upgradeType);
+
         $this->_helper->redirector->goto('logs');
     }
 
     /**
      * Launch the upgrade process.
      *
+     * @param string $upgradeType Can be "full" or "themes".
      * @return void
      */
-    protected function _launchUpgradeProcess()
+    protected function _launchUpgradeProcess($upgradeType = 'full')
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_STARTING);
 
@@ -212,9 +237,21 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         set_option('upgrade_to_omeka_s_service_down', true);
 
         // Reset the logs here to hide them in the log view.
-        set_option('upgrade_to_omeka_s_process_logs', json_encode(array()));
+        if ($upgradeType == 'full') {
+            set_option('upgrade_to_omeka_s_process_logs', json_encode(array()));
+        }
 
         $params = $this->_cleanParams();
+
+        // Keep old params when processing themes only.
+        if ($upgradeType == 'themes') {
+            $baseDir = $params['base_dir'];
+            $oldParams = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
+            $params = $oldParams;
+            $params['base_dir'] = $baseDir;
+        }
+
+        $params['upgrade_type'] = $upgradeType;
         $params['isProcessing'] = true;
         $params['start'] = date('Y-m-d H:i:s');
 
@@ -629,6 +666,21 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     }
 
     /**
+     * Check if the the button "Themes only" is allowed.
+     *
+     * @return boolean
+     */
+    protected function _allowThemesOnly()
+    {
+        $iniFile = dirname(dirname(__FILE__))
+            . DIRECTORY_SEPARATOR . 'security.ini';
+        $settings = new Zend_Config_Ini($iniFile, 'upgrade-to-omeka-s');
+        return isset($settings->button_themes_only)
+            ? (boolean) $settings->button_themes_only
+            : false;
+    }
+
+    /**
      * Helper to get the backend settings from the file "security.ini".
      *
      * @return Zend_Config_Ini
@@ -847,7 +899,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             'check_backup_metadata', 'check_backup_files', 'check_backup_check',
             'plugins_confirm_unupgradable',
             'check_confirm_backup', 'check_confirm_license',
-            'csrf_token', 'submit', 'check_params',
+            'csrf_token', 'submit', 'submit_themes', 'check_params',
         );
         $params = array_diff_key($params, array_flip($unsetParams));
 

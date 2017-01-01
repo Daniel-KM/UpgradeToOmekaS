@@ -152,6 +152,15 @@ abstract class UpgradeToOmekaS_Job_Abstract extends Omeka_Job_AbstractJob
             'message' => $msg,
         );
         $logs[] = $msg;
+
+        // Options are limited to 65535 bytes, about 32760 characters in the
+        // common non English cases.
+        while (strlen($this->toJson($logs)) > 32760) {
+            // Keep key, unlike array_shift().
+            reset($logs);
+            unset($logs[key($logs)]);
+        }
+
         set_option('upgrade_to_omeka_s_process_logs', $this->toJson($logs));
 
         $message = ltrim($message, ': ');

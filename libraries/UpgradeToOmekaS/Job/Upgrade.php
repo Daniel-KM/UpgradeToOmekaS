@@ -22,15 +22,18 @@ class UpgradeToOmekaS_Job_Upgrade extends UpgradeToOmekaS_Job_Abstract
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);
         set_option('upgrade_to_omeka_s_process_progress', json_encode(array()));
 
+        $params = $this->_params;
+
         // Reset existing logs. They are available in the logs of Omeka if
         // enabled (level default).
-        set_option('upgrade_to_omeka_s_process_logs', '[]');
+        if (empty($params['upgrade_type']) || $params['upgrade_type'] == 'full') {
+            set_option('upgrade_to_omeka_s_process_logs', json_encode(array()));
+        }
 
         $this->_log(__('Starting upgrade from Omeka Classic to Omeka Semantic.'),
             Zend_Log::INFO);
 
         $user = $this->getUser();
-        $params = $this->_params;
         $params['user'] = $user;
 
         //Add the security ini params.
@@ -41,6 +44,7 @@ class UpgradeToOmekaS_Job_Upgrade extends UpgradeToOmekaS_Job_Abstract
         defined('OMEKA_PATH') or define('OMEKA_PATH', $params['base_dir']);
 
         $startMessage = __('Params are:') . PHP_EOL;
+        $startMessage .= __('Upgrade type: %s', $params['upgrade_type']) . PHP_EOL;
         $startMessage .= __('Base dir: %s', $params['base_dir']) . PHP_EOL;
         $startMessage .= __('Installation Title: %s', $params['installation_title']) . PHP_EOL;
         $startMessage .= __('Time Zone: %s', $params['time_zone']) . PHP_EOL;

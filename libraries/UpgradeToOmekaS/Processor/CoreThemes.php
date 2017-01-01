@@ -31,11 +31,6 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         'install' => array(),
     );
 
-    /**
-     * List of methods to process for the upgrade.
-     *
-     * @var array
-     */
     public $processMethods = array(
         '_installCompatibiltyLayer',
         '_copyAssets',
@@ -45,6 +40,16 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         '_upgradeFunctionsAndVariables',
         '_upgradeHooks',
         '_upgradeFiles',
+    );
+
+    public $specificProcessMethods = array(
+        'themes' => array(
+            '_copyThemes',
+            '_upgradeThemes',
+            '_upgradeFunctionsAndVariables',
+            '_upgradeHooks',
+            '_upgradeFiles',
+        ),
     );
 
     /**
@@ -77,8 +82,40 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
 
     protected function _copyAssets()
     {
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, all assets used for the themes (logo...) are managed in one place.'),
-            Zend_Log::INFO);
+        $this->_copyAssetsFilesAndMetadata();
+    }
+
+    protected function _copyAssetsFiles()
+    {
+        $this->_copyAssetsFilesAndMetadata('files');
+    }
+
+    protected function _copyAssetsMetadata()
+    {
+        $this->_copyAssetsFilesAndMetadata('metadata');
+    }
+
+    /**
+     * Helper to copy files of metadata of assets.
+     *
+     * @param string $limitTo "full" (default), "files" or "metadata".
+     * @throws UpgradeToOmekaS_Exception
+     */
+    protected function _copyAssetsFilesAndMetadata($limitTo = 'full')
+    {
+        $copyFiles = $limitTo != 'metadata';
+        $copyMetadata = $limitTo != 'files';
+        $copyFull = $copyFiles && $copyMetadata;
+
+        if (!$copyFiles && !$copyMetadata) {
+            throw new UpgradeToOmekaS_Exception(
+                __('This function is used to copy assets files or metadata, but nothing is defined.'));
+        }
+
+        if ($copyFull) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, all assets used for the themes (logo...) are managed in one place.'),
+                Zend_Log::INFO);
+        }
 
         // There are usually few files in the folder.
         $sourceDir = FILES_DIR . DIRECTORY_SEPARATOR . 'theme_uploads';
@@ -92,8 +129,10 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
 
         $totalRecords = count($files);
         if (empty($totalRecords)) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The current site has no asset.'),
-                Zend_Log::INFO);
+            if ($copyFull) {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The current site has no asset.'),
+                    Zend_Log::INFO);
+            }
             return;
         }
 
@@ -109,10 +148,12 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             }
             // Warn about the copy.
             else {
-                $this->_log('[' . __FUNCTION__ . ']: ' . __('The directory "files/themes_uploads" contain symbolic links.')
-                        . ' ' . __('Some errors may occur in some cases.')
-                        . ' ' . __('You need to check yourself if all files were copied.'),
-                    Zend_Log::WARN);
+                if ($copyFiles) {
+                    $this->_log('[' . __FUNCTION__ . ']: ' . __('The directory "files/themes_uploads" contain symbolic links.')
+                            . ' ' . __('Some errors may occur in some cases.')
+                            . ' ' . __('You need to check yourself if all files were copied.'),
+                        Zend_Log::WARN);
+                }
             }
         }
 
@@ -131,33 +172,40 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         $i = 0;
         foreach ($files as $filename) {
             $this->_progress(++$i);
-            // Do a true copy, because they are not an archive and may change.
-            $source = $sourceDir . DIRECTORY_SEPARATOR . $filename;
-            $destination = $destinationDir . DIRECTORY_SEPARATOR . $filename;
-            $result = copy($source, $destination);
-            if (!$result) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('The copy of the file "%s" to the directory "%s" failed.',
-                        $source, $destinationDir . DIRECTORY_SEPARATOR));
+
+            if ($copyFiles) {
+                // Do a true copy because they aren't an archive and may change.
+                $source = $sourceDir . DIRECTORY_SEPARATOR . $filename;
+                $destination = $destinationDir . DIRECTORY_SEPARATOR . $filename;
+                $result = copy($source, $destination);
+                if (!$result) {
+                    throw new UpgradeToOmekaS_Exception(
+                        __('The copy of the file "%s" to the directory "%s" failed.',
+                            $source, $destinationDir . DIRECTORY_SEPARATOR));
+                }
             }
 
-            $detect = new Omeka_File_MimeType_Detect($source);
-            $mimeType = $detect->detect();
+            if ($copyMetadata) {
+                $detect = new Omeka_File_MimeType_Detect($source);
+                $mimeType = $detect->detect();
 
-            // Create the asset after each copy in case of an error.
-            $toInsert = array();
-            $toInsert['id'] = null;
-            $toInsert['name'] = $filename;
-            $toInsert['media_type'] = $mimeType;
-            $toInsert['storage_id'] = pathinfo($filename, PATHINFO_FILENAME);
-            $toInsert['extension'] = pathinfo($filename, PATHINFO_EXTENSION);
-            $targetDb->insert('asset', $toInsert);
+                // Create the asset after each copy in case of an error.
+                $toInsert = array();
+                $toInsert['id'] = null;
+                $toInsert['name'] = $filename;
+                $toInsert['media_type'] = $mimeType;
+                $toInsert['storage_id'] = pathinfo($filename, PATHINFO_FILENAME);
+                $toInsert['extension'] = pathinfo($filename, PATHINFO_EXTENSION);
+                $targetDb->insert('asset', $toInsert);
+            }
         }
 
-        $this->_log('[' . __FUNCTION__ . ']: ' . ($totalRecords <= 1
-                ? __('One asset has been upgraded.')
-                : __('%d assets have been upgraded.', $totalRecords)),
-            Zend_Log::INFO);
+        if ($copyFull) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . ($totalRecords <= 1
+                    ? __('One asset has been upgraded.')
+                    : __('%d assets have been upgraded.', $totalRecords)),
+                Zend_Log::INFO);
+        }
     }
 
     protected function _copyThemes()
@@ -212,10 +260,14 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         foreach ($themes as $theme) {
             $this->_progress(++$i);
 
+            $destinationTheme = $destination . DIRECTORY_SEPARATOR . $theme;
+
+            // Remove the existing dir to avoid issues when copy of themes only.
+            UpgradeToOmekaS_Common::removeDir($destinationTheme, true);
+
             // First, copy the default scripts from Omeka in each theme, since
             // they are used when there is no script with the same name in the
             // theme.
-            $destinationTheme = $destination . DIRECTORY_SEPARATOR . $theme;
             UpgradeToOmekaS_Common::copyDir(
                 $sourceDefaultTheme,
                 $destinationTheme,
@@ -787,7 +839,7 @@ OUTPUT;
                 continue;
             }
             if (empty($dirpathNew)) {
-                UpgradeToOmekaS_Common::removeDir($source, true);
+                UpgradeToOmekaS_Common::removeDir($source, false);
                 continue;
             }
             $destination = $path . DIRECTORY_SEPARATOR . $dirpathNew;

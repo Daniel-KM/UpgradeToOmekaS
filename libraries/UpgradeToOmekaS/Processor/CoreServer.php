@@ -49,11 +49,6 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
      */
     public $minTempDirSize = 1000000000;
 
-    /**
-     * List of methods to process for the upgrade.
-     *
-     * @var array
-     */
     public $processMethods = array(
         '_createDirectory',
         '_downloadOmekaS',
@@ -81,13 +76,6 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
      */
     protected $_destinationFreeSize;
 
-    /**
-     * Check if the plugin is installed.
-     *
-     * @internal Always true for the Core.
-     *
-     * @return boolean
-     */
     public function isPluginReady()
     {
         return true;

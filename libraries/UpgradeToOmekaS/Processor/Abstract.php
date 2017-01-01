@@ -53,6 +53,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $processMethods = array();
 
     /**
+     * List of methods to process for a specific upgrade type.
+     *
+     * @var array
+     */
+    public $specificProcessMethods = array();
+
+    /**
      * The mapping of derivative files between Omeka C and Omeka S.
      *
      * @var array
@@ -243,11 +250,21 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         $this->_db = get_db();
 
         // Check if each method exists.
-        if ($this->processMethods) {
-            foreach ($this->processMethods as $method) {
+        foreach ($this->processMethods as $method) {
+            if (!method_exists($this, $method)) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('The method "%s" of the plugin %s does not exist.',
+                        $method, $this->pluginName));
+            }
+        }
+
+        // Check if each specific method exists.
+        foreach ($this->specificProcessMethods as $upgradeType => $methods) {
+            foreach ($methods as $method) {
                 if (!method_exists($this, $method)) {
                     throw new UpgradeToOmekaS_Exception(
-                        __('The method "%s" of the plugin %s does not exist.', $method, $this->pluginName));
+                        __('The method "%s" of the plugin %s for the upgrade type "%s" does not exist.',
+                            $method, $this->pluginName, $upgradeType));
                 }
             }
         }
@@ -771,8 +788,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     final public function checkConfig()
     {
-        if ($this->isPluginReady()) {
-            $this->_checkConfig();
+        $upgradeType = $this->getParam('upgrade_type');
+        if ($upgradeType != 'themes') {
+            if ($this->isPluginReady()) {
+                $this->_checkConfig();
+            }
         }
 
         return $this->_checks;
@@ -801,12 +821,26 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             return;
         }
 
+        // May use specific process methods.
+        $upgradeType = $this->getParam('upgrade_type');
+        if (empty($upgradeType) || $upgradeType == 'full') {
+            $processMethods = $this->processMethods;
+        } elseif (isset($this->specificProcessMethods[$upgradeType])) {
+            $processMethods = $this->specificProcessMethods[$upgradeType];
+        } else {
+            $processMethods = array();
+        }
+
+        if (empty($processMethods)) {
+            return;
+        }
+
         $this->_log(__('Start processing.'), Zend_Log::DEBUG);
 
         // The default methods are checked during the construction, but other
         // ones may be added because the list is public.
-        $totalMethods = count($this->processMethods);
-        foreach ($this->processMethods as $i => $method) {
+        $totalMethods = count($processMethods);
+        foreach ($processMethods as $i => $method) {
             $baseMessage = '[' . $method . ']: ';
             // Process stopped externally.
             if (!$this->isProcessing()) {
@@ -889,7 +923,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 $progress['total'] = $total;
             }
         }
-        set_option('upgrade_to_omeka_s_process_progress', $this->_toJson($progress));
+        set_option('upgrade_to_omeka_s_process_progress', $this->toJson($progress));
         return $progress;
     }
 
@@ -1272,17 +1306,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Upgrade files of a module once installed.
+     * Upgrade files of a module.
+     *
+     * @internal There are generally nothing to add, because the processor for
+     * themes upgrades all files inside the theme.
      */
     protected function _upgradeFiles()
     {
-        $this->_progress(0, count($this->upgrade_files));
-
-        $i = 0;
-        foreach ($this->upgrade_files as $relativePath => $upgrade) {
-            $this->_progress(++$i);
-            $this->_upgradeFileInThemes($relativePath, $upgrade);
-        }
     }
 
     /**
@@ -1357,7 +1387,16 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             'message' => $msg,
         );
         $logs[] = $msg;
-        set_option('upgrade_to_omeka_s_process_logs', $this->_toJson($logs));
+
+        // Options are limited to 65535 bytes, about 32760 characters in the
+        // common non English cases.
+        while (strlen($this->toJson($logs)) > 32760) {
+            // Keep key, unlike array_shift().
+            reset($logs);
+            unset($logs[key($logs)]);
+        }
+
+        set_option('upgrade_to_omeka_s_process_logs', $this->toJson($logs));
 
         $message = ltrim($message, ': ');
         if (strpos($message, '[') !== 0) {
@@ -1393,7 +1432,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @param var $value
      * @return string
      */
-    protected function _toJson($value)
+    public function toJson($value)
     {
         return json_encode(
             $value,
@@ -1563,6 +1602,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             }
             $output = $args['prepend'] . $input . $args['append'];
             if (!(empty($output) && !$destinationExists)) {
+                UpgradeToOmekaS_Common::createDir(dirname($destination));
                 $result = file_put_contents($destination, $output);
             }
         }

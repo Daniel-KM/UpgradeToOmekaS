@@ -53,7 +53,7 @@ echo head(array(
         <a class="medium red button" href="<?php echo url('/upgrade-to-omeka-s/index/stop'); ?>"><?php echo __('Stop Upgrade'); ?></a>
         <?php else: ?>
         <p><?php echo __('The previous upgrade is being removed.'); ?></p>
-        <p><?php echo __('If it’s too long, stop the process to reset it.'); ?></p>
+        <p><?php echo __('If it’s too long, stop the process to reset it and check rights of the folder or remove it yourself.'); ?></p>
         <a class="medium red button" href="<?php echo url('/upgrade-to-omeka-s/index/stop'); ?>"><?php echo __('Stop Removing'); ?></a>
         <?php endif; ?>
     <?php else: ?>

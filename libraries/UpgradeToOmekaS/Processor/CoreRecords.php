@@ -15,18 +15,13 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         'type' => 'integrated',
     );
 
-    /**
-     * List of methods to process for the upgrade.
-     *
-     * @var array
-     */
     public $processMethods = array(
         // Items are upgraded before collections in order to keep their ids.
         '_upgradeItems',
         '_createItemSetForSite',
         '_upgradeCollections',
         '_setCollectionsOfItems',
-        '_upgradeFiles',
+        '_upgradeItemFiles',
         '_upgradeMetadata',
     );
 
@@ -67,13 +62,6 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
      */
     protected $_itemSetSiteId;
 
-    /**
-     * Check if the plugin is installed.
-     *
-     * @internal Always true for the Core.
-     *
-     * @return boolean
-     */
     public function isPluginReady()
     {
         return true;
@@ -301,7 +289,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
             Zend_Log::INFO);
     }
 
-    protected function _upgradeFiles()
+    protected function _upgradeItemFiles()
     {
         $this->_upgradeRecords('File');
 

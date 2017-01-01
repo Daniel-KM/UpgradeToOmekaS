@@ -17,11 +17,6 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         'version' => '1.0.0-beta2',
     );
 
-    /**
-     * List of methods to process for the upgrade.
-     *
-     * @var array
-     */
     public $processMethods = array(
         '_configOmekaS',
         '_installOmekaS',
@@ -130,13 +125,6 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         'xlsx', 'xlt', 'xlw', 'zip',
     );
 
-    /**
-     * Check if the plugin is installed.
-     *
-     * @internal Always true for the Core.
-     *
-     * @return boolean
-     */
     public function isPluginReady()
     {
         return true;
@@ -774,6 +762,10 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
             ? $settings->default->site->theme
             : get_option('public_theme');
 
+        if ($theme == 'default') {
+            $theme = 'classic';
+        }
+
         $id = 1;
 
         $navigation = $this->_convertNavigation();
@@ -784,7 +776,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $toInsert['slug'] = $slug;
         $toInsert['theme'] = substr($theme ?: 'default', 0, 190);
         $toInsert['title'] = substr($title, 0, 190);
-        $toInsert['navigation'] = $this->_toJson($navigation);
+        $toInsert['navigation'] = $this->toJson($navigation);
         $toInsert['item_pool'] = json_encode(array());
         $toInsert['created'] = $this->getDatetime();
         $toInsert['is_public'] = 1;

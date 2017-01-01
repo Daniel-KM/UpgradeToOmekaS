@@ -22,22 +22,16 @@ class UpgradeToOmekaS_Processor_CoreChecks extends UpgradeToOmekaS_Processor_Abs
      */
     protected $_checkedFiles = array();
 
-    /**
-     * List of methods to process for the upgrade.
-     *
-     * @var array
-     */
     public $processMethods = array(
         '_checkFiles',
     );
 
-    /**
-     * Check if the plugin is installed.
-     *
-     * @internal Always true for the Core.
-     *
-     * @return boolean
-     */
+    public $specificProcessMethods = array(
+        'themes' => array(
+            '_checkFiles',
+        ),
+    );
+
     public function isPluginReady()
     {
         return true;
@@ -88,16 +82,18 @@ class UpgradeToOmekaS_Processor_CoreChecks extends UpgradeToOmekaS_Processor_Abs
 
         if ($totalErrors) {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The files (%d) of the themes below have errors.', $totalErrors)
-                    . ' ' . __('They are generally related to multiline functions and php comments /* ... */.'),
+                    . ' ' . __('They are generally related to multiline, nested or custom functions and php comments /* ... */.')
+                    . ' ' . __('See the background PHP error logs for more information (enable debug in php.ini before).'),
                 Zend_Log::ERR);
-            $this->_log('[' . __FUNCTION__ . ']: ' . implode(PHP_EOL, $filesWithErrors),
+            $this->_log('[' . __FUNCTION__ . ']: ' . snippet(implode(PHP_EOL, $filesWithErrors), 0, 40000),
                 Zend_Log::INFO);
         }
         // Message for no error.
         else {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The files of the themes have no syntax error.')
-                . ' ' . __('Nevertheless, check them yourself.'),
-                Zend_Log::INFO);
+                    . ' ' . __('Nevertheless, check them yourself.')
+                    . ' ' . __('There may be errors with multiline, nested or custom functions.'),
+                Zend_Log::WARN);
         }
     }
 

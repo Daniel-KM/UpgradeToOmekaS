@@ -3,6 +3,7 @@
 class UpgradeToOmekaS_Form_Main extends Omeka_Form
 {
     protected $_unupgradablePlugins = 0;
+    protected $_allowThemesOnly = 0;
     protected $_isConfirmation = false;
     protected $_processorCore;
 
@@ -576,6 +577,15 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'div', 'class' => 'field')))),
             ));
+            if ($this->_allowThemesOnly) {
+                $this->addElement('submit', 'submit_themes', array(
+                    'label' => __('Themes only'),
+                    'class' => 'submit submit-big blue',
+                    'decorators' => (array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'field')))),
+                ));
+            }
         }
         // Simple check.
         else {
@@ -597,6 +607,16 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
     public function setUnupgradablePlugins($value)
     {
         $this->_unupgradablePlugins = $value;
+    }
+
+    /**
+     * Set the param "allowThemesOnly".
+     *
+     * @param boolean $value
+     */
+    public function setAllowThemesOnly($value)
+    {
+        $this->_allowThemesOnly = $value;
     }
 
     /**
