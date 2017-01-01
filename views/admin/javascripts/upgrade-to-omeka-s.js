@@ -1,6 +1,7 @@
 jQuery(document).ready(function () {
     var $ = jQuery;
 
+    // Display the fields for the database.
     var databaseType = $('#fieldset-database input[name=database_type]:checked').val();
     databaseType == 'share' ? shareDatabase() : separateDatabase();
 
@@ -24,6 +25,30 @@ jQuery(document).ready(function () {
         });
     }
 
+    // Display the mapped elements.
+    hideshowMappedElements();
+    $('#display-mapped-elements').click(function () {
+        hideshowMappedElements();
+    });
+    function hideshowMappedElements() {
+        var button = $('#display-mapped-elements');
+        if (button.val() == 'show') {
+            $('#fieldset-elements .field').each(function() {
+                $(this).show(300);
+            });
+            button.val('hide');
+            button.text('Hide mapped elements');
+        } else {
+            $($('#fieldset-elements .field')).each(function() {
+                if ($(this).find('select').val())
+                    $(this).hide(300);
+            });
+            button.val('show');
+            button.text('Show all elements');
+        }
+    }
+
+    // Display the checkboxes for the confirmation.
     if ($('body.upgrade.form').hasClass('confirm')) {
         $('#fieldset-confirm').show();
     } else {

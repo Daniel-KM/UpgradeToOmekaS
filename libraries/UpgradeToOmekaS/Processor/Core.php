@@ -66,6 +66,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // Database.
         '_importUsers',
         '_importSite',
+        '_importElements',
         '_importItemTypes',
         '_importCollections',
         '_importItems',
@@ -81,27 +82,19 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         '_installCompatibiltyModule',
     );
 
-    public $mapping_roles = array(
-        // Default roles of Omeka C.
-        // Only the current super user will be the "global_admin".
-        'super' => 'site_admin',
-        'admin' => 'site_admin',
-        'contributor' => 'author',
-        'researcher' => 'researcher',
-        // Default roles of Omeka S, if needed.
-        'global_admin' => 'global_admin',
-        'site_admin' => 'site_admin',
-        'editor' => 'editor',
-        'reviewer' => 'reviewer',
-        'author' => 'author',
-        'researcher' => 'researcher',
-        // TODO Currently not managed
-        // Plugin Guest User.
-        // 'guest' => 'guest',
-        // Plugin Contribution.
-        // 'contribution-anonymous' => 'anonymous',
-        // 'contribution_anonymous' => 'anonymous',
-    );
+    /**
+     * Initialized during init via libraries/data/mapping_roles.php.
+     *
+     * @var array
+     */
+    // public $mapping_roles = array();
+
+    /**
+     * Initialized during init via libraries/data/mapping_elements.php.
+     *
+     * @var array
+     */
+    // public $mapping_elements = array();
 
     /**
      * Default tables of Omeka S.
@@ -227,6 +220,21 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
      * @var integer
      */
     protected $_destinationFreeSize;
+
+    protected function _init()
+    {
+        $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'libraries'
+            . DIRECTORY_SEPARATOR . 'data';
+
+        $script = $dataDir
+            . DIRECTORY_SEPARATOR . 'mapping_roles.php';
+        $this->mapping_roles = require $script;
+
+        $script = $dataDir
+            . DIRECTORY_SEPARATOR . 'mapping_elements.php';
+        $this->mapping_elements = require $script;
+    }
 
     /**
      * Check if the plugin is installed.
@@ -1488,6 +1496,11 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The first site has been created.'),
             Zend_Log::INFO);
+    }
+
+    protected function _importElements()
+    {
+
     }
 
     protected function _importItemTypes()

@@ -142,6 +142,7 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
         $baseProcessors['Core'] = 'UpgradeToOmekaS_Processor_Core';
 
         // Integrated plugins.
+        $baseProcessors['DublinCoreExtended'] = 'UpgradeToOmekaS_Processor_DublinCoreExtended';
         // The first plugin to convert in order to keep ids and navigation.
         $baseProcessors['SimplePages'] = 'UpgradeToOmekaS_Processor_SimplePages';
         // $processors['Dropbox'] = 'UpgradeToOmekaS_Processor_Dropbox';

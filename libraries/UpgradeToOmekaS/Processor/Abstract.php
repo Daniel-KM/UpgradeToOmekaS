@@ -51,6 +51,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $mapping_roles = array();
 
     /**
+     * Mapping of elements from Omeka C to properties of Omeka S.
+     */
+    public $mapping_elements = array();
+
+    /**
      * Maximum rows to process by loop.
      *
      * @var integer
@@ -80,13 +85,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @var object
      */
     protected $_targetDb;
-
-    /**
-     * Short to the ini reader.
-     *
-     * @var object
-     */
-    protected $_iniReader;
 
     /**
      * Short to the security.ini.
@@ -159,7 +157,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public function __construct()
     {
         $this->_db = get_db();
-        $this->_iniReader = new Omeka_Plugin_Ini(PLUGIN_DIR);
 
         // Check if each method exists.
         if ($this->processMethods) {
@@ -170,6 +167,20 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 }
             }
         }
+
+        try {
+            $this->_init();
+        } catch (Exception $e) {
+            throw new UpgradeToOmekaS_Exception(
+                __('An error occurred durring the init of %s: %s.', $this->pluginName, $e->getMessage()));
+        }
+    }
+
+    /**
+     * A method used to initialize classes.
+     */
+    protected function _init()
+    {
     }
 
     /**
@@ -390,7 +401,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         // There is a plugin name, so check versions.
         $path = $this->pluginName;
         try {
-            $version = $this->_iniReader->getPluginIniValue($path, 'version');
+            $iniReader = new Omeka_Plugin_Ini(PLUGIN_DIR);
+            $version = $iniReader->getPluginIniValue($path, 'version');
         } catch (Exception $e) {
             return __('The plugin.ini file of the plugin "%s" is not readable: %s',
                 $this->pluginName, $e->getMessage());
@@ -621,6 +633,120 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
         $this->_targetDb = $targetDb;
         return $this->_targetDb;
+    }
+
+    /**
+     * Get the mapping from Omeka C elements to Omeka S properties.
+     *
+     * This method doesn't use the database of Omeka S, but the file "properties.php".
+     *
+     * @param string $elementFormat "set name:name" (default) or "id".
+     * @param string $propertyFormat "prefix:name" (default), "label" or "id".
+     * @param boolean $bySet Return a one or a two levels associative array.
+     * @return array
+     */
+    public function getMappingElementsToProperties($elementFormat = 'set_name:name', $propertyFormat = 'prefix:name', $bySet = false)
+    {
+        static $elements;
+        static $properties;
+        static $mapping;
+
+        if (empty($elements)) {
+            // Get the flat list of elements truly installed in Omeka.
+            $select = $this->_db->getTable('Element')->getSelect()
+                ->reset(Zend_Db_Select::COLUMNS)
+                ->from(array(), array(
+                    'id' => 'elements.id',
+                    'name' => 'elements.name',
+                    'set_name' => 'element_sets.name',
+                ))
+                ->order('elements.id');
+            $elements = $this->_db->fetchAll($select);
+
+            // Get the flat list of property ids and prefix:name by prefix:name.
+            $properties = $this->getProperties();
+            $result = array();
+            foreach ($properties as $vocabularyLabel => $vocabulary) {
+                // Use only the prefix of the vocabulary.
+                $prefix = trim(substr($vocabularyLabel, strpos($vocabularyLabel, '[')), '[] ');
+                // Preformat the property.
+                foreach ($vocabulary as $propertyId => $property) {
+                    $label = reset($property);
+                    $name = key($property);
+                    $result[$prefix . ':' . $name] = array(
+                        'id' => $propertyId,
+                        'name' => $name,
+                        'prefix:name' => $prefix . ':' . $name,
+                        'label' => $label,
+                        'prefix' => $prefix,
+                    );
+                }
+            }
+            $properties = $result;
+
+            // Get the mapping of elements with properties as prefix:name.
+            $mapping = $this->getMerged('mapping_elements');
+            foreach ($mapping as $setName => &$mappedElements) {
+                $mappedElements = array_map(function ($v) {
+                    return key($v) . ':' . reset($v);
+                } , $mappedElements);
+            }
+        }
+
+        // The list is made by set, then the set level is removed if wanted.
+
+        // Process the requested format.
+        $result = array();
+        foreach ($elements as $element) {
+            $mappedProperty = null;
+            // Get the map of the element if any.
+            if (!empty($mapping[$element['set_name']][$element['name']])) {
+                $map = $mapping[$element['set_name']][$element['name']];
+                if (isset($properties[$map])) {
+                    $mappedProperty = $properties[$map][$propertyFormat];
+                }
+            }
+            // Format the result.
+            // Set the mapping, even if not mapped.
+            switch ($elementFormat) {
+                case 'id':
+                    $result[$element['id']] = $mappedProperty;
+                    break;
+                case 'set_name:name':
+                default:
+                    $result[$element['set_name'] . ':' . $element['name']] = $mappedProperty;
+                    break;
+            }
+        }
+
+        if (!$bySet) {
+            $simple = array();
+            foreach ($result as $set => $mapped) {
+                $simple += $mapped;
+            }
+            $result = $simple;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the list of properties of all vocabularies of Omeka S.
+     *
+     * This method doesn't use the database of Omeka S, but the file "properties.php".
+     *
+     * @todo Add an option to fetch the list from the database when possible.
+     *
+     * @return array
+     */
+    public function getProperties()
+    {
+        $script = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'libraries'
+            . DIRECTORY_SEPARATOR . 'data'
+            . DIRECTORY_SEPARATOR . 'properties.php';
+        $properties = require $script;
+        return $properties;
     }
 
     /**

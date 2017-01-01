@@ -15,12 +15,14 @@ class UpgradeToOmekaS_Processor_MoreUserRoles extends UpgradeToOmekaS_Processor_
         'type' => 'integrated',
     );
 
-    public $mapping_roles = array(
-        'editor' => 'editor',
-        'reviewer' => 'reviewer',
-        'author' => 'author',
-        // Specific roles.
-        'fulladmin' => 'site_admin',
-        'documentalist' => 'editor',
-    );
+    protected function _init()
+    {
+        $dataDir = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'libraries'
+            . DIRECTORY_SEPARATOR . 'data';
+
+        $script = $dataDir
+            . DIRECTORY_SEPARATOR . 'mapping_roles_more_user_roles.php';
+        $this->mapping_roles = require $script;
+    }
 }

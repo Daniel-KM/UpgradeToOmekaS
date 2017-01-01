@@ -200,6 +200,111 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'description' => __('Currently, Omeka S doesn’t allow to use a prefix.'),
         ));
 
+        $usedElements = $this->_getUsedElements();
+        $itemTypesByUsedElements = $this->_getItemTypesByUsedElement();
+        $properties = $this->_getPropertiesByVocabulary();
+        $mapping = $this->_getMappingElementsToProperties();
+        $elementNames = array();
+        $isOldOmeka = version_compare(OMEKA_VERSION, '2.5', '<');
+        $previousElementSetName = null;
+        $i = 0;
+        foreach ($usedElements as $usedElement) {
+            if ($previousElementSetName != $usedElement['element_set_name']) {
+                $elementName = 'element_note_element_set_' . ++$i;
+                $elementNames[] = $elementName;
+                $this->addElement('note', $elementName, array(
+                    'label' => __($usedElement['element_set_name']),
+                    'description' => '<em>' . __('Elements below belong to the element set "%s".',
+                        __($usedElement['element_set_name'])) . '</em>',
+                ));
+            }
+            $elementName = 'element_' . $usedElement['element_id'];
+            $elementNames[] = $elementName;
+            $description = '';
+            if ($usedElement['total_items'] > 0) {
+                // For "Item Type Metadata", add some infos about types.
+                $descriptionItemTypes = '';
+                if ($usedElement['element_set_name'] == 'Item Type Metadata'
+                        // The element may be used by a collection or a file.
+                        && isset($itemTypesByUsedElements[$usedElement['element_id']])
+                    ) {
+                    $itemTypesForUsedElement = $itemTypesByUsedElements[$usedElement['element_id']];
+                    $descriptionItemTypes = array();
+                    foreach ($itemTypesForUsedElement as $itemTypeName => $itemTypeForElementValues) {
+                        if ($isOldOmeka) {
+                            $descriptionItemTypes[] = $itemTypeForElementValues['item_type_name'] . ' (' . $itemTypeForElementValues['total'] . ')';
+                        }
+                        // Omeka 2.5.
+                        else {
+                            $descriptionItemTypes[] = '<a href="' . url('/items/browse', array(
+                                'advanced[0][element_id]' => $usedElement['element_id'],
+                                'advanced[0][type]' => 'is not empty',
+                                'type' => $itemTypeForElementValues['item_type_id'],
+                            )) . '">' . $itemTypeForElementValues['item_type_name'] . '</a> (' . $itemTypeForElementValues['total'] . ')';
+                        }
+                    }
+                    $descriptionItemTypes = count($descriptionItemTypes) <= 1
+                        ? ' ' . __('as item type %s', implode(', ', $descriptionItemTypes))
+                        : ' ' . __('as item types %s', implode(', ', $descriptionItemTypes));
+                }
+
+                if ($isOldOmeka) {
+                    $description = function_exists('plural')
+                        ? __(plural('One item uses this element%s.', '%d items use this element%s.', $usedElement['total_items']), $usedElement['total_items'], $descriptionItemTypes)
+                        : __('%d items use this element%s.', $usedElement['total_items'], $descriptionItemTypes);
+                    }
+                // Omeka 2.5.
+                else {
+                    $linkStart = '<a href="' . url('/items/browse', array(
+                                'advanced[0][element_id]' => $usedElement['element_id'],
+                                'advanced[0][type]' => 'is not empty',
+                            )) .  '"><em>';
+                    if ($usedElement['total_items'] <= 1) {
+                        $description = __('%s%d item%s uses this element%s.',
+                            $linkStart,
+                            $usedElement['total_items'],
+                            '</em></a>',
+                            $descriptionItemTypes);
+                    } else {
+                        $description = __('%s%d items%s use this element%s.',
+                            $linkStart,
+                            $usedElement['total_items'],
+                            '</em></a>',
+                            $descriptionItemTypes);
+                    }
+                }
+            }
+            // Element with no item.
+            else {
+                $description = __('No item uses this element.');
+            }
+            $description .= ' ';
+            if ($usedElement['total_collections'] && $usedElement['total_files']) {
+                $description .= __('%d collections and %d files use this element.',
+                    $usedElement['total_collections'], $usedElement['total_files']);
+            }
+            elseif ($usedElement['total_collections']) {
+                $description .= $usedElement['total_collections'] <= 1
+                    ? __('One collection uses this element.')
+                    : __('%d collections use this element.',
+                        $usedElement['total_collections']);
+            }
+            elseif ($usedElement['total_files']) {
+                $description .= $usedElement['total_files'] <= 1
+                    ? __('One file uses this element.')
+                    : __('%d files use this element.',
+                        $usedElement['total_files']);
+            }
+            $this->addElement('select', $elementName, array(
+                'label' => __($usedElement['element_name']),
+                'multiOptions' => $properties,
+                'value' => isset($mapping[$usedElement['element_id']]) ? $mapping[$usedElement['element_id']]: '',
+                'description' => $description,
+            ));
+            $previousElementSetName = $usedElement['element_set_name'];
+        }
+
+        // TODO Replace by a checkbox to skip any plugins.
         if (empty($this->_unupgradablePlugins)) {
             $this->addElement('hidden', 'plugins_confirm_unupgradable', array(
                 'value' => true,
@@ -285,6 +390,20 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'files',
             array(
                 'legend' => __('Files for Omeka Semantic'),
+        ));
+
+        $this->addDisplayGroup(
+            $elementNames,
+            'elements',
+            array(
+                'legend' => __('Mapping of elements to properties'),
+                'description' => __('By default, Omeka S allows only these semantic vocabularies: "Dublin Core", "Bibliographic Ontology" and  "Friend of a Friend".')
+                    . ' ' . __('So, %sused%s elements of Omeka C should be mapped to the %d properties of these vocabularies.',
+                        '<em>', '</em>', 184)
+                    . ' ' . __('The preset is the one used by the module Omeka2Importer.')
+                    . ' ' . __('Elements that are not mapped won’t be imported.')
+                    . '<br />' . __('Currently, no new vocabulary can be added during the upgrade process.')
+                    . '<br /><br /><button id="display-mapped-elements" class="green button" name="display-mapped-elements" type="button" value="show">' . __('Hide/show mapped elements'). '</button>'
         ));
 
         $this->addDisplayGroup(
@@ -457,5 +576,119 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         } catch (Exception $e) {
             return 0;
         }
+    }
+
+    /**
+     * Get an array containing all used elements with total by record type.
+     *
+     * @return array.
+     */
+    protected function _getUsedElements()
+    {
+        $db = get_db();
+        $sql = "
+        SELECT element_sets.id AS element_set_id,
+            element_sets.name AS element_set_name,
+            elements.id AS element_id,
+            elements.name AS element_name,
+            COUNT(collections.id) AS total_collections,
+            COUNT(items.id) AS total_items,
+            COUNT(files.id) AS total_files
+        FROM {$db->ElementSet} element_sets
+        JOIN {$db->Element} elements
+            ON elements.element_set_id = element_sets.id
+        JOIN {$db->ElementText} element_texts
+            ON element_texts.element_id = elements.id
+        LEFT JOIN {$db->Collection} collections
+            ON collections.id = element_texts.record_id
+                AND element_texts.record_type = 'Collection'
+        LEFT JOIN {$db->Item} items
+            ON items.id = element_texts.record_id
+                AND element_texts.record_type = 'Item'
+        LEFT JOIN {$db->File} files
+            ON files.id = element_texts.record_id
+                AND element_texts.record_type = 'File'
+        GROUP BY elements.id
+        ORDER BY element_sets.name, elements.name
+        ;";
+        $elements = $db->fetchAll($sql);
+        return $elements;
+    }
+
+    /**
+     * Get an array containing all item types by used element.
+     *
+     * @return array.
+     */
+    protected function _getItemTypesByUsedElement()
+    {
+        $db = get_db();
+        $sql = "
+        SELECT
+            elements.id AS element_id,
+            elements.name AS element_name,
+            item_types.id AS item_type_id,
+            item_types.name AS item_type_name,
+            COUNT(items.id) AS total
+        FROM {$db->Item} items
+        JOIN {$db->ElementText} element_texts
+             ON element_texts.record_id = items.id
+                AND element_texts.record_type = 'Item'
+        JOIN {$db->ItemTypesElement} item_types_elements
+             ON item_types_elements.element_id = element_texts.element_id
+        JOIN {$db->ItemType} item_types
+            ON item_types_elements.item_type_id = item_types.id
+                AND item_types.id = items.item_type_id
+        JOIN {$db->Element} elements
+            ON elements.id = element_texts.element_id
+                AND elements.id = item_types_elements.element_id
+        GROUP BY elements.id, item_types.id
+        ORDER BY elements.name, item_types.name
+        ;";
+        $elements = $db->fetchAll($sql);
+        $result = array();
+        foreach ($elements as $element) {
+            $result[$element['element_id']][$element['item_type_name']] = $element;
+        }
+        return $result;
+    }
+
+    /**
+     * Get the list of properties of all vocabularies of Omeka S.
+     *
+     * @internal To use Omeka S is not possible, since it's not installed yet.
+     *
+     * @return array Array of values suitable for a dropdown menu.
+     */
+    protected function _getPropertiesByVocabulary()
+    {
+        $processor = new UpgradeToOmekaS_Processor_Core();
+        $properties = $processor->getProperties();
+        $result = array();
+        foreach ($properties as $vocabularyLabel => $vocabulary) {
+            // Use only the prefix of the vocabulary.
+            $prefix = trim(substr($vocabularyLabel, strpos($vocabularyLabel, '[')), '[] ');
+            // Preformat the properties.
+            foreach ($vocabulary as $propertyId => $property) {
+                $label = reset($property);
+                $name = key($property);
+                $result[$vocabularyLabel][$prefix . ':' . $name] = $label;
+            }
+            asort($result[$vocabularyLabel], SORT_NATURAL | SORT_FLAG_CASE);
+        }
+        $properties = array_merge(array('' => ''), $result);
+        return $properties;
+    }
+
+    /**
+     * Get the mapping from Omeka C element ids to Omeka S property ids.
+     *
+     * @return array
+     */
+    protected function _getMappingElementsToProperties()
+    {
+        $processor = new UpgradeToOmekaS_Processor_Core();
+        $result = $processor->getMappingElementsToProperties('id', 'prefix:name', true);
+        return $result;
     }
 }
