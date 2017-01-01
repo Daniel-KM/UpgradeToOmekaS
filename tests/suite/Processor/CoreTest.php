@@ -368,7 +368,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $exists = file_exists($path);
         if ($exists) {
             if (filesize($path) == 0) {
-                $this->markTestSkipped(__('An empty file "%s" exists: replace it by the true omeka-s.zip.', $path));
+                $this->markTestIncomplete(__('An empty file "%s" exists: replace it by the true omeka-s.zip.', $path));
             }
             elseif (filesize($path) != $processor->omekaSemantic['size']
                     || md5_file($path) != $processor->omekaSemantic['md5']
@@ -382,9 +382,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         }
         else {
             touch($path);
+            $this -> expectException (UpgradeToOmekaS_Exception::class);
             $result = $processor->process();
-            unlink($path);
-            $this->assertContains('An empty file "omeka-s.zip" exists in the temp d', $result);
         }
     }
 

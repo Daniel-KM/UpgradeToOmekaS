@@ -164,7 +164,7 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
     }
 
     /**
-     * List and check processors.
+     * List and check processors for active plugins.
      *
      * @todo Move this in another place to merge it with UpgradeToOmekaS_IndexController?
      *
@@ -180,18 +180,24 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
         $installedPlugins = $pluginLoader->getPlugins();
 
         // Keep only the name of plugins.
-        $installedPlugins = array_map(function ($v) {
-            return $v->name;
+        $activePlugins = array_map(function ($v) {
+            return $v->isActive() ? $v->name : null;
         }, $installedPlugins);
-        $installedPlugins[] = 'Core';
+        $activePlugins = array_filter($activePlugins);
+        $activePlugins[] = 'Core';
 
         // Check processors to prevents possible issues with external plugins.
         foreach ($allProcessors as $name => $processor) {
             $class = $processor['class'];
             if (class_exists($class)) {
                 if (is_subclass_of($class, 'UpgradeToOmekaS_Processor_Abstract')) {
-                    if (in_array($name, $installedPlugins)) {
-                        $processors[$name] = new $class();
+                    if (in_array($name, $activePlugins)) {
+                        $processor = new $class();
+                        $result = $processor->isPluginReady()
+                            && !($processor->precheckProcessorPlugin());
+                        if ($result) {
+                            $processors[$name] = $processor;
+                        }
                     }
                 }
             }

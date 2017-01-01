@@ -12,7 +12,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     public $pluginName = 'Core';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
-    protected $_bypassDefaultPrechecks = true;
 
     public $omekaSemantic = array(
         'version' => 'v1.0.0-beta2',
@@ -594,7 +593,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // request (the one set by Apache) and a command line request (empty, so
         // saved from document root during install).
         if (!UpgradeToOmekaS_Form_Validator::validateBaseDir($path)) {
-            $this->_checks[] = __('The base dir "%s" is not allowed or not writable.', $path);
+            $this->_checks[] = __('The base dir "%s" is not empty, not allowed or not writable.', $path);
             // Other checks are not processed when this one fails.
             return;
         }
@@ -1499,7 +1498,6 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     {
         // TODO Compatibility module.
     }
-
 
     /**
      * Helper to convert an array into an indented raw file.

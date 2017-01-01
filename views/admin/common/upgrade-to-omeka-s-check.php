@@ -30,7 +30,7 @@ if ($prechecksPlugins or $checksPlugins):
     : __('Fix them before upgrade.', $totalErrorsPlugins);
 ?></p>
 <?php else:
-    echo '<p>' . __('The precheck processor deems that all installed plugins with an available processor can be upgraded.') . '</p>';
+    echo '<p>' . __('The precheck processor deems that all active plugins with an available processor can be upgraded.') . '</p>';
 endif;
 ?>
 <table>
@@ -53,31 +53,36 @@ endif;
             $rowClass = $plugin['processor'] ? 'upgrade-has-processor' . ' ' : '';
             $rowClass .= $plugin['upgradable'] ? 'upgrade-true' : 'upgrade-false';
             $rowClass .= ' ' . (++$key % 2 ? 'odd' : 'even');
-            $toCheck = $plugin['processor'] && $plugin['installed'] && $plugin['active'] && !$plugin['upgradable'];
+            $error = $plugin['processor'] && $plugin['installed'] && $plugin['active'] && !$plugin['upgradable'];
+            $pluginProcessor = !empty($plugin['processor']) ? $plugin['processor'] : null;
+            $pluginProcessorNote = $pluginProcessor ? $pluginProcessor->precheckProcessorPlugin() : null;
+            $note = !empty($prechecks[$name]) || !empty($checks[$name]) || !empty($pluginProcessorNote);
         ?>
         <tr class="<?php echo $rowClass; ?>">
-            <td<?php echo $toCheck ? ' rowspan="2"' : ''; ?>><?php echo $plugin['name']; ?></td>
+            <td<?php echo $error || $note ? ' rowspan="2"' : ''; ?>><?php echo $plugin['name']; ?></td>
             <td><?php echo $plugin['installed'] ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['active'] ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['version']; ?></td>
-            <td><?php echo isset($processors[$name]) ? $processors[$name]->minVersion : ''; ?></td>
-            <td><?php echo isset($processors[$name]) ? $processors[$name]->maxVersion : ''; ?></td>
-            <td><?php echo $plugin['processor'] ? __('Yes') : __('No'); ?></td>
+            <td><?php echo $pluginProcessor ? $pluginProcessor->minVersion : ''; ?></td>
+            <td><?php echo $pluginProcessor ? $pluginProcessor->maxVersion : ''; ?></td>
+            <td><?php echo $pluginProcessor && !$pluginProcessorNote ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['upgradable'] ? __('Yes') : __('No'); ?></td>
         </tr>
-        <?php if ($toCheck): ?>
+        <?php if ($error || $note): ?>
         <tr>
-            <td colspan="7" class="check-error">
+            <td colspan="7">
                 <?php
-                // An empty check means no processor.
+                if (!empty($pluginProcessorNote)):
+                    echo '<div>' . $pluginProcessorNote . '</div>';
+                endif;
                 if (!empty($prechecks[$name])):
-                    echo '<div>' . implode ('</div><div>', $prechecks[$name]) . '</div>';
+                    echo '<div class="check-error">' . implode ('</div><div class="check-error">', $prechecks[$name]) . '</div>';
                 endif;
                 if (!empty($checks[$name])):
-                    echo '<div>' . implode ('</div><div>', $checks[$name]) . '</div>';
+                    echo '<div class="check-error">' . implode ('</div><div class="check-error">', $checks[$name]) . '</div>';
                 endif;
                 ?>
-            </div></td>
+            </td>
         </tr>
         <?php endif; ?>
         <?php endforeach; ?>

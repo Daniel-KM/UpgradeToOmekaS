@@ -30,6 +30,10 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
 
         //This is where the install test will be done by default.
         $this->_baseDir = BASE_DIR . DIRECTORY_SEPARATOR . 'Semantic';
+        $test = file_exists($this->_baseDir)
+            ? __('The test base dir %s must not exist.', $this->_baseDir)
+            : __('You should remove it.');
+        $this->assertEquals($test, __('You should remove it.'));
 
         // This is where the downloaded package omeka-s.zip is saved.
         // TODO Move it in the main setup of the tests.
@@ -43,6 +47,7 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
     {
         $this->_removeStubPlugin();
         $this->_removeBaseDir();
+        $this->_removeEmptyDownloadedFile();
         $this->_removeTableOmekaS();
         $this->_removeRecords('Process');
         $this->_removeRecords('User');
@@ -103,6 +108,14 @@ PLUGIN;
         if (file_exists($path)) {
             chmod($this->_baseDir, 0755);
             $this->_delTree($path);
+        }
+    }
+
+    protected function _removeEmptyDownloadedFile()
+    {
+        $path = $this->_zippath;
+        if (file_exists($path) && filesize($path) === 0) {
+            unlink($path);
         }
     }
 

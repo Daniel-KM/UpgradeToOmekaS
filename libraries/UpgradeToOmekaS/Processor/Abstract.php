@@ -20,14 +20,14 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      *
      * @var string
      */
-    public $minVersion;
+    public $minVersion = '0';
 
     /**
      * Maximum version of the plugin managed by the processor.
      *
      * @var string
      */
-    public $maxVersion;
+    public $maxVersion = '0';
 
     /**
      * List of methods to process for the upgrade.
@@ -42,13 +42,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @var integer
      */
     public $maxChunk = 100;
-
-    /**
-     * To bypass default prechecks. Should be true for the core only.
-     *
-     * @var boolean
-     */
-    protected $_bypassDefaultPrechecks = false;
 
     /**
      * The full dir where Omeka Semantic will be installed.
@@ -233,6 +226,47 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Precheck if the processor matches the plugin, even not installed.
+     *
+     * @return string|null Null means no error.
+     */
+    final public function precheckProcessorPlugin()
+    {
+        if ($this->pluginName == 'Core') {
+            return;
+        }
+
+        if (empty($this->pluginName)) {
+            return __('The processor of a plugin should have a plugin name, %s hasn’t.', get_class($this));
+        }
+
+        // There is a plugin name, so check versions.
+        $path = $this->pluginName;
+        try {
+            $version = $this->_iniReader->getPluginIniValue($path, 'version');
+        } catch (Exception $e) {
+            return __('The plugin.ini file of the plugin "%s" is not readable: %s',
+                $this->pluginName, $e->getMessage());
+        }
+
+        if ($version) {
+            if ($this->minVersion) {
+                if (version_compare($this->minVersion, $version, '>')) {
+                    return __('The processor for %s requires version between %s and %s (current is %s).',
+                        $this->pluginName, $this->minVersion, $this->maxVersion, $version);
+                }
+            }
+
+            if ($this->maxVersion) {
+                if (version_compare($this->maxVersion, $version, '<')) {
+                    return __('The processor for %s requires version between %s and %s (current is %s).',
+                        $this->pluginName, $this->minVersion, $this->maxVersion, $version);
+                }
+            }
+        }
+    }
+
+    /**
      * Quick precheck of the configuration (to display before form, not via a
      * background job).
      *
@@ -240,43 +274,20 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     final public function precheckConfig()
     {
-        if (!$this->_bypassDefaultPrechecks) {
-            if (empty($this->pluginName)) {
-                $this->_prechecks[] = __('The processor of a plugin should have a plugin name, %s hasn’t.', get_class($this));
+        if ($this->isPluginReady()) {
+            $result = $this->precheckProcessorPlugin();
+            if ($result) {
+                $this->_prechecks[] = $result;
             }
-
-            // There is a plugin name, so check versions.
+            // The processor is fine for the plugin.
             else {
-                $path = $this->pluginName;
-                try {
-                    $version = $this->_iniReader->getPluginIniValue($path, 'version');
-                } catch (Exception $e) {
-                    $version = null;
-                    $this->_prechecks[] = __('The plugin.ini file of the plugin "%s" is not readable: %s',
-                        $this->pluginName, $e->getMessage());
-                }
-
-                if ($version) {
-                    if ($this->minVersion) {
-                        if (version_compare($this->minVersion, $version, '>')) {
-                            $this->_prechecks[] = __('The current release requires at least %s %s, current is only %s.',
-                                $this->pluginName, $this->minVersion, $version);
-                        }
-                    }
-
-                    if ($this->maxVersion) {
-                        if (version_compare($this->maxVersion, $version, '<')) {
-                            $this->_prechecks[] = __('The current release requires at most %s %s, current is %s.',
-                                $this->pluginName, $this->maxVersion, $version);
-                        }
-                    }
-                }
+                $this->_precheckConfig();
+                $this->_precheckIntegrity();
             }
         }
-
-        if ($this->isPluginReady()) {
-            $this->_precheckConfig();
-            $this->_precheckIntegrity();
+        //  Not installed or disabled.
+        else {
+            $this->_prechecks[] = __('The plugin is not installed or not active.');
         }
 
         return $this->_prechecks;
