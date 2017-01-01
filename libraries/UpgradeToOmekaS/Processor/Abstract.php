@@ -169,6 +169,20 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_siteSlug;
 
     /**
+     * The id of the first site once created (#1).
+     *
+     * @var string
+     */
+    protected $_siteId;
+
+    /**
+     * The item set for the site.
+     *
+     * @var integer
+     */
+    protected $_itemSetSiteId;
+
+    /**
      * List of merged values from all plugins.
      *
      * @var array
@@ -684,19 +698,35 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      *
      * @internal Unlike Zend_Db_Adapter_Abstract::quote(), it takes care of
      * the value "null", kept as NULL, not "".
+     * @internal Moreover, it allows not to quote some keys for an array of values.
      *
-     * @param mixed $value If array, it should be a flat one.
+     * @param mixed $value If array, it should be a *flat* one.
+     * @param array $skipQuoteKeys Keys of the values to not quote; it requires an
+     * associative array in $value.
      * @return string A database quoted string, according to the value type. The
      * separator is a comma + a tabulation.
      */
-    protected function _dbQuote($value)
+    protected function _dbQuote($value, $skipQuoteKeys = array())
     {
         if (is_null($value)) {
             return 'NULL';
         }
 
         if (is_array($value)) {
-            $result = array_map(array($this, '_dbQuote'), $value);
+            if ($skipQuoteKeys) {
+                if (!is_array($skipQuoteKeys)) {
+                    $skipQuoteKeys = array($skipQuoteKeys);
+                }
+                $result = $value;
+                foreach ($result as $key => &$val) {
+                    if (!in_array($key, $skipQuoteKeys)) {
+                        $val = $this->_dbQuote($val);
+                    }
+                }
+            }
+            else {
+                $result = array_map(array($this, '_dbQuote'), $value);
+            }
             return implode(",\t", $result);
         }
 
@@ -727,61 +757,81 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     /**
      * Helper to insert multiple quoted rows in a table of the target database.
      *
-     * @internal An early quotation of rows may save memory with big chunks.
+     * @uses self::_insertRowsInTables()
      *
      * @param string $table
      * @param array $rows
      * @param array $columns
      * @param boolean $areQuoted
-     * @throws UpgradeToOmekaS_Exception
      */
-    protected function _insertRows($table, $rows, $columns = null, $areQuoted = true)
+    protected function _insertRows($table, $rows, $columns = array(), $areQuoted = true)
     {
-        $targetDb = $this->getTargetDb();
-
-        if (!count($rows) || empty($table)) {
+        if (empty($rows) || empty($table)) {
             return;
         }
 
-        if (empty($columns)) {
-            $columns = $this->getTargetTableColumns($table);
-            if (empty($columns)) {
-                return;
+        $rowsByTable = array($table => $rows);
+        $columnsByTable = $columns ? array($table => $columns) : array();
+
+        $this->_insertRowsInTables($rowsByTable, $columnsByTable, $areQuoted);
+    }
+
+    /**
+     * Insert multiple rows in multiple tables of the target database.
+     *
+     * @internal An early quotation of rows may save memory with big chunks.
+     * @internal This method uses sql transaction to manage auto-increment ids
+     * as long as the "LAST_INSERT_ID() + ' . $baseId" is well formed in rows.
+     * The last inserted id is the *first* autoincremented value of the previous
+     * successfull insert, i.e. the first inserted id of the second table for
+     * the third table. Finally, if the id is set manually, it is not an
+     * autoincremented one, so it is not recommended to mix auto and manual ids.
+     *
+     * @internal There is no error or warning when the number of columns and
+     * values are different. The query is simply skipped.
+     *
+     * @param array $rowsByTable The rows for each table.
+     * @param array $columnsByTable The columns for each table.
+     * @param boolean $areQuoted
+     * @throws UpgradeToOmekaS_Exception
+     */
+    protected function _insertRowsInTables($rowsByTable, $columnsByTable = array(), $areQuoted = true)
+    {
+        if (empty($rowsByTable)) {
+            return;
+        }
+
+        // Get the columns of each table.
+        foreach ($rowsByTable as $table => $rows) {
+            if (!isset($columns[$table])) {
+                $columns[$table] = $this->getTargetTableColumns($table);
+                if (empty($columns[$table])) {
+                    return;
+                }
             }
         }
 
         if (!$areQuoted) {
-            foreach ($rows as &$values) {
-                $values = $this->_dbQuote($values);
+            foreach ($rowsByTable as $table => &$rows) {
+                $rows = array_map(array($this, '_dbQuote'), $rows);
             }
+            unset($rows);
         }
 
-        $sql = sprintf('INSERT INTO `%s` (`%s`) VALUES ', $table, implode('`, `', $columns)) . PHP_EOL;
-        $sql .= '(' . implode('),' . PHP_EOL . '(', $rows) . ');' . PHP_EOL;
+        // Prepare the transaction.
+        $sql = 'BEGIN;' . PHP_EOL;
+        foreach ($rowsByTable as $table => $rows) {
+            $sql .= sprintf('INSERT INTO `%s` (`%s`) VALUES ', $table, implode('`, `', $columns[$table])) . PHP_EOL;
+            $sql .= '(' . implode('),' . PHP_EOL . '(', $rows) . ');' . PHP_EOL;
+        }
+        $sql .= 'COMMIT;' . PHP_EOL;
+
+        $targetDb = $this->getTargetDb();
         $result = $targetDb->prepare($sql)->execute();
         if (!$result) {
             throw new UpgradeToOmekaS_Exception(
                 __('Unable to insert data in table %s.', $table));
         }
-    }
-
-    /**
-     * Return the greatest id for a target table.
-     *
-     * This is the last inserted id of the table, since there is no deletion
-     * during the upgrade process, at least for main records.
-     *
-     * @param string $table
-     * @return integer
-     */
-    protected function _getGreatestId($table)
-    {
-        $targetDb = $this->getTargetDb();
-        $select = $targetDb->select()
-            ->from($table, array('id'))
-            ->order('id DESC');
-        $lastId = $targetDb->fetchOne($select);
-        return $lastId;
     }
 
     /**
@@ -800,7 +850,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Get the mapping from Omeka C item types to Omeka S classes.
+     * Get the default mapping from Omeka C item types to Omeka S classes.
      *
      * This method doesn't use the database of Omeka S, but the file "classes.php".
      *
@@ -808,7 +858,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @param string $classFormat "prefix:name" (default), "label" or "id".
      * @return array
      */
-    public function getMappingItemTypesToClasses($itemTypeFormat = 'name', $classFormat = 'prefix:name')
+    public function getDefaultMappingItemTypesToClasses($itemTypeFormat = 'name', $classFormat = 'prefix:name')
     {
         static $itemTypes;
         static $classes;
@@ -881,6 +931,18 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Get the user mapping from Omeka C item types to Omeka S classes.
+     *
+     * @return array
+     */
+    public function getMappingItemTypesToClasses()
+    {
+        $defaultMapping = $this->getDefaultMappingItemTypesToClasses('id', 'id');
+        $mapping = $this->getParam('mapping_item_types') ?: array();
+        return $defaultMapping + $mapping;
+    }
+
+    /**
      * Get the list of classes of all vocabularies of Omeka S.
      *
      * This method doesn't use the database of Omeka S, but the file "classes.php".
@@ -900,7 +962,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Get the mapping from Omeka C elements to Omeka S properties.
+     * Get the default mapping from Omeka C elements to Omeka S properties.
      *
      * This method doesn't use the database of Omeka S, but the file "properties.php".
      *
@@ -909,7 +971,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @param boolean $bySet Return a one or a two levels associative array.
      * @return array
      */
-    public function getMappingElementsToProperties($elementFormat = 'set_name:name', $propertyFormat = 'prefix:name', $bySet = false)
+    public function getDefaultMappingElementsToProperties($elementFormat = 'set_name:name', $propertyFormat = 'prefix:name', $bySet = false)
     {
         static $elements;
         static $properties;
@@ -957,8 +1019,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             }
         }
 
-        // The list is made by set, then the set level is removed if wanted.
-
         // Process the requested format.
         $result = array();
         foreach ($elements as $element) {
@@ -972,26 +1032,42 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             }
             // Format the result.
             // Set the mapping, even if not mapped.
-            switch ($elementFormat) {
-                case 'id':
-                    $result[$element['id']] = $mappedProperty;
-                    break;
-                case 'set_name:name':
-                default:
-                    $result[$element['set_name'] . ':' . $element['name']] = $mappedProperty;
-                    break;
+            if ($bySet) {
+                switch ($elementFormat) {
+                    case 'id':
+                        $result[$element['set_name']][$element['id']] = $mappedProperty;
+                        break;
+                    case 'set_name:name':
+                    default:
+                        $result[$element['set_name']][$element['set_name'] . ':' . $element['name']] = $mappedProperty;
+                        break;
+                }
+            } else {
+                switch ($elementFormat) {
+                    case 'id':
+                        $result[$element['id']] = $mappedProperty;
+                        break;
+                    case 'set_name:name':
+                    default:
+                        $result[$element['set_name'] . ':' . $element['name']] = $mappedProperty;
+                        break;
+                }
             }
-        }
-
-        if (!$bySet) {
-            $simple = array();
-            foreach ($result as $set => $mapped) {
-                $simple += $mapped;
-            }
-            $result = $simple;
         }
 
         return $result;
+    }
+
+    /**
+     * Get the mapping from Omeka C elements to Omeka S properties.
+     *
+     * @return array
+     */
+    public function getMappingElementsToProperties()
+    {
+        $defaultMapping = $this->getDefaultMappingElementsToProperties('id', 'id', false);
+        $mapping = $this->getParam('mapping_elements') ?: array();
+        return $defaultMapping + $mapping;
     }
 
     /**

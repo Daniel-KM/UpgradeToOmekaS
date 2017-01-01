@@ -1351,8 +1351,9 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         // This case is possible with an external identification (ldap...).
         if (empty($totalRecords)) {
+            $id = $user->id;
             $toInsert = array();
-            $toInsert['id'] = $user->id;
+            $toInsert['id'] = $id;
             $toInsert['email'] = substr($user->email, 0, 190);
             $toInsert['name'] = substr($user->name, 0, 190);
             $toInsert['created'] = $this->getDatetime();
@@ -1365,6 +1366,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 throw new UpgradeToOmekaS_Exception(
                     __('Unable to insert the global user.'));
             }
+            $this->_mappingIds[$recordType][$user->id] = $id;
+
             $this->_log('[' . __FUNCTION__ . ']: ' . __('No user to import: only the global administrator has been created from the current user.'),
                 Zend_Log::WARN);
         }
@@ -1397,9 +1400,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                             : 1;
                         continue;
                     }
-                    $role = $record->id == $user->id ? 'global_admin' : $mappingRoles[$record->role];
+                    $id = (integer) $record->id;
+                    $role = $record->id == $user->id
+                        ? 'global_admin'
+                        : $mappingRoles[$record->role];
                     $toInsert = array();
-                    $toInsert['id'] = (integer) $record->id;
+                    $toInsert['id'] = $id;
                     $toInsert['email'] = substr($record->email, 0, 190);
                     $toInsert['name'] = substr($record->name, 0, 190);
                     $toInsert['created'] = $this->getDatetime();
@@ -1408,11 +1414,11 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     $toInsert['role'] = $role;
                     $toInsert['is_active'] = (integer) (boolean) $record->active;
                     $toInserts[] = $this->_dbQuote($toInsert);
+
+                    $this->_mappingIds[$recordType][$record->id] = $id;
                 }
 
-                if ($toInserts) {
-                    $this->_insertRows('user', $toInserts);
-                }
+                $this->_insertRows('user', $toInserts);
             }
 
             $totalUnmanaged = array_sum($unmanagedRoles);
@@ -1472,9 +1478,11 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             ? $settings->default->site->theme
             : get_option('public_theme');
 
+        $id = 1;
+
         $toInsert = array();
-        $toInsert['id'] = 1;
-        $toInsert['owner_id'] = $user->id;
+        $toInsert['id'] = $id;
+        $toInsert['owner_id'] = $this->_mappingIds['User'][$user->id];
         $toInsert['slug'] = $slug;
         $toInsert['theme'] = substr($theme ?: 'default', 0,190);
         $toInsert['title'] = substr($title, 0, 190);
@@ -1488,6 +1496,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 __('Unable to create the first site.'));
         }
 
+        $this->_siteId = $id;
 
         $this->_setSiteSetting('attachment_link_type', 'item');
         $this->_setSiteSetting('browse_attached_items', '0');
@@ -1654,35 +1663,43 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         $recordType = 'Collection';
 
-        $lastId = $this->_getGreatestId('resource');
+        $siteId = $this->_siteId;
 
-        $siteId = 1;
+        // This should be the first item set to simplify next processes.
+        $totalTarget= $this->countTargetTable('item_set');
+        if ($totalTarget) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The item set created for the site should be the first one.'));
+        }
 
         // TODO Add the resource template when it will be created.
         $defaultResourceTemplateId = null;
 
-        // Create the item set.
-        $id = ++$lastId;
+        $id = null;
+
+        $toInserts = array();
 
         $toInsert = array();
         $toInsert['id'] = $id;
-        $toInsert['owner_id'] = $user->id;
+        $toInsert['owner_id'] = $this->_mappingIds['User'][$user->id];
         $toInsert['resource_class_id'] = null;
         $toInsert['resource_template_id'] = $defaultResourceTemplateId;
         $toInsert['is_public'] = 1;
         $toInsert['created'] = $this->getDatetime();
         $toInsert['modified'] = $this->getDatetime();
         $toInsert['resource_type'] = $this->_mappingRecordClasses[$recordType];
-        $result = $targetDb->insert('resource', $toInsert);
+        $toInserts['resource'][] = $this->_dbQuote($toInsert);
+
+        $id = 'LAST_INSERT_ID()';
 
         $toInsert = array();
         $toInsert['id'] = $id;
         $toInsert['is_open'] = 1;
-        $result = $targetDb->insert('item_set', $toInsert);
+        $toInserts['item_set'][] = $this->_dbQuote($toInsert, 'id');
 
-        // Give it some metadata.
+        // Give it some metadata (6).
         $properties = array();
-        $properties['dcterms:title'][] = __('Items for the site "%s"', $this->getSiteTitle());
+        $properties['dcterms:title'][] = __('All items of the site "%s"', $this->getSiteTitle());
         $properties['dcterms:creator'][] = get_option('author') ?: $user->name;
         $properties['dcterms:rights'][] = get_option('copyright') ?: __('Public Domain');
         $properties['dcterms:description'][] = get_option('description') ?: __('This collection contains all items of the site.');
@@ -1692,14 +1709,30 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             'uri' => WEB_ROOT,
             'value' => __('Digital library powered by Omeka Classic'),
         );
-        $this->_insertProperties($id, $properties);
+        $toInserts['value'] = $this->_prepareRowsForProperties($id, $properties);
 
-        // Set it as the first item set for the site.
+        $this->_insertRowsInTables($toInserts);
+
+        // Save the item set id of the site. This is the first item set.
+        $select = $targetDb->select()
+            ->from('item_set', array(new Zend_Db_Expr('MAX(id)')));
+        $itemSetSiteId = (integer) $targetDb->fetchOne($select);
+        if (empty($itemSetSiteId)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The first created site can’t be found in Omeka S.'));
+        }
+
+        $this->_itemSetSiteId = $itemSetSiteId;
+
+        // Set the item set as the first one for the site.
+        $toInserts = array();
+        $toInsert = array();
         $toInsert['id'] = null;
         $toInsert['site_id'] = $siteId;
-        $toInsert['item_set_id'] = $id;
+        $toInsert['item_set_id'] = $itemSetSiteId;
         $toInsert['position'] = 1;
-        $result = $targetDb->insert('site_item_set', $toInsert);
+        $toInserts[] = $this->_dbQuote($toInsert);
+        $this->_insertRows('site_item_set', $toInserts);
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('An item set has been set for the site.'),
             Zend_Log::INFO);
@@ -1716,6 +1749,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _setCollectionsOfItems()
     {
         $recordType = 'Item';
+        $mappedType = 'item_item_set';
 
         $db = $this->_db;
         $targetDb = $this->getTargetDb();
@@ -1725,10 +1759,12 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             return;
         }
 
-        $siteId = 1;
+        $siteId = $this->_siteId;
 
-        $sql = 'SELECT `item_set_id` FROM site_item_set WHERE site_id = ?';
-        $collectionSiteId = $targetDb->fetchOne($sql, array($siteId));
+        $table = $db->getTable($recordType);
+
+        // Get the item set id of the site, if any.
+        $itemSetSiteId = $this->_itemSetSiteId;
 
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
         for ($page = 1; $page <= $loops; $page++) {
@@ -1736,63 +1772,57 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
             $toInserts = array();
             foreach ($records as $record) {
-                if (!isset($this->_mappingIds['Collection'][$record->collection_id])) {
-                    throw new UpgradeToOmekaS_Exception(
-                        __('An error occurred: the collection %d for item %d can’t be found in Omeka S.',
-                            $record->collection_id, $record->id)
-                        . ' ' . __('Check the processors of the plugins.'));
-                }
+                if (!empty($record->collection_id)) {
+                    if (!isset($this->_mappingIds['Collection'][$record->collection_id])) {
+                        throw new UpgradeToOmekaS_Exception(
+                            __('The collection #%d for item #%d can’t be found in Omeka S.',
+                                $record->collection_id, $record->id)
+                            . ' ' . __('Check the processors of the plugins.'));
+                    }
 
-                $toInsert = array();
-                $toInsert['item_id'] = $record->id;
-                $toInsert['item_set_id'] = $this->_mappingIds['Collection'][$record->collection_id];
-                $toInserts[] = $this->_dbQuote($toInsert);
-
-                if ($collectionSiteId) {
                     $toInsert = array();
                     $toInsert['item_id'] = $record->id;
                     $toInsert['item_set_id'] = $this->_mappingIds['Collection'][$record->collection_id];
                     $toInserts[] = $this->_dbQuote($toInsert);
                 }
+
+                if ($itemSetSiteId) {
+                    $toInsert = array();
+                    $toInsert['item_id'] = $record->id;
+                    $toInsert['item_set_id'] = $itemSetSiteId;
+                    $toInserts[] = $this->_dbQuote($toInsert);
+                }
             }
 
-            if ($toInserts) {
-                $this->_insertRows('item_item_set', $toInserts);
-            }
+            $this->_insertRows($mappedType, $toInserts);
         }
 
         // A final check, normally useless.
-        $totalTargetRecords = $this->countTargetTable($mappedType);
-        if ($totalRecords > $totalTargetRecords) {
+
+        // Get the total of items with a collection.
+        $select = $db->getTable('Item')->getSelect()
+            ->reset(Zend_Db_Select::COLUMNS)
+            ->from(array(), array(new Zend_Db_Expr('COUNT(*)')))
+            ->where('items.collection_id IS NOT NULL');
+        $totalItemsWithCollection = $db->fetchOne($select);
+
+        $totalTarget = $this->countTargetTable($mappedType);
+        if ($itemSetSiteId) {
+            $totalTarget -= $totalRecords;
+        }
+        if ($totalItemsWithCollection > $totalTarget) {
             throw new UpgradeToOmekaS_Exception(
                 __('Only %d/%d %s have been upgraded into "%s".',
-                    $totalTargetRecords, $totalRecords, $recordTypePlural, $mappedType));
+                    $totalTarget, $totalItemsWithCollection, __('items with a collection'), $mappedType));
         }
+
         // May be possible with plugins?
-        if ($totalRecords < $totalTargetRecords) {
+        if ($totalItemsWithCollection < $totalTarget) {
             throw new UpgradeToOmekaS_Exception(
-                __('An error occurred: there are %d upgraded "%s" in Omeka S, but only %d %s in Omeka C.',
-                    $totalTargetRecords, $mappedType, $totalRecords, $recordType)
+                __('There are %d upgraded "%s" in Omeka S, but only %d %s in Omeka C.',
+                    $totalTarget, $mappedType, $totalItemsWithCollection, __('items with a collection'))
                 . ' ' . __('Check the processors of the plugins.'));
         }
-
-        if (in_array($recordType, array('Item', 'Collection'))) {
-            // The roles are checked, because at this point, all users were
-            // imported according to the role and there is no option to set a
-            // default role to the users without an existing role.
-            $lostOwners = $this->countRecordsWithoutOwner($recordType, 'owner_id', true);
-            if ($lostOwners) {
-                $this->_log('[' . __FUNCTION__ . ']: '
-                    . ($lostOwners <= 1
-                        ? __('One %s has lost its owner.', $recordTypeSingular)
-                        : __('%d %s have lost their owner.', $lostOwners, $recordTypePlural)),
-                    Zend_Log::NOTICE);
-            }
-        }
-
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('All %s (%d) have been upgraded as "%s".',
-            $recordTypePlural, $totalRecords, $mappedType), Zend_Log::INFO);
-
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, an item can belong to multiple collections (item sets) and multipe sites.'),
             Zend_Log::INFO);
@@ -1831,6 +1861,8 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             return;
         }
 
+        $siteId = $this->_siteId;
+
         $db = $this->_db;
         $targetDb = $this->getTargetDb();
 
@@ -1843,77 +1875,83 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // The list of user ids allows to check if the owner of a record exists.
         // The id of users are kept between Omeka C and Omeka S.
         $userIds = $this->_getRecordIds('User');
+        // Manage the special case where there is no user.
+        if (empty($userIds)) {
+            $userIds[$user->id] = $user->id;
+        }
 
         // TODO Add the resource template when it will be created.
         $defaultResourceTemplateId = null;
 
+        $totalItemTypesUnmapped = 0;
+
         // Specificities for each record type. This avoids to loop some process.
-        $lastId = null;
         switch ($recordType) {
             case 'Item':
                 // Check if there are already records.
                 $totalExisting = $this->countTargetTable('resource');
                 if ($totalExisting) {
-                    // TODO Allow to import without ids (need a temp mapping of source and destination ids)?
+                    // TODO Allow to import without ids (need the last inserted id and a temp mapping of source and destination ids)?
                     throw new UpgradeToOmekaS_Exception(
                         __('Some items (%d) have been imported, so ids won’t be kept.',
                             $totalExisting)
                         . ' ' . __('Check the processors of the plugins.'));
                 }
 
-                $mappingItemTypes = $recordType == 'Item'
-                    ? $this->getMappingItemTypesToClasses('id', 'id')
-                    : array();
+                $mappingItemTypes = $this->getMappingItemTypesToClasses();
                 break;
 
-            case 'Collection':
-            case 'File':
-                // Get the greatest resource id (i.e. the last inserted id).
-                // Normally, for collection, this is the total of items + 1.
-                // For files, this is the total of items and collections + 1
-                // (item set of the site) + 1.
-                $lastId = $this->_getGreatestId('resource');
-                break;
+            // Nothing specific for collections and files.
         }
 
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
         for ($page = 1; $page <= $loops; $page++) {
             $records = $table->findBy(array(), $this->maxChunk, $page);
 
-            $toInsertResources = array();
-            $toInsertRecords = array();
+            // Initialize the array to map ids of collections and files.
+            $remapIds = array();
+
+            $baseId = 0;
+            $toInserts = array();
             foreach ($records as $record) {
                 $toInsert = array();
                 switch ($recordType) {
                     case 'Item':
                         $id = $record->id;
                         $ownerId = isset($userIds[$record->owner_id])
-                            ? $record->owner_id
+                                && isset($this->_mappingIds['User'][$record->owner_id])
+                            ? $this->_mappingIds['User'][$record->owner_id]
                             : null;
-                        $resourceClassId = isset($mappingItemTypes[$record->item_type_id])
-                            ? $mappingItemTypes[$record->item_type_id]
-                            : null;
+                        if (empty($mappingItemTypes[$record->item_type_id])) {
+                            $resourceClassId = null;
+                        } elseif (isset($mappingItemTypes[$record->item_type_id])) {
+                            $resourceClassId = $mappingItemTypes[$record->item_type_id];
+                        } else {
+                            $resourceClassId = null;
+                            ++$totalItemTypesUnmapped;
+                        }
                         $isPublic = (integer) (boolean) $record->public;
                         break;
                     case 'Collection':
-                        $id = ++$lastId;
+                        $id = null;
                         $ownerId = isset($userIds[$record->owner_id])
-                            ? $record->owner_id
+                                && isset($this->_mappingIds['User'][$record->owner_id])
+                            ? $this->_mappingIds['User'][$record->owner_id]
                             : null;
                         $resourceClassId = null;
                         $isPublic = (integer) (boolean) $record->public;
                         break;
                     case 'File':
-                        $id = ++$lastId;
+                        $id = null;
                         $item = $record->getItem();
                         $ownerId = isset($userIds[$item->owner_id])
-                            ? $item->owner_id
+                                && isset($this->_mappingIds['User'][$item->owner_id])
+                            ? $this->_mappingIds['User'][$item->owner_id]
                             : null;
                         $resourceClassId = null;
                         $isPublic = 1;
                         break;
                 }
-                $this->_mappingIds[$recordType][$record->id] = $id;
 
                 $toInsert['id'] = $id;
                 $toInsert['owner_id'] = $ownerId;
@@ -1923,7 +1961,17 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 $toInsert['created'] = $record->added;
                 $toInsert['modified'] = $record->modified;
                 $toInsert['resource_type'] = $this->_mappingRecordClasses[$recordType];
-                $toInsertResources[] = $this->_dbQuote($toInsert);
+                $toInserts['resource'][] = $this->_dbQuote($toInsert);
+
+                // Check if this is an autoinserted id.
+                if (empty($id)) {
+                    $remapIds[$recordType][] = $record->id;
+                    $id = 'LAST_INSERT_ID() + ' . $baseId;
+                    ++$baseId;
+                }
+                else {
+                    $this->_mappingIds[$recordType][$record->id] = $id;
+                }
 
                 $toInsert = array();
                 $toInsert['id'] = $id;
@@ -1960,27 +2008,36 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                         $toInsert['lang'] = null;
                         break;
                 }
-                $toInsertRecords[] = $this->_dbQuote($toInsert);
+                $toInserts[$mappedType][] = $this->_dbQuote($toInsert, 'id');
             }
 
-            if ($toInsertResources) {
-                $this->_insertRows('resource', $toInsertResources);
-                $this->_insertRows($mappedType, $toInsertRecords);
+            $this->_insertRowsInTables($toInserts);
+
+            // Remaps only if needed.
+            if (!empty($remapIds[$recordType])) {
+                $this->_remapIds($remapIds[$recordType], $recordType);
             }
         }
 
         // A final check, normally useless.
-        $totalTargetRecords = $this->countTargetTable($mappedType);
-        if ($totalRecords > $totalTargetRecords) {
+        $totalTarget = $this->countTargetTable($mappedType);
+
+        // Substract the default item set for the site beforechecks, if any.
+        if ($recordType == 'Collection' && $this->_itemSetSiteId) {
+            --$totalTarget;
+        }
+
+        if ($totalRecords > $totalTarget) {
             throw new UpgradeToOmekaS_Exception(
                 __('Only %d/%d %s have been upgraded into "%s".',
-                    $totalTargetRecords, $totalRecords, $recordTypePlural, $mappedType));
+                    $totalTarget, $totalRecords, $recordTypePlural, $mappedType));
         }
+
         // May be possible with plugins?
-        if ($totalRecords < $totalTargetRecords) {
+        if ($totalRecords < $totalTarget) {
             throw new UpgradeToOmekaS_Exception(
-                __('An error occurred: there are %d upgraded "%s" in Omeka S, but only %d %s in Omeka C.',
-                    $totalTargetRecords, $mappedType, $totalRecords, $recordType)
+                __('There are %d upgraded "%s" in Omeka S, but only %d %s in Omeka C.',
+                    $totalTarget, $mappedType, $totalRecords, $recordTypePlural)
                 . ' ' . __('Check the processors of the plugins.'));
         }
 
@@ -1996,10 +2053,76 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                         : __('%d %s have lost their owner.', $lostOwners, $recordTypePlural)),
                     Zend_Log::NOTICE);
             }
+
+            if ($totalItemTypesUnmapped) {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The item type of %d items was not mapped and was not upgraded.',
+                    $totalItemTypesUnmapped), Zend_Log::WARN);
+            }
         }
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All %s (%d) have been upgraded as "%s".',
             $recordTypePlural, $totalRecords, $mappedType), Zend_Log::INFO);
+    }
+
+    /**
+     * Helper to remap ids for a record type.
+     *
+     * @internal This is possible, because only one user uses the database.
+     *
+     * @param array $remapIds
+     * @param string $recordType
+     * @throws UpgradeToOmekaS_Exception
+     */
+    protected function _remapIds($remapIds, $recordType)
+    {
+        $db = $this->_db;
+        $targetDb = $this->getTargetDb();
+
+        $mappedType = $this->_mappingRecordTypes[$recordType];
+
+        // Prepare a string for the messages.
+        $recordTypeSingular = strtolower(Inflector::humanize(Inflector::underscore($recordType)));
+        $recordTypePlural = strtolower(Inflector::pluralize($recordTypeSingular));
+
+        // Initialize the mapping if needed.
+        if (empty($this->_mappingIds[$recordType])) {
+            $this->_mappingIds[$recordType] = array();
+        }
+
+        // Do a precheck on the source ids.
+        if (array_intersect(array_keys($this->_mappingIds[$recordType]), $remapIds)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Some %s ids are already mapped between source and destination.',
+                    $recordTypeSingular));
+        }
+
+        // Get the last greatest ids of the record table, in order.
+        $max = count($remapIds);
+        $sql = '
+        (
+            SELECT `id`
+            FROM ' . $mappedType . '
+            ORDER BY `id` DESC
+            LIMIT ' . $max . '
+        )
+        ORDER BY `id` ASC;';
+        $result = $targetDb->fetchCol($sql);
+
+        if (empty($result) || count($result) != count($remapIds)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to fetch the last %d %s ids in the target database.',
+                    count($remapIds), $recordTypePlural));
+        }
+
+        // Check if this is really the n last destination ids. They must
+        // not be already mapped.
+        if (array_intersect($this->_mappingIds[$recordType], $result)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to get the last %d %s ids in the target database.',
+                    count($remapIds), $recordTypePlural));
+        }
+
+        $this->_mappingIds[$recordType] += array_combine($remapIds, $result);
     }
 
     protected function _importMetadata()
@@ -2577,22 +2700,22 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Insert properties for a resource.
+     * Prepare properties for a resource.
      *
-     * @param integer $id The resource id
+     * @param integer|string $resourceId A number or equivalent sql expression.
      * @param unknown $properties
      * @return void
      */
-    protected function _insertProperties($id, $properties)
+    protected function _prepareRowsForProperties($resourceId, $properties)
     {
         // Get the flat list of properties to get the id of each property.
-        $propertiesIds = $this->getPropertiesIds();
+        $propertiesIds = $this->getPropertyIds();
 
         // Set the default values for the "value", that is a literal.
         // As all other insertions, keep order and completion of the list.
         $toInsertBase = array();
-        $toInsertBase['id'] = '';
-        $toInsertBase['resource_id'] = $id;
+        $toInsertBase['id'] = null;
+        $toInsertBase['resource_id'] = $resourceId;
         $toInsertBase['property_id'] = null;
         $toInsertBase['value_resource_id'] = null;
         $toInsertBase['type'] = 'literal';
@@ -2617,10 +2740,26 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     $toInsert = $toInsertBase;
                     $toInsert['value'] = $value;
                 }
-                $toInserts[] = $this->_dbQuote($toInsert);
+                $toInserts[] = $this->_dbQuote($toInsert, 'resource_id');
             }
         }
 
+        return $toInserts;
+    }
+
+    /**
+     * Helper to insert properties for a resource.
+     *
+     * @uses self::_prepareRowsForProperties()
+     * @uses self::_insertRows()
+     *
+     * @param integer|string $resourceId A number or equivalent sql expression.
+     * @param unknown $properties
+     * @return void
+     */
+    protected function _insertProperties($resourceId, $properties)
+    {
+        $toInserts = $this->_prepareRowsForProperties($resourceId, $properties);
         $this->_insertRows('value', $toInserts);
     }
 }

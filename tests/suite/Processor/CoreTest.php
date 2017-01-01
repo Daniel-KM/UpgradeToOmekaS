@@ -473,6 +473,28 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals($totalRecords, $result + 1);
     }
 
+    public function testInsertRows()
+    {
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers'));
+        $result = $processor->process();
+        $targetDb = $processor->getTargetDb();
+
+        $sqls = array();
+        $sqls[] = "
+        INSERT INTO `resource` (`id`, `owner_id`, `resource_class_id`, `resource_template_id`, `is_public`, `created`, `modified`, `resource_type`) VALUES
+        (10,     1,      NULL,   NULL,   1,      '2017-01-02 03:04:05',  '2017-01-02 03:04:05',  'Omeka\\Entity\\ItemSet');";
+        $sqls[] = "
+        INSERT INTO `item_set` (`id`, `is_open`) VALUES
+        (10,     1);";
+        foreach ($sqls as $sql) {
+            $result = $targetDb->prepare($sql)->execute();
+            $this->assertTrue($result);
+        }
+    }
+
     public function testImportSite()
     {
         $this->_checkDownloadedOmekaS();
@@ -573,6 +595,65 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals($totalRecords, $result);
     }
 
+    public function testCreateItemSetForSite()
+    {
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
+                '_createItemSetForSite'));
+        $result = $processor->process();
+        $targetDb = $processor->getTargetDb();
+
+        // There are no collection by default.
+        $result = $processor->countTargetTable('item_set');
+        $this->assertEquals(1, $result);
+        $sql = 'SELECT * FROM item_set;';
+        $result = $targetDb->fetchRow($sql);
+        $itemSetId = $result['id'];
+
+        $result = $processor->countTargetTable('resource');
+        $this->assertEquals(1, $result);
+        $sql = 'SELECT * FROM resource WHERE id = ' . $itemSetId;
+        $result = $targetDb->fetchRow($sql);
+
+        $itemSet = array(
+            'id' => $itemSetId,
+            'owner_id' => $this->user->id,
+            'resource_template_id' => null,
+            'is_public' => 1,
+            'resource_type' => 'Omeka\Entity\ItemSet',
+        );
+        $result = array_intersect_key($result, $itemSet);
+        $this->assertEquals($itemSet, $result);
+
+        $result = $processor->countTargetTable('value');
+        $this->assertEquals(6, $result);
+        $sql = 'SELECT * FROM value';
+        $result = $targetDb->fetchAll($sql);
+        $this->assertEquals(6, count($result));
+        $sql = 'SELECT * FROM value WHERE resource_id = ' . $itemSetId;
+        $result = $targetDb->fetchAll($sql);
+        $this->assertEquals(6, count($result));
+
+        $properties = array(
+            'resource_id' => $itemSetId,
+            'property_id' => 1,
+            'value' => 'All items of the site "Automated Test Installation"',
+        );
+        $result[0] = array_intersect_key($result[0], $properties);
+        $this->assertEquals($properties, $result[0]);
+
+        $properties = array(
+            'resource_id' => $itemSetId,
+            'property_id' => 30,
+            'value' => 'Digital library powered by Omeka Classic',
+            'uri' => 'http://www.example.com',
+        );
+        $result[5] = array_intersect_key($result[5], $properties);
+        $this->assertEquals($properties, $result[5]);
+    }
+
     public function testImportCollections()
     {
         $this->_checkDownloadedOmekaS();
@@ -595,6 +676,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
     {
         $this->_checkDownloadedOmekaS();
 
+        // Prepare a list of records:
+        // 2 collections and 5 items (3 with a collection).
         $itemDefaultId = 1;
 
         // Create a missing id.
@@ -605,32 +688,51 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $item = new Item();
         $item->owner_id = 25;
         $item->save();
-        $itemWithoutOwnerId = $item->id;
+        $item3 = $item->id;
 
-        // Create a missing id.
         $item = new Item();
         $item->save();
         $item->delete();
 
         $collection = new Collection();
         $collection->save();
-        $collectionId = $collection->id;
+        $collection1 = $collection->id;
 
         $item = new Item();
-        $item->collection_id = $collection->id;
+        $item->collection_id = $collection1;
         $item->public = 1;
         $item->save();
-        $itemInCollectionId = $item->id;
+        $item5 = $item->id;
+
+        $collection = new Collection();
+        $collection->save();
+        $collection->delete();
+
+        $item = new Item();
+        $item->collection_id = $collection1;
+        $item->public = 1;
+        $item->save();
+        $item6 = $item->id;
+
+        $collection = new Collection();
+        $collection->save();
+        $collection2 = $collection->id;
+
+        $item = new Item();
+        $item->collection_id = $collection2;
+        $item->public = 1;
+        $item->save();
+        $item7 = $item->id;
 
         $totalItems = total_records('Item');
-        $this->assertEquals(3, $totalItems);
+        $this->assertEquals(5, $totalItems);
         $totalCollections = total_records('Collection');
-        $this->assertEquals(1, $totalCollections);
+        $this->assertEquals(2, $totalCollections);
 
         $processor = $this->_prepareProcessor(
             array('user' => $this->user),
             array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
-                '_importItems', '_importCollections'));
+                '_importItems', '_importCollections', '_setCollectionsOfItems'));
         $result = $processor->process();
         $targetDb = $processor->getTargetDb();
 
@@ -643,19 +745,28 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
         $sql = 'SELECT * FROM resource;';
         $result = $targetDb->fetchAll($sql);
-
         $this->assertEquals('Omeka\Entity\Item', $result[1]['resource_type']);
-        $this->assertEquals($itemWithoutOwnerId, $result[1]['id']);
+        $this->assertEquals($item3, $result[1]['id']);
         $this->assertEmpty($result[1]['owner_id']);
         $this->assertEmpty($result[1]['is_public']);
 
-        $this->assertEquals($itemInCollectionId, $result[2]['id']);
+        $this->assertEquals($item5, $result[2]['id']);
         $this->assertNotEmpty($result[2]['is_public']);
 
-        $this->assertEquals('Omeka\Entity\ItemSet', $result[3]['resource_type']);
-        $this->assertEquals(6, $result[3]['id']);
-        $this->assertEmpty($result[3]['is_public']);
-        $this->assertEquals($this->user->id, $result[3]['owner_id']);
+        $this->assertEquals('Omeka\Entity\ItemSet', $result[5]['resource_type']);
+        $this->assertEquals(8, $result[5]['id']);
+        $this->assertEmpty($result[5]['is_public']);
+        $this->assertEquals($this->user->id, $result[5]['owner_id']);
+
+        $result = $processor->countTargetTable('item_item_set');
+        $this->assertEquals(3, $result);
+
+        $sql = 'SELECT MAX(id) FROM item_set;';
+        $itemSet2 = $targetDb->fetchOne($sql);
+        $sql = 'SELECT * FROM item_item_set WHERE item_id = ' . $item7;
+        $result = $targetDb->fetchAll($sql);
+        $this->assertEquals(1, count($result));
+        $this->assertEquals($itemSet2, $result[0]['item_set_id']);
     }
 
     protected function _prepareProcessor($params = null, $methods = array(), $checkDir = true)

@@ -203,7 +203,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
 
         $usedItemTypes = $this->_getUsedItemTypes();
         $classes = $this->_getClassesByVocabulary();
-        $mapping = $this->_getMappingItemTypesToClasses();
+        $mapping = $this->_getDefaultMappingItemTypesToClasses();
         $itemTypeNames = array();
         $i = 0;
         foreach ($usedItemTypes as $usedItemType) {
@@ -243,7 +243,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         $usedElements = $this->_getUsedElements();
         $itemTypesByUsedElements = $this->_getItemTypesByUsedElement();
         $properties = $this->_getPropertiesByVocabulary();
-        $mapping = $this->_getMappingElementsToProperties();
+        $mapping = $this->_getDefaultMappingElementsToProperties();
         $elementNames = array();
         $isOldOmeka = version_compare(OMEKA_VERSION, '2.5', '<');
         $previousElementSetName = null;
@@ -693,10 +693,10 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      *
      * @return array
      */
-    protected function _getMappingItemTypesToClasses()
+    protected function _getDefaultMappingItemTypesToClasses()
     {
         $processor = $this->_getProcessorCore();
-        $result = $processor->getMappingItemTypesToClasses('id', 'prefix:name');
+        $result = $processor->getDefaultMappingItemTypesToClasses('id', 'prefix:name');
         return $result;
     }
 
@@ -744,10 +744,10 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      *
      * @return array
      */
-    protected function _getMappingElementsToProperties()
+    protected function _getDefaultMappingElementsToProperties()
     {
         $processor = $this->_getProcessorCore();
-        $result = $processor->getMappingElementsToProperties('id', 'prefix:name', true);
+        $result = $processor->getDefaultMappingElementsToProperties('id', 'prefix:name', false);
         return $result;
     }
 
