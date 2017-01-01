@@ -1511,12 +1511,79 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     protected function _importItemTypes()
     {
+        $customItemTypes = $this->_getCustomItemTypes();
+        $message = '[' . __FUNCTION__ . ']: '
+            . __('In Omeka S, it’s possible to create one or more specific forms for each type of item.')
+            . ' ';
 
+        if ($customItemTypes) {
+            $list = implode('", "', array_map(function ($v) { return $v->name; }, $customItemTypes));
+            $this->_log($message . (count($customItemTypes) <= 1
+                    ? __('Like one item type is customized ("%s"), you can check resource templates to recreate it.',
+                        $list)
+                    : __('Like %s items types are customized ("%s"), you can check resource templates to recreate them.',
+                        count($customItemTypes), $list)),
+                Zend_Log::INFO);
+        }
+        // Just an info.
+        else {
+            $this->_log($message
+                . __('So, if you have customized your item types, you can check resource templates.'),
+                Zend_Log::INFO);
+        }
+
+        $unmappedItemTypes = $this->_getUnmappedItemTypes();
+        $message = '[' . __FUNCTION__ . ']: ';
+        if ($unmappedItemTypes) {
+            $list = implode('", "', array_map(function ($v) {
+                return $v->name;
+            }, $unmappedItemTypes));
+            $this->_log($message . (count($unmappedItemTypes) <= 1
+                ? __('One used item type ("%s") is not mapped and won’t be imported.',
+                    $list)
+                : __('%d used item types ("%s") are not mapped and won’t be imported.',
+                    count($unmappedItemTypes), $list)),
+                Zend_Log::WARN);
+        }
+        // Just an info.
+        else {
+            $this->_log($message
+                . __('All used item types are mapped.'),
+                Zend_Log::INFO);
+        }
+
+        // TODO Create resource templates for customized item types.
+        // TODO The resource templates can contains only the truly used elements.
     }
 
     protected function _importElements()
     {
+        $unmappedElements = $this->_getUnmappedElements();
+        $message = '[' . __FUNCTION__ . ']: '
+            . __('In Omeka S, it’s not possible currently to create a specific property (element) without a rdf vocabulary or a module.')
+            . ' ';
 
+        if ($unmappedElements) {
+            $list = implode('", "', array_map(function ($v) {
+                $elementSet = $v->getElementSet();
+                return ($elementSet ? $elementSet->name : '[' . __('No Element Set') . ']')
+                    . ':' . $v->name;
+            }, $unmappedElements));
+            $this->_log($message . (count($unmappedElements) <= 1
+                    ? __('One used element ("%s") is not mapped and won’t be imported.',
+                        $list)
+                    : __('%d used elements ("%s") are not mapped and won’t be imported.',
+                        count($unmappedElements), $list)),
+                Zend_Log::WARN);
+        }
+        // Just an info.
+        else {
+            $this->_log($message
+                . __('Anyway, all used elements are mapped, so all metadata will be available.'),
+            Zend_Log::INFO);
+        }
+
+        // TODO Allow to create properties in a custom ontology, or list more than the default ones.
     }
 
     protected function _importCollections()
@@ -1860,5 +1927,165 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $nav->addPagesFromFilter(Omeka_Navigation::PUBLIC_NAVIGATION_MAIN_FILTER_NAME);
         $total = $nav->findAllBy('visible', $visible);
         return count($total);
+    }
+
+    /**
+     * Get an array containing all used item types with total.
+     *
+     * @return array.
+     */
+    public function getUsedItemTypes()
+    {
+        $db = $this->_db;
+        $sql = "
+        SELECT item_types.`id` AS item_type_id,
+            item_types.`name` AS item_type_name,
+            COUNT(items.`id`) AS total_items
+        FROM {$db->ItemType} item_types
+        JOIN {$db->Item} items
+            ON items.`item_type_id` = item_types.`id`
+        GROUP BY item_types.`id`
+        ORDER BY item_types.`name`
+        ;";
+        $itemTypes = $db->fetchAll($sql);
+        return $itemTypes;
+    }
+
+    /**
+     * Get the customized item types (different from the standard ones).
+     *
+     * @todo Count the total of customized item types too (changed order, etc.).
+     * @todo Check the specific element sets too.
+     * @todo Manage the item types of the plugins too.
+     *
+     * @return array
+     */
+    protected function _getCustomItemTypes()
+    {
+        $itemTypes = get_records('ItemType', array(), 0);
+        $defaultItemTypes = $this->mapping_item_types;
+
+        $result = array();
+        foreach ($itemTypes as $itemType) {
+            if (!isset($defaultItemTypes[$itemType->name])) {
+                $result[$itemType->id] = $itemType;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Get an array containing all used elements with total by record type.
+     *
+     * @return array.
+     */
+    public function getUsedElements()
+    {
+        $db = $this->_db;
+        $sql = "
+        SELECT element_sets.`id` AS element_set_id,
+            element_sets.`name` AS element_set_name,
+            elements.`id` AS element_id,
+            elements.`name` AS element_name,
+            COUNT(collections.`id`) AS total_collections,
+            COUNT(items.`id`) AS total_items,
+            COUNT(files.`id`) AS total_files
+        FROM {$db->ElementSet} element_sets
+        JOIN {$db->Element} elements
+            ON elements.`element_set_id` = element_sets.`id`
+        JOIN {$db->ElementText} element_texts
+            ON element_texts.`element_id` = elements.`id`
+        LEFT JOIN {$db->Collection} collections
+            ON collections.`id` = element_texts.`record_id`
+                AND element_texts.`record_type` = 'Collection'
+        LEFT JOIN {$db->Item} items
+            ON items.`id` = element_texts.`record_id`
+                AND element_texts.`record_type` = 'Item'
+        LEFT JOIN {$db->File} files
+            ON files.`id` = element_texts.`record_id`
+                AND element_texts.`record_type` = 'File'
+        GROUP BY elements.`id`
+        ORDER BY element_sets.`name`, elements.`name`
+        ;";
+        $elements = $db->fetchAll($sql);
+        return $elements;
+    }
+
+    /**
+     * Get an array containing all item types by used element.
+     *
+     * @return array.
+     */
+    public function getItemTypesByUsedElement()
+    {
+        $db = $this->_db;
+        $sql = "
+        SELECT
+            elements.`id` AS element_id,
+            elements.`name` AS element_name,
+            item_types.`id` AS item_type_id,
+            item_types.`name` AS item_type_name,
+            COUNT(items.`id`) AS total
+        FROM {$db->Item} items
+        JOIN {$db->ElementText} element_texts
+            ON element_texts.`record_id` = items.`id`
+                AND element_texts.`record_type` = 'Item'
+        JOIN {$db->ItemTypesElement} item_types_elements
+            ON item_types_elements.`element_id` = element_texts.`element_id`
+        JOIN {$db->ItemType} item_types
+            ON item_types_elements.`item_type_id` = item_types.`id`
+                AND item_types.`id` = items.`item_type_id`
+        JOIN {$db->Element} elements
+            ON elements.`id` = element_texts.`element_id`
+                AND elements.`id` = item_types_elements.`element_id`
+        GROUP BY elements.`id`, item_types.`id`
+        ORDER BY elements.`name`, item_types.`name`
+        ;";
+        $elements = $db->fetchAll($sql);
+        $result = array();
+        foreach ($elements as $element) {
+            $result[$element['element_id']][$element['item_type_name']] = $element;
+        }
+        return $result;
+    }
+
+    /**
+     * Get the unmapped item types.
+     *
+     * @return array
+     */
+    protected function _getUnmappedItemTypes()
+    {
+        $mapping = $this->getParam('mapping_item_types');
+        $unmapped = array_filter($mapping, function ($v) {
+            return empty($v);
+        });
+        $records = get_records('ItemType', array(), 0);
+        foreach ($records as $record) {
+            if (isset($unmapped[$record->id])) {
+                $unmapped[$record->id] = $record;
+            }
+        }
+        return $unmapped;
+    }
+
+    /**
+     * Get the unmapped elements.
+     *
+     * @return array
+     */
+    protected function _getUnmappedElements()
+    {
+        $mapping = $this->getParam('mapping_elements');
+        $unmapped = array_filter($mapping, function ($v) {
+            return empty($v);
+        });
+        $records = get_records('Element', array(), 0);
+        foreach ($records as $record) {
+            if (isset($unmapped[$record->id])) {
+                $unmapped[$record->id] = $record;
+            }
+        }
+        return $unmapped;
     }
 }

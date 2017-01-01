@@ -536,7 +536,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             return;
         }
 
-        $this->_log(__('Start processing.'), Zend_Log::INFO);
+        $this->_log(__('Start processing.'), Zend_Log::DEBUG);
 
         // The default methods are checked during the construction, but other
         // ones may be added because the list is public.
@@ -556,7 +556,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                     $baseMessage . __('Method "%s" does not exist.', $method));
             }
 
-            $this->_log($baseMessage . __('Started.'), Zend_Log::INFO);
+            $this->_log($baseMessage . __('Started.'), Zend_Log::DEBUG);
             try {
                 $result = $this->$method();
                 // Needed for prechecks and checks.
@@ -566,10 +566,10 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             } catch (Exception $e) {
                 throw new UpgradeToOmekaS_Exception($baseMessage . $e->getMessage());
             }
-            $this->_log($baseMessage . __('Ended.'), Zend_Log::INFO);
+            $this->_log($baseMessage . __('Ended.'), Zend_Log::DEBUG);
         }
 
-        $this->_log(__('End processing.'), Zend_Log::INFO);
+        $this->_log(__('End processing.'), Zend_Log::DEBUG);
     }
 
     /**

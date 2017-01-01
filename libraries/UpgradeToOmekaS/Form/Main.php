@@ -4,6 +4,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
 {
     protected $_unupgradablePlugins = 0;
     protected $_isConfirmation = false;
+    protected $_processorCore;
 
     public function init()
     {
@@ -206,7 +207,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         $itemTypeNames = array();
         $i = 0;
         foreach ($usedItemTypes as $usedItemType) {
-            $itemTypeName = 'item_type_' . $usedItemType['item_type_id'];
+            $itemTypeName = 'mapping_item_type_' . $usedItemType['item_type_id'];
             $itemTypeNames[] = $itemTypeName;
 
             if ($usedItemType['total_items'] > 0) {
@@ -257,7 +258,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                         __($usedElement['element_set_name'])) . '</em>',
                 ));
             }
-            $elementName = 'element_' . $usedElement['element_id'];
+            $elementName = 'mapping_element_' . $usedElement['element_id'];
             $elementNames[] = $elementName;
             $description = '';
             if ($usedElement['total_items'] > 0) {
@@ -647,6 +648,18 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         }
     }
 
+    /**
+     * Get the processor for core.
+     *
+     * @return UpgradeToOmekaS_Processor_Core
+     */
+    protected function _getProcessorCore()
+    {
+        if (empty($this->_processorCore)) {
+            $this->_processorCore = new UpgradeToOmekaS_Processor_Core();
+        }
+        return $this->_processorCore;
+    }
 
     /**
      * Get an array containing all used item types with total.
@@ -655,19 +668,9 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getUsedItemTypes()
     {
-        $db = get_db();
-        $sql = "
-        SELECT item_types.id AS item_type_id,
-            item_types.name AS item_type_name,
-            COUNT(items.id) AS total_items
-        FROM {$db->ItemType} item_types
-        JOIN {$db->Item} items
-            ON items.item_type_id = item_types.id
-        GROUP BY item_types.id
-        ORDER BY item_types.name
-        ;";
-        $itemTypes = $db->fetchAll($sql);
-        return $itemTypes;
+        $processor = $this->_getProcessorCore();
+        $result = $processor->getUsedItemTypes();
+        return $result;
     }
 
     /**
@@ -679,9 +682,10 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getClassesByVocabulary()
     {
-        $processor = new UpgradeToOmekaS_Processor_Core();
+        $processor = $this->_getProcessorCore();
         $classes = $processor->getClasses();
-        return $this->_getSelectOptionsForVocabularies($classes);
+        $result = $this->_getSelectOptionsForVocabularies($classes);
+        return $result;
     }
 
     /**
@@ -691,7 +695,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getMappingItemTypesToClasses()
     {
-        $processor = new UpgradeToOmekaS_Processor_Core();
+        $processor = $this->_getProcessorCore();
         $result = $processor->getMappingItemTypesToClasses('id', 'prefix:name');
         return $result;
     }
@@ -703,34 +707,9 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getUsedElements()
     {
-        $db = get_db();
-        $sql = "
-        SELECT element_sets.id AS element_set_id,
-            element_sets.name AS element_set_name,
-            elements.id AS element_id,
-            elements.name AS element_name,
-            COUNT(collections.id) AS total_collections,
-            COUNT(items.id) AS total_items,
-            COUNT(files.id) AS total_files
-        FROM {$db->ElementSet} element_sets
-        JOIN {$db->Element} elements
-            ON elements.element_set_id = element_sets.id
-        JOIN {$db->ElementText} element_texts
-            ON element_texts.element_id = elements.id
-        LEFT JOIN {$db->Collection} collections
-            ON collections.id = element_texts.record_id
-                AND element_texts.record_type = 'Collection'
-        LEFT JOIN {$db->Item} items
-            ON items.id = element_texts.record_id
-                AND element_texts.record_type = 'Item'
-        LEFT JOIN {$db->File} files
-            ON files.id = element_texts.record_id
-                AND element_texts.record_type = 'File'
-        GROUP BY elements.id
-        ORDER BY element_sets.name, elements.name
-        ;";
-        $elements = $db->fetchAll($sql);
-        return $elements;
+        $processor = $this->_getProcessorCore();
+        $result = $processor->getUsedElements();
+        return $result;
     }
 
     /**
@@ -740,34 +719,8 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getItemTypesByUsedElement()
     {
-        $db = get_db();
-        $sql = "
-        SELECT
-            elements.id AS element_id,
-            elements.name AS element_name,
-            item_types.id AS item_type_id,
-            item_types.name AS item_type_name,
-            COUNT(items.id) AS total
-        FROM {$db->Item} items
-        JOIN {$db->ElementText} element_texts
-             ON element_texts.record_id = items.id
-                AND element_texts.record_type = 'Item'
-        JOIN {$db->ItemTypesElement} item_types_elements
-             ON item_types_elements.element_id = element_texts.element_id
-        JOIN {$db->ItemType} item_types
-            ON item_types_elements.item_type_id = item_types.id
-                AND item_types.id = items.item_type_id
-        JOIN {$db->Element} elements
-            ON elements.id = element_texts.element_id
-                AND elements.id = item_types_elements.element_id
-        GROUP BY elements.id, item_types.id
-        ORDER BY elements.name, item_types.name
-        ;";
-        $elements = $db->fetchAll($sql);
-        $result = array();
-        foreach ($elements as $element) {
-            $result[$element['element_id']][$element['item_type_name']] = $element;
-        }
+        $processor = $this->_getProcessorCore();
+        $result = $processor->getItemTypesByUsedElement();
         return $result;
     }
 
@@ -780,9 +733,10 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getPropertiesByVocabulary()
     {
-        $processor = new UpgradeToOmekaS_Processor_Core();
+        $processor = $this->_getProcessorCore();
         $properties = $processor->getProperties();
-        return $this->_getSelectOptionsForVocabularies($properties);
+        $result = $this->_getSelectOptionsForVocabularies($properties);
+        return $result;
     }
 
     /**
@@ -792,7 +746,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getMappingElementsToProperties()
     {
-        $processor = new UpgradeToOmekaS_Processor_Core();
+        $processor = $this->_getProcessorCore();
         $result = $processor->getMappingElementsToProperties('id', 'prefix:name', true);
         return $result;
     }

@@ -66,7 +66,7 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
         // Reprocess the checks, because some time may have been occurred and
         // this is not a problem in a background process. Above all, the config
         // of the php cli is generally different from the php web one.
-        $this->_log(__('Prechecks start.'), Zend_Log::INFO);
+        $this->_log(__('Prechecks start.'), Zend_Log::DEBUG);
         foreach ($processors as $name => $processor) {
             if ($this->_isProcessing()) {
                 try {
@@ -96,9 +96,9 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
                 return;
             }
         }
-        $this->_log(__('Prechecks end successfully.'), Zend_Log::INFO);
+        $this->_log(__('Prechecks end successfully.'), Zend_Log::DEBUG);
 
-        $this->_log(__('Checks start.'), Zend_Log::INFO);
+        $this->_log(__('Checks start.'), Zend_Log::DEBUG);
         foreach ($processors as $name => $processor) {
             if ($this->_isProcessing()) {
                 try {
@@ -121,10 +121,10 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
                 return;
             }
         }
-        $this->_log(__('Checks end successfully.'), Zend_Log::INFO);
+        $this->_log(__('Checks end successfully.'), Zend_Log::DEBUG);
 
         // Launch process.
-        $this->_log(__('Process start.'), Zend_Log::INFO);
+        $this->_log(__('Process start.'), Zend_Log::DEBUG);
         foreach ($processors as $name => $processor) {
             if ($this->_isProcessing()) {
                 try {
@@ -151,7 +151,7 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
                 return;
             }
         }
-        $this->_log(__('Process end successfully.'), Zend_Log::INFO);
+        $this->_log(__('Process end successfully.'), Zend_Log::DEBUG);
 
         // No error.
         $this->_log(__('End of the upgrade from Omeka Classic to Omeka Semantic.'), Zend_Log::INFO);

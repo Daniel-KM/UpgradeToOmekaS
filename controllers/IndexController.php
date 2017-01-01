@@ -140,9 +140,6 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             // return;
         }
 
-        // Save params here.
-        $this->_cleanListParams();
-
         // Launch the check of the config with params.
         $checks = $this->_checkConfig();
         $this->view->checks = $checks;
@@ -193,7 +190,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         // Reset the logs here to hide them in the log view.
         set_option('upgrade_to_omeka_s_process_logs', '[]');
 
-        $params = $this->_getParams();
+        $params = $this->_cleanListParams();
         $params['isProcessing'] = true;
 
         $url = $this->_determineUrl($params['base_dir']);
@@ -624,7 +621,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      */
     protected function _checkConfig()
     {
-        $params = $this->_getParams();
+        $params = $this->getAllParams();
         foreach ($this->_processors as $name => $processor) {
             $processor->setParams($params);
             try {
@@ -654,29 +651,33 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     private function _cleanListParams()
     {
         $params = $this->getAllParams();
+
         $unsetParams = array(
             'admin', 'module', 'controller', 'action',
             'check_backup_metadata', 'check_backup_files', 'check_backup_check',
+            'plugins_confirm_unupgradable',
             'check_confirm_backup', 'check_confirm_license',
-            'database_type_note_separate',
             'csrf_token', 'submit', 'check_params',
         );
         $params = array_diff_key($params, array_flip($unsetParams));
-        $this->_params = $params;
-        return $this->_params;
-    }
 
-    /**
-     * Get parameters.
-     *
-     * @return void
-     */
-    protected function _getParams()
-    {
-        if (is_null($this->_params)) {
-            $this->_cleanListParams();
+        // Create an array for some data.
+        foreach (array(
+                // 'database_' => 'database',
+                'mapping_item_type_' => 'mapping_item_types',
+                'mapping_element_' => 'mapping_elements',
+            ) as $name => $set) {
+            $params[$set] = array();
+            foreach ($params as $key => $value) {
+                if (strpos($key, $name) === 0) {
+                    $id = (integer) substr($key, strlen($name));
+                    $params[$set][$id] = $value;
+                    unset($params[$key]);
+                }
+            }
         }
-        return $this->_params;
+
+        return $params;
     }
 
     /**

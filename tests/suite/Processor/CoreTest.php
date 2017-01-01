@@ -542,6 +542,16 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->assertEquals('https://example.org/path/to/bar?a=z&b=y#', $nav[4]['data']['url']);
     }
 
+    public function testImportItemTypes()
+    {
+        $this->markTestIncomplete();
+    }
+
+    public function testImportElements()
+    {
+        $this->markTestIncomplete();
+    }
+
     protected function _prepareProcessor($params = null, $methods = array(), $checkDir = true)
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);
