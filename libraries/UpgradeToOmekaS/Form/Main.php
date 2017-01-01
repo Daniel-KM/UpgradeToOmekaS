@@ -706,26 +706,13 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
     }
 
     /**
-     * Get the processor for core.
-     *
-     * @return UpgradeToOmekaS_Processor_Core
-     */
-    protected function _getProcessorCore()
-    {
-        if (empty($this->_processorCore)) {
-            $this->_processorCore = new UpgradeToOmekaS_Processor_Core();
-        }
-        return $this->_processorCore;
-    }
-
-    /**
      * Get an array containing all used roles with total.
      *
      * @return array.
      */
     protected function _getUsedRoles()
     {
-        $processor = $this->_getProcessorCore();
+        $processor = new UpgradeToOmekaS_Processor_CoreSite();
         $result = $processor->getUsedRoles();
         return $result;
     }
@@ -756,9 +743,22 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getDefaultMappingRoles()
     {
-        $processor = $this->_getProcessorCore();
+        $processor = new UpgradeToOmekaS_Processor_CoreSite();
         $result = $processor->getDefaultMappingRoles();
         return $result;
+    }
+
+    /**
+     * Get the processor for core Elements.
+     *
+     * @return UpgradeToOmekaS_Processor_CoreElements
+     */
+    protected function _getProcessorCoreElements()
+    {
+        if (empty($this->_processorCore)) {
+            $this->_processorCore = new UpgradeToOmekaS_Processor_CoreElements();
+        }
+        return $this->_processorCore;
     }
 
     /**
@@ -768,7 +768,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getUsedItemTypes()
     {
-        $processor = $this->_getProcessorCore();
+        $processor = $this->_getProcessorCoreElements();
         $result = $processor->getUsedItemTypes();
         return $result;
     }
@@ -782,7 +782,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getClassesByVocabulary()
     {
-        $processor = $this->_getProcessorCore();
+        $processor = $this->_getProcessorCoreElements();
         $classes = $processor->getClasses();
         $result = $this->_getSelectOptionsForVocabularies($classes);
         return $result;
@@ -795,7 +795,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getDefaultMappingItemTypesToClasses()
     {
-        $processor = $this->_getProcessorCore();
+        $processor = $this->_getProcessorCoreElements();
         $result = $processor->getDefaultMappingItemTypesToClasses('id', 'prefix:name');
         return $result;
     }
@@ -807,7 +807,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getUsedElements()
     {
-        $processor = $this->_getProcessorCore();
+        $processor = $this->_getProcessorCoreElements();
         $result = $processor->getUsedElements();
         return $result;
     }
@@ -819,7 +819,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getItemTypesByUsedElement()
     {
-        $processor = $this->_getProcessorCore();
+        $processor = $this->_getProcessorCoreElements();
         $result = $processor->getItemTypesByUsedElement();
         return $result;
     }
@@ -833,7 +833,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getPropertiesByVocabulary()
     {
-        $processor = $this->_getProcessorCore();
+        $processor = $this->_getProcessorCoreElements();
         $properties = $processor->getProperties();
         $result = $this->_getSelectOptionsForVocabularies($properties);
         return $result;
@@ -846,7 +846,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
      */
     protected function _getDefaultMappingElementsToProperties()
     {
-        $processor = $this->_getProcessorCore();
+        $processor = $this->_getProcessorCoreElements();
         $result = $processor->getDefaultMappingElementsToProperties('id', 'prefix:name', false);
         return $result;
     }

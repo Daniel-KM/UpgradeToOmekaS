@@ -25,14 +25,16 @@ echo head(array(
     <?php
         echo common('upgrade-to-omeka-s-check', array(
             'hasErrors' => $hasErrors,
-            'prechecks' => $prechecks,
+            'prechecksCore' => $prechecksCore,
+            'prechecksPlugins' => $prechecksPlugins,
             'processors' => $processors,
-            'checks' => $checks,
+            'checksCore' => $checksCore,
+            'checksPlugins' => $checksPlugins,
             'plugins' => $plugins,
         ));
     ?>
 
-    <?php if (empty($prechecks['Core'])): ?>
+    <?php if (empty($prechecksCore)): ?>
         <h2><?php echo __('Set Options'); ?></h2>
         <?php echo $form; ?>
         <?php if ($isConfirmation): ?>

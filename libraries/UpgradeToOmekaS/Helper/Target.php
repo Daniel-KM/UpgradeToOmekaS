@@ -217,9 +217,30 @@ class UpgradeToOmekaS_Helper_Target
 
         $db = $this->getDb();
         $select = $db->select()
-        ->from($table, array(new Zend_Db_Expr('COUNT(*)')));
+            ->from($table, array(new Zend_Db_Expr('COUNT(*)')));
         $result = $db->fetchOne($select);
         return (integer) $result;
+    }
+
+    /**
+     * Helper to list the ids of a table or any column with single values.
+     *
+     * @param string $table
+     * @param string $column
+     * @return array Associative array of ids.
+     */
+    public function getIds($table, $column = 'id')
+    {
+        $db = $this->getDb();
+        $columns = $this->getTableColumns($table);
+        if (!in_array($column, $columns)) {
+            return;
+        }
+        $select = $db->select()
+            ->from($table, $column)
+            ->order($column);
+        $result = $db->fetchCol($select);
+        return array_combine($result, $result);
     }
 
     /**

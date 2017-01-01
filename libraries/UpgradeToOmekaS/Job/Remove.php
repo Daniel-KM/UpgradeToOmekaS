@@ -32,7 +32,7 @@ class UpgradeToOmekaS_Job_Remove extends Omeka_Job_AbstractJob
         // This constant may be needed in some scripts fetched from Omeka S.
         defined('OMEKA_PATH') or define('OMEKA_PATH', $params['base_dir']);
 
-        $processor = new UpgradeToOmekaS_Processor_Core();
+        $processor = new UpgradeToOmekaS_Processor_CoreSite();
         // Some tools can't be processed at running time, so they
         // can be bypassed with this check.
         $processor->setIsProcessing(true);

@@ -40,7 +40,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
         // only good records and to manage filters.
         $table = $db->getTable($recordType);
 
-        $siteId = 1;
+        $siteId = $this->getSiteId();
 
         // Check if there are already records for a warn.
         $totalExisting = $target->totalRows('site_page');

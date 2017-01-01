@@ -7,6 +7,8 @@
 
 /**
  * Base class for UpgradeToOmekaS tests.
+ *
+ * @todo True unit cases.
  */
 class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
 {
@@ -131,7 +133,7 @@ PLUGIN;
 
     protected function _removeTableOmekaS()
     {
-        $processor = new UpgradeToOmekaS_Processor_Core();
+        $processor = new UpgradeToOmekaS_Processor_CoreSite();
         // $target = $processor->getTarget();
         // $result = $target->removeTables();
         $omekasTables = $processor->getMerged('_tables_omekas');
@@ -148,6 +150,88 @@ PLUGIN;
         $records = get_records($recordType, array(), 0);
         foreach ($records as $record) {
             $record->delete();
+        }
+    }
+
+    protected function _prepareProcessor(
+        $processorName,
+        $params = null,
+        $methods = array(),
+        $checkDir = true,
+        $isProcessing = true
+    ) {
+        set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);
+        $defaultParams = array(
+            'database' => array(
+                'type' => 'share',
+                'prefix' => 'omekas_',
+            ),
+            'base_dir' => $this->_baseDir,
+            'files_type' => 'copy',
+        );
+        if (is_null($params)) {
+            $params = $defaultParams;
+        }
+        // Add and replace values.
+        else {
+            $params = array_merge($defaultParams, $params);
+        }
+
+        $processor = new UpgradeToOmekaS_Processor_CoreServer();
+        $processors = $processor->getProcessors();
+        $this->assertTrue(isset($processors[$processorName]));
+
+        if ($checkDir) {
+            $baseDir = $processor->getParam('base_dir');
+            $result = !file_exists($baseDir) || UpgradeToOmekaS_Common::isDirEmpty($baseDir);
+            $this->assertTrue($result);
+            $this->_isBaseDirCreated = true;
+        }
+
+        if ($methods) {
+            foreach ($methods as $method) {
+                foreach ($processors as $name => $processor) {
+                    if (in_array($method, $processor->processMethods)) {
+                        $defaultmethods = $processor->processMethods;
+                        $processor->processMethods = array($method);
+                        $processor->setParams($params);
+                        $processor->setIsProcessing($isProcessing);
+                        $processor->process();
+                        $processor->processMethods = $defaultmethods;
+                    }
+                }
+            }
+        }
+        // in the case there is no method.
+        else {
+            $processor = $processors[$processorName];
+            $processor->setParams($params);
+            if ($checkDir) {
+                $baseDir = $processor->getParam('base_dir');
+                $result = !file_exists($baseDir) || UpgradeToOmekaS_Common::isDirEmpty($baseDir);
+                $this->assertTrue($result);
+                $this->_isBaseDirCreated = true;
+            }
+            $processor->setIsProcessing($isProcessing);
+        }
+
+        return $processors[$processorName];
+    }
+
+    protected function _checkDownloadedOmekaS()
+    {
+        $path = $this->_zippath;
+        if (!file_exists($path)) {
+            $this->markTestSkipped(__('The test requires that the file "omeka-s.zip" is saved in temp folder.'));
+        }
+        // Check correct file.
+        else {
+            $processor = new UpgradeToOmekaS_Processor_CoreServer();
+            if (filesize($path) != $processor->module['size']
+                   || md5_file($path) != $processor->module['md5']
+                ) {
+                $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));
+            }
         }
     }
 }

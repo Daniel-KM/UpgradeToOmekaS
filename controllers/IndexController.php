@@ -81,6 +81,11 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $prechecks = $this->_precheckConfig();
         $plugins = $this->_listPlugins();
 
+        $prechecksPlugins = array_filter($prechecks, function ($k) {
+            return strpos($k, 'Core / ') !== 0;
+        }, ARRAY_FILTER_USE_KEY);
+        $prechecksCore = array_diff_key($prechecks, $prechecksPlugins);
+
         $this->view->isProcessing = $isProcessing;
         $this->view->isCompleted = $isCompleted;
         $this->view->isError = $isError;
@@ -94,22 +99,22 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->previousParams = $previousParams;
         $this->view->isConfirmation = $isConfirmation;
         $this->view->processors = $processors;
-        $this->view->prechecks = $prechecks;
+        $this->view->prechecksCore = $prechecksCore;
+        $this->view->prechecksPlugins = $prechecksPlugins;
         $this->view->plugins = $plugins;
-        $this->view->checks = array();
+        $this->view->checksCore = array();
+        $this->view->checksPlugins = array();
         $this->view->form = null;
         $this->view->hasErrors = empty($prechecks) ? 'none' : 'precheck';
 
-        if (!empty($prechecks['Core'])) {
+        if ($prechecksCore) {
             $message = __('Some requirements are not met.');
             $this->_helper->_flashMessenger($message, 'error');
             return;
         }
 
-        $unupgradablePrechecks = $prechecks;
-        unset($unupgradablePrechecks['Core']);
         $form = new UpgradeToOmekaS_Form_Main(array(
-            'unupgradablePlugins' => count($unupgradablePrechecks),
+            'unupgradablePlugins' => count($prechecksPlugins),
         ));
         $form->setAction($this->_helper->url('index'));
         $this->view->form = $form;
@@ -148,7 +153,12 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
         // Launch the check of the config with params.
         $checks = $this->_checkConfig();
-        $this->view->checks = $checks;
+        $checksPlugins = array_filter($checks, function ($k) {
+            return strpos($k, 'Core / ') !== 0;
+        }, ARRAY_FILTER_USE_KEY);
+        $checksCore = array_diff_key($checks, $checksPlugins);
+        $this->view->checksCore = $checksCore;
+        $this->view->checksPlugins = $checksPlugins;
         if (!empty($checks)) {
             $this->view->hasErrors = 'checks';
             $message = __('Some requirements or some parameters are not good.');
@@ -196,7 +206,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         // Reset the logs here to hide them in the log view.
         set_option('upgrade_to_omeka_s_process_logs', '[]');
 
-        $params = $this->_cleanListParams();
+        $params = $this->_cleanParams();
         $params['isProcessing'] = true;
 
         $url = $this->_determineUrl($params['base_dir']);
@@ -602,7 +612,13 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             $installedPlugins = array_map(function ($v) {
                 return $v->name;
             }, $installedPlugins);
-            $installedPlugins[] = 'Core';
+            // Add all core "plugins".
+            $installedPlugins[] = 'Core / Server';
+            $installedPlugins[] = 'Core / Site';
+            $installedPlugins[] = 'Core / Elements';
+            $installedPlugins[] = 'Core / Records';
+            $installedPlugins[] = 'Core / Files';
+            $installedPlugins[] = 'Core / Themes';
 
             // Check processors to prevents possible issues with external plugins.
             foreach ($processors as $name => $class) {
@@ -720,24 +736,29 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      */
     protected function _checkConfig()
     {
-        $params = $this->_cleanListParams();
-        foreach ($this->_processors as $name => $processor) {
-            $processor->setParams($params);
-            try {
-                $result = $processor->checkConfig();
-            } catch (UpgradeToOmekaS_Exception $e) {
-                $result = array($e->getMessage());
-            } catch (Exception $e) {
-                $message = __('An error occurred during precheck of "%s".',
-                    $processor->pluginName);
-                $result = array($message, $e->getMessage());
+        static $isChecked = false;
+
+        if (!$isChecked) {
+            $params = $this->_cleanParams();
+            foreach ($this->_processors as $name => $processor) {
+                $processor->setParams($params);
+                try {
+                    $result = $processor->checkConfig();
+                } catch (UpgradeToOmekaS_Exception $e) {
+                    $result = array($e->getMessage());
+                } catch (Exception $e) {
+                    $message = __('An error occurred during precheck of "%s".',
+                        $processor->pluginName);
+                    $result = array($message, $e->getMessage());
+                }
+                if ($result) {
+                    // Normally, no previous checks.
+                    $this->_checks[$name] = isset($this->_checks[$name])
+                        ? array_unique(array_merge($this->_checks[$name], $result))
+                        : $result;
+                }
             }
-            if ($result) {
-                // Normally, no previous checks.
-                $this->_checks[$name] = isset($this->_checks[$name])
-                    ? array_unique(array_merge($this->_checks[$name], $result))
-                    : $result;
-            }
+            $isChecked = true;
         }
         return $this->_checks;
     }
@@ -747,7 +768,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      *
      * @return array
      */
-    private function _cleanListParams()
+    private function _cleanParams()
     {
         $params = $this->getAllParams();
 

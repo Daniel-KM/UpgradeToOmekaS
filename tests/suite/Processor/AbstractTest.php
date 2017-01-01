@@ -82,6 +82,29 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
         $this->assertEmpty($result);
     }
 
+    public function testInsertRows()
+    {
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            'Core / Server',
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_upgradeUsers'));
+        $target = $processor->getTarget();
+        $targetDb = $target->getDb();
+
+        $sqls = array();
+        $sqls[] = "
+        INSERT INTO `resource` (`id`, `owner_id`, `resource_class_id`, `resource_template_id`, `is_public`, `created`, `modified`, `resource_type`) VALUES
+        (10,     1,      NULL,   NULL,   1,      '2017-01-02 03:04:05',  '2017-01-02 03:04:05',  'Omeka\\Entity\\ItemSet');";
+        $sqls[] = "
+        INSERT INTO `item_set` (`id`, `is_open`) VALUES
+        (10,     1);";
+        foreach ($sqls as $sql) {
+            $result = $targetDb->prepare($sql)->execute();
+            $this->assertTrue($result);
+        }
+    }
+
     public function testMergedMappingRoles()
     {
         $processor = $this->getMockForAbstractClass('UpgradeToOmekaS_Processor_Abstract');

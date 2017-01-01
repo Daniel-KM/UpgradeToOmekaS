@@ -172,7 +172,12 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
     {
         // Keep the core at first place to keep order or processing.
         $baseProcessors = array();
-        $baseProcessors['Core'] = 'UpgradeToOmekaS_Processor_Core';
+        $baseProcessors['Core / Server'] = 'UpgradeToOmekaS_Processor_CoreServer';
+        $baseProcessors['Core / Site'] = 'UpgradeToOmekaS_Processor_CoreSite';
+        $baseProcessors['Core / Elements'] = 'UpgradeToOmekaS_Processor_CoreElements';
+        $baseProcessors['Core / Records'] = 'UpgradeToOmekaS_Processor_CoreRecords';
+        $baseProcessors['Core / Files'] = 'UpgradeToOmekaS_Processor_CoreFiles';
+        $baseProcessors['Core / Themes'] = 'UpgradeToOmekaS_Processor_CoreThemes';
 
         // Integrated plugins.
         $baseProcessors['DublinCoreExtended'] = 'UpgradeToOmekaS_Processor_DublinCoreExtended';

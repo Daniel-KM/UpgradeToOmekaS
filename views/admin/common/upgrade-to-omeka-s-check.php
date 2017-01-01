@@ -1,11 +1,23 @@
 <h2><?php echo __('Core & Server'); ?></h2>
 <?php
-if (isset($prechecks['Core'])): ?>
+if (!empty($prechecksCore)): ?>
     <p class="check-error"><?php echo __('Omeka can’t be upgraded.'); ?></p>
-    <?php echo '<ul><li>' . implode('</li><li>', $prechecks['Core']) . '</li></ul>';
-elseif (isset($checks['Core'])): ?>
+    <ul>
+    <?php
+    foreach ($prechecksCore as $name => $value):
+        echo '<li>' . implode('</li><li>', $value) . '</li>';
+    endforeach;
+    ?>
+    </ul><?php
+elseif (!empty($checksCore)): ?>
     <p class="check-error"><?php echo __('Omeka can be upgraded, but some errors have been reported in the form.'); ?></p>
-    <?php echo '<ul><li>' . implode('</li><li>', $checks['Core']) . '</li></ul>';
+    <ul>
+    <?php
+    foreach ($checksCore as $name => $value):
+        echo '<li>' . implode('</li><li>', $value) . '</li>';
+    endforeach;
+    ?>
+    </ul><?php
 else: ?>
     <p><?php echo __('The precheck processor deems that the core of Omeka Classic can be upgraded on this server.'); ?></p>
     <?php if ($hasErrors == 'form'): ?>
@@ -15,10 +27,6 @@ else: ?>
 <h2><?php echo __('Plugins'); ?></h2>
 <?php
 // A check for the message for the plugins, except core.
-$prechecksPlugins = $prechecks;
-unset($prechecksPlugins['Core']);
-$checksPlugins = $checks;
-unset($checksPlugins['Core']);
 if ($prechecksPlugins or $checksPlugins):
     $totalErrorsPlugins = count($prechecksPlugins) + count($checksPlugins); ?>
 <p class="check-error"><?php echo function_exists('plural')
@@ -57,7 +65,7 @@ endif;
             $pluginProcessor = !empty($plugin['processor']) ? $plugin['processor'] : null;
             $pluginProcessorPrecheck = $pluginProcessor ? $pluginProcessor->precheckProcessorPlugin() : null;
             $pluginProcessorNote = $pluginProcessor && !empty($pluginProcessor->module['note']) ? $pluginProcessor->module['note'] : null;
-            $note = !empty($prechecks[$name]) || !empty($checks[$name]) || !empty($pluginProcessorPrecheck) || $pluginProcessorNote;
+            $note = !empty($prechecksPlugins[$name]) || !empty($checksPlugins[$name]) || !empty($pluginProcessorPrecheck) || $pluginProcessorNote;
         ?>
         <tr class="<?php echo $rowClass; ?>">
             <td<?php echo $error || $note ? ' rowspan="2"' : ''; ?>><?php echo $plugin['name']; ?></td>
@@ -74,17 +82,17 @@ endif;
             <td colspan="7">
                 <?php
                 // Processor prechecks are done via the main prechecks too.
-                if (!empty($pluginProcessorPrecheck) && empty($prechecks[$name])):
+                if (!empty($pluginProcessorPrecheck) && empty($prechecksPlugins[$name])):
                     echo '<div class="check-warn">' . $pluginProcessorPrecheck . '</div>';
                 endif;
                 if (!empty($pluginProcessorNote)):
                     echo '<div class="processor-note">' . __('Upgrade note: %s', __($pluginProcessorNote)) . '</div>';
                 endif;
-                if (!empty($prechecks[$name])):
-                    echo '<div class="check-error">' . implode ('</div><div class="check-error">', $prechecks[$name]) . '</div>';
+                if (!empty($prechecksPlugins[$name])):
+                    echo '<div class="check-error">' . implode ('</div><div class="check-error">', $prechecksPlugins[$name]) . '</div>';
                 endif;
-                if (!empty($checks[$name])):
-                    echo '<div class="check-error">' . implode ('</div><div class="check-error">', $checks[$name]) . '</div>';
+                if (!empty($checksPlugins[$name])):
+                    echo '<div class="check-error">' . implode ('</div><div class="check-error">', $checksPlugins[$name]) . '</div>';
                 endif;
                 ?>
             </td>

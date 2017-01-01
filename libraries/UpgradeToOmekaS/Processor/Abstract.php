@@ -112,13 +112,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_target;
 
     /**
-     * Flat list of properties as an associative array of names to ids.
-     *
-     * @var
-     */
-    protected $_propertyIds = array();
-
-    /**
      * Short to the security.ini.
      *
      * @var Zend_Ini
@@ -182,18 +175,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_siteSlug;
 
     /**
-     * The id of the first site once created (#1).
+     * The id of the first site once created (always #1).
      *
      * @var string
      */
-    protected $_siteId;
-
-    /**
-     * The item set for the site.
-     *
-     * @var integer
-     */
-    protected $_itemSetSiteId;
+    protected $_siteId = 1;
 
     /**
      * List of merged values from all plugins.
@@ -295,11 +281,12 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Get the list of all active processors.
+     * Get the list of all active processors with current params.
      *
      * @internal Not very clean to set processors inside a processor, even if
      * there is no impact on memory. Used to get filtered values, in particular
-     * the list of roles, and to convert the navigation menu.
+     * the list of roles, to convert the navigation menu and to get the values
+     * that depend on params (mappings).
      *
      * @return array
      */
@@ -318,7 +305,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 return $v->isActive() ? $v->name : null;
             }, $installedPlugins);
             $activePlugins = array_filter($activePlugins);
-            $activePlugins[] = 'Core';
+            // Add all core "plugins".
+            $activePlugins[] = 'Core / Server';
+            $activePlugins[] = 'Core / Site';
+            $activePlugins[] = 'Core / Elements';
+            $activePlugins[] = 'Core / Records';
+            $activePlugins[] = 'Core / Files';
+            $activePlugins[] = 'Core / Themes';
 
             // Check processors to prevents possible issues with external plugins.
             foreach ($allProcessors as $name => $class) {
@@ -329,6 +322,9 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                             $result = $processor->isPluginReady()
                                 && !($processor->precheckProcessorPlugin());
                             if ($result) {
+                                $processor->setParams($this->getParams());
+                                $processor->setDatetime($this->getDatetime());
+                                $processor->setIsProcessing($this->isProcessing());
                                 $processors[$name] = $processor;
                             }
                         }
@@ -338,6 +334,20 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             $this->_processors = $processors;
         }
         return $this->_processors;
+    }
+
+    /**
+     * Get a processor.
+     *
+     * @param string $name
+     * @return Processor
+     */
+    public function getProcessor($name)
+    {
+        $processors = $this->getProcessors();
+        if (isset($processors[$name])) {
+            return $processors[$name];
+        }
     }
 
     /**
@@ -394,6 +404,16 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Helper to get the site id (#1).
+     *
+     * @return integer
+     */
+    public function getSiteId()
+    {
+        return $this->_siteId;
+    }
+
+    /**
      * Get a specific array of values from all processors.
      *
      * @param string $name The name of the values to fetch.
@@ -435,7 +455,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Check if this class is the core one.
+     * Check if this class is a core one.
      *
      * @return boolean
      */
@@ -443,7 +463,15 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     {
         // get_class() isn't used directly because it can be bypassed.
         $processors = apply_filters('upgrade_omekas', array());
-        return get_class($this) == $processors['Core'];
+        $core = array();
+        $core[] = 'Core / Server';
+        $core[] = 'Core / Site';
+        $core[] = 'Core / Elements';
+        $core[] = 'Core / Records';
+        $core[] = 'Core / Files';
+        $core[] = 'Core / Themes';
+        $coreProcessors = array_intersect_key($processors, array_flip($core));
+        return in_array(get_class($this), $coreProcessors);
     }
 
     /**
@@ -477,7 +505,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     final public function precheckProcessorPlugin()
     {
-        if ($this->pluginName == 'Core') {
+        if (strpos($this->pluginName, 'Core / ') === 0) {
             return;
         }
 
@@ -672,308 +700,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
         $this->_target = $target;
         return $this->_target;
-    }
-
-    /**
-     * Get the default mapping of roles from Omeka C to Omeka S.
-     *
-     * The name of each role is its id. The label is not used here.
-     *
-     * @return array
-     */
-    public function getDefaultMappingRoles()
-    {
-        static $mapping;
-
-        if (empty($mapping)) {
-            $mapping = $this->getMerged('mapping_roles');
-        }
-
-        return $mapping;
-    }
-
-    /**
-     * Get the user mapping of roles from Omeka C to Omeka S.
-     *
-     * @return array
-     */
-    public function getMappingRoles()
-    {
-        $defaultMapping = $this->getDefaultMappingRoles();
-        $mapping = $this->getParam('mapping_roles') ?: array();
-        return $defaultMapping + $mapping;
-    }
-
-    /**
-     * Get the default mapping from Omeka C item types to Omeka S classes.
-     *
-     * This method doesn't use the database of Omeka S, but the file "classes.php".
-     *
-     * @param string $itemTypeFormat "name" (default) or "id".
-     * @param string $classFormat "prefix:name" (default), "label" or "id".
-     * @return array
-     */
-    public function getDefaultMappingItemTypesToClasses($itemTypeFormat = 'name', $classFormat = 'prefix:name')
-    {
-        static $itemTypes;
-        static $classes;
-        static $mapping;
-
-        if (empty($itemTypes)) {
-            // Get the flat list of item types truly installed in Omeka.
-            $select = $this->_db->getTable('ItemType')->getSelect()
-                ->reset(Zend_Db_Select::COLUMNS)
-                ->from(array(), array(
-                    'id' => 'item_types.id',
-                    'name' => 'item_types.name',
-                ))
-                ->order('item_types.id');
-            $itemTypes = $this->_db->fetchAll($select);
-
-            // Get the flat list of classes ids and prefix:name by prefix:name.
-            $classes = $this->getClasses();
-            $result = array();
-            foreach ($classes as $vocabularyLabel => $vocabulary) {
-                // Use only the prefix of the vocabulary.
-                $prefix = trim(substr($vocabularyLabel, strpos($vocabularyLabel, '[')), '[] ');
-                // Preformat the class.
-                foreach ($vocabulary as $classId => $class) {
-                    $label = reset($class);
-                    $name = key($class);
-                    $result[$prefix . ':' . $name] = array(
-                        'id' => $classId,
-                        'name' => $name,
-                        'prefix:name' => $prefix . ':' . $name,
-                        'label' => $label,
-                        'prefix' => $prefix,
-                    );
-                }
-            }
-            $classes = $result;
-
-            // Get the mapping of item types with classes as prefix:name.
-            $mapping = $this->getMerged('mapping_item_types');
-            $mapping = array_map(function ($v) {
-                return key($v) . ':' . reset($v);
-            } , $mapping);
-        }
-
-        // Process the requested format.
-        $result = array();
-        foreach ($itemTypes as $itemType) {
-            $mappedClass = null;
-            // Get the map of the element if any.
-            if (!empty($mapping[$itemType['name']])) {
-                $map = $mapping[$itemType['name']];
-                if (isset($classes[$map])) {
-                    $mappedClass = $classes[$map][$classFormat];
-                }
-            }
-            // Format the result.
-            // Set the mapping, even if not mapped.
-            switch ($itemTypeFormat) {
-                case 'id':
-                    $result[$itemType['id']] = $mappedClass;
-                    break;
-                case 'name':
-                default:
-                    $result[$itemType['name']] = $mappedClass;
-                    break;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get the user mapping from Omeka C item types to Omeka S classes.
-     *
-     * @return array
-     */
-    public function getMappingItemTypesToClasses()
-    {
-        $defaultMapping = $this->getDefaultMappingItemTypesToClasses('id', 'id');
-        $mapping = $this->getParam('mapping_item_types') ?: array();
-        return $defaultMapping + $mapping;
-    }
-
-    /**
-     * Get the list of classes of all vocabularies of Omeka S.
-     *
-     * This method doesn't use the database of Omeka S, but the file "classes.php".
-     *
-     * @todo Add an option to fetch the list from the database when possible.
-     *
-     * @return array
-     */
-    public function getClasses()
-    {
-        $script = dirname(dirname(dirname(dirname(__FILE__))))
-            . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'data'
-            . DIRECTORY_SEPARATOR . 'classes.php';
-        $classes = require $script;
-        return $classes;
-    }
-
-    /**
-     * Get the default mapping from Omeka C elements to Omeka S properties.
-     *
-     * This method doesn't use the database of Omeka S, but the file "properties.php".
-     *
-     * @param string $elementFormat "set name:name" (default) or "id".
-     * @param string $propertyFormat "prefix:name" (default), "label" or "id".
-     * @param boolean $bySet Return a one or a two levels associative array.
-     * @return array
-     */
-    public function getDefaultMappingElementsToProperties($elementFormat = 'set_name:name', $propertyFormat = 'prefix:name', $bySet = false)
-    {
-        static $elements;
-        static $properties;
-        static $mapping;
-
-        if (empty($elements)) {
-            // Get the flat list of elements truly installed in Omeka.
-            $select = $this->_db->getTable('Element')->getSelect()
-                ->reset(Zend_Db_Select::COLUMNS)
-                ->from(array(), array(
-                    'id' => 'elements.id',
-                    'name' => 'elements.name',
-                    'set_name' => 'element_sets.name',
-                ))
-                ->order('elements.id');
-            $elements = $this->_db->fetchAll($select);
-
-            // Get the flat list of property ids and prefix:name by prefix:name.
-            $properties = $this->getProperties();
-            $result = array();
-            foreach ($properties as $vocabularyLabel => $vocabulary) {
-                // Use only the prefix of the vocabulary.
-                $prefix = trim(substr($vocabularyLabel, strpos($vocabularyLabel, '[')), '[] ');
-                // Preformat the property.
-                foreach ($vocabulary as $propertyId => $property) {
-                    $label = reset($property);
-                    $name = key($property);
-                    $result[$prefix . ':' . $name] = array(
-                        'id' => $propertyId,
-                        'name' => $name,
-                        'prefix:name' => $prefix . ':' . $name,
-                        'label' => $label,
-                        'prefix' => $prefix,
-                    );
-                }
-            }
-            $properties = $result;
-
-            // Get the mapping of elements with properties as prefix:name.
-            $mapping = $this->getMerged('mapping_elements');
-            foreach ($mapping as $setName => &$mappedElements) {
-                $mappedElements = array_map(function ($v) {
-                    return key($v) . ':' . reset($v);
-                } , $mappedElements);
-            }
-        }
-
-        // Process the requested format.
-        $result = array();
-        foreach ($elements as $element) {
-            $mappedProperty = null;
-            // Get the map of the element if any.
-            if (!empty($mapping[$element['set_name']][$element['name']])) {
-                $map = $mapping[$element['set_name']][$element['name']];
-                if (isset($properties[$map])) {
-                    $mappedProperty = $properties[$map][$propertyFormat];
-                }
-            }
-            // Format the result.
-            // Set the mapping, even if not mapped.
-            if ($bySet) {
-                switch ($elementFormat) {
-                    case 'id':
-                        $result[$element['set_name']][$element['id']] = $mappedProperty;
-                        break;
-                    case 'set_name:name':
-                    default:
-                        $result[$element['set_name']][$element['set_name'] . ':' . $element['name']] = $mappedProperty;
-                        break;
-                }
-            } else {
-                switch ($elementFormat) {
-                    case 'id':
-                        $result[$element['id']] = $mappedProperty;
-                        break;
-                    case 'set_name:name':
-                    default:
-                        $result[$element['set_name'] . ':' . $element['name']] = $mappedProperty;
-                        break;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get the mapping from Omeka C elements to Omeka S properties.
-     *
-     * @return array
-     */
-    public function getMappingElementsToProperties()
-    {
-        $defaultMapping = $this->getDefaultMappingElementsToProperties('id', 'id', false);
-        $mapping = $this->getParam('mapping_elements') ?: array();
-        return $defaultMapping + $mapping;
-    }
-
-    /**
-     * Get the list of properties of all vocabularies of Omeka S.
-     *
-     * This method doesn't use the database of Omeka S, but the file "properties.php".
-     *
-     * @todo Add an option to fetch the list from the database when possible.
-     *
-     * @return array
-     */
-    public function getProperties()
-    {
-        static $properties;
-
-        if (empty($properties)) {
-            $script = dirname(dirname(dirname(dirname(__FILE__))))
-                . DIRECTORY_SEPARATOR . 'libraries'
-                . DIRECTORY_SEPARATOR . 'data'
-                . DIRECTORY_SEPARATOR . 'properties.php';
-            $properties = require $script;
-        }
-
-        return $properties;
-    }
-
-    /**
-     * Get the flat list of properties of all vocabularies of Omeka S.
-     *
-     * This method doesn't use the database of Omeka S, but the file "properties.php".
-     *
-     * @todo Add an option to fetch the list from the database when possible.
-     *
-     * @return array
-     */
-    public function getPropertyIds()
-    {
-        if (empty($this->_propertyIds)) {
-            $properties = $this->getProperties();
-            $result = array();
-            foreach ($properties as $vocabularyLabel => $vocabulary) {
-                // Use only the prefix of the vocabulary.
-                $prefix = trim(substr($vocabularyLabel, strpos($vocabularyLabel, '[')), '[] ');
-                foreach ($vocabulary as $propertyId => $property) {
-                    $name = key($property);
-                    $result[$prefix . ':' . $name] = $propertyId;
-                }
-            }
-            $this->_propertyIds = $result;
-        }
-        return $this->_propertyIds;
     }
 
     /**
@@ -1264,12 +990,29 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * Helper to convert a navigation link from the Omeka 2 to Omeka S.
      *
      * @param array $page The page to convert.
-     * @param array $args The url and parsed elements.
+     * @param array $parsed The url and parsed elements.
      * @param array $site Some data for the url of the site.
      * @return array|null The Omeka S formatted nav link, or null.
      */
-    protected function _convertNavigationPageToLink($page, $args, $site)
+    protected function _convertNavigationPageToLink($page, $parsed, $site)
     {
+    }
+
+    /**
+     * Helper to get the list of ids of a record type.
+     *
+     * @param string $recordType
+     * @return array Associative array of ids.
+     */
+    protected function _getRecordIds($recordType)
+    {
+        $db = $this->_db;
+        $select = $db->getTable($recordType)->getSelect()
+            ->reset(Zend_Db_Select::COLUMNS)
+            ->from(array(), 'id')
+            ->order('id');
+        $result = $db->fetchCol($select);
+        return array_combine($result, $result);
     }
 
     /**

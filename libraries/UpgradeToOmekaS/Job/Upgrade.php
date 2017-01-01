@@ -169,7 +169,7 @@ class UpgradeToOmekaS_Job_Upgrade extends Omeka_Job_AbstractJob
      */
     protected function _listProcessors()
     {
-        $processor = new UpgradeToOmekaS_Processor_Core();
+        $processor = new UpgradeToOmekaS_Processor_CoreSite();
         return $processor->getProcessors();
     }
 
