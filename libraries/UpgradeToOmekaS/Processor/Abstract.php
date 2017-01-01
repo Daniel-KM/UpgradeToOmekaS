@@ -34,7 +34,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      *
      * @var array
      */
-    public $processMethods;
+    public $processMethods = array();
 
     /**
      * Maximum rows to process by loop.
@@ -82,11 +82,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_securityIni;
 
     /**
-     * Single datetime for whole process.
+     * List of processors.
      *
-     * @var string
+     * @var array
      */
-    protected $_datetime;
+    protected $_processors = array();
 
     /**
      * List of parameters.
@@ -115,6 +115,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @var boolean
      */
     protected $_isProcessing;
+
+    /**
+     * Single datetime for whole process.
+     *
+     * @var string
+     */
+    protected $_datetime;
 
     /**
      * Constructor of the class.
@@ -171,6 +178,53 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public function getParam($name)
     {
         return isset($this->_params[$name]) ? $this->_params[$name] : null;
+    }
+
+    /**
+     * Get the list of all active processors.
+     *
+     * @internal Not very clean to set processors inside a processor, even if
+     * there is no impact on memory. Used to get filtered values, in particular
+     * the list of roles, and to convert the navigation menu.
+     *
+     * @return array
+     */
+    public function getProcessors()
+    {
+        if (empty($this->_processors)) {
+            $processors = array();
+            $allProcessors = apply_filters('upgrade_omekas', array());
+
+            // Get installed plugins, includes active and inactive.
+            $pluginLoader = Zend_Registry::get('pluginloader');
+            $installedPlugins = $pluginLoader->getPlugins();
+
+            // Keep only the name of plugins.
+            $activePlugins = array_map(function ($v) {
+                return $v->isActive() ? $v->name : null;
+            }, $installedPlugins);
+            $activePlugins = array_filter($activePlugins);
+            $activePlugins[] = 'Core';
+
+            // Check processors to prevents possible issues with external plugins.
+            foreach ($allProcessors as $name => $processor) {
+                $class = $processor['class'];
+                if (class_exists($class)) {
+                    if (is_subclass_of($class, 'UpgradeToOmekaS_Processor_Abstract')) {
+                        if (in_array($name, $activePlugins)) {
+                            $processor = new $class();
+                            $result = $processor->isPluginReady()
+                                && !($processor->precheckProcessorPlugin());
+                            if ($result) {
+                                $processors[$name] = $processor;
+                            }
+                        }
+                    }
+                }
+            }
+            $this->_processors = $processors;
+        }
+        return $this->_processors;
     }
 
     /**

@@ -494,6 +494,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
 
         $processor = new UpgradeToOmekaS_Processor_Core();
         $processor->setParams($params);
+
         if ($methods) {
             $processor->processMethods = $methods;
         }

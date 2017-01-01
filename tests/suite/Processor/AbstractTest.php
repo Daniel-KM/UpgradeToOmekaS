@@ -11,7 +11,11 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
         // Authenticate and set the current user.
         $this->user = $this->db->getTable('User')->find(1);
         $this->_authenticateUser($this->user);
+    }
 
+    public function testListProcessors()
+    {
+        $this->markTestIncomplete();
     }
 
     public function testPrecheckProcessorPluginEmpty()

@@ -487,9 +487,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     }
 
     /**
-     * List and precheck processors.
-     *
-     * @todo Move this in another place to merge it with UpgradeToOmekaS_Job_Process?
+     * List and precheck processors, active or not.
      *
      * @return array
      */

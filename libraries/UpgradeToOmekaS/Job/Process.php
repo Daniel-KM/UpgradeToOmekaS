@@ -70,6 +70,8 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
         foreach ($processors as $name => $processor) {
             if ($this->_isProcessing()) {
                 try {
+                    // Some tools can't be processed at running time, so they
+                    // can be bypassed with this check.
                     $processor->setIsProcessing(true);
                     // The params should be set now, because there is the processing
                     // parameter.
@@ -166,44 +168,12 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
     /**
      * List and check processors for active plugins.
      *
-     * @todo Move this in another place to merge it with UpgradeToOmekaS_IndexController?
-     *
      * @return array
      */
     protected function _listProcessors()
     {
-        $processors = array();
-        $allProcessors = apply_filters('upgrade_omekas', array());
-
-        // Get installed plugins, includes active and inactive.
-        $pluginLoader = Zend_Registry::get('pluginloader');
-        $installedPlugins = $pluginLoader->getPlugins();
-
-        // Keep only the name of plugins.
-        $activePlugins = array_map(function ($v) {
-            return $v->isActive() ? $v->name : null;
-        }, $installedPlugins);
-        $activePlugins = array_filter($activePlugins);
-        $activePlugins[] = 'Core';
-
-        // Check processors to prevents possible issues with external plugins.
-        foreach ($allProcessors as $name => $processor) {
-            $class = $processor['class'];
-            if (class_exists($class)) {
-                if (is_subclass_of($class, 'UpgradeToOmekaS_Processor_Abstract')) {
-                    if (in_array($name, $activePlugins)) {
-                        $processor = new $class();
-                        $result = $processor->isPluginReady()
-                            && !($processor->precheckProcessorPlugin());
-                        if ($result) {
-                            $processors[$name] = $processor;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $processors;
+        $processor = new UpgradeToOmekaS_Processor_Core();
+        return $processor->getProcessors();
     }
 
     /**
