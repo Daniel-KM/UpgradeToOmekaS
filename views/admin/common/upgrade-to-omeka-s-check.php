@@ -44,21 +44,22 @@ endif;
         <?php
         $key = 0;
         foreach ($plugins as $name => $plugin):
-            $rowClass = $plugin['skip'] ? 'upgrade-skip' . ' ' : '';
+            $rowClass = $plugin['processor'] ? 'upgrade-has-processor' . ' ' : '';
             $rowClass .= $plugin['upgradable'] ? 'upgrade-true' : 'upgrade-false';
             $rowClass .= ' ' . (++$key % 2 ? 'odd' : 'even');
+            $toCheck = $plugin['processor'] && $plugin['installed'] && $plugin['active'] && !$plugin['upgradable'];
         ?>
         <tr class="<?php echo $rowClass; ?>">
-            <td<?php echo !$plugin['skip'] && !$plugin['upgradable'] ? ' rowspan="2"' : ''; ?>><?php echo $plugin['name']; ?></td>
+            <td<?php echo $toCheck ? ' rowspan="2"' : ''; ?>><?php echo $plugin['name']; ?></td>
             <td><?php echo $plugin['installed'] ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['active'] ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['version']; ?></td>
             <td><?php echo isset($processors[$name]) ? $processors[$name]->minVersion : ''; ?></td>
             <td><?php echo isset($processors[$name]) ? $processors[$name]->maxVersion : ''; ?></td>
-            <td><?php echo !$plugin['skip'] ? __('Yes') : __('No'); ?></td>
+            <td><?php echo $plugin['processor'] ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['upgradable'] ? __('Yes') : __('No'); ?></td>
         </tr>
-        <?php if (!$plugin['skip'] && !$plugin['upgradable']): ?>
+        <?php if ($toCheck): ?>
         <tr>
             <td colspan="7" class="check-error">
                 <?php

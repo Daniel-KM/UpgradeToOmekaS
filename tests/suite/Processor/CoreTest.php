@@ -194,6 +194,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
     /**
      * @note Some check require that the free space is greater than 1GB.
      * @note This check requires to define the document root.
+     * @note This check fails if the basedir has not been cleaned after a crash.
      */
     public function testCheckConfigFileSystemBase()
     {

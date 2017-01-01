@@ -512,8 +512,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
                     $this->_prechecks[$name][] = __('Processor class "%s" should extend UpgradeToOmekaS_Processor_Abstract.', $class);
                 }
                 // Apparently a good processor, but check for the plugin.
-                // No error is given about non installed plugins.
-                elseif (in_array($name, $installedPlugins)) {
+                // Only the processors with an active plugin will be processed.
+                else {
                     $this->_processors[$name] = new $class();
                 }
             }
@@ -550,13 +550,17 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
             foreach ($allPlugins as $plugin) {
                 $name = $plugin->name;
-                $skip = !isset($this->_processors[$name]);
-                $upgradable = !$skip && !isset($this->_prechecks[$name]) && !isset($this->_checks[$name]);
+                $hasProcessor = isset($this->_processors[$name]);
+                $upgradable = $hasProcessor
+                    && $plugin->isInstalled()
+                    && $plugin->isActive()
+                    && !isset($this->_prechecks[$name])
+                    && !isset($this->_checks[$name]);
                 $this->_plugins[$plugin->name]['name'] = $name;
                 $this->_plugins[$plugin->name]['installed'] = $plugin->isInstalled();
                 $this->_plugins[$plugin->name]['active'] = $plugin->isActive();
                 $this->_plugins[$plugin->name]['version'] = $plugin->getIniVersion();
-                $this->_plugins[$plugin->name]['skip'] = $skip;
+                $this->_plugins[$plugin->name]['processor'] = $hasProcessor;
                 $this->_plugins[$plugin->name]['upgradable'] = $upgradable;
             }
             ksort($this->_plugins);

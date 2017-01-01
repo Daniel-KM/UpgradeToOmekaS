@@ -160,6 +160,20 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Check if the plugin is installed.
+     *
+     * @return boolean
+     */
+    public function isPluginReady()
+    {
+        if (empty($this->pluginName)) {
+            return false;
+        }
+        $plugin = get_record('Plugin', array('name' => $this->pluginName));
+        return $plugin && $plugin->isActive();
+    }
+
+    /**
      * Quick precheck of the configuration (to display before form, not via a
      * background job).
      *
@@ -201,7 +215,9 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             }
         }
 
-        $this->_precheckConfig();
+        if ($this->isPluginReady()) {
+            $this->_precheckConfig();
+        }
 
         return $this->_prechecks;
     }
@@ -222,7 +238,9 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     final public function checkConfig()
     {
-        $this->_checkConfig();
+        if ($this->isPluginReady()) {
+            $this->_checkConfig();
+        }
 
         return $this->_checks;
     }
@@ -270,6 +288,10 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     final public function process()
     {
+        if (!$this->isPluginReady()) {
+            return;
+        }
+
         $this->_log(__('Start processing.'), Zend_Log::INFO);
 
         // The default methods are checked during the construction, but other

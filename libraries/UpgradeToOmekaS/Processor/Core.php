@@ -120,6 +120,18 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected $_destinationFreeSize;
 
     /**
+     * Check if the plugin is installed.
+     *
+     * @internal Always true for the Core.
+     *
+     * @return boolean
+     */
+    public function isPluginReady()
+    {
+        return true;
+    }
+
+    /**
      * Return the default Omeka S tables.
      */
     public function getOmekaSDefaultTables()
