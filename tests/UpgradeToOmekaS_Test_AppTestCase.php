@@ -19,6 +19,19 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
     protected $_baseDir;
     protected $_isBaseDirCreated = false;
 
+    protected $_processor;
+    protected $_processorName;
+
+    protected $_defaultParams = array(
+        'database' => array(
+            'type' => 'share',
+            'prefix' => 'omekas_test_unit_',
+        ),
+        // Set during setup.
+        'base_dir' => null,
+        'files_type' => 'copy',
+    );
+
     public function setUp()
     {
         parent::setUp();
@@ -41,6 +54,8 @@ class UpgradeToOmekaS_Test_AppTestCase extends Omeka_Test_AppTestCase
             ? __('The test base dir %s must not exist.', $this->_baseDir)
             : __('You should remove it.');
         $this->assertEquals($test, __('You should remove it.'));
+
+        $this->_defaultParams['base_dir'] = $this->_baseDir;
 
         // This is where the downloaded package omeka-s.zip is saved.
         // TODO Move it in the main setup of the tests.
@@ -119,6 +134,9 @@ PLUGIN;
         if (empty($this->_isBaseDirCreated)
                 || $path == BASE_DIR
                 || $path == dirname(BASE_DIR)
+                || $path == dirname(dirname(BASE_DIR))
+                || $path == dirname(dirname(dirname(BASE_DIR)))
+                || $path == dirname(dirname(dirname(dirname(BASE_DIR))))
             ) {
             return;
         }
@@ -166,28 +184,21 @@ PLUGIN;
         $isProcessing = true
     ) {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);
-        $defaultParams = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 'omekas_',
-            ),
-            'base_dir' => $this->_baseDir,
-            'files_type' => 'copy',
-        );
         if (is_null($params)) {
-            $params = $defaultParams;
+            $params = $this->_defaultParams;
         }
         // Add and replace values.
         else {
-            $params = array_merge($defaultParams, $params);
+            $params = array_merge($this->_defaultParams, $params);
         }
 
-        $processor = new UpgradeToOmekaS_Processor_Base();
-        $processors = $processor->getProcessors();
+        $processorBase = new UpgradeToOmekaS_Processor_Base();
+        $processorBase->setParams($params);
+        $processors = $processorBase->getProcessors();
         $this->assertTrue(isset($processors[$processorName]));
 
         if ($checkDir) {
-            $baseDir = $processor->getParam('base_dir');
+            $baseDir = $processorBase->getParam('base_dir');
             $result = !file_exists($baseDir) || UpgradeToOmekaS_Common::isDirEmpty($baseDir);
             $this->assertTrue($result);
             $this->_isBaseDirCreated = true;

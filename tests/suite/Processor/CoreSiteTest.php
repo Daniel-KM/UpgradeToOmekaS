@@ -11,12 +11,15 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
         // Authenticate and set the current user.
         $this->user = $this->db->getTable('User')->find(1);
         $this->_authenticateUser($this->user);
+
+        $this->_checkDownloadedOmekaS();
     }
 
     public function testConfigOmekaS()
     {
-        $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor('Core / Site', null, array('_unzipOmekaS'));
+        $params = $processor->getParams();
+        $this->assertNotEmpty($params);
         $processor->processMethods = array('_configOmekaS');
         $result = $processor->process();
         $this->assertEmpty($result);
@@ -24,7 +27,6 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
 
     public function testInstallOmekaS()
     {
-        $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             'Core / Site',
             array('user' => $this->user),
@@ -50,7 +52,6 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
     public function testUpgradeLocalConfig()
     {
         // TODO Check modified config.ini, for example for priority or locale.
-        $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             'Core / Site',
             array('user' => $this->user),
@@ -73,7 +74,6 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
         $user->username = 'foo';
         $user->save();
 
-        $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             'Core / Site',
             array('user' => $this->user),
@@ -92,7 +92,6 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
 
     public function testUpgradeSite()
     {
-        $this->_checkDownloadedOmekaS();
         $processor = $this->_prepareProcessor(
             'Core / Site',
             array('user' => $this->user),

@@ -3,15 +3,11 @@
 /**
  * UpgradeToOmekaS_Job_Remove class
  *
- * @todo Manage status via the main process object, not via an internal option.
- *
  * @package UpgradeToOmekaS
  */
-class UpgradeToOmekaS_Job_Remove extends Omeka_Job_AbstractJob
+class UpgradeToOmekaS_Job_Remove extends UpgradeToOmekaS_Job_Abstract
 {
     const QUEUE_NAME = 'upgrade_to_omeka_s_remove';
-
-    protected $_params;
 
     /**
      * Performs the remove task.
@@ -30,6 +26,10 @@ class UpgradeToOmekaS_Job_Remove extends Omeka_Job_AbstractJob
 
         $user = $this->getUser();
         $params = $this->_params;
+
+        //Add the security ini params.
+        $security = $this->_getSecurityIni()->toArray();
+        $params['checks'] = $security['check'];
 
         // This constant may be needed in some scripts fetched from Omeka S.
         defined('OMEKA_PATH') or define('OMEKA_PATH', $params['base_dir']);
@@ -97,80 +97,5 @@ class UpgradeToOmekaS_Job_Remove extends Omeka_Job_AbstractJob
 
         $this->_log(__('The remove process of Omeka Semantic ended successfully.'),
             Zend_Log::INFO);
-    }
-
-    public function setParams($params)
-    {
-        $this->_params = $params;
-    }
-
-    /**
-     * Quit the process after an error.
-     *
-     * @param string $message
-     * @param array $messages
-     */
-    protected function _processError($message, $messages = array())
-    {
-        set_option('upgrade_to_omeka_s_process_status', Process::STATUS_ERROR);
-        $this->_log($message, Zend_Log::ERR);
-        foreach ($messages as $message) {
-            $this->_log($message, Zend_Log::ERR);
-        }
-    }
-
-    /**
-     * Log infos about process.
-     *
-     * @todo Merge with the logs of the processor or use a full logging class.
-     *
-     * @param string $message
-     * @param integer $priority
-     */
-    protected function _log($message, $priority = Zend_Log::DEBUG)
-    {
-        $priorities = array(
-            Zend_Log::EMERG => 'emergency',
-            Zend_Log::ALERT => 'alert',
-            Zend_Log::CRIT => 'critical',
-            Zend_Log::ERR => 'error',
-            Zend_Log::WARN => 'warning',
-            Zend_Log::NOTICE => 'notice',
-            Zend_Log::INFO => 'info',
-            Zend_Log::DEBUG => 'debug',
-        );
-        if (!isset($priorities[$priority])) {
-            $priority = Zend_Log::ERR;
-        }
-
-        $logs = json_decode(get_option('upgrade_to_omeka_s_process_logs'), true);
-
-        $msg = $message;
-        $processor = '';
-        $task = '';
-        if (strpos($msg, '[') === 0 && $pos = strpos($msg, ']')) {
-            $processor = substr($msg, 1, $pos - 1);
-            $msg = substr($msg, $pos + 1);
-            if (strpos($msg, '[') === 0 && $pos = strpos($msg, ']')) {
-                $task = substr($msg, 1, $pos - 1);
-                $msg = substr($msg, $pos + 1);
-            }
-        }
-        $msg = ltrim($msg, ': ');
-
-        $msg = array(
-            'date' => date(DateTime::ISO8601),
-            'priority' => $priorities[$priority],
-            'processor' => $processor,
-            'task' => $task,
-            'message' => $msg,
-        );
-        $logs[] = $msg;
-        set_option('upgrade_to_omeka_s_process_logs', json_encode($logs));
-
-        $message = ltrim($message, ': ');
-
-        $message = '[UpgradeToOmekaS]: ' . $message;
-        _log($message, $priority);
     }
 }

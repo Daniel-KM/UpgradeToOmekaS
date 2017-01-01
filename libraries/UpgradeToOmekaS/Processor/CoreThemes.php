@@ -119,7 +119,8 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
         // Recheck for the symlinks, that can be bypassed.
         $result = UpgradeToOmekaS_Common::containsSymlinks(PUBLIC_THEME_DIR);
         if ($result) {
-            if ($settings->precheck->symlinks) {
+            $checks = $this->getParam('checks');
+            if (!empty($checks['symlinks'])) {
                 throw new UpgradeToOmekaS_Exception(
                     __('There are symbolic links inside the directory of themes.')
                         . ' ' . __('They cannot be managed.')

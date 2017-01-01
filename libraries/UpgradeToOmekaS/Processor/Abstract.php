@@ -706,7 +706,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 $progress['total'] = $total;
             }
         }
-        set_option('upgrade_to_omeka_s_process_progress', json_encode($progress));
+        set_option('upgrade_to_omeka_s_process_progress', $this->_toJson($progress));
         return $progress;
     }
 
@@ -1153,7 +1153,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             'message' => $msg,
         );
         $logs[] = $msg;
-        set_option('upgrade_to_omeka_s_process_logs', json_encode($logs));
+        set_option('upgrade_to_omeka_s_process_logs', $this->_toJson($logs));
 
         $message = ltrim($message, ': ');
         if (strpos($message, '[') !== 0) {

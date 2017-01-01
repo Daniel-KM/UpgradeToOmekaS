@@ -75,28 +75,23 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
 
     public function testCheckConfigDatabase()
     {
-        $params = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 's_' . get_db()->prefix,
-            ),
-        );
+        $params = $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(2, count($result), 'Error: ' . reset($result));
+        $this->assertEmpty($result);
         $database = $processor->getParam('database');
-        $this->assertEquals('s_omeka_', $database['prefix']);
+        $this->assertEquals('omekas_test_unit_', $database['prefix']);
 
         $params = array(
             'database' => array(
                 'type' => 'foo',
             ),
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(3, count($result));
+        $this->assertEquals(1, count($result));
         $this->assertEquals('The type of database "foo" is not supported.', $result[0]);
     }
 
@@ -111,7 +106,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
                 'dbname' => 'bar',
                 'prefix' => '',
             ),
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $this->expectException(Zend_Db_Adapter_Exception::class);
@@ -135,7 +130,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
                 'dbname' => $dbName,
                 'prefix' => '',
             ),
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $this->expectException(Zend_Db_Adapter_Exception::class);
@@ -151,7 +146,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
                 'type' => 'separate',
                 'prefix' => '',
             ),
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $this->expectException(Zend_Db_Adapter_Exception::class);
@@ -167,11 +162,11 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
                 'type' => 'share',
                 'prefix' => '',
             ),
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(3, count($result));
+        $this->assertEquals(1, count($result));
         $this->assertEquals('A database prefix is required when the database is shared.', $result[0]);
 
         $params = array(
@@ -179,17 +174,17 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
                 'type' => 'share',
                 'prefix' => get_db()->prefix,
             ),
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(3, count($result));
+        $this->assertEquals(1, count($result));
         $this->assertEquals('The database prefix should be different from the Omeka Classic one when the database is shared.', $result[0]);
     }
 
     public function testCheckConfigBadDatabaseShareTableExists()
     {
-        $sql = 'CREATE TABLE `vocabulary` (
+        $sql = 'CREATE TABLE `value` (
             `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY
         );';
         $result = get_db()->prepare($sql)->execute();
@@ -199,11 +194,11 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
                 'type' => 'share',
                 'prefix' => 's_' . get_db()->prefix,
             ),
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(3, count($result));
+        $this->assertEquals(1, count($result));
         $this->assertEquals('Some names of tables of Omeka S or its modules are existing in the database of Omeka Classic.', $result[0]);
     }
 
@@ -215,13 +210,9 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
     public function testCheckConfigFileSystemBase()
     {
         $params = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 'omekas_',
-            ),
             'base_dir' => $this->_baseDir,
             'files_type' => 'copy',
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $this->assertEquals('copy', $processor->getParam('files_type'));
@@ -234,13 +225,9 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
     public function testCheckConfigFileSystemBaseSeparator()
     {
         $params = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 'omekas_',
-            ),
             'base_dir' => $this->_baseDir . " \/ /\\ ",
             'files_type' => 'copy',
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $this->assertEquals($this->_baseDir, $processor->getParam('base_dir'));
@@ -249,30 +236,22 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
     public function testCheckConfigFileSystemBadBase()
     {
         $params = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 'omekas_',
-            ),
             'base_dir' => dirname(BASE_DIR) . DIRECTORY_SEPARATOR,
             'files_type' => 'copy',
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(2, count($result));
+        $this->assertEquals(1, count($result));
 
         $params = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 'omekas_',
-            ),
             'base_dir' => BASE_DIR . DIRECTORY_SEPARATOR,
             'files_type' => 'copy',
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(2, count($result));
+        $this->assertEquals(1, count($result));
     }
 
     public function testCheckConfigFileSystemBadBase2()
@@ -281,31 +260,23 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
         $file = $this->_baseDir . DIRECTORY_SEPARATOR . md5(rtrim(strtok(substr(microtime(), 2), ' '), '0'));
         touch($file);
         $params = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 'omekas_',
-            ),
             'base_dir' => $file,
             'files_type' => 'copy',
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(2, count($result));
+        $this->assertEquals(1, count($result));
 
         // Base dir is not empty.
         $params = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 'omekas_',
-            ),
             'base_dir' => $this->_baseDir,
             'files_type' => 'copy',
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(2, count($result));
+        $this->assertEquals(1, count($result));
     }
 
     public function testCheckConfigFileSystemBadBase3()
@@ -313,30 +284,22 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
         $this->_createBaseDir();
         chmod($this->_baseDir, 0555);
         $params = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 'omekas_',
-            ),
             'base_dir' => $this->_baseDir,
             'files_type' => 'copy',
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
-        $this->assertEquals(2, count($result));
+        $this->assertEquals(1, count($result));
     }
 
     public function testCheckConfigFileSystemSize()
     {
         $this->_createBaseDir();
         $params = array(
-            'database' => array(
-                'type' => 'share',
-                'prefix' => 'omekas_',
-            ),
             'base_dir' => $this->_baseDir,
             'files_type' => 'copy',
-        );
+        ) + $this->_defaultParams;
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $processor->setParams($params);
         $result = $processor->checkConfig();
@@ -350,7 +313,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
         $processor->setParams($params);
         $processor->minDestinationSize = 1000000000000000;
         $result = $processor->checkConfig();
-        $this->assertEquals(2, count($result));
+        $this->assertEquals(1, count($result));
         $this->assertEquals('The free size of the base dir should be greater than 1000000000MB.', $result[0]);
 
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
@@ -378,7 +341,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
         $this->assertEmpty($result);
     }
 
-    /* Methods used for the upgrade. */
+    // Methods used for the upgrade.
 
     public function testCreateDirectory()
     {
@@ -421,7 +384,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
         }
     }
 
-    /* The next steps require that omeka-s.zip is available in the temp folder. */
+    // The next steps require that omeka-s.zip is available in the temp folder.
 
     public function testUnzipOmekaS()
     {

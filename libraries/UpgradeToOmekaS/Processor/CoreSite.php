@@ -800,7 +800,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $toInsert['slug'] = $slug;
         $toInsert['theme'] = substr($theme ?: 'default', 0, 190);
         $toInsert['title'] = substr($title, 0, 190);
-        $toInsert['navigation'] = json_encode($this->_convertNavigation());
+        $toInsert['navigation'] = $this->_toJson($this->_convertNavigation());
         $toInsert['item_pool'] = json_encode(array());
         $toInsert['created'] = $this->getDatetime();
         $toInsert['is_public'] = 1;

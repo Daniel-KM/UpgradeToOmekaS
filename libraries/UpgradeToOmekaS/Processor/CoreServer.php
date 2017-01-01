@@ -103,8 +103,8 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
     protected function _precheckConfig()
     {
         $this->_precheckVersion();
-        $settings = $this->getSecurityIni();
-        if ($settings->precheck->background_dispatcher) {
+        $checks = $this->getParam('checks');
+        if (!empty($checks['background_dispatcher'])) {
             $this->_precheckBackgroundDispatcher();
         }
         // During the background process, the server is not Apache.
@@ -121,7 +121,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         if (!$this->isProcessing()) {
             $this->_precheckJobs();
         }
-        if ($settings->precheck->symlinks) {
+        if (!empty($checks['symlinks'])) {
             $this->_precheckSymlinks();
         }
     }
