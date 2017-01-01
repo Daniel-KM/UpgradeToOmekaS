@@ -332,8 +332,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $path = $this->_zippath;
         $exists = file_exists($path);
         if ($exists) {
-            if (filesize($path) != $processor->omekaSemanticSize
-                    || md5_file($path) != $processor->omekaSemanticMd5
+            if (filesize($path) != $processor->omekaSemantic['size']
+                    || md5_file($path) != $processor->omekaSemantic['md5']
                 ) {
                 $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));
             }
@@ -424,8 +424,8 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         // Check correct file.
         else {
             $processor = new UpgradeToOmekaS_Processor_Core();
-            if (filesize($path) != $processor->omekaSemanticSize
-                    || md5_file($path) != $processor->omekaSemanticMd5
+            if (filesize($path) != $processor->omekaSemantic['size']
+                    || md5_file($path) != $processor->omekaSemantic['md5']
                 ) {
                 $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));
             }

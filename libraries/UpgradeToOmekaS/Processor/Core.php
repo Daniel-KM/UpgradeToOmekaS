@@ -17,9 +17,11 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     public $minVersionMysql = '5.5.3';
     public $minVersionMariadb = '5.5.3';
 
-    public $omekaSemanticVersion = 'v1.0.0-beta2';
-    public $omekaSemanticSize = 11526232;
-    public $omekaSemanticMd5 = '45283a20f3a8e13dac1a9cfaeeaa9c51';
+    public $omekaSemantic = array(
+        'version' => 'v1.0.0-beta2',
+        'size' => 11526232,
+        'md5' => '45283a20f3a8e13dac1a9cfaeeaa9c51',
+    );
 
     /**
      * Define a minimum size for the install directory (without files).
@@ -567,7 +569,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
     protected function _downloadOmekaS()
     {
-        $url = sprintf($this->_urlPackage, $this->omekaSemanticVersion);
+        $url = sprintf($this->_urlPackage, $this->omekaSemantic['version']);
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'omeka-s.zip';
         if (file_exists($path)) {
             // Check if the file is empty, in particular for network issues.
@@ -575,24 +577,24 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                 return __('An empty file "omeka-s.zip" exists in the temp directory.')
                     . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url);
             }
-            if (filesize($path) != $this->omekaSemanticSize
-                    || md5_file($path) != $this->omekaSemanticMd5
+            if (filesize($path) != $this->omekaSemantic['size']
+                    || md5_file($path) != $this->omekaSemantic['md5']
                 ) {
                 return __('A file "omeka-s.zip" exists in the temp directory and this is not the release %s.',
-                    $this->omekaSemanticVersion);
+                    $this->omekaSemantic['version']);
             }
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The file is already downloaded.'), Zend_Log::INFO);
         }
         // Download the file.
         else {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dMB, so wait a while.', $this->omekaSemanticSize / 1000000), Zend_Log::INFO);
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dMB, so wait a while.', $this->omekaSemantic['size'] / 1000000), Zend_Log::INFO);
             $result = file_put_contents($path, fopen($url, 'r'));
             if (empty($result)) {
                 return __('An issue occured during the file download.')
                     . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path);
             }
-            if (filesize($path) != $this->omekaSemanticSize
-                    || md5_file($path) != $this->omekaSemanticMd5
+            if (filesize($path) != $this->omekaSemantic['size']
+                    || md5_file($path) != $this->omekaSemantic['md5']
                 ) {
                 return __('The downloaded file is corrupted.')
                 . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path);
