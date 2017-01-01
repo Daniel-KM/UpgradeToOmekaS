@@ -13,6 +13,12 @@ class UpgradeToOmekaS_Form_Validator extends Zend_Validate_Callback
         return (boolean) $value;
     }
 
+    static public function validateDateTimeZone($value)
+    {
+        $timeZones = DateTimeZone::listIdentifiers();
+        return $value == 'UTC' || in_array($value, $timeZones);
+    }
+
     /**
      * Callback to check the prefix.
      *

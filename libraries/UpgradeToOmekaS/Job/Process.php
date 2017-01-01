@@ -31,11 +31,17 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
 
         $this->_log(__('Starting upgrade from Omeka Classic to Omeka Semantic.'), Zend_Log::INFO);
 
+        $user = $this->getUser();
         $params = $this->_params;
+        $params['user'] = $user;
+
+        // This constant may be needed in some scripts fetched from Omeka S.
+        defined('OMEKA_PATH') or define('OMEKA_PATH', $params['base_dir']);
 
         $startMessage = __('Params are:') . PHP_EOL;
         $startMessage .= __('Base dir: %s', $params['base_dir']) . PHP_EOL;
-        $startMessage .= __('Files type: %s', $params['files_type']) . PHP_EOL;
+        $startMessage .= __('Installation Title: %s', $params['installation_title']) . PHP_EOL;
+        $startMessage .= __('Time Zone: %s', $params['time_zone']) . PHP_EOL;
         $startMessage .= __('Database type: %s', $params['database_type']) . PHP_EOL;
         if ($params['database_type'] == 'separate') {
             $startMessage .= __('Database host: %s', $params['database_host']) . PHP_EOL;
@@ -49,7 +55,9 @@ class UpgradeToOmekaS_Job_Process extends Omeka_Job_AbstractJob
         else {
             // $startMessage .= __('Database prefix: %s', $params['database_prefix']) . PHP_EOL;
         }
-        $startMessage .= __('Url: %s', get_option('upgrade_to_omeka_s_process_url'));
+        $startMessage .= __('Files type: %s', $params['files_type']) . PHP_EOL;
+        $startMessage .= __('Url: %s', get_option('upgrade_to_omeka_s_process_url')) . PHP_EOL;
+        $startMessage .= __('User: %s (#%d)', $user->username, $user->id);
         $this->_log($startMessage, Zend_Log::INFO);
 
         $processors = $this->_listProcessors();

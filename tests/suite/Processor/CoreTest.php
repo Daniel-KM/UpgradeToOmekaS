@@ -422,7 +422,7 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
     {
         // TODO To be moved.
         $this->_checkDownloadedOmekaS();
-        $processor = $this->_prepareProcessor(null, array('_unzipOmekaS', '_configOmekaS', '_installOmekaS'));
+        $processor = $this->_prepareProcessor(array('user' => $this->user), array('_unzipOmekaS', '_configOmekaS', '_installOmekaS'));
         $path = $this->_zippath;
         $baseDir = $processor->getParam('base_dir');
         $result = !file_exists($baseDir) || UpgradeToOmekaS_Common::isDirEmpty($baseDir);
@@ -430,18 +430,39 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->_isBaseDirCreated = true;
         $result = $processor->process();
         $this->assertEmpty($result);
+
+        $targetDb = $processor->getTargetDb();
+        $sql = 'SELECT COUNT(*) FROM resource_class;';
+        $result = $targetDb->fetchOne($sql);
+        $this->assertEquals(105, $result);
+        $sql = 'SELECT local_name FROM resource_class WHERE id = 105;';
+        $result = $targetDb->fetchOne($sql);
+        $this->assertEquals('OnlineChatAccount', $result);
+
+        $sql = 'SELECT local_name FROM property WHERE id = 184;';
+        $result = $targetDb->fetchOne($sql);
+        $this->assertEquals('status', $result);
+
+        $sql = 'SELECT value FROM setting WHERE id = "administrator_email";';
+        $result = $targetDb->fetchOne($sql);
+        $this->assertEquals($this->user->email, json_decode($result));
     }
 
     protected function _prepareProcessor($params = null, $methods = array())
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);
+        $defaultParams = array(
+            'database_type' => 'share',
+            'database_prefix' => 'omekas_',
+            'base_dir' => $this->_baseDir,
+            'files_type' => 'copy',
+        );
         if (is_null($params)) {
-            $params = array(
-                'database_type' => 'share',
-                'database_prefix' => 'omekas_',
-                'base_dir' => $this->_baseDir,
-                'files_type' => 'copy',
-            );
+            $params = $defaultParams;
+        }
+        // Add and replace values.
+        else {
+            $params = array_merge($defaultParams, $params);
         }
 
         $processor = new UpgradeToOmekaS_Processor_Core();

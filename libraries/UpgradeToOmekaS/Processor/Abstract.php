@@ -375,19 +375,31 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Helper to get an absolute path to a file inside Omeka S.
+     * Helper to get an absolute path to a file or a directory inside Omeka S.
      *
      * @param string $path A relative path.
+     * @param boolean $check Check if exists and is readable.
      * @param
      */
-    protected function _getFullPath($path)
+    protected function _getFullPath($path, $check = true)
     {
         $baseDir = $this->getParam('base_dir');
         if (empty($baseDir)) {
             throw new UpgradeToOmekaS_Exception(
                 __('Base dir undefined.'));
         }
-        return $baseDir . DIRECTORY_SEPARATOR . ltrim($path, '/');
+        $file = $baseDir . DIRECTORY_SEPARATOR . ltrim($path, '/');
+        if ($check) {
+            if (!file_exists($file)) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('The file "%s" doesn’t exist.', $path));
+            }
+            if (!is_readable($file)) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('The file "%s" is not readable.', $path));
+            }
+        }
+        return $file;
     }
 
     /**

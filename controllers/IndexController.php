@@ -196,6 +196,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $jobDispatcher = Zend_Registry::get('bootstrap')->getResource('jobs');
         $options = array(
             'params' => $params,
+            // The current user will be the global administrator.
+            'user' => current_user(),
         );
         $jobDispatcher->setQueueName(UpgradeToOmekaS_Job_Process::QUEUE_NAME);
         $jobDispatcher->sendLongRunning('UpgradeToOmekaS_Job_Process', $options);

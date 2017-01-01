@@ -132,6 +132,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
      *
      * {@inheritDoc}
      * @see UpgradeToOmekaS_Processor_Abstract::_precheckConfig()
+     * @see application/config/module.config.php['installer']['pre_tasks']
      */
     protected function _precheckConfig()
     {
@@ -142,8 +143,10 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         if (!$this->_isProcessing) {
             $this->_checkServer();
         }
+        // See Omeka S ['installer']['pre_tasks']: CheckEnvironmentTask.php
         $this->_checkPhp();
         $this->_checkPhpModules();
+        // See Omeka S ['installer']['pre_tasks']: CheckDbConfigurationTask.php
         $this->_checkDatabaseServer();
         $this->_checkZip();
         // Don't check the jobs during true process.
@@ -155,6 +158,7 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
     protected function _checkConfig()
     {
         $this->_checkDatabase();
+        // See Omeka S ['installer']['pre_tasks']: CheckDirPermissionsTask.php
         $this->_checkFileSystem();
         $this->_checkFreeSize();
     }
@@ -734,10 +738,24 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         $this->_targetDb = $targetDb;
     }
 
+    /**
+     * @see application/config/module.config.php['installer']['tasks']
+     * @throws UpgradeToOmekaS_Exception
+     */
     protected function _installOmekaS()
     {
         $targetDb = $this->getTargetDb();
 
+        // See Omeka S ['installer']['tasks']: DestroySessionTask.php
+        // Nothing to do: there is no session by default in the tables and no
+        // user is logged since it is processed automatically.
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended (nothing to do).', 'Destroy Session'), Zend_Log::DEBUG);
+
+        // See Omeka S ['installer']['tasks']: ClearCacheTask.php
+        // Nothing to do.
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended (nothing to do).', 'Clear Cache'), Zend_Log::DEBUG);
+
+        // See Omeka S ['installer']['tasks']: InstallSchemaTask.php
         // The Omeka S schema is an optimized sql script, so use it.
         $script = $this->_getFullPath('application/data/install/schema.sql');
         $sql = file_get_contents($script);
@@ -746,21 +764,93 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             throw new UpgradeToOmekaS_Exception(
                 __('Unable to execute install queries.'));
         }
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended.', 'Install Schema'), Zend_Log::DEBUG);
 
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('The main tables are installed.'), Zend_Log::INFO);
+        // See Omeka S ['installer']['tasks']: RecordMigrationsTask.php
+        // See Omeka\Db\Migration\Manager::getAvailableMigrations()
+        // Omeka 2 should be compatible with 5.3.2.
+        $path = $this->_getFullPath('application/data/migrations');
+        $migrations = array();
+        $globPattern = $path . DIRECTORY_SEPARATOR . '*.php';
+        $regexPattern = '/^(\d+)_(\w+)\.php$/';
+        $files = glob($globPattern, GLOB_MARK);
+        foreach ($files as $filename) {
+            if (preg_match($regexPattern, basename($filename), $matches)) {
+                $version = $matches[1];
+                $migrations[] = $version;
+            }
+        }
+        $sql = 'INSERT INTO migration VALUES(' . implode('),(', $migrations) . ');';
+        $result = $targetDb->prepare($sql)->execute();
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to update list of migrations.'));
+        }
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended.', 'Record Migrations'), Zend_Log::DEBUG);
 
-        // Other tasks.
-        // Vocabulary.
+        // See Omeka S ['installer']['tasks']: InstallDefaultVocabulariesTask.php
+        // To simplify process for vocabularies, that Omeka doesn't manage, an
+        // export of a fresh automatic install is used (the installer task
+        // imports rdf vocabularies in application/data/vocabularies).
+        $script = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'libraries'
+            . DIRECTORY_SEPARATOR . 'scripts'
+            . DIRECTORY_SEPARATOR . 'rdf_vocabularies.sql';
+        $sql = file_get_contents($script);
+        $result = $targetDb->prepare($sql)->execute();
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to execute install queries for default vocabularies.'));
+        }
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended.', 'Install Default Vocabularies'), Zend_Log::DEBUG);
 
+        // See Omeka S ['installer']['tasks']: InstallDefaultTemplatesTask.php
+        // Same note than vocabularies above.
+        $script = dirname(dirname(dirname(dirname(__FILE__))))
+            . DIRECTORY_SEPARATOR . 'libraries'
+            . DIRECTORY_SEPARATOR . 'scripts'
+            . DIRECTORY_SEPARATOR . 'default_templates.sql';
+        $sql = file_get_contents($script);
+        $result = $targetDb->prepare($sql)->execute();
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to execute install queries for default templates.'));
+        }
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended.', 'Install Default Templates'), Zend_Log::DEBUG);
+
+        // See Omeka S ['installer']['tasks']: CreateFirstUserTask.php
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" skipped (processed with other users).', 'Create First User'), Zend_Log::DEBUG);
+
+        // See Omeka S ['installer']['tasks']: AddDefaultSettingsTask.php
+        $user = $this->getParam('user');
+        if (empty($user)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('No user has been defined.'));
+        }
+        // Use the option "administrator_email" instead of the current user.
+        $value = get_option('administrator_email') ?: $user->email;
+        $result = $targetDb->insert('setting', array('id' => 'administrator_email', 'value' => json_encode($value)));
+        $result = $result && $targetDb->insert('setting', array('id' => 'installation_title', 'value' => json_encode($this->getParam('installation_title'))));
+        $result = $result && $targetDb->insert('setting', array('id' => 'time_zone', 'value' => json_encode($this->getParam('time_zone'))));
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to insert default settings.'));
+        }
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('Installer Task "%s" ended.', 'Add Default Settings'), Zend_Log::DEBUG);
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The main tables are created and default data inserted.'), Zend_Log::INFO);
     }
 
     protected function _importSettings()
     {
-        // Included settings of Omeka S.
+        // Convert config.ini.
 
-        // Settings of Omeka Classic.
+        // Settings of Omeka Classic: create first site.
 
-        // Size of thumbnails
+        // application.ini: useless.
+
+        // routes.ini
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('"routes.ini" is not upgradable currently (rarely customized).'), Zend_Log::WARN);
     }
 
     protected function _importUsers()

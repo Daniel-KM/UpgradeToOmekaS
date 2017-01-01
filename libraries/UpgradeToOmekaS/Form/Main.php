@@ -81,6 +81,36 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'errorMessages' => array(__('The directory should be writable and empty.')),
         ));
 
+        $this->addElement('text', 'installation_title', array(
+            'label' => __('Installation Title'),
+            'description'   => __('Omeka Semantic can manage multiple sites, so the main install is not a site and requires a title.')
+                . ' ' . __('The current single Omeka Classic site will be the first one of Omeka Semantic.'),
+            'required' => true,
+            'value' => __('Upgrade from Omeka Classic'),
+            'filters' => array('StringTrim'),
+        ));
+
+        $timeZones = DateTimeZone::listIdentifiers();
+        $timeZones = array_combine($timeZones, $timeZones);
+        $defaultTimeZone = ini_get('date.timezone') ?: 'UTC';
+        $this->addElement('select', 'time_zone', array(
+            'label' => __('Time Zone'),
+            'description'   => __('Omeka S requires this value.'),
+            'multiOptions' => $timeZones,
+            'required' => true,
+            'value' => $defaultTimeZone,
+            'validators' => array(
+                array(
+                    'Callback',
+                    true,
+                    array(
+                        'callback' => array('UpgradeToOmekaS_Form_Validator', 'validateDateTimeZone'),
+                    ),
+                ),
+            ),
+            'errorMessages' => array(__('A time zone is required for Omeka S.')),
+        ));
+
         $multiOptions = array();
         if ($allowHardLink) {
             $multiOptions['hard_link'] = __('Hard Link (recommended)');
@@ -204,6 +234,8 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         $this->addDisplayGroup(
             array(
                 'base_dir',
+                'installation_title',
+                'time_zone',
             ),
             'general',
             array(
