@@ -1317,6 +1317,16 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
 
         $totalRecords = total_records($recordType);
 
+        // Check if there are already records.
+        $totalExisting = $this->countTargetTable('user');
+        if ($totalExisting) {
+            // TODO Allow to import without ids (need a temp mapping of source and destination ids)?
+            throw new UpgradeToOmekaS_Exception(
+                __('Some users(%d) have been imported, so ids won’t be kept.',
+                    $totalExisting)
+                . ' ' . __('Check the processors of the plugins.'));
+        }
+
         // This case is possible with an external identification (ldap...).
         if (empty($totalRecords)) {
             $toInsert = array();
@@ -1337,17 +1347,22 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // There is one or more users, at least the current one.
         else {
             $mappingRoles = $this->getMerged('mapping_roles');
-            $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
+
+            // The process uses the regular queries of Omeka in order to keep
+            // only good records.
+            $table = $db->getTable('User');
+
+            $columnsRecord = array('id', 'email', 'name', 'created', 'role', 'is_active');
+
             $totalSupers = 0;
             $totalAdmins = 0;
             $unmanagedRoles = array();
-            for ($page = 1; $page <= $loops; $page++) {
-                // The process uses the regular queries of Omeka in order to keep
-                // only good records.
-                $table = $db->getTable('User');
-                $records = $table->findBy(array(), $this->maxChunk, $page);
-                $toInserts = array();
 
+            $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
+            for ($page = 1; $page <= $loops; $page++) {
+                $records = $table->findBy(array(), $this->maxChunk, $page);
+
+                $toInserts = array();
                 foreach ($records as $record) {
                     if ($record->role == 'super') {
                         $totalSupers++;
@@ -1363,22 +1378,16 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
                     $role = $record->id == $user->id ? 'global_admin' : $mappingRoles[$record->role];
                     $toInsert = array();
                     $toInsert['id'] = (integer) $record->id;
-                    $toInsert['email'] = $targetDb->quote(substr($record->email, 0, 190));
-                    $toInsert['name'] = $targetDb->quote(substr($record->name, 0, 190));
-                    $toInsert['created'] = $targetDb->quote($this->getDatetime());
-                    $toInsert['role'] = $targetDb->quote($role);
+                    $toInsert['email'] = substr($record->email, 0, 190);
+                    $toInsert['name'] = substr($record->name, 0, 190);
+                    $toInsert['created'] = $this->getDatetime();
+                    $toInsert['role'] = $role;
                     $toInsert['is_active'] = (integer) (boolean) $record->active;
-                    $toInserts[] = implode(",\t", $toInsert);
+                    $toInserts[] = $this->_dbQuote($toInsert);
                 }
 
                 if ($toInserts) {
-                    $sql = 'INSERT INTO `user` (`id`, `email`, `name`, `created`, `role`, `is_active`) VALUES ';
-                    $sql .= '(' . implode('),' . PHP_EOL . '(', $toInserts) . ');';
-                    $result = $targetDb->prepare($sql)->execute();
-                    if (!$result) {
-                        throw new UpgradeToOmekaS_Exception(
-                            __('Unable to insert users.'));
-                    }
+                    $this->_insertRows('user', $columnsRecord, $toInserts);
                 }
             }
 
