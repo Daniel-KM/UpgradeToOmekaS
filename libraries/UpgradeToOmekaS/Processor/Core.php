@@ -68,9 +68,13 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         '_importSite',
         '_importItemTypes',
         '_importElements',
-        '_importCollections',
+        // Items are imported before collections in order to keep their ids.
         '_importItems',
+        '_createItemSetForSite',
+        '_importCollections',
+        '_setCollectionOfItems',
         '_importFiles',
+        '_importMetadata',
 
         // Files.
         '_copyFiles',
@@ -227,6 +231,13 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
      * @var integer
      */
     protected $_destinationFreeSize;
+
+    /**
+     * Store the current mapping of record ids between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    protected $_mappingIds = array();
 
     protected function _init()
     {
@@ -1586,19 +1597,272 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
         // TODO Allow to create properties in a custom ontology, or list more than the default ones.
     }
 
-    protected function _importCollections()
-    {
-
-    }
-
     protected function _importItems()
     {
+        // Because items are the first resource imported, their ids are kept.
+        // This implies that files are imported separately and that the
+        // collection id of all items are set in a second step.
+        $this->_importRecords('Item');
 
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The record status "Featured" doesn’t exist in Omeka S.'),
+            Zend_Log::INFO);
+    }
+
+    protected function _importCollections()
+    {
+        $this->_importRecords('Collection');
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The status "Is Open" has been added to item sets.'),
+            Zend_Log::INFO);
+    }
+
+    protected function _createItemSetForSite()
+    {
+        // Create the item set.
+
+        // Set it as as a collection for the site.
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('A site may group a set of items.'),
+            Zend_Log::INFO);
+    }
+
+    protected function _setCollectionOfItems()
+    {
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, an item can belong to multiple collections (item sets) and multipe sites.'),
+            Zend_Log::INFO);
     }
 
     protected function _importFiles()
     {
+        $this->_importRecords('File');
 
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('In Omeka S, each attached files can be hidden/shown separately.'),
+            Zend_Log::INFO);
+    }
+
+    /**
+     * Helper to import standard records of Omeka C (items, collections, files).
+     *
+     * @param string $recordType
+     * @throws UpgradeToOmekaS_Exception
+     * @return void
+     */
+    protected function _importRecords($recordType)
+    {
+        $mappingRecordTypes = array(
+            'Item' => 'item',
+            'Collection' => 'item_set',
+            'File' => 'media',
+        );
+        if (!isset($mappingRecordTypes[$recordType])) {
+            return;
+        }
+        $mappedType = $mappingRecordTypes[$recordType];
+
+        $resourceTypes = array(
+            'Item' => 'Omeka\Entity\Item',
+            'Collection' => 'Omeka\Entity\ItemSet',
+            'File' => 'Omeka\Entity\Media',
+        );
+
+        // Prepare a string for the messages.
+        $recordTypeSingular = Inflector::humanize(Inflector::underscore($recordType));
+        $recordTypePlural = Inflector::pluralize($recordTypeSingular);
+
+        $totalRecords = total_records($recordType);
+        if (empty($totalRecords)) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('No %s to import.',
+                $recordTypeSingular), Zend_Log::INFO);
+            return;
+        }
+
+        $db = $this->_db;
+        $targetDb = $this->getTargetDb();
+
+        $user = $this->getParam('user');
+
+        // The process uses the regular queries of Omeka in order to keep
+        // only good records and to manage filters.
+        $table = $db->getTable($recordType);
+
+        $columnsResource = array(
+            'id', 'owner_id', 'resource_class_id', 'resource_template_id',
+            'is_public', 'created', 'modified', 'resource_type');
+
+        $columnsRecords = array(
+            'item' => array('id'),
+            'item_set' => array('id', 'is_open'),
+            'media' => array('id', 'item_id', 'ingester', 'renderer', 'data',
+                'source', 'media_type', 'storage_id', 'extension', 'sha256',
+                'has_original', 'has_thumbnails', 'position', 'lang',
+            ),
+        );
+
+        // The list of user ids allows to check if the owner of a record exists.
+        // The id of users are kept between Omeka C and Omeka S.
+        $userIds = $this->_getRecordIds('User');
+
+        // TODO Add the resource template when it will be created.
+        $defaultResourceTemplateId = null;
+
+        // Specificities for each record type. This avoids to loop some process.
+        $lastId = null;
+        switch ($recordType) {
+            case 'Item':
+                // Check if there are already records.
+                $totalExisting = $this->countTargetTable('resource');
+                if ($totalExisting) {
+                    // TODO Allow to import without ids (need a temp mapping of source and destination ids)?
+                    throw new UpgradeToOmekaS_Exception(
+                        __('Some items (%d) have been imported, so ids won’t be kept.',
+                            $totalExisting)
+                        . ' ' . __('Check the processors of the plugins.'));
+                }
+
+                $mappingItemTypes = $recordType == 'Item'
+                    ? $this->getMappingItemTypesToClasses('id', 'id')
+                    : array();
+                break;
+
+            case 'Collection':
+            case 'File':
+                // Get the greatest resource id (i.e. the last inserted id).
+                // Normally, for collection, this is the total of items + 1.
+                // For files, this is the total of items and collections + 1
+                // (item set of the site) + 1.
+                $lastId = $this->_getGreatestId('resource');
+                break;
+        }
+
+        $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
+        for ($page = 1; $page <= $loops; $page++) {
+            $records = $table->findBy(array(), $this->maxChunk, $page);
+
+            $toInsertResources = array();
+            $toInsertRecords = array();
+            foreach ($records as $record) {
+                $toInsert = array();
+                switch ($recordType) {
+                    case 'Item':
+                        $id = $record->id;
+                        $ownerId = isset($userIds[$record->owner_id])
+                            ? $record->owner_id
+                            : null;
+                        $resourceClassId = isset($mappingItemTypes[$record->item_type_id])
+                            ? $mappingItemTypes[$record->item_type_id]
+                            : null;
+                        $isPublic = (integer) (boolean) $record->public;
+                        break;
+                    case 'Collection':
+                        $id = ++$lastId;
+                        $ownerId = isset($userIds[$record->owner_id])
+                            ? $record->owner_id
+                            : null;
+                        $resourceClassId = null;
+                        $isPublic = (integer) (boolean) $record->public;
+                        break;
+                    case 'File':
+                        $id = ++$lastId;
+                        $item = $record->getItem();
+                        $ownerId = isset($userIds[$item->owner_id])
+                            ? $item->owner_id
+                            : null;
+                        $resourceClassId = null;
+                        $isPublic = 1;
+                        break;
+                }
+                $this->_mappingIds[$recordType][$record->id] = $id;
+
+                $toInsert['id'] = $id;
+                $toInsert['owner_id'] = $ownerId;
+                $toInsert['resource_class_id'] = $resourceClassId;
+                $toInsert['resource_template_id'] = $defaultResourceTemplateId;
+                $toInsert['is_public'] = $isPublic;
+                $toInsert['created'] = $record->added;
+                $toInsert['modified'] = $record->modified;
+                $toInsert['resource_type'] = $resourceTypes[$recordType];
+                $toInsertResources[] = $this->_dbQuote($toInsert);
+
+                $toInsert = array();
+                $toInsert['id'] = $id;
+                switch ($recordType) {
+                    case 'Item':
+                        // Currently, the table "item" contains only the id.
+                        break;
+                    case 'Collection':
+                        $toInsert['is_open'] = 1;
+                        break;
+                    case 'File':
+                        $source = $record->original_filename;
+                        $scheme = parse_url($source, PHP_URL_SCHEME);
+                        $isRemote = UpgradeToOmekaS_Common::isRemote($source);
+                        $extension = pathinfo($source, PATHINFO_EXTENSION);
+                        // This allows to manage the plugin Archive Repertory.
+                        $storageId = $extension
+                            ? substr($record->filename, 0, strrpos($record->filename, $extension) - 1)
+                            : $record->filename;
+                        $toInsert['item_id'] = $item->id;
+                        $toInsert['ingester'] = $isRemote ? 'url' : 'upload';
+                        $toInsert['renderer'] = 'file';
+                        $toInsert['data'] = null;
+                        $toInsert['source'] = $source;
+                        $toInsert['media_type'] = $record->mime_type;
+                        $toInsert['storage_id'] = $storageId;
+                        $toInsert['extension'] = $extension;
+                        // The sha256 is optional and set later (here or in the
+                        // compatibility module).
+                        $toInsert['sha256'] = null;
+                        $toInsert['has_original'] = 1;
+                        $toInsert['has_thumbnails'] = (integer) (boolean) $record->has_derivative_image;
+                        $toInsert['position'] = $record->order ?: 1;
+                        $toInsert['lang'] = null;
+                        break;
+                }
+                $toInsertRecords[] = $this->_dbQuote($toInsert);
+            }
+
+            if ($toInsertResources) {
+                $this->_insertRows('resource', $columnsResource, $toInsertResources);
+                $this->_insertRows($mappedType, $columnsRecords[$mappedType], $toInsertRecords);
+            }
+        }
+
+        // A final check, normally useless.
+        $totalTargetRecords = $this->countTargetTable($mappedType);
+        if ($totalRecords > $totalTargetRecords) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Only %d/%d %s have been upgraded into "%s".',
+                    $totalTargetRecords, $totalRecords, $recordTypePlural, $mappedType));
+        }
+        // May be possible with plugins?
+        if ($totalRecords < $totalTargetRecords) {
+            throw new UpgradeToOmekaS_Exception(
+                __('An error occurred: there are %d upgraded "%s" in Omeka S, but only %d %s in Omeka C.',
+                    $totalTargetRecords, $mappedType, $totalRecords, $recordType)
+                . ' ' . __('Check the processors of the plugins.'));
+        }
+
+        if (in_array($recordType, array('Item', 'Collection'))) {
+            // The roles are checked, because at this point, all users were
+            // imported according to the role and there is no option to set a
+            // default role to the users without an existing role.
+            $lostOwners = $this->countRecordsWithoutOwner($recordType, 'owner_id', true);
+            if ($lostOwners) {
+                $this->_log('[' . __FUNCTION__ . ']: '
+                    . ($lostOwners <= 1
+                        ? __('One %s has lost its owner.', $recordTypeSingular)
+                        : __('%d %s have lost their owner.', $lostOwners, $recordTypePlural)),
+                    Zend_Log::NOTICE);
+            }
+        }
+
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('All %s (%d) have been upgraded as "%s".',
+            $recordTypePlural, $totalRecords, $mappedType), Zend_Log::INFO);
+    }
+
+    protected function _importMetadata()
+    {
     }
 
     protected function _copyFiles()
@@ -2087,5 +2351,87 @@ class UpgradeToOmekaS_Processor_Core extends UpgradeToOmekaS_Processor_Abstract
             }
         }
         return $unmapped;
+    }
+
+    /**
+     * Helper to get the list of ids of a record type.
+     *
+     * @param string $recordType
+     * @return array
+     */
+    protected function _getRecordIds($recordType)
+    {
+        $db = $this->_db;
+        $table = $db->getTable($recordType);
+        $alias = $table->getTableAlias();
+        $select = $table->getSelect()
+            ->reset(Zend_Db_Select::COLUMNS)
+            ->from(array(), array(
+                'id' => $alias  . '.id',
+            ))
+            ->order($alias . '.id');
+        $result = $db->fetchCol($select);
+        return array_combine($result, $result);
+    }
+
+    /**
+     * Helper to get the count of lost owners for a record type.
+     *
+     * The user may be removed or not importable (no role).
+     *
+     * @param string $recordType
+     * @param string $columnName
+     * @param boolean $checkRoles Check only for records whose owner has an
+     * role importable in Omeka S.
+     * @return integer
+     */
+    public function countRecordsWithoutOwner($recordType, $columnName = 'owner_id', $checkRoles = false)
+    {
+        $db = $this->_db;
+
+        $sqlRoles = '';
+        if ($checkRoles) {
+            $mappingRoles = $this->getMerged('mapping_roles');
+            $roles = array_keys($mappingRoles);
+            if ($roles) {
+                $sqlRoles = 'OR users.`role` NOT IN ("' . implode('", "', $roles) . '")';
+            }
+        }
+
+        // Mysql doesn't support full outer join.
+        $sql = "
+        SELECT
+            COUNT(records.`id`) AS total
+        FROM {$db->$recordType} records
+        LEFT JOIN {$db->User} users
+            ON records.`$columnName` = users.`id`
+        WHERE records.`$columnName` IS NULL
+            OR users.`id` IS NULL
+            $sqlRoles
+        ;";
+        $result = $db->fetchOne($sql);
+        return $result;
+    }
+
+    /**
+     * Helper to get the count of lost owners for a record type in the target.
+     *
+     * @param string $tableName
+     * @param string $columnName
+     * @return integer
+     */
+    public function countTargetRecordsWithoutOwner($tableName, $columnName = 'owner_id')
+    {
+        // Because there are constraints in the database of Omeka S, a simple
+        //check on null is enough.
+        $targetDb = $this->getTargetDb();
+        $sql = "
+        SELECT
+            COUNT(record.`id`) AS total
+        FROM {$tableName} record
+        WHERE record.`$columnName` IS NULL
+        ;";
+        $result = $targetDb->fetchOne($sql);
+        return $result;
     }
 }

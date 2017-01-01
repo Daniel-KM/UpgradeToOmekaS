@@ -552,6 +552,110 @@ class UpgradeToOmekaS_Processor_CoreTest extends UpgradeToOmekaS_Test_AppTestCas
         $this->markTestIncomplete();
     }
 
+    public function testImportItems()
+    {
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
+            '_importItems'));
+        $result = $processor->process();
+        $targetDb = $processor->getTargetDb();
+
+        // There is one item by default.
+        $totalRecords = total_records('Item');
+
+        $result = $processor->countTargetTable('item');
+        $this->assertEquals($totalRecords, $result);
+        $result = $processor->countTargetTable('resource');
+        $this->assertEquals($totalRecords, $result);
+    }
+
+    public function testImportCollections()
+    {
+        $this->_checkDownloadedOmekaS();
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
+                '_importCollections'));
+        $result = $processor->process();
+        $targetDb = $processor->getTargetDb();
+
+        // There are no collection by default.
+        $totalRecords = total_records('Collection');
+        $result = $processor->countTargetTable('item_set');
+        $this->assertEquals($totalRecords, $result);
+        $result = $processor->countTargetTable('resource');
+        $this->assertEquals($totalRecords, $result);
+    }
+
+    public function testImportItemsCollections()
+    {
+        $this->_checkDownloadedOmekaS();
+
+        $itemDefaultId = 1;
+
+        // Create a missing id.
+        $item = new Item();
+        $item->save();
+        $item->delete();
+
+        $item = new Item();
+        $item->owner_id = 25;
+        $item->save();
+        $itemWithoutOwnerId = $item->id;
+
+        // Create a missing id.
+        $item = new Item();
+        $item->save();
+        $item->delete();
+
+        $collection = new Collection();
+        $collection->save();
+        $collectionId = $collection->id;
+
+        $item = new Item();
+        $item->collection_id = $collection->id;
+        $item->public = 1;
+        $item->save();
+        $itemInCollectionId = $item->id;
+
+        $totalItems = total_records('Item');
+        $this->assertEquals(3, $totalItems);
+        $totalCollections = total_records('Collection');
+        $this->assertEquals(1, $totalCollections);
+
+        $processor = $this->_prepareProcessor(
+            array('user' => $this->user),
+            array('_unzipOmekaS', '_configOmekaS', '_installOmekaS', '_importUsers',
+                '_importItems', '_importCollections'));
+        $result = $processor->process();
+        $targetDb = $processor->getTargetDb();
+
+        $result = $processor->countTargetTable('item');
+        $this->assertEquals($totalItems, $result);
+        $result = $processor->countTargetTable('item_set');
+        $this->assertEquals($totalCollections, $result);
+        $result = $processor->countTargetTable('resource');
+        $this->assertEquals($totalItems + $totalCollections, $result);
+
+        $sql = 'SELECT * FROM resource;';
+        $result = $targetDb->fetchAll($sql);
+
+        $this->assertEquals('Omeka\Entity\Item', $result[1]['resource_type']);
+        $this->assertEquals($itemWithoutOwnerId, $result[1]['id']);
+        $this->assertEmpty($result[1]['owner_id']);
+        $this->assertEmpty($result[1]['is_public']);
+
+        $this->assertEquals($itemInCollectionId, $result[2]['id']);
+        $this->assertNotEmpty($result[2]['is_public']);
+
+        $this->assertEquals('Omeka\Entity\ItemSet', $result[3]['resource_type']);
+        $this->assertEquals(6, $result[3]['id']);
+        $this->assertEmpty($result[3]['is_public']);
+        $this->assertEquals($this->user->id, $result[3]['owner_id']);
+    }
+
     protected function _prepareProcessor($params = null, $methods = array(), $checkDir = true)
     {
         set_option('upgrade_to_omeka_s_process_status', Process::STATUS_IN_PROGRESS);

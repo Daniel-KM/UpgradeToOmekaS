@@ -641,6 +641,97 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Helper to quote a value before insertion of multiple rows in database.
+     *
+     * It safely quotes a value for an SQL statement. If an array is passed as
+     * the value, the array values are quoted and then returned as a
+     * comma-separated string.
+     *
+     * @internal Unlike Zend_Db_Adapter_Abstract::quote(), it takes care of
+     * the value "null", kept as NULL, not "".
+     *
+     * @param mixed $value If array, it should be a flat one.
+     * @return string A database quoted string, according to the value type. The
+     * separator is a comma + a tabulation.
+     */
+    protected function _dbQuote($value)
+    {
+        if (is_null($value)) {
+            return 'NULL';
+        }
+
+        if (is_array($value)) {
+            $result = array_map(array($this, '_dbQuote'), $value);
+            return implode(",\t", $result);
+        }
+
+        return $this->_db->quote($value);
+    }
+
+    /**
+     * Helper to insert multiple quoted rows in a table of the target database.
+     *
+     * @internal An early quotation of rows may save memory with big chunks.
+     *
+     * @param string $table
+     * @param array $columns
+     * @param array $rows
+     * @param boolean $areQuoted
+     * @throws UpgradeToOmekaS_Exception
+     */
+    protected function _insertRows($table, $columns, $rows, $areQuoted = true)
+    {
+        $targetDb = $this->getTargetDb();
+
+        $sql = sprintf('INSERT INTO `%s` (`%s`) VALUES ', $table, implode('`, `', $columns));
+        if (!$areQuoted) {
+            foreach ($rows as &$values) {
+                $values = $this->_dbQuote($values);
+            }
+        }
+        $sql .= PHP_EOL . '(' . implode('),' . PHP_EOL . '(', $rows) . ');';
+        $result = $targetDb->prepare($sql)->execute();
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to insert data in table %s.', $table));
+        }
+    }
+
+    /**
+     * Return the greatest id for a target table.
+     *
+     * This is the last inserted id of the table, since there is no deletion
+     * during the upgrade process, at least for main records.
+     *
+     * @param string $table
+     * @return integer
+     */
+    protected function _getGreatestId($table)
+    {
+        $targetDb = $this->getTargetDb();
+        $select = $targetDb->select()
+            ->from($table, array('id'))
+            ->order('id DESC');
+        $lastId = $targetDb->fetchOne($select);
+        return $lastId;
+    }
+
+    /**
+     * Helper to get the total rows of a target table.
+     *
+     * @param string $table
+     * @return integer
+     */
+    public function countTargetTable($table)
+    {
+        $targetDb = $this->getTargetDb();
+        $select = $targetDb->select()
+            ->from($table, array(new Zend_Db_Expr('COUNT(*)')));
+        $result = $targetDb->fetchOne($select);
+        return $result;
+    }
+
+    /**
      * Get the mapping from Omeka C item types to Omeka S classes.
      *
      * This method doesn't use the database of Omeka S, but the file "classes.php".
