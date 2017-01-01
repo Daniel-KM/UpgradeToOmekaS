@@ -803,6 +803,11 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             }
         }
 
+        // Fix a Zend related bug (the "-" is not set in the form) for roles.
+        if (isset($params['mapping_roles']['contributionanonymous'])) {
+            $params['mapping_roles']['contribution-anonymous'] = $params['mapping_roles']['contributionanonymous'];
+        }
+
         return $params;
     }
 
