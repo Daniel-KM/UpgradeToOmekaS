@@ -83,7 +83,8 @@ class UpgradeToOmekaS_Processor_CoreSiteTest extends UpgradeToOmekaS_Test_AppTes
         $result = $targetDb->fetchRow($sql);
         $nav = json_decode($result['navigation'], true);
 
-        $this->assertEquals(5, count($nav));
+        // 2 defaults + 3 hooks + homepage.
+        $this->assertEquals(6, count($nav));
         $this->assertEquals('Foo', $nav[2]['data']['label']);
         $this->assertEquals('http://www.example.com/foo', $nav[2]['data']['url']);
         $this->assertEquals('Search bar', $nav[3]['data']['label']);

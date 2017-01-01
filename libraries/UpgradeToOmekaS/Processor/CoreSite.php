@@ -758,13 +758,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
         $title = $this->getSiteTitle();
         $slug = $this->getSiteSlug();
-        $theme = !empty($settings->default->site->theme)
-            ? $settings->default->site->theme
-            : get_option('public_theme');
-
-        if ($theme == 'default') {
-            $theme = 'classic';
-        }
+        $theme = $this->getSiteTheme();
 
         $id = 1;
 
@@ -883,13 +877,14 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $siteId = $this->getSiteId();
 
         // Upgrade options required by the site.
-        $searchRecordTypes = unserialize(get_option('search_record_types'));
-        $searchResourceTypes = empty($searchRecordTypes) ? array() : array_flip(array_filter($searchRecordTypes));
+        $searchResourceTypes = $this->upgradeSearchRecordTypes();
         $target->saveSiteSetting('upgrade_search_resource_types', $searchResourceTypes);
         $target->saveSiteSetting('upgrade_show_empty_properties', (string) get_option('show_empty_elements'));
         $target->saveSiteSetting('upgrade_show_vocabulary_headings', (string) get_option('show_element_set_headings'));
         $target->saveSiteSetting('upgrade_tag_delimiter', (string) get_option('tag_delimiter'));
-        $target->saveSiteSetting('upgrade_use_advanced_search', (string) get_theme_option('use_advanced_search'));
+        // It fails with the theme Neatscape (no config).
+        $useAdvancedSearch = $theme == 'neatscape' ? '0' : (string) get_theme_option('use_advanced_search');
+        $target->saveSiteSetting('upgrade_use_advanced_search', $useAdvancedSearch);
         $target->saveSiteSetting('upgrade_use_square_thumbnail', (string) get_option('use_square_thumbnail'));
 
         // Give all users access right to view the site.
@@ -927,6 +922,40 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The first site has been created.')
                 . ' ' . __('Each user has a specific role in it.'),
             Zend_Log::INFO);
+    }
+
+    /**
+     * Helper to upgrade search record types.
+     *
+     * @return array
+     */
+    public function upgradeSearchRecordTypes()
+    {
+        $searchRecordTypes = unserialize(get_option('search_record_types'));
+        if (isset($searchRecordTypes['Collection'])) {
+            $searchRecordTypes['ItemSet'] = 'ItemSet';
+            unset($searchRecordTypes['Collection']);
+        }
+        if (isset($searchRecordTypes['File'])) {
+            $searchRecordTypes['Media'] = 'Media';
+            unset($searchRecordTypes['File']);
+        }
+        if (isset($searchRecordTypes['SimplePagesPage'])) {
+            $searchRecordTypes['Page'] = 'Page';
+            unset($searchRecordTypes['SimplePagesPage']);
+        }
+        if (isset($searchRecordTypes['Exhibit'])) {
+            $searchRecordTypes['Page'] = 'Page';
+            unset($searchRecordTypes['Exhibit']);
+        }
+        if (isset($searchRecordTypes['ExhibitPage'])) {
+            $searchRecordTypes['Page'] = 'Page';
+            unset($searchRecordTypes['ExhibitPage']);
+        }
+        $searchResourceTypes = empty($searchRecordTypes)
+            ? array()
+            : array_flip(array_filter($searchRecordTypes));
+        return $searchResourceTypes;
     }
 
     /**

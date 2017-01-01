@@ -20,6 +20,10 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
         '_upgradeData',
     );
 
+    public $mapping_models = array(
+        'simple_pages_page' => 'page',
+    );
+
     protected function _upgradeData()
     {
         $recordType = 'SimplePagesPage';
@@ -53,6 +57,8 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
                 $totalExisting - 1), Zend_Log::INFO);
         }
 
+        $pageSlugs = array();
+
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
         for ($page = 1; $page <= $loops; $page++) {
             $this->_progress(($page - 1) * $this->maxChunk);
@@ -61,11 +67,17 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
             $baseId = 0;
             $toInserts = array();
             foreach ($records as $record) {
+                $slug = substr($record->slug, 0, 190);
+                if (in_array($slug, $pageSlugs) || $slug == 'homepage-site') {
+                    $slug = substr($record->slug, 0, 190 - 20) . '-page-' . $record->id;
+                }
+                $pageSlugs[] = $slug;
+
                 $id = $previousRecordsExistsExceptHomepage ? null : (integer) $record->id;
                 $toInsert = array();
                 $toInsert['id'] = $id;
                 $toInsert['site_id'] = $siteId;
-                $toInsert['slug'] = substr($record->slug, 0, 190);
+                $toInsert['slug'] = $slug;
                 $toInsert['title'] = substr($record->title, 0, 190);
                 $toInsert['created'] = $record->inserted;
                 $toInsert['modified'] = $record->updated;

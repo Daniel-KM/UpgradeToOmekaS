@@ -45,6 +45,15 @@ ALTER TABLE mapping ADD CONSTRAINT FK_49E62C8A126F525E FOREIGN KEY (item_id) REF
         '_installModule',
     );
 
+    public $mapping_models = array(
+        // The zoom level is replaced by "mapping".
+        'location' => 'mapping_marker',
+    );
+
+    public $mapping_layouts = array(
+        'geolocation-map' => 'mappingMap',
+    );
+
     protected function _upgradeData()
     {
         $recordType = 'Location';

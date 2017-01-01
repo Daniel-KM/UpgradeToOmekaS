@@ -26,18 +26,6 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
     );
 
     /**
-     * The mapping of record types between Omeka C and Omeka S.
-     *
-     * @var array
-     */
-    protected $_mappingRecordTypes = array(
-        'Item' => 'item',
-        'Collection' => 'item_set',
-        'File' => 'media',
-        'ElementText' => 'value',
-    );
-
-    /**
      * The mapping between classes between Omeka C and Omeka S.
      *
      * @var array
@@ -47,13 +35,6 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         'Collection' => 'Omeka\Entity\ItemSet',
         'File' => 'Omeka\Entity\Media',
     );
-
-    /**
-     * Store the current mapping of record ids between Omeka C and Omeka S.
-     *
-     * @var array
-     */
-    protected $_mappingIds = array();
 
     /**
      * The item set for the site.
@@ -221,6 +202,8 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
 
         $siteId = $this->getSiteId();
 
+        $mappedCollectionIds = $this->fetchMappedIds('Collection');
+
         $table = $db->getTable($recordType);
 
         // Get the item set id of the site, if any.
@@ -234,7 +217,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
             $toInserts = array();
             foreach ($records as $record) {
                 if (!empty($record->collection_id)) {
-                    if (!isset($this->_mappingIds['Collection'][$record->collection_id])) {
+                    if (!isset($mappedCollectionIds[$record->collection_id])) {
                         throw new UpgradeToOmekaS_Exception(
                             __('The collection #%d for item #%d can’t be found in Omeka S.',
                                 $record->collection_id, $record->id)
@@ -243,7 +226,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
 
                     $toInsert = array();
                     $toInsert['item_id'] = $record->id;
-                    $toInsert['item_set_id'] = $this->_mappingIds['Collection'][$record->collection_id];
+                    $toInsert['item_set_id'] = $mappedCollectionIds[$record->collection_id];
                     $toInserts[] = $target->cleanQuote($toInsert);
                 }
 
@@ -306,10 +289,10 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
      */
     protected function _upgradeRecords($recordType)
     {
-        if (!isset($this->_mappingRecordTypes[$recordType])) {
+        if (!isset($this->mapping_models[inflector::underscore($recordType)])) {
             return;
         }
-        $mappedType = $this->_mappingRecordTypes[$recordType];
+        $mappedType = $this->mapping_models[inflector::underscore($recordType)];
 
         // Prepare a string for the messages.
         $recordTypeSingular = strtolower(Inflector::humanize(Inflector::underscore($recordType)));
@@ -338,7 +321,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         // The list of user ids allows to check if the owner of a record exists.
         // The id of users are kept between Omeka C and Omeka S.
         // Some users may not have been upgraded.
-        $targetUserIds = $target->getIds('user');
+        $targetUserIds = $target->fetchIds('user');
 
         // TODO Add the resource template when it will be created.
         $defaultResourceTemplateId = null;
@@ -429,7 +412,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                     ++$baseId;
                 }
                 else {
-                    $this->_mappingIds[$recordType][$record->id] = $id;
+                    $this->_mappingIds[$recordType][$record->id] = (integer) $id;
                 }
 
                 $toInsert = array();
@@ -480,6 +463,8 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                 $this->_remapIds($remapIds[$recordType], $recordType);
             }
         }
+
+        $this->storeMappedIds($recordType, $this->_mappingIds[$recordType]);
 
         // A final check, normally useless.
         $totalTarget = $target->totalRows($mappedType);
@@ -542,7 +527,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         $target = $this->getTarget();
         $targetDb = $target->getDb();
 
-        $mappedType = $this->_mappingRecordTypes[$recordType];
+        $mappedType = $this->mapping_models[inflector::underscore($recordType)];
 
         // Prepare a string for the messages.
         $recordTypeSingular = strtolower(Inflector::humanize(Inflector::underscore($recordType)));
@@ -587,13 +572,14 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         }
 
         $this->_mappingIds[$recordType] += array_combine($remapIds, $result);
+        $this->_mappingIds[$recordType] = array_map('intval', $this->_mappingIds[$recordType]);
     }
 
     protected function _upgradeMetadata()
     {
         $recordType = 'ElementText';
 
-        $mappedType = $this->_mappingRecordTypes[$recordType];
+        $mappedType = $this->mapping_models[inflector::underscore($recordType)];
 
         // Prepare a string for the messages.
         $recordTypeSingular = strtolower(Inflector::humanize(Inflector::underscore($recordType)));
@@ -634,12 +620,13 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                 }
                 // The record id has changed: check it.
                 else {
-                    if (!isset($this->_mappingIds[$etRecordType][$etRecordId])) {
+                    $mappedIds = $this->fetchMappedIds($etRecordType);
+                    if (!isset($mappedIds[$etRecordId])) {
                         throw new UpgradeToOmekaS_Exception(
                             __('The %s #%d can’t be found in Omeka S.',
                                 $etRecordType, $etRecordId));
                     }
-                    $resourceId = $this->_mappingIds[$etRecordType][$etRecordId];
+                    $resourceId = $mappedIds[$etRecordId];
                 }
 
                 // Check if the element has been mapped to a property.

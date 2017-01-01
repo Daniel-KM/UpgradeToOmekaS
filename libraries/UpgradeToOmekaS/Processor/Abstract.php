@@ -60,6 +60,35 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $specificProcessMethods = array();
 
     /**
+     * Mapping of models between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    public $mapping_models = [
+        'element_set' => 'vocabulary',
+        'element' => 'property',
+        'item_type' => 'resource_class',
+        'item_type_element' => 'property',
+        'record' => 'resource',
+        'item' => 'item',
+        'collection' => 'item_set',
+        'file' => 'media',
+        'element_text' => 'value',
+
+        'user' => 'user',
+        'users_activation' => 'password_creation',
+        'key' => 'api_key',
+        // Options can be "site_setting" or theme setting too.
+        'option' => 'setting',
+        'plugin' => 'module',
+        'process' => 'job',
+        'schema_migration' => 'migration',
+        'search_text' => '',
+        'session' => 'session',
+        'tag' => '',
+    ];
+
+    /**
      * The mapping of derivative files between Omeka C and Omeka S.
      *
      * @var array
@@ -131,6 +160,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @var array
      */
     public $upgrade_files = array();
+
+    /**
+     * Mapping of each exhibit block layout between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    public $mapping_layouts = array();
 
     /**
      * Maximum rows to process by loop.
@@ -227,6 +263,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_siteSlug;
 
     /**
+     * The theme of the first site on Omeka S.
+     *
+     * @var string
+     */
+    protected $_siteTheme;
+
+    /**
      * The id of the first site once created (always #1).
      *
      * @var string
@@ -239,6 +282,28 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @var array
      */
     protected $_merged = array();
+
+
+    /**
+     * Temp store for current mapping of record ids between Omeka C and Omeka S.
+     *
+     * @var array
+     */
+    protected $_mappingIds = array();
+
+    /**
+     * Store the mapped record ids between Omeka C and Omeka S.
+     *
+     * @var UpgradeToOmekaS_MappedIds
+     */
+    protected $_mappedIds;
+
+    /**
+     * Internal count the current progression.
+     *
+     * @var integer
+     */
+    protected $_progressCurrent = 0;
 
     /**
      * Constructor of the class.
@@ -396,11 +461,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     /**
      * Get the list of all active processors with current params.
      *
-     * @internal Not very clean to set processors inside a processor, even if
-     * there is no impact on memory. Used to get filtered values, in particular
-     * the list of roles, to convert the navigation menu and to get the values
-     * that depend on params (mappings).
-     *
      * @return array
      */
     public function getProcessors()
@@ -532,6 +592,16 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Helper to get the site id (#1).
+     *
+     * @return integer
+     */
+    public function getSiteId()
+    {
+        return $this->_siteId;
+    }
+
+    /**
      * Helper to get the site title.
      *
      * @return string
@@ -562,13 +632,22 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Helper to get the site id (#1).
+     * Helper to get the site theme in Omeka S.
      *
-     * @return integer
+     * @internal The upgraded default theme is "classic".
+     *
+     * @return string
      */
-    public function getSiteId()
+    public function getSiteTheme()
     {
-        return $this->_siteId;
+        if (empty($this->_siteTheme)) {
+            $theme = get_option('public_theme');
+            if (empty($theme) || $theme == 'default') {
+                $theme = 'classic';
+            }
+            $this->_siteTheme = $theme;
+        }
+        return $this->_siteTheme;
     }
 
     /**
@@ -1328,20 +1407,86 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Helper to get the list of ids of a record type.
+     * Helper to list the ids of a record type or any column with unique values.
      *
      * @param string $recordType
+     * @param string $column
      * @return array Associative array of ids.
      */
-    protected function _getRecordIds($recordType)
+    protected function _getRecordIds($recordType, $column = 'id')
     {
         $db = $this->_db;
+        if (!$table->hasColumn($column)) {
+            return;
+        }
         $select = $db->getTable($recordType)->getSelect()
             ->reset(Zend_Db_Select::COLUMNS)
-            ->from(array(), 'id')
-            ->order('id');
+            ->from(array(), $column)
+            ->order($column);
         $result = $db->fetchCol($select);
         return array_combine($result, $result);
+    }
+
+    /**
+     * Helper to get an associative array of two columns of a table.
+     *
+     * @param string $table
+     * @param string $columnKey
+     * @param string $columnValue
+     * @return array Associative array of two columns.
+     */
+    protected function _fetchPairs($recordType, $columnKey, $columnValue)
+    {
+        $db = $this->_db;
+        $table = $db->getTable($recordType);
+        if (!$table->hasColumn($columnKey) || !$table->hasColumn($columnValue)) {
+            return;
+        }
+        $select = $db->select()
+            ->reset(Zend_Db_Select::COLUMNS)
+            ->from($recordType, array($columnKey, $columnValue))
+            ->order($columnKey);
+        $result = $db->fetchPairs($select);
+        return $result;
+    }
+
+    /**
+     * Init the singleton for mapped ids.
+     *
+     * @return void
+     */
+    public function initMappedIds()
+    {
+        $this->_mappedIds = UpgradeToOmekaS_MappedIds::init();
+    }
+
+    /**
+     * Store the mapped ids for a record type.
+     *
+     * @param string recordType
+     * @param array $mappedIds
+     * @return void
+     */
+    public function storeMappedIds($recordType, array $mappedIds)
+    {
+        if (is_null($this->_mappedIds)) {
+            $this->initMappedIds();
+        }
+        $this->_mappedIds->store($recordType, $mappedIds);
+    }
+
+    /**
+     * Get the mapping ids for a record type or all mappings.
+     *
+     * @param string $recordType
+     * @return array
+     */
+    public function fetchMappedIds($recordType = null)
+    {
+        if (is_null($this->_mappedIds)) {
+            $this->initMappedIds();
+        }
+        return $this->_mappedIds->fetch($recordType);
     }
 
     /**

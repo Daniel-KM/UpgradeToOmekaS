@@ -1,7 +1,10 @@
 <?php
 
 /**
- * @note Some check require that the free space is greater than 1GB.
+ * @note Some checks require that the free space is greater than 1GB.
+ * @note Some checks require to define the document root.
+ * @note Some checks fail if the basedir has not been cleaned after a crash.
+ * @note Some checks fail if omeka-s.zip is not in the temp folder.
  */
 class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppTestCase
 {
@@ -65,7 +68,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
         $result = $processor->precheckConfig();
         $this->assertEquals(1, count($result));
-        $this->assertEquals('1 job is running.', $result[0]);
+        $this->assertEquals('1 job is running. See below to kill them.', $result[0]);
 
         $job->delete();
         $processor = new UpgradeToOmekaS_Processor_CoreServer();
@@ -206,9 +209,10 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
     }
 
     /**
-     * @note Some check require that the free space is greater than 1GB.
-     * @note This check requires to define the document root.
-     * @note This check fails if the basedir has not been cleaned after a crash.
+     * @note Some checks require that the free space is greater than 1GB.
+     * @note Some checks require to define the document root.
+     * @note Some checks fail if the basedir has not been cleaned after a crash.
+     * @note Some checks fail if omeka-s.zip is not in the temp folder.
      */
     public function testCheckConfigFileSystemBase()
     {

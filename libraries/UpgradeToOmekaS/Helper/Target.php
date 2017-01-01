@@ -231,7 +231,7 @@ class UpgradeToOmekaS_Helper_Target
      * @param string $column
      * @return array Associative array of ids.
      */
-    public function getIds($table, $column = 'id')
+    public function fetchIds($table, $column = 'id')
     {
         $db = $this->getDb();
         $columns = $this->getTableColumns($table);
@@ -243,6 +243,28 @@ class UpgradeToOmekaS_Helper_Target
             ->order($column);
         $result = $db->fetchCol($select);
         return array_combine($result, $result);
+    }
+
+    /**
+     * Helper to get an associative array of two columns of a table.
+     *
+     * @param string $table
+     * @param string $columnKey
+     * @param string $columnValue
+     * @return array Associative array of two columns.
+     */
+    public function fetchPairs($table, $columnKey, $columnValue)
+    {
+        $db = $this->getDb();
+        $columns = $this->getTableColumns($table);
+        if (!in_array($columnKey, $columns) || !in_array($columnValue, $columns)) {
+            return;
+        }
+        $select = $db->select()
+            ->from($table, array($columnKey, $columnValue))
+            ->order($columnKey);
+        $result = $db->fetchPairs($select);
+        return $result;
     }
 
     /**

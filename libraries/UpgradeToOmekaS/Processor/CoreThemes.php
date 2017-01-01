@@ -84,10 +84,7 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             . DIRECTORY_SEPARATOR . 'config'
             . DIRECTORY_SEPARATOR . 'module.config.php';
         $input = file_get_contents($source);
-        $line = <<<'INPUT'
-$siteSlug = '__MAINSITE__ (see modules/UpgradeFromOmekaClassic/config/module.config.php)';
-INPUT;
-        $output = preg_replace('~^' . preg_quote($line,  '~') . '$~', "\$siteSlug = '$siteSlug';", $input);
+        $output = preg_replace('~^' . preg_quote('$siteSlug = \'\';') . '$~', "\$siteSlug = '$siteSlug';", $input);
         $result = file_put_contents($destination, $output);
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The compatibility layer translates only standard functions: check your theme if there are custom ones.'),
@@ -386,6 +383,26 @@ OUTPUT;
     protected function _upgradeThemesParams()
     {
         $siteId = $this->getSiteId();
+        $target = $this->getTarget();
+        $defaultSettings = $this->prepareThemeSettings();
+        foreach ($defaultSettings as $theme => $settings) {
+            // Add the option for the homepage.
+            $settings['use_homepage_template'] = '1';
+            $nameSetting = 'theme_settings_' . $theme;
+            $target->saveSiteSetting($nameSetting, $settings, $siteId);
+        }
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The options of the themes have been upgraded as site settings.'),
+            Zend_Log::INFO);
+    }
+
+    /**
+     * Helper to normalize the list of all theme settings.
+     *
+     * return @array
+     */
+    public function prepareThemeSettings()
+    {
+        $siteId = $this->getSiteId();
 
         $db = $this->_db;
         $target = $this->getTarget();
@@ -406,15 +423,15 @@ OUTPUT;
             ->order('name');
         $assets = $targetDb->fetchPairs($select);
 
-        // Extract the name and the values.
-        $toInserts = array();
+        $result = array();
         foreach ($options as $key => $values) {
-            $name = substr($key, strlen('theme_'), strlen($key) - strlen('theme__options'));
-            if (empty($name)) {
+            $theme = substr($key, strlen('theme_'), strlen($key) - strlen('theme__options'));
+            if (empty($theme)) {
                 continue;
             }
 
             $values = unserialize($values) ?: array();
+            unset($values['theme_config_csrf']);
 
             // Check if there is an asset to upgrade the logo, else remove.
             if (!empty($values['logo'])) {
@@ -426,12 +443,9 @@ OUTPUT;
             // Add the option for the homepage.
             $values['use_homepage_template'] = '0';
 
-            $nameSetting = 'theme_settings_' . $name;
-            $target->saveSiteSetting($nameSetting, $values, $siteId);
+            $result[$theme] = $values;
         }
-
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('The options of the themes have been upgraded as site settings.'),
-            Zend_Log::INFO);
+        return $result;
     }
 
     protected function _upgradeThemes()

@@ -35,7 +35,7 @@ class UpgradeToOmekaS_Processor_CoreThemesTest extends UpgradeToOmekaS_Test_AppT
         $processor = new UpgradeToOmekaS_Processor_CoreThemes();
         $processor->setParams($this->_defaultParams);
         $result = $this->invokeMethod($processor, '_copyThemes');
-        $this->assertEmpty($resut);
+        $this->assertEmpty($result);
     }
 
     public function testUpgradeConfigTheme()
@@ -75,7 +75,7 @@ class UpgradeToOmekaS_Processor_CoreThemesTest extends UpgradeToOmekaS_Test_AppT
         $processor->setParams($this->_defaultParams);
         $result = $this->invokeMethod($processor, '_copyThemes');
         $result = $this->invokeMethod($processor, '_upgradeThemes');
-        $this->assertEmpty($resut);
+        $this->assertEmpty($result);
     }
 
     public function testUpgradeFunctionsAndVariables()
@@ -89,7 +89,7 @@ class UpgradeToOmekaS_Processor_CoreThemesTest extends UpgradeToOmekaS_Test_AppT
         $result = $this->invokeMethod($processor, '_copyThemes');
         $result = $this->invokeMethod($processor, '_upgradeThemes');
         $result = $this->invokeMethod($processor, '_upgradeFunctionsAndVariables');
-        $this->assertEmpty($resut);
+        $this->assertEmpty($result);
     }
 
     /**
