@@ -2,8 +2,8 @@ Upgrade to Omeka Semantic
 =========================
 
 [Upgrade to Omeka Semantic] is a plugin for [Omeka Classic] that allows to
-upgrade automatically your installation from [Omeka 2] to [Omeka S] (records,
-files and themes).
+upgrade automatically your installation from [Omeka 2] to [Omeka S]. It upgrades
+records, files, config, and themes.
 
 [Omeka S] is a remastered, up-to-date and improved release of Omeka, built for
 the semantic web, multi-sites and multilingual. So this plugin allows to use new
