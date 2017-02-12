@@ -42,7 +42,6 @@ class UpgradeToOmekaS_Processor_UpgradeToOmekaS extends UpgradeToOmekaS_Processo
     protected function _upgradeSettings()
     {
         $source = $destination = $this->_getModuleDir()
-            . DIRECTORY_SEPARATOR . $this->module['name']
             . DIRECTORY_SEPARATOR . 'config'
             . DIRECTORY_SEPARATOR . 'module.config.php';
 
