@@ -43,7 +43,7 @@ Feel free to add missing plugins, to update versions or to create an upgrader pr
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type "yes" to filter only upgradable plugins. Click on row headers to sort. Get the <a href="{{ site.url }}{{ site.baseurl }}/assets/omeka_plugins.csv)">csv source file</a>.
+    Type "yes" to filter only upgradable plugins. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_plugins.csv">csv source file</a>.
     </em></p>
     <div class="row">
         <table class="table table-striped">
