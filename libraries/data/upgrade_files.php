@@ -704,10 +704,9 @@ $upgrade['common/breadcrumb.phtml'] = array(
 );
 
 $upgrade['view/layout/layout.phtml'] = array(
-    'preg_replace' => array(        '~' . preg_quote('[\'maxDepth\' => $this->themeSetting(\'nav_depth\') - 1])->setMaxDepth(') . '(\d+)\)~' => '[\'maxDepth\' => \1])'
-    ),
-    'replace' => array(
-        '$nav = bootstrap_nav(' => '$nav = ',
+    'preg_replace' => array(
+        '~' . preg_quote('[\'maxDepth\' => $this->themeSetting(\'nav_depth\') - 1])->setMaxDepth(') . '(\d+)\)~' => '[\'maxDepth\' => \1])',
+        '~' . preg_quote('$nav = bootstrap_nav(') . '(.*)\)\, array\(~' => '$nav = \1, array(',
     ),
 );
 

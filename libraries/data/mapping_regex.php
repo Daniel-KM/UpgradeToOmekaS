@@ -168,6 +168,10 @@ return array(
     '~' . preg_quote('<?php head(') . '~'               => '<?php echo head(',
     '~' . preg_quote('<?php foot(') . '~'               => '<?php echo foot(',
 
+    // Fix default themes.
+    // Neatscape.
+    '~' . preg_quote('(array(\'class\'=>\'show\'))') . '~' => 'array(\'class\' => \'show\')',
+
     // These regex fix the record passed as a string in various places, and update the names.
     '~\b(metadata|all_element_texts|record_image|item_type_elements|link_to|record_url)\((?:\$|\'|")item(?:\'|")~i'                    => '\1($item',
     '~\b(metadata|all_element_texts|record_image|item_type_elements|link_to|record_url)\((?:\$|\'|")collection(?:\'|")~i'              => '\1($itemSet',
@@ -662,6 +666,9 @@ return array(
     '~\b' . preg_quote('Zend_Date::DATETIME_LONG') . '\b~'  => "'j F Y \a\\t G:i:s T'",
     '~\b' . preg_quote('Zend_Date::DATETIME_MEDIUM') . '\b~' => "'j M Y, G:i:s'",
     '~\b' . preg_quote('Zend_Date::DATETIME_SHORT') . '\b~' => "'Y/m/d, G:i'",
+
+    // Functions from the fork of Omeka.
+    '~' . preg_quote('useInternalAssets()') . '~'    => '$this->upgrade()->useInternalAssets()',
 
     // Other functions.
     '~' . preg_quote('$this->shortcodes(') . '~'    => '$this->upgrade()->fallback(\'shortcodes\', ',
