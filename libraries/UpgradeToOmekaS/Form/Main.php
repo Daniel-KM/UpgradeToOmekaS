@@ -21,8 +21,6 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         // TODO Add the confirmation checkboxes only in a second step.
         $this->_isConfirmation = true;
 
-        // TODO Manual select to skip some plugins?
-
         $validateTrue = array(array(
             'Callback',
             true,
@@ -422,7 +420,6 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'value' => false,
         ));
 
-        // TODO Replace by a checkbox to skip any plugins.
         if (empty($this->_unupgradablePlugins)) {
             $this->addElement('hidden', 'plugins_confirm_unupgradable', array(
                 'value' => true,

@@ -3,7 +3,7 @@ Upgrade to Omeka Semantic
 
 [Upgrade to Omeka Semantic] is a plugin for [Omeka Classic] that allows to
 upgrade automatically your installation from [Omeka 2] to [Omeka S]. It upgrades
-records, files, config, and themes.
+records, files, config, themes and some plugins.
 
 [Omeka S] is a remastered, up-to-date and improved release of Omeka, built for
 the semantic web, multi-sites and multilingual. So this plugin allows to use new
@@ -87,6 +87,11 @@ Just change the setting in plugin.ini to try it.
 You may need to upgrade your plugins to the current version. Only enabled and
 up-to-date plugins are processed.
 
+There will be no update of this plugin for a version of Omeka S after the first
+one, because Omeka S manages its own upgrades and migrations processes. But
+there will be update for new versions of Omeka Classic and integration of
+processors for plugins.
+
 
 Usage
 -----
@@ -96,10 +101,9 @@ user, then simply click on "Upgrade" in the top admin bar, fill the short form,
 click the `Submit` button, wait from a few tens of seconds, and click on the
 provided url.
 
-There will be no update of this plugin for a version of Omeka S after the first
-one, because Omeka S manages its own upgrades and migrations processes. But
-there will be update for new versions of Omeka Classic and integration of
-processors for plugins.
+The urls of the main page and of the login page are provided. If the main page
+is broken, fix the theme or log in and change the theme to one of the [official themes]
+or use on upgraded official theme of Omeka Classic.
 
 
 Internal Upgrade Process
@@ -131,7 +135,7 @@ Omeka Semantic ones via simple mysql queries.
   files.
 * Copy, reorganize and upgrade themes.
 * Install the compatibility layer and upgraded plugins.
-* Check manually main settings and parameters of each modules of Omeka Semantic.
+* Check manually main settings and parameters of each module of Omeka Semantic.
 
 The site will be available automatically at the end of the process with the
 specified link.
