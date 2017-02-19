@@ -7,9 +7,11 @@
  */
 class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'Core/Site';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
+    protected $_isCore = true;
 
     public $module = array(
         'type' => 'integrated',
@@ -124,11 +126,6 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         'tiff', 'txt', 'wav', 'wax', 'wma', 'wmv', 'wmx', 'wri', 'xla', 'xls',
         'xlsx', 'xlt', 'xlw', 'zip',
     );
-
-    public function isPluginReady()
-    {
-        return true;
-    }
 
     protected function _configOmekaS()
     {

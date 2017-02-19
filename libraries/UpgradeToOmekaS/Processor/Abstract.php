@@ -32,6 +32,15 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     public $maxVersion = '0';
 
     /**
+     * Specify if the plugin is for the core.
+     *
+     * @internal This allows to avoid some checks and to manage specific tasks.
+     *
+     * @var boolean
+     */
+    protected $_isCore = false;
+
+    /**
      * Infos about the module for Omeka S, if any.
      *
      * @var array
@@ -547,7 +556,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Get the list of name of current processors for plugins.
+     * Get the list of the name of current processors for plugins.
      *
      * @return array
      */
@@ -724,18 +733,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     final public function isCore()
     {
-        // get_class() isn't used directly because it can be bypassed.
-        $processors = apply_filters('upgrade_omekas', array());
-        $core = array();
-        $core[] = 'Core/Server';
-        $core[] = 'Core/Site';
-        $core[] = 'Core/Elements';
-        $core[] = 'Core/Records';
-        $core[] = 'Core/Files';
-        $core[] = 'Core/Themes';
-        $core[] = 'Core/Checks';
-        $coreProcessors = array_intersect_key($processors, array_flip($core));
-        return in_array(get_class($this), $coreProcessors);
+        return $this->_isCore;
     }
 
     /**
@@ -748,6 +746,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         if (empty($this->pluginName)) {
             return false;
         }
+
+        if ($this->isCore()) {
+            return true;
+        }
+
         $plugin = get_record('Plugin', array('name' => $this->pluginName));
         return $plugin && $plugin->isActive();
     }

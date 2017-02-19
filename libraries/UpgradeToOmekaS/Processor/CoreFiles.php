@@ -7,9 +7,11 @@
  */
 class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'Core/Files';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
+    protected $_isCore = true;
 
     public $module = array(
         'type' => 'integrated',
@@ -18,11 +20,6 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
     public $processMethods = array(
         '_copyFiles',
     );
-
-    public function isPluginReady()
-    {
-        return true;
-    }
 
     protected function _copyFiles()
     {

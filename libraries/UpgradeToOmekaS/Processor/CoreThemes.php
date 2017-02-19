@@ -7,9 +7,11 @@
  */
 class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'Core/Themes';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
+    protected $_isCore = true;
 
     public $module = array(
         'type' => 'integrated',
@@ -34,18 +36,6 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
             '_upgradeFiles',
         ),
     );
-
-    /**
-     * Check if the plugin is installed.
-     *
-     * @internal Always true for the Core.
-     *
-     * @return boolean
-     */
-    public function isPluginReady()
-    {
-        return true;
-    }
 
     protected function _copyAssets()
     {

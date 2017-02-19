@@ -7,6 +7,7 @@
  */
 class UpgradeToOmekaS_Processor_Geolocation extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'Geolocation';
     // Upstream release.
     public $minVersion = '2.0';

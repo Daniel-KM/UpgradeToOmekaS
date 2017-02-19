@@ -9,17 +9,7 @@
  */
 class UpgradeToOmekaS_Processor_Base extends UpgradeToOmekaS_Processor_Abstract
 {
-    public $pluginName = 'Base';
 
-    /**
-     * Check if the plugin is installed.
-     *
-     * @internal Always true for the Core.
-     *
-     * @return boolean
-     */
-    public function isPluginReady()
-    {
-        return true;
-    }
+    public $pluginName = 'Base';
+    protected $_isCore = true;
 }

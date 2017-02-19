@@ -7,6 +7,7 @@
  */
 class UpgradeToOmekaS_Processor_SocialBookmarking extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'SocialBookmarking';
     // Upstream release.
     public $minVersion = '2.0';

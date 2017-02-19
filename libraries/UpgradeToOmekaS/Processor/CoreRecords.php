@@ -7,9 +7,11 @@
  */
 class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'Core/Records';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
+    protected $_isCore = true;
 
     public $module = array(
         'type' => 'integrated',
@@ -42,11 +44,6 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
      * @var integer
      */
     protected $_itemSetSiteId;
-
-    public function isPluginReady()
-    {
-        return true;
-    }
 
     protected function _upgradeItems()
     {

@@ -7,9 +7,11 @@
  */
 class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'Core/Elements';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
+    protected $_isCore = true;
 
     public $module = array(
         'type' => 'integrated',
@@ -33,11 +35,6 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
      * @var
      */
     protected $_propertyIds = array();
-
-    public function isPluginReady()
-    {
-        return true;
-    }
 
     protected function _upgradeItemTypes()
     {

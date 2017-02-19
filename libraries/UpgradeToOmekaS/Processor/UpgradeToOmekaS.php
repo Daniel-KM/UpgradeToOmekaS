@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Compatibility layer for themes of Omeka 2 in Omeka S.
+ * Install the compatibility layer for themes of Omeka 2 in Omeka S.
  *
  * @package UpgradeToOmekaS
  */
 class UpgradeToOmekaS_Processor_UpgradeToOmekaS extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'UpgradeToOmekaS';
     public $minVersion = '2.0.1';
     public $maxVersion = '2.0.1';
@@ -26,18 +27,6 @@ class UpgradeToOmekaS_Processor_UpgradeToOmekaS extends UpgradeToOmekaS_Processo
     public $processMethods = array(
         '_installModule',
     );
-
-    /**
-     * Check if the plugin is installed.
-     *
-     * @internal Always true for the Core.
-     *
-     * @return boolean
-     */
-    public function isPluginReady()
-    {
-        return true;
-    }
 
     protected function _upgradeSettings()
     {

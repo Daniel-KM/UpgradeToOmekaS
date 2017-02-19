@@ -7,6 +7,7 @@
  */
 class UpgradeToOmekaS_Processor_EmbedCodes extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'EmbedCodes';
     public $minVersion = '1.0';
     public $maxVersion = '1.0';

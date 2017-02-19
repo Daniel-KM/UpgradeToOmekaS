@@ -9,9 +9,11 @@
  */
 class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abstract
 {
+
     public $pluginName = 'Core/Server';
     public $minVersion = '2.3.1';
     public $maxVersion = '2.5';
+    protected $_isCore = true;
 
     public $module = array(
         'name' => 'Omeka S',
@@ -75,11 +77,6 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
      * @var integer
      */
     protected $_destinationFreeSize;
-
-    public function isPluginReady()
-    {
-        return true;
-    }
 
     /**
      * @todo Load all the config checks from Omeka Semantic.
