@@ -20,6 +20,8 @@ equivalent module: [Dublin Core Extended], [Embed Codes], [Exhibit Builder],
 used, the modules will be automatically installed. For other plugins, contact
 me.
 
+See the full list of [plugins for Omeka 2 and matching modules for Omeka S].
+
 A compatibility layer is available for themes with the module [Upgrade from Omeka Classic],
 that is installed automatically too. The themes are restructured and upgraded,
 but custom functions may fail. In that case, use [official themes] or contact me
@@ -216,6 +218,7 @@ Copyright
 [More User Roles]: https://github.com/ebellempire/MoreUserRoles
 [Simple Pages]: http://omeka.org/add-ons/plugins/simple-pages/
 [Social Bookmarking]: http://omeka.org/add-ons/plugins/social-bookmarking/
+[plugins for Omeka 2 and matching modules for Omeka S]: https://daniel-km.github.com/UpgradeToOmekaS
 [official themes]: https://github.com/omeka-s-themes
 [Omeka 2 Importer]: https://github.com/omeka-s-modules/Omeka2Importer
 [Clean Url]: https://github.com/Daniel-KM/CleanUrl
