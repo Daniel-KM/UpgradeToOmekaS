@@ -101,7 +101,7 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
                 throw new UpgradeToOmekaS_Exception(
                     __('There are symbolic links inside the directory "files/themes_uploads".')
                         . ' ' . __('Some errors may occur in some cases.')
-                        . ' ' . __('This precheck may be bypassed via "security.ini".'));
+                        . ' ' . __('This precheck may be bypassed via an option in "security.ini".'));
             }
             // Warn about the copy.
             else {
@@ -183,7 +183,7 @@ class UpgradeToOmekaS_Processor_CoreThemes extends UpgradeToOmekaS_Processor_Abs
                 throw new UpgradeToOmekaS_Exception(
                     __('There are symbolic links inside the directory of themes.')
                         . ' ' . __('Some errors may occur in some cases.')
-                        . ' ' . __('This precheck may be bypassed via "security.ini".'));
+                        . ' ' . __('This precheck may be bypassed via an option in "security.ini".'));
             }
             // Warn about the copy.
             else {

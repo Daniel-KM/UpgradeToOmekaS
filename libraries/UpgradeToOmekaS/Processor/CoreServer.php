@@ -141,7 +141,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
             if (isset($config->jobs->dispatcher->longRunning)) {
                 if ($config->jobs->dispatcher->longRunning == 'Omeka_Job_Dispatcher_Adapter_Synchronous') {
                     $this->_prechecks[] = __('The process should be done in the background: modify the setting "jobs.dispatcher.longRunning" in the config of Omeka Classic.')
-                        . ' ' . __('This precheck may be bypassed via "security.ini".');
+                        . ' ' . __('This precheck may be bypassed via an option in "security.ini".');
                 }
             }
             // No long job.
@@ -254,14 +254,14 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         if ($result) {
             $this->_prechecks[] = __('There are symbolic links inside the directory of files.')
                 . ' ' . __('Some errors may occur in some cases.')
-                . ' ' . __('This precheck may be bypassed via "security.ini".');
+                . ' ' . __('This precheck may be bypassed via an option in "security.ini".');
         }
 
         $result = UpgradeToOmekaS_Common::containsSymlinks(PUBLIC_THEME_DIR);
         if ($result) {
             $this->_prechecks[] = __('There are symbolic links inside the directory of themes.')
                 . ' ' . __('Some errors may occur in some cases.')
-                . ' ' . __('This precheck may be bypassed via "security.ini".');
+                . ' ' . __('This precheck may be bypassed via an option in "security.ini".');
         }
 
         // A check is done on plugins since their views are copied in the theme.
@@ -269,7 +269,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         if ($result) {
             $this->_prechecks[] = __('There are symbolic links inside the directory of plugins.')
                 . ' ' . __('Some errors may occur in some cases.')
-                . ' ' . __('This precheck may be bypassed via "security.ini".');
+                . ' ' . __('This precheck may be bypassed via an option in "security.ini".');
         }
     }
 
