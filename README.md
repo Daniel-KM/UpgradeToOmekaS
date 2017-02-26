@@ -16,9 +16,9 @@ Of course, if a plugin doesn’t exist under Omeka S, it won’t be upgraded.
 Furthermore, a processor should be written to upgrade data. There are already
 such a  processor for the most common plugins, that are integrated or have an
 equivalent module: [Dublin Core Extended], [Embed Codes], [Exhibit Builder],
-[Geolocation],  [More User Roles],  [Simple Pages], [Social Bookmarking]. If
-used, the modules will be automatically installed. For other plugins, contact
-me.
+[Geolocation],  [More User Roles],  [Simple Pages], [Social Bookmarking], [Universal Viewer].
+If enabled, the modules will be automatically installed. For other plugins,
+contact me.
 
 See the full list of [plugins for Omeka 2 and matching modules for Omeka S].
 
@@ -46,7 +46,7 @@ exhibits keep their slugs.
 Anyway, it’s always recommended you set your own single and permanent
 identifiers that don’t depend on an internal position in a database. The term
 `Dublin Core Identifier` is designed for that and a record can have multiple
-single identifiers. There are many possibilities: named number like in library
+single identifiers. There are many possibilities: named number like in a library
 or a museum, isbn for books, or random id like with ark, noid, doi, etc. In
 Omeka 2, they can be displayed in the public url with the plugin [Clean Url].
 
@@ -205,7 +205,7 @@ Copyright
 
 
 [Upgrade to Omeka Semantic]: https://github.com/Daniel-KM/UpgradeToOmekaS
-[Upgrade From Omeka Classic]: https://github.com/Daniel-KM/UpgradeFromOmekaClassic
+[Upgrade from Omeka Classic]: https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic
 [Omeka]: https://www.omeka.org
 [Omeka Classic]: https://omeka.org
 [Omeka Semantic]: https://omeka.org/s
@@ -218,6 +218,7 @@ Copyright
 [More User Roles]: https://github.com/ebellempire/MoreUserRoles
 [Simple Pages]: http://omeka.org/add-ons/plugins/simple-pages/
 [Social Bookmarking]: http://omeka.org/add-ons/plugins/social-bookmarking/
+[Universal Viewer]: https://github.com/Daniel-KM/UniversalViewer4Omeka
 [plugins for Omeka 2 and matching modules for Omeka S]: https://daniel-km.github.com/UpgradeToOmekaS
 [official themes]: https://github.com/omeka-s-themes
 [Omeka 2 Importer]: https://github.com/omeka-s-modules/Omeka2Importer

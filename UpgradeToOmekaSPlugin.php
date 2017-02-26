@@ -227,7 +227,7 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
         // $processors['Stats'] = 'UpgradeToOmekaS_Processor_Stats';
         // $processors['Tagging'] = 'UpgradeToOmekaS_Processor_Tagging';
         // $processors['Taxonomy'] = 'UpgradeToOmekaS_Processor_Taxonomy';
-        // $processors['UniversalViewer'] = 'UpgradeToOmekaS_Processor_UniversalViewer';
+        $processors['UniversalViewer'] = 'UpgradeToOmekaS_Processor_UniversalViewer';
 
         return array_merge($baseProcessors, $processors);
     }
