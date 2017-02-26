@@ -1,222 +1,223 @@
-Plugin,Plugin Url,Current Version,Upgrader,Min Version,Max Version,Module,Module Url,Note
-Add Item,https://github.com/lmullen/plugin-AddItem,0.1,,,,,,
-Admin Images,https://github.com/UCSCLibrary/AdminImages,1.3,,,,[Integrated],,Assets in Omeka S.
-Advanced Search Element Order,https://github.com/GerZah/plugin-AdvSearchElementOrder,1.0,,,,,,
-Ajax Create,https://github.com/omeka/plugin-AjaxCreate,0.1,,,,,,
-Annotate,https://github.com/omeka/plugin-Annotate,1.0,,,,,,
-Archive Folder,https://github.com/Daniel-KM/ArchiveFolder,2.7,,,,Archive Folder,https://github.com/biblibre/omeka-s-module-ArchiveFolder,
-Archive Repertory,https://github.com/Daniel-KM/ArchiveRepertory,2.14,,,,Archive Repertory,https://github.com/biblibre/omeka-s-module-ArchiveRepertory,
-Ark & Noid,https://github.com/Daniel-KM/ArkAndNoid4Omeka,2.5.1,,,,Ark,https://github.com/biblibre/omeka-s-module-Ark,
-Assign Owner,https://github.com/anuragji/Omeka-Assign-Owner,0.1,,,,,,
-Audio Recorder,https://github.com/UCSCLibrary/Omeka-AudioRecorder,1.1,,,,,,
-Bag It,https://github.com/scholarslab/BagItPlugin,2.0.1,,,,,,
-Beam Me Up To Internet Archive,https://github.com/popuparchive/BeamMeUpToInternetArchive,2.3,,,,,,
-Beam Me Up To SoundCloud,https://github.com/popuparchive/BeamMeUpToSoundCloud,2.2.1,,,,,,
-Block Party,https://github.com/jaguillette/omeka-plugin-BlockParty,0.1,,,,,,
-Blocks,https://github.com/omeka/plugin-Blocks,2.3,,,,,,
-Book Reader,https://github.com/Daniel-KM/BookReader,2.7,,,,,,
-Browse Values,https://github.com/patrickmj/BrowseValues,-,,,,,,
-Bulk Metadata Editor,https://github.com/UCSCLibrary/BulkMetadataEditor,2.3,,,,,,
-Carta,https://github.com/AcuGIS/Carta,1.2.2,,,,,,
-Catalog Search,https://github.com/lmullen/plugin-CatalogSearch,1.0.3,,,,,,
-Category Browse,https://github.com/Daniel-KM/CategoryBrowse,2.1,,,,,,
-Central Auth,https://github.com/BGSU-LITS/omeka-plugin-CentralAuth,1.2,,,,,,
-Clean Url,https://github.com/Daniel-KM/CleanUrl,2.15,,,,Clean Url,https://github.com/biblibre/omeka-s-module-CleanUrl,
-Clickable Links,https://github.com/GerZah/plugin-ClickableLinks,0.1,,,,,,
-Coins,https://github.com/omeka/plugin-Coins,2.0.3,,,,Coins,https://github.com/biblibre/omeka-s-module-Coins,Consider the module UnApi too.
-Colaborate,https://github.com/rsanc77/plugin-Colaborate,0.1,,,,,,
-Collection Themes,https://github.com/BGSU-LITS/omeka-plugin-CollectionThemes,1.0,,,,,,
-Collection Tree,https://github.com/omeka/plugin-CollectionTree,2.0.2,,,,Item Sets Tree,https://github.com/biblibre/omeka-s-module-ItemSetsTree,
-CollectionSpace Import,https://github.com/patrickmj/CollectionSpaceImport,-,,,,,,
-Commenting,https://github.com/omeka/plugin-Commenting,2.1.2,,,,,,
-Commons,https://github.com/omeka/plugin-Commons,1.0,,,,,,
-Commons Api,https://github.com/omeka/plugin-CommonsApi,1.0,,,,,,
-Conditional Elements,https://github.com/GerZah/plugin-ConditionalElements,0.1,,,,,,
-ContentDM Link,https://github.com/UCSCLibrary/CdmLink,1.4,,,,,,
-Contribution,https://github.com/omeka/plugin-Contribution,3.1.0,,,,Collecting,https://github.com/omeka-s-modules/Collecting,
-Contributor Contact,https://github.com/UCSCLibrary/ContributorContact,1.0.0,,,,,,
-Controlled Vocab,https://github.com/patrickmj/ControlledVocab,0.1,,,,,,
-Correct Citation,https://gitlab.com/TIME_LAS/Omeka_Plugin_CorrectCitation,1.0,,,,,,
-Corrections,https://github.com/patrickmj/Corrections,1.0,,,,,,
-Course Tools,https://github.com/jaguillette/omeka-plugin-CourseTools,0.1,,,,,,Add new roles and permissions.
-Creative Commons Chooser,https://github.com/Daniel-KM/CreativeCommonsChooser,2.3.1,,,,,,See the module Rights Statements.
-Crowd Ed,https://github.com/gsbodine/crowd-ed,0.8.1,,,,,,
-CSS Editor,https://github.com/omeka/plugin-CSSEditor,1.0.1,,,,CSS Editor,https://github.com/biblibre/omeka-s-module-CSSEditor,
-CSV Import,https://github.com/omeka/plugin-CsvImport,2.0.4,,,,CSV Import,https://github.com/omeka-s-modules/CSVImport,
-CSV Import +,https://github.com/Daniel-KM/CsvImportPlus,2.3,,,,,,
-Curator Monitor,https://github.com/Daniel-KM/CuratorMonitor,2.4.6,,,,,,
-Date Search,https://github.com/GerZah/plugin-DateSearch,0.1,,,,,,
-Default Sort,https://github.com/anuragji/DefaultSort,1.2,,,,,,
-Derivative Images,https://github.com/omeka/plugin-DerivativeImages,2.0,,,,,,
-Digital Object Linker,https://github.com/ives1227/myomekaplugins/tree/master/DigitalObjectLinker,2.0.1,,,,,,
-Doc To Html,https://github.com/ozmeka/plugin-DocToHtml,0.1,,,,,,
-Docs Viewer,https://github.com/omeka/plugin-DocsViewer,2.0,,,,,,
-Dropbox,https://github.com/omeka/plugin-Dropbox,0.7.2,,,,File Sideload,https://github.com/omeka-s-modules/FileSideload,
-DSpace Restapi Harvester,https://github.com/yingjin/DspaceRestapiHarvester,0.1,,,,DSpace Connector,https://github.com/omeka-s-modules/DspaceConnector,
-Dublin Core Extended,https://github.com/omeka/plugin-DublinCoreExtended,2.2,Yes,2.0,2.2,[Integrated],,
-EAD,https://github.com/Daniel-KM/Ead4Omeka,2.4.2,,,,,,
-EAD Importer,https://github.com/scholarslab/EadImporter,1.0,,,,,,
-Edit Link,https://github.com/omeka/plugin-EditLink,1.0,,,,,,
-Editorial,https://github.com/omeka/plugin-Editorial,1.0.0,,,,,,
-Element Manager,https://github.com/biblibre/omeka-plugin-ElementManager,0.1,,,,,,
-Element Types,https://github.com/biblibre/omeka-plugin-ElementTypes,0.4,,,,[Integrated],,
-Embed Codes,https://github.com/omeka/plugin-EmbedCodes,1.0,Yes,1.0,1.0,Sharing,https://github.com/omeka-s-modules/Sharing,No embedded statistics.
-Enhanced Collections,https://github.com/BGSU-LITS/Enhanced-Collections-Plugin,0.1.0,,,,,,
-Entities,https://github.com/gsbodine/plugin-Entities,0.5-dev,,,,,,
-Escher,https://github.com/AcuGIS/Escher,1.0.1,,,,,,
-Europeana Element Set,https://github.com/Daniel-KM/EuropeanaElementSet,2.1,,,,,,
-Exhibit Access,https://github.com/patrickmj/ExhibitAccess,-,,,,,,
-Exhibit Assignments,https://github.com/BGSU-LITS/omeka-plugin-Assignments,1.1,,,,,,
-Exhibit Builder,https://github.com/omeka/plugin-ExhibitBuilder,3.3.3,Yes,3.3.3,3.3.3,[Integrated],,Exhibits are now standard sites.
-Exhibit Image Annotation,https://github.com/omeka/plugin-ExhibitImageAnnotation,0.1,,,,,,
-Export,https://github.com/omeka/plugin-Export,0.1alpha,,,,,,
-Export Spoke Json,https://github.com/uklibraries/ExportSpokeJson,0.0.18,,,,,,
-Extract OCR,https://github.com/symac/Plugin-Extractocr,1.0.1,,,,,,
-Facet By Metadata,https://github.com/patrickmj/FacetByMetadata,1.0.2,,,,,,
-Fedora Connector,https://github.com/scholarslab/FedoraConnector,2.1.5,,,,Fedora Connector,https://github.com/omeka-s-modules/FedoraConnector,
-Feed Importer,https://github.com/patrickmj/FeedImporter,0.1,,,,,,
-File Modify,https://github.com/Daniel-KM/FileModify,2.4,,,,,,
-FirePhp,https://github.com/patrickmj/FirePhp,1.0,,,,,,
-Flickr Import,https://github.com/UCSCLibrary/FlickrImport,1.3,,,,,,
-Geolocation,https://github.com/omeka/plugin-Geolocation,2.3.3-2.2.5,Yes,2.0,2.3.3-2.2.5,Mapping,https://github.com/omeka-s-modules/Mapping,"Really free (no Google Map but Leaflet/OpenStreetMap), smarter, with multipoints and layers."
-Getty Suggest,https://github.com/UCSCLibrary/GettySuggest,1.4,,,,Value Suggest,https://github.com/omeka-s-modules/ValueSuggest,
-GLAM Hack Philly Sagas,https://github.com/patrickmj/GlamHackPhillySagas,0.1,,,,,,
-Google Analytics Dimensions,https://github.com/BGSU-LITS/omeka-plugin-AnalyticsDimensions,1.0,,,,,,
-Google Tag Manager,https://github.com/anuragji/omeka-google-tagmanager,0.1.0,,,,,,
-GoogleAnalytics,https://github.com/omeka/plugin-GoogleAnalytics,1.3-2.0,,,,,,
-Groups,https://github.com/omeka/plugin-Groups,1.1,,,,,,
-Guest User,https://github.com/omeka/plugin-GuestUser,1.2.1,,,,Guest User,https://github.com/biblibre/omeka-s-module-GuestUser,
-Hide Elements,https://github.com/zerocrates/HideElements,1.3,,,,,,
-History Log,https://github.com/UCSCLibrary/HistoryLog,2.9.1,,,,,,
-Honor Thy Contributors,https://github.com/lmullen/plugin-HonorThyContributors,0.1.3,,,,,,
-Hotlink Urls,https://github.com/uklibraries/HotlinkUrls,0.0.0,,,,,,
-Html 5 Media,https://github.com/zerocrates/Html5Media,2.6,,,,,,
-Html Viewer,https://github.com/ozmeka/plugin-HtmlViewer,0.2.3,,,,,,
-Identity,https://github.com/uklibraries/IdentityPlugin,0.0.0,,,,,,
-IdRef,https://github.com/jsicot/idref,0.1,,,,IdRef,https://github.com/biblibre/omeka-s-module-IdRef,
-IIIF,https://github.com/klokantech/omeka-plugin-IIIF,1.0,,,,,,
-Image Annotation,https://github.com/omeka/plugin-ImageAnnotation,1.0.1,,,,,,
-Image Resize,https://github.com/omeka/plugin-ImageResize,1.0,,,,,,
-Import,https://github.com/biblibre/omeka-plugin-Import,0.1.0,,,,,,
-Import Hyperlink,https://github.com/BGSU-LITS/omeka-plugin-ImportHyperlink,1.1,,,,,,
-Item Duplicate Check,https://github.com/biblibre/omeka-plugin-ItemDuplicateCheck,0.1,,,,,,
-Item Order,https://github.com/omeka/plugin-ItemOrder,2.0.2,,,,,,
-Item References,https://github.com/GerZah/plugin-ItemReferences,0.1,,,,,,
-Item Relations,https://github.com/omeka/plugin-itemrelations,2.0.2.2,,,,[Integrated],,
-Item Review,https://github.com/UCSCLibrary/ItemReview,1.1,,,,,,
-Koha Authority Suggest,https://github.com/biblibre/omeka-plugin-KohaAuthoritySuggest,0.1,,,,,,
-Kudl Identity Client,https://github.com/uklibraries/KudlIdentityClient,0.0.0,,,,,,
-LC Suggest,https://github.com/omeka/plugin-LcSuggest,2.0.2,,,,Value Suggest,https://github.com/omeka-s-modules/ValueSuggest,
-LDAP,https://github.com/BGSU-LITS/LDAP-Plugin,0.4.0,,,,,,
-Lightbox Gallery,https://github.com/annamichelle/LightboxGallery,1.2.0,,,,,,
-Linked Data Elements,https://github.com/ozmeka/plugin-LinkedDataElements,2.4,,,,,,
-Linkify Url,https://github.com/Daniel-KM/LinkifyUrl,2.1,,,,,,
-Live Book,https://github.com/jsicot/Plugin-bibnum,2.8,,,,,,
-Locale,https://github.com/omeka/plugin-Locale,1.0,,,,,,
-Maintenance,https://github.com/biblibre/omeka-plugin-Maintenance,0.1.0,,,,,,
-Mall Extensions,https://github.com/omeka/plugin-MallExtensions,0.1,,,,,,
-Mall Map,https://github.com/omeka/MallMap,1.0-dev,,,,,,
-MapFig,https://github.com/AcuGIS/MapFig-Omeka-Plugin,2.0.1,,,,,,
-Measurement Search,https://github.com/GerZah/plugin-MeasurementSearch,0.1,,,,,,
-Media Buckets,https://github.com/patrickmj/MediaBuckets,1.0,,,,,,
-Media Rss,https://github.com/omeka/plugin-MediaRss,1.0,,,,,,
-Metadata Browser,https://github.com/Daniel-KM/MetadataBrowser,2.11,,,,Metadata Browse,https://github.com/omeka-s-modules/MetadataBrowse,
-METS Export,https://github.com/UCSCLibrary/MetsExport,1.2.3,,,,,,
-MLA TEIi,https://github.com/patrickmj/MlaTei,1.0,,,,,,
-More Metadata For Collections,https://gitlab.com/TIME_LAS/Omeka_Plugin_MoreMetadata4Collections,1.0,,,,,,
-More User Roles,https://github.com/ebellempire/MoreUserRoles,1.0.1,Yes,1.0,1.0.1,[Integrated],,
-Mud,https://github.com/patrickmj/Mud,-,,,,,,
-Multi Collections,https://github.com/omeka/plugin-MultiCollections,2.1,,,,[Integrated],,
-Multimedia Display,https://github.com/UCSCLibrary/MultimediaDisplay,1.3,,,,,,
-My Omeka,https://github.com/omeka/plugin-MyOmeka,1.0,,,,,,
-Neatline,https://github.com/scholarslab/Neatline,2.5.0,,,,,,
-Neatline Features,https://github.com/scholarslab/NeatlineFeatures,2.0.5,,,,,,
-Neatline Maps,https://github.com/scholarslab/NeatlineMaps,1.0.1,,,,,,
-Neatline Simile,https://github.com/scholarslab/nl-widget-Simile,2.0.4,,,,,,
-Neatline Text,https://github.com/scholarslab/nl-widget-Text,1.1.0,,,,,,
-Neatline Time,https://github.com/scholarslab/NeatlineTime,2.2.5,,,,,,
-Neatline Waypoints,https://github.com/scholarslab/nl-widget-Waypoints,2.0.2,,,,,,
-Ngram,https://github.com/omeka/plugin-Ngram,1.1,,,,,,
-Nuxeo Link,https://github.com/UCSCLibrary/NuxeoLink,1.1.12,,,,,,
-OAI-PMH Gateway,https://github.com/Daniel-KM/OaiPmhGateway,2.3,,,,,,
-OAI-PMH Harvester,https://github.com/zerocrates/OaiPmhRepository,2.2,,,,,,
-OAI-PMH Repository,https://github.com/omeka/plugin-OaiPmhRepository,2.2,,,,OAI-PMH Repository,https://github.com/biblibre/omeka-s-module-OaiPmhRepository,
-OAI-PMH Static Repository,https://github.com/Daniel-KM/OaiPmhStaticRepository,2.6,,,,,,
-OCR Element Set,https://github.com/Daniel-KM/OcrElementSet,2.6,,,,,,
-OHMS Export,https://github.com/uklibraries/OHMSExportPlugin,2.1,,,,,,
-Omeka API Import,https://github.com/omeka/plugin-OmekaApiImport,1.1.1,,,,Omeka 2 Importer,https://github.com/omeka-s-modules/Omeka2Importer,
-Omeka On Ovh,https://github.com/Daniel-KM/OmekaOnOvh,2.2,,,,,,
-OpenLayers Zoom,https://github.com/Daniel-KM/OpenLayersZoom,2.7.1,,,,,,
-OpenSeadragon,https://github.com/klokantech/omeka-OpenSeadragon,0.3.1,,,,,,
-Page Caching,https://github.com/Daniel-KM/PageCaching,2.1,,,,,,
-PB Core Element Set,https://github.com/annewootton/PBCore-Element-Set,2.1,,,,,,
-PDF Embed,https://github.com/zerocrates/PdfEmbed,1.0,,,,,,
-PDF Output,https://github.com/klokantech/plugin-PDFOutput,1.1,,,,,,
-PDF Search,https://github.com/omeka/plugin-PdfSearch,1.0.1,,,,,,
-PDF Text,https://github.com/omeka/plugin-PdfText,1.0.1,,,,,,
-PDF ToC,https://github.com/symac/Plugin-PdfToc,1.0.1,,,,,,
-Posters,https://github.com/omeka/plugin-Posters,0.1,,,,,,
-Range Search,https://github.com/GerZah/plugin-RangeSearch,0.3,,,,,,
-Rating,https://github.com/Daniel-KM/Rating,2.1,,,,,,
-Ratings,https://github.com/anuragji/Omeka-Ratings,0.6,,,,,,
-Reassign Files,https://github.com/GerZah/plugin-ReassignFiles,0.1,,,,,,
-Reassign Ownership,https://github.com/patrickmj/ReassignOwnership,1.0,,,,,,
-Record Relations,https://github.com/omeka/plugin-RecordRelations,1.0,,,,[Integrated],,
-Recursive Suppression,https://github.com/uklibraries/RecursiveSuppression,0.0.1,,,,,,
-Redact Elements,https://github.com/omeka/plugin-RedactElements,1.0,,,,,,
-Reference,https://github.com/Daniel-KM/Reference,2.4.1,,,,,,
-Refnum Element Set,https://github.com/Daniel-KM/RefnumElementSet,2.4,,,,,,
-Reorder Element Texts,https://github.com/GerZah/plugin-ReorderElementTexts,0.1,,,,,,
-Reports,https://github.com/omeka/plugin-Reports,2.0.1,,,,,,
-Rotate Picture,https://github.com/symac/plugin-RotatePicture,1.0.1,,,,,,
-Scripto,https://github.com/omeka/plugin-Scripto,2.3.1,,,,,,
-Search By Metadata,https://github.com/omeka/plugin-SearchByMetadata,1.2.1,,,,,,
-Search Tweaks,https://github.com/ozmeka/plugin-SearchTweaks,0.3,,,,,,
-Select Owner,https://github.com/BGSU-LITS/omeka-plugin-SelectOwner,1.0,,,,,,
-Select2,https://github.com/biblibre/omeka-plugin-Select2,0.3,,,,,,
-Shared Shelf Link,https://github.com/omeka/SharedShelfLink,1.0,,,,,,
-Shortcode Carousel,https://github.com/omeka/plugin-ShortcodeCarousel,1.0.1,,,,,,
-Simple Contact,https://github.com/Daniel-KM/SimpleContact,0.7,,,,,,
-Simple Contact Form,https://github.com/omeka/plugin-SimpleContactForm,0.7,,,,,,
-Simple Pages,https://github.com/omeka/plugin-SimplePages,3.0.8,Yes,3.0.8,3.0.8,[Integrated],,
-Simple Vocab,https://github.com/omeka/plugin-SimpleVocab,2.0.1,,,,Custom Vocab,https://github.com/omeka-s-modules/CustomVocab,
-Simple Vocab +,https://github.com/UCSCLibrary/SimpleVocabPlus,2.4,,,,,,
-Site Notes,https://github.com/omeka/plugin-SiteNotes,1.0.1,,,,,,
-Sites,https://github.com/omeka/plugin-Sites,1.2,,,,,,
-Social Bookmarking,https://github.com/omeka/plugin-SocialBookmarking,2.2,Yes,2.0,2.2,Sharing,https://github.com/omeka-s-modules/Sharing,"Only common social networks (Facebook, Twitter, Pinterest, Tumblr, email) and embed, but not AddThis."
-Social Media Element Set,https://github.com/patrickmj/SocialMediaElementSet,1.0,,,,,,
-Solr Search,https://github.com/scholarslab/SolrSearch,2.2.0,,,,Solr Search,https://github.com/biblibre/omeka-s-module-Solr,
-Spoke Relationships,https://github.com/uklibraries/SpokeRelationships,0.0.0,,,,,,
-Stats,https://github.com/Daniel-KM/Stats,2.2.2,,,,,,
-Structured Names,https://github.com/uklibraries/StructuredNames,0.0.0,,,,,,
-Subject Browse,https://github.com/Daniel-KM/SubjectBrowse,2.3,,,,,,Replaced by Reference.
-Suggest Anything,https://github.com/ozmeka/plugin-SuggestAnything,2.3.2,,,,,,
-Switch Language,https://gitlab.com/TIME_LAS/Omeka_Plugin_SwitchLang,1.1,,,,,,
-Tagging,https://github.com/Daniel-KM/Tagging,2.2.1,,,,,,
-Taxonomy,https://github.com/biblibre/omeka-plugin-Taxonomy,0.2.0,,,,,,
-TCs Dialogue,https://github.com/ozmeka/plugin-TCsDialogue,0.3,,,,,,
-TEI Display,https://github.com/scholarslab/TeiDisplay,1.0,,,,,,
-Terms Of Service,https://github.com/omeka/plugin-TermsOfService,0.2.2,,,,,,
-Text Analysis,https://github.com/omeka/plugin-TextAnalysis,1.1,,,,,,
-Text Annotation,https://github.com/omeka/plugin-TextAnnotation,0.2,,,,,,
-TinyMce Mod,https://github.com/jaguillette/TinyMceMod,-,,,,,,
-Tumbleka,https://github.com/NedHenry/Tumbleka,1.0,,,,,,
-Universal Viewer,https://github.com/Daniel-KM/UniversalViewer4Omeka,2.4.2,Yes,2.4.2,2.4.2,Universal Viewer,https://github.com/Daniel-KM/Omeka-S-module-UniversalViewer,
-Upgrade To Omeka S,https://github.com/Daniel-KM/UpgradeToOmekaS,2.0.2,Yes,2.0.1,,Upgrade From Omeka Classic,https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic,Install the compatibility layer for themes.
-User Profiles,https://github.com/omeka/plugin-UserProfiles,1.1,,,,,,
-User Tags,https://github.com/omeka/plugin-UserTags,1.0,,,,,,
-Video Stream,https://github.com/Daniel-KM/VideoStream,2.3,,,,,,
-Vimeo Import,https://github.com/UCSCLibrary/VimeoImport,1.3,,,,,,
-VRA Core Element Set,https://github.com/scholarslab/VraCoreElementSet,1.0,,,,,,
-Web Services Shortcodes,https://github.com/omeka/plugin-WebServicesShortcodes,0.1,,,,,,
-XML Import,https://github.com/Daniel-KM/XmlImport,2.16,,,,,,
-XML Sitemap,https://github.com/UCSCLibrary/Sitemap,0.11,,,,,,
-YouTube Import,https://github.com/UCSCLibrary/YouTubeImport,1.3,,,,,,
-ZoomIt,https://github.com/omeka/plugin-Zoomit,2.0,,,,,,
-Zotero Import,https://github.com/omeka/plugin-ZoteroImport,2.0.2,,,,Zotero Import,https://github.com/omeka-s-modules/ZoteroImport,
-,,,,,,Basket,https://github.com/biblibre/omeka-s-module-Basket,
-,,,,,,jQuery UI,https://github.com/biblibre/omeka-s-module-jQueryUI,
-,,,,,,PSL Search Form,https://github.com/biblibre/omeka-s-module-PslSearchForm,
-,,,,,,Rights Statements,https://github.com/zerocrates/RightsStatements,
-,,,,,,Search,https://github.com/biblibre/omeka-s-module-Search,
-,,,,,,UnApi,https://github.com/omeka-s-modules/UnApi,
+Plugin,Plugin Url,Last,Upgradable,Min Version,Max Version,Module,Module Url,Note,Plugin.ini Path,Omeka.org,Omeka Min,Omeka Target,Author,License,Description,Tags,Required Plugins,Optional Plugins,Link,Support Link
+Add Item Link,https://github.com/lmullen/plugin-AddItem,0.1,,,,,,,,0.1,2.0,,Lincoln A. Mullen,GPLv3,Add an add item link to the admin bar,,,,https://github.com/lmullen/plugin-AddItem,https://github.com/lmullen/plugin-AddItem/issues
+Admin Images,https://github.com/UCSCLibrary/AdminImages,1.3,Yes,,,[Integrated],,Assets in Omeka S.,,1.3,2.1,,UC Santa Cruz University Library,GPLv3,This Omeka 2.0+ plugin allows administrators to upload images not attached to items for use in carousels and simple pages,,,,https://github.com/UCSCLibrary/AdminImages,https://github.com/UCSCLibrary/AdminImages/issues
+Advanced Search Element Order,https://github.com/GerZah/plugin-AdvSearchElementOrder,1.0,,,,,,,,,2.0,,Gero Zahn,GPLv3,Reorder elements in Advanced Search dropdown box according to their element types.,,,,,
+Ajax Create,https://github.com/omeka/plugin-AjaxCreate,0.1,,,,,,,,,1.0,1.0,CHNM,GPL,Adds way to quickly create records via ajax,utility,,,http://omeka.org/addons/AjaxCreate,http://omeka.org/forums/forum/plugins
+Annotate,https://github.com/omeka/plugin-Annotate,1.0,,,,,,,,,,,Center for History and New Media,,Adds user favoriting and note taking to Omeka Items.,,,GuestUser,,
+Archive Folder,https://github.com/Daniel-KM/ArchiveFolder,2.7,Yes,,,Archive Folder,https://github.com/biblibre/omeka-s-module-ArchiveFolder,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,"Automatically import a local or remote folder into Omeka as collections, items, files, and metadata.","archive,  repository,  import",,"ArchiveRepertory,  DublinCoreExtended,  OcrElementSet",https://github.com/Daniel-KM/ArchiveFolder,https://github.com/Daniel-KM/ArchiveFolder/issues
+Archive Repertory,https://github.com/Daniel-KM/ArchiveRepertory,2.14,Yes,,,Archive Repertory,https://github.com/biblibre/omeka-s-module-ArchiveRepertory,,,2.14,2.1,,Daniel Berthereau,CeCILL v2.1,Keeps original names of imported files and put them in a hierarchical structure (collection / item / files) in order to get readable urls for files and to avoid an overloading of the file server.,"file,  path,  import",,CleanUrl,https://github.com/Daniel-KM/ArchiveRepertory,https://github.com/Daniel-KM/ArchiveRepertory/issues
+Ark & Noid,https://github.com/Daniel-KM/ArkAndNoid4Omeka,2.5.1,Yes,,,Ark,https://github.com/biblibre/omeka-s-module-Ark,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,"Create short, unique, meaningless, universal and persistent identifiers (ark and/or noid) and use them as urls for records.","url,  route,  identifier",,,https://github.com/Daniel-KM/ArkAndNoid4Omeka,https://github.com/Daniel-KM/ArkAndNoid4Omeka/issues
+Assign Owner,https://github.com/anuragji/Omeka-Assign-Owner,0.1,,,,,,,,,2.0,,Anurag,GPLv3,Assign ownership of items to a specific user,,,,,r.spatzenegger@gmail.com
+Audio Recorder,https://github.com/UCSCLibrary/Omeka-AudioRecorder,1.1,,,,,,,,,2.0,2.4,Ned Henry; UCSC Library Digital Initiative,,This Omeka 2.0+ plugin provides an in-browser audio recorder which can attach resulting recordings to Omeka items.,"audio,  recording,  media capture",,,,
+BagIt,https://github.com/scholarslab/BagItPlugin,2.0.1,,,,,,,,2.0.1,2.0.0,2.1.0,Scholars' Lab,Apache 2.0,Implements the BagIt specification for storing collections of files. Adds an administrative interface that allows users to (a) generate and export Bags containing files on the site and (b) import Bags and make their contents available through the Dropbox interface.,,,Dropbox,https://github.com/scholarslab/BagItPlugin,https://github.com/scholarslab/BagItPlugin/issues
+Beam Me Up to Internet Archive,https://github.com/popuparchive/BeamMeUpToInternetArchive,2.3,,,,,,,,,2.0,,Pop Up Archive,CeCILLv2|GPLv3,Posts items to the Internet Archive as they are saved.,"upload,  file",,,https://github.com/popuparchive/BeamMeUpToInternetArchive,https://github.com/popuparchive/BeamMeUpToInternetArchive/Issues
+Beam Me Up to SoundCloud,https://github.com/popuparchive/BeamMeUpToSoundCloud,2.2.1,,,,,,,,2.2.1,2.0,,Pop Up Archive,CeCILLv2|GPLv3,Posts items to SoundCloud as they are saved.,"upload,  file",,,https://github.com/popuparchive/BeamMeUpToSoundCloud,https://github.com/popuparchive/BeamMeUpToSoundCloud/Issues
+Block Party,https://github.com/jaguillette/omeka-plugin-BlockParty,0.1,,,,,,,,,,,Jeremy Guillette,GPL v3,"Adds new, useful Exhibit blocks, like groups of Items, Collections, or other Exhibits.",,,,,
+Blocks,https://github.com/omeka/plugin-Blocks,0.3,,,,,,,,,1.0,1.0,Roy Rosenzweig Center for History and New Media,GPL,Adds blocks/widgets to public display,,,,http://omeka.org/addons/Blocks,http://omeka.org/forums/forum/plugins
+BookReader,https://github.com/Daniel-KM/BookReader,2.7,,,,,,,,,2.2.2,,Julien Sicot (upgraded for Omeka 2.0 by Daniel Berthereau),GNU/GPL,Adds the Internet Archive BookReader (http://openlibrary.org/dev/docs/bookreader) into Omeka and allows to create online flip book from image files constituting an item.,"viewer,  books,  digital library,  live book",,"Extract OCR,  PDF TOC",https://github.com/jsicot/BookReader,https://github.com/jsicot/BookReader
+Browse Values,https://github.com/patrickmj/BrowseValues,-,,,,,,,,,,,,,,,,,,
+Bulk Metadata Editor,https://github.com/UCSCLibrary/BulkMetadataEditor,2.3,,,,,,,,2.3,2.1,,"UC Santa Cruz University Library, Daniel Berthereau",GPLv3,Adds search and replace functionality allowing curators to update metadata fields over many records quickly and easily.,,,,https://github.com/UCSCLibrary/BulkMetadataEditor,https://github.com/UCSCLibrary/BulkMetadataEditor/issues
+Carta,https://github.com/AcuGIS/Carta,1.2.2,,,,,,,,1.2.2,2.0,,AcuGIS,GPLv3,"Add Leaflet maps to your pages, exhibits, and collections",,,,https://www.acugis.com,https://www.acugis.com/Carta/
+Catalog Search,https://github.com/lmullen/plugin-CatalogSearch,1.0.3,,,,,,,,1.0.3,2.0,,Lincoln A. Mullen,GPLv3,Searches other catalogs for records related to Omeka items,,,,https://github.com/lmullen/plugin-CatalogSearch,https://github.com/lmullen/plugin-CatalogSearch/issues
+Category Browse,https://github.com/Daniel-KM/CategoryBrowse,2.1,,,,,,,,,2.2.2,,"Kevin Reiss, Daniel Berthereau (upgrade to Omeka 2.0)",GPLv3,Slugify Omeka element values into nice URLs,"categories,  elements,  browsing,  metadata",,,https://github.com/Daniel-KM/CategoryBrowse,https://github.com/Daniel-KM/CategoryBrowse/issues
+Central Auth,https://github.com/BGSU-LITS/omeka-plugin-CentralAuth,1.2,,,,,,,,,2.0,,Bowling Green State University Libraries,MIT,Allows login through various centralized authentication systems.,,,,https://github.com/BGSU-LITS/omeka-plugin-CentralAuth,https://github.com/BGSU-LITS/omeka-plugin-CentralAuth/issues
+Clean Url,https://github.com/Daniel-KM/CleanUrl,2.15,Yes,,,Clean Url,https://github.com/biblibre/omeka-s-module-CleanUrl,,,2.14,2.1,,Daniel Berthereau,CeCILL v2.1,Displays clean and readable URLs like http://example.com/my_collection/dc:identifier.,"url,  route",,ArchiveRepertory,https://github.com/Daniel-KM/CleanUrl,https://github.com/Daniel-KM/CleanUrl/issues
+Clickable Links,https://github.com/GerZah/plugin-ClickableLinks,0.1,,,,,,,,,2.0,,Gero Zahn,GPLv3,Filter non-HTML text fields for URLs and make render them as »target='_blank'« clickable.,,,,,
+COinS,https://github.com/omeka/plugin-Coins,2.0.3,Yes,,,Coins,https://github.com/biblibre/omeka-s-module-Coins,Consider the module UnApi too.,,2.0.3,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,"Adds COinS metadata to item pages, making them Zotero readable.","metadata, zotero",,,http://omeka.org/codex/Plugins/Coins_2.0,http://omeka.org/forums/forum/plugins
+Collaborate,https://github.com/rsanc77/plugin-Colaborate,0.1,,,,,,,,,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Let multiple users collaborate on a document,"collaborate,  share",,,,http://omeka.org/forums/forum/plugins
+Collection Themes,https://github.com/BGSU-LITS/omeka-plugin-CollectionThemes,1.0,,,,,,,,,2.2.2,,Bowling Green State University Libraries,MIT,Set the theme to use for an individual collection.,,,,https://github.com/BGSU-LITS/omeka-plugin-CollectionThemes,https://github.com/BGSU-LITS/omeka-plugin-CollectionThemes/issues
+Collection Tree,https://github.com/omeka/plugin-CollectionTree,2.1,Yes,,,Item Sets Tree,https://github.com/biblibre/omeka-s-module-ItemSetsTree,,,2.1,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Gives administrators the ability to create a hierarchical tree of their collections.,"tree, collections, subcollections",,,https://omeka.org/codex/Plugins/CollectionTree_2.0,https://omeka.org/forums/forum/plugins
+CollectionSpace Importer,https://github.com/patrickmj/CollectionSpaceImport,-,,,,,,,,,2.0,,,GPLv3,,,,,,
+Commenting,https://github.com/omeka/plugin-Commenting,2.1.4,,,,,,,,2.1.4,2.1,,Roy Rosenzweig Center for History and New Media,GPLv3,"Allows commenting on Items, Collections, Exhibits, and more",,,GuestUser,http://omeka.org/codex/Plugins/Commenting_2.0,http://omeka.org/forums/forum/plugins
+Commons,https://github.com/omeka/plugin-Commons,1.0,,,,,,,,,,,,GPL,Connect your institution's Omeka installation to the Omeka Commons.,,,,,
+Commons API,https://github.com/omeka/plugin-CommonsApi,1.0,,,,,,,master/php.ini,,,,,GPL,API for Omeka installations to communicate with Omeka Commons,,RecordRelations,,,
+Conditional Elements,https://github.com/GerZah/plugin-ConditionalElements,0.1,,,,,,,,,2.0,,Gero Zahn / Githanjalli Elangovan,GPLv3,Dynamically show/hide elements based on values entered in other elements. Requires SimpleVocab.,,SimpleVocab,,,
+Content DM Link,https://github.com/UCSCLibrary/CdmLink,1.4,,,,,,,,1.4,2.0,,"UC Santa Cruz University Library, Ned Henry",GPLv3,Adds the ability to import items from Content DM into Omeka.,,,,https://github.com/UCSCLibrary/CdmLink,https://github.com/UCSCLibrary/CdmLink/issues
+Contribution,https://github.com/omeka/plugin-Contribution,3.1.0,Yes,,,Collecting,https://github.com/omeka-s-modules/Collecting,,,3.1.0,2.3,,Roy Rosenzweig Center for History & New Media,GPLv3,Allows collecting items from visitors,"social,  items",GuestUser,UserProfiles,http://omeka.org/codex/Plugins/Contribution_2.0,http://omeka.org/forums/forum/plugins
+Contributor Contact,https://github.com/UCSCLibrary/ContributorContact,1.1,,,,,,,,1.1,2.2,,UC Santa Cruz University Library,GPLv3,Supplies administrators with tools to contact contributors in bulk,,Contribution,,,https://github.com/UCSCLibrary/ContributorContact
+Controlled Vocabulary,https://github.com/patrickmj/ControlledVocab,0.1,,,,,,,,,1.0,1.0,"Jim Safley, Patrick Murray-John",,Work with a controlled vocabulary,,,,,
+Correct Citation,https://gitlab.com/TIME_LAS/Omeka_Plugin_CorrectCitation,1.0,,,,,,,,,2.0,,Anne Garcia-Fernandez (LAS-CNRS),CC BY-NC-SA 4.0,Correct the coma position in French citation.,,,,https://gitlab.com/TIME_LAS/Omeka_Plugin_CorrectCitation/,https://gitlab.com/TIME_LAS/Omeka_Plugin_CorrectCitation/issues
+Corrections,https://github.com/patrickmj/Corrections,1.0,,,,,,,,1.0,2.0,,Patrick Murray-John,GPLv3,Adds simple user-supplied corrections to metadata.,,,,http://omeka.org/add-ons/plugins/corrections,https://github.com/patrickmj/Corrections/issues
+Course Tools,https://github.com/jaguillette/omeka-plugin-CourseTools,0.1,,,,,,Add new roles and permissions.,,,,,Jeremy Guillette,GPLv3,"Adds user roles useful for courses, including a student role with customizable permissions.",,,"ExhibitBuilder, Neatline",https://github.com/jaguillette/omeka-plugin-CourseTools,https://github.com/jaguillette/omeka-plugin-CourseTools/issues
+CreativeCommonsChooser,https://github.com/Daniel-KM/CreativeCommonsChooser,2.3.1,,,,,,See the module Rights Statements.,,,2.2.2,,"Alexandria Archive Institute, African Commons, and the UC Berkeley School of Information, Information and Service Design Program (upgraded to Omeka 2 by Daniel Berthereau)",GNU/GPL,Adds a Creative Commons License Chooser to the admin interface and extends Omeka items to be associated with individual CC licenses.,license,,,https://github.com/Daniel-KM/CreativeCommonsChooser,https://github.com/Daniel-KM/CreativeCommonsChooser/issues
+CrowdEd,https://github.com/gsbodine/crowd-ed,0.8.1,,,,,,,master/CrowdEd/plugin.ini,,2.0-Beta,2.0-RC1,Garrick S. Bodine and Stephanie A. Schlitz,,Adds ability for crowd-sourcing metadata of Omeka items.,"metadata,  crowdsourcing",Entities,,http://gsbodine.github.org/crowd-ed,
+CSS Editor,https://github.com/omeka/plugin-CSSEditor,1.0.1,Yes,,,CSS Editor,https://github.com/biblibre/omeka-s-module-CSSEditor,,,1.0.1,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Add public CSS styles through the admin interface.,,,,http://omeka.org/codex/Plugins/CSS_Editor,http://omeka.org/forums/forum/plugins
+CSV Import,https://github.com/omeka/plugin-CsvImport,2.0.4,Yes,,,CSV Import,https://github.com/omeka-s-modules/CSVImport,,,2.0.4,2.0,,Roy Rosenzweig Center for History and New Media,GPL,"Imports items, tags, and files from CSV files.","import,  csv",,,http://omeka.org/codex/Plugins/CSV_Import_2.0,http://omeka.org/forums/forum/plugins
+CSV Import+,https://github.com/Daniel-KM/CsvImportPlus,2.3,,,,,,,,,2.2.2,,Daniel Berthereau (improvement of CSV Import of Center for History & New Media),GPL,"Imports and updates collections, items, files, tags and any metadata or extra data from CSV files.","import,  update,  csv,  metadata",,,https://github.com/Daniel-KM/CsvImportPlus,https://github.com/Daniel-KM/CsvImportPlus/issues
+Curator Monitor,https://github.com/Daniel-KM/CuratorMonitor,2.4.6,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,Allows a curator to monitor the status of records via administrative fields and a page to follow progression of publication.,"curation,  monitor,  set,  metadata,  administration","HistoryLog,  SimpleVocab",HideElements,https://github.com/Daniel-KM/CuratorMonitor,https://github.com/Daniel-KM/CuratorMonitor/issues
+Date Search,https://github.com/GerZah/plugin-DateSearch,0.1,,,,,,,,,2.0,,Gero Zahn,GPLv3,"Date Search will take of your dates and timespans that you enter in your items' text fields, using the YYYY, YYYY-MM, or YYYY-MM-DD format, if necessary with [G] or [J] prefix for Gregorian/Julian dates. In 'Advanced Search', you may search for dates: If you search for '1970', your item containing the timespan '1960-1980' will be found. — Works great with enhanced Item Relations featuring relation comments.",,,ItemRelations,,
+Default Sort,https://github.com/anuragji/DefaultSort,1.2,,,,,,,,,2.0,,The Digital Ark,GPLv3,Allows an admin to set the default sort for 'Browse Items' and 'Browse Collections',,,,,aspatzenegger@thedigitalark.com
+Derivative Images,https://github.com/omeka/plugin-DerivativeImages,2.0,,,,,,,,2.0,2.2,,Roy Rosenzweig Center for History and New Media,GPLv3,Recreate (or create) derivative images.,"file, image, derivatives",,,http://omeka.org/codex/Plugins/DerivativeImages,http://omeka.org/forums/forum/plugins
+Digital Object Linker,https://github.com/ives1227/myomekaplugins/tree/master/DigitalObjectLinker,2.0.1,,,,,,,plugin.ini,2.0.1,2.0,2.1.4,Valdeva Crema,GPLv3,This plugin allows you to embed digital images from the external sources to be displayed on the item pages.,,,,https://github.com/ives1227/myomekaplugins/tree/master/DigitalObjectLinker,https://github.com/ives1227/myomekaplugins/issues
+Doc to HTML,https://github.com/ozmeka/plugin-DocToHtml,0.1,,,,,,,,,2.0,,Thom Mc,GPLv3,"When a Docx file is added to an item, renders it in HTML5 (requires Pandoc 1.13 or later)",,,,https://github.com/ozmeka,https://github.com/ozmeka
+Docs Viewer,https://github.com/omeka/plugin-DocsViewer,2.1,,,,,,,,2.1,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,"Embeds a Google document viewer into item show pages. PDF documents, PowerPoint presentations, TIFF files, and some Microsoft Word documents are supported.","docs, documents, viewer, google",,,http://omeka.org/codex/Plugins/DocsViewer_2.0,http://omeka.org/forums/forum/plugins
+Dropbox,https://github.com/omeka/plugin-Dropbox,0.7.2,Yes,,,File Sideload,https://github.com/omeka-s-modules/FileSideload,,,0.7.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Allows users to upload files outside of Omeka and batch-add many files at once.,"import,  files",,,http://omeka.org/codex/Plugins/Dropbox_2.0,http://omeka.org/forums/forum/plugins
+Dspace Restapi Harvester,https://github.com/yingjin/DspaceRestapiHarvester,0.1,Yes,,,DSpace Connector,https://github.com/omeka-s-modules/DspaceConnector,,,,2.0,2.0,Ying Jin,GPLv3,Harvest metadata and link the item to their bitstreams in DSpace using REST API.,DSpace,,,,https://github.com/yingjin/DspaceRestapiHarvester/issues
+Dublin Core Extended,https://github.com/omeka/plugin-DublinCoreExtended,2.2,Yes (auto),2.0,2.2,[Integrated],,,,2.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,"Adds the full set of Dublin Core properties to the existing Dublin Core element set, including element refinements and supplemental elements. See DCMI Metadata Terms: http://dublincore.org/documents/dcmi-terms/","metadata, dublin core",,,http://omeka.org/codex/Plugins/DublinCoreExtended_2.0,http://omeka.org/forums/forum/plugins
+EAD,https://github.com/Daniel-KM/Ead4Omeka,2.4.2,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,"Creates, imports, exports, manages and display EAD finding aids via OAI-PMH Static Repository.","set,  metadata,  archive",DublinCoreExtended,"ArchiveFolder,  ArchiveDocument,  OaiPmhGateway,  OaipmhHarvester,  OaiPmhRepository,  OaiPmhStaticRepository,  ArchiveRepertory",https://github.com/Daniel-KM/Ead4Omeka,https://github.com/Daniel-KM/Ead4Omeka/issues
+EAD Import,https://github.com/scholarslab/EadImporter,1.0,,,,,,,,,1.0,1.1,Scholars' Lab,,Imports EAD files into database.,"import,  csv,  ead",CsvImport,,http://www.scholarslab.org/projects/omeka-plugins/,
+Edit Link,https://github.com/omeka/plugin-EditLink,1.0,,,,,,,,,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,"Adds an edit link to admin bar for items, collections, and exhibit pages",,,,https://github.com/omeka/plugin-EditLink,https://github.com/omeka/plugin-EditLink/issues
+Editorial,https://github.com/omeka/plugin-Editorial,1.0.0,,,,,,,,1.0.0,2.4,,Roy Rosenzweig Center for History and New Media,GPLv3,Allows editorial feedback when building exhibits,,ExhibitBuilder,,http://omeka.org/codex/Plugins/Editorial,http://omeka.org/forums/forum/plugins
+ElementManager,https://github.com/biblibre/omeka-plugin-ElementManager,0.1,,,,,,,,,2.0,,Julian Maurice,GPLv3,Delete or rename existing elements,,,,https://github.com/biblibre/omeka-plugin-ElementManager,https://github.com/biblibre/omeka-plugin-ElementManager/issues
+Element Types,https://github.com/biblibre/omeka-plugin-ElementTypes,0.4,Yes,,,[Integrated],,,,0.4,2.0,,Julian Maurice,GPLv3,"Allow elements to have a type, thus allowing easier input. For instance, this plugin implements the 'date' type and show a datepicker widget for elements of this type. Other types can be implemented by plugins.",,,,https://github.com/biblibre/omeka-plugin-ElementTypes,https://github.com/biblibre/omeka-plugin-ElementTypes/issues
+Embed Codes,https://github.com/omeka/plugin-EmbedCodes,1.0,Yes (auto),1.0,1.0,Sharing,https://github.com/omeka-s-modules/Sharing,No embedded statistics.,,1.0,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Allows embedding item content as an iframe in other sites,,,,http://omeka.org/codex/Plugins/EmbedCodes,http://omeka.org/forums/forum/plugins
+Enhanced Collections,https://github.com/BGSU-LITS/Enhanced-Collections-Plugin,0.1.0,,,,,,,,,2.0,,Bowling Green State University,,Adding a layer of functionality on top of Omeka's built-in collections,collections,,,https://github.com/BGSU-LITS/Enhanced-Collections-Plugin,https://github.com/BGSU-LITS/Enhanced-Collections-Plugin/issues
+Entities,https://github.com/gsbodine/plugin-Entities,0.5-dev,,,,,,,,,2.0-dev,,Garrick S. Bodine (the original work was by RRCHNM),GPLv3,Original entities models and functions from Omeka 1.x reworked into a plug-in for Omeka 2.0,,,CrowdEd,https://github.com/gsbodine/plugin-Entities,https://github.com/gsbodine/plugin-Entities/issues
+Escher,https://github.com/AcuGIS/Escher,1.0.1,,,,,,,,1.0.1,2.0,,AcuGIS,GPLv3,Plugin for installing plugins,,,,https://www.acugis.com,http://omeka.org/forums/forum/plugins
+Europeana Element Set,https://github.com/Daniel-KM/EuropeanaElementSet,2.1,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,"Add the specific elements of the Europeana Semantic Elements, which completes the Dublin Core.","set,  metadata",DublinCoreExtended,"HideElements,  RedactElements,  SimpleVocab",https://github.com/Daniel-KM/EuropeanaElementSet,https://github.com/Daniel-KM/EuropeanaElementSet/issues
+Exhibit Access,https://github.com/patrickmj/ExhibitAccess,-,,,,,,,,,,,,,,,,,,
+Assignments,https://github.com/BGSU-LITS/omeka-plugin-Assignments,1.1,,,,,,,,,2.0,,Bowling Green State University Libraries,MIT,Create a new student role and allow assignment of students to exhibits.,,ExhibitBuilder,,https://github.com/BGSU-LITS/omeka-plugin-Assignments,https://github.com/BGSU-LITS/omeka-plugin-Assignments/issues
+Exhibit Builder,https://github.com/omeka/plugin-ExhibitBuilder,3.3.3,Yes (auto),3.3.3,3.3.4,[Integrated],,Exhibits are now standard sites.,,3.3.3,2.5,,Roy Rosenzweig Center for History and New Media,GPLv3,Build rich exhibits using Omeka.,"exhibit,  pages,  presentation",,,http://omeka.org/codex/Plugins/ExhibitBuilder_3.0,http://omeka.org/forums/forum/plugins
+Exhibit Image Annotation,https://github.com/omeka/plugin-ExhibitImageAnnotation,0.1,,,,,,,,,2.4,,Roy Rosenzweig Center for History and New Media,GPLv3,Annotate images in your exhibits.,,ExhibitBuilder,,,https://forum.omeka.org/c/omeka-classic/plugins
+Export,https://github.com/omeka/plugin-Export,0.1alpha,,,,,,,,,1.1,1.2,Center for History & New Media,,Exports an Omeka site as an archive for backup or data transfer.,,,,http://omeka.org/codex/Plugins/Export,
+Export to SPOKEdb JSON,https://github.com/uklibraries/ExportSpokeJson,0.0.18,,,,,,,,,2.1.4,2.1.4,"Michael Slone, Eric C. Weig",MIT,Exports unrestricted records to SPOKEdb-style JSON.,,RecursiveSuppression,,https://github.com/uklibraries/ExportSpokeJson,
+Extract OCR,https://github.com/symac/Plugin-Extractocr,1.0.1,,,,,,,,,2.0,,"Sylvain Machefert, based on preivous work from Roy Rosenzweig Center for History and New Media (upgraded for Omeka 2.0 by Julien Sicot)",GPLv3,Extracts text from PDF files and store them in XML so they can be searched. (Can be used to highlight results with BookReader plugin),"pdf, search, ocr, bookreader, xml",,,https://github.com/symac/Plugin-ExtractOcr,https://github.com/symac/Plugin-ExtractOcr/issues
+Facet By Metadata,https://github.com/patrickmj/FacetByMetadata,1.0.2,,,,,,,,1.0.2,2.0,,Patrick Murray-John,GPLv3,Create checkboxes for filtering searches by matching metadata values.,,,,http://omeka.org/add-ons/plugins/facet-by-metadata,https://github.com/patrickmj/FacetByMetadata/issues
+Fedora Connector,https://github.com/scholarslab/FedoraConnector,2.1.5,Yes,,,Fedora Connector,https://github.com/omeka-s-modules/FedoraConnector,,,2.1.5,2.0,2.1,Scholars' Lab,Apache 2.0,Connect Omeka to a Fedora Commons repository.,"repository,  storage",,,https://github.com/scholarslab/FedoraConnector,https://github.com/scholarslab/FedoraConnector/issues
+Feed Importer,https://github.com/patrickmj/FeedImporter,0.1,,,,,,,,,1.4,1.4,Patrick Murray-John,,Import items from RSS and ATOM feeds,feeds,"AjaxCreate,  FakeCron",,,
+File Modify,https://github.com/Daniel-KM/FileModify,2.4,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,"Modify (convert, compress, watermark, rename or any other command) uploaded file before saving it in archive folder and before creating metadata in Omeka database. Renaming files requires Archive Repertory plugin.","image,  file,  path",,ArchiveRepertory,https://github.com/Daniel-KM/FileModify,https://github.com/Daniel-KM/FileModify/issues
+FirePHP,https://github.com/patrickmj/FirePhp,1.0,,,,,,,,,2.0-dev,,Patrick Murray-John,GPLv3,Output log messages to FirePHP console,,,,https://github.com/patrickmj/FirePHP,https://github.com/patrickmj/FirePHP/issues
+Flickr Import,https://github.com/UCSCLibrary/FlickrImport,1.3,,,,,,,,1.1.9,2.1,,UC Santa Cruz University Library,GPLv3,"Adds the ability to import Flickr photosets and galleries into Omeka as items or collections, while preserving as much metadata as possible",,,,,https://github.com/UCSCLibrary/FlickrImport
+Geolocation,https://github.com/omeka/plugin-Geolocation,2.2.5,Yes (auto),2.0,2.3.3-2.2.5,Mapping,https://github.com/omeka-s-modules/Mapping,"Really free (no Google Map but Leaflet/OpenStreetMap), smarter, with multipoints and layers.",,2.2.5,2.2,,Roy Rosenzweig Center for History and New Media,GPLv3,Adds location info and maps to Omeka,,,,http://omeka.org/codex/Plugins/Geolocation_2.0,http://omeka.org/forums/forum/plugins
+Getty Suggest,https://github.com/UCSCLibrary/GettySuggest,1.4,Yes,,,Value Suggest,https://github.com/omeka-s-modules/ValueSuggest,,,1.4,2.1,,UC Santa Cruz University Library,GPLv3,Enable an autosuggest feature for Omeka elements using the Getty Collection controlled vocabularies,,,,,https://github.com/UCSCLibrary/GettySuggest
+Saga,https://github.com/patrickmj/GlamHackPhillySagas,0.1,,,,,,,,,2.1,,Patrick Murray-John,GPLv3,GLAMHack Philly Fornaldarsögur norðurlanda,,,,http://omeka.org/codex/Plugins/Saga,https://github.com/patrickmj/GlamHackPhillySagas/issues
+Analytics Dimensions,https://github.com/BGSU-LITS/omeka-plugin-AnalyticsDimensions,1.0,,,,,,,,,2.3,,Bowling Green State University Libraries,MIT,Google Analytics with dimensions for collections and exhibits.,,,,https://github.com/BGSU-LITS/omeka-plugin-AnalyticsDimensions,https://github.com/BGSU-LITS/omeka-plugin-AnalyticsDimensions/issues
+Google Tag Manager,https://github.com/anuragji/omeka-google-tagmanager,0.1.0,,,,,,,,,2.0,,The Digital Ark,GPLv3,Adds Google Tagmanager code to your pages,"analytics, tracking",,,http://www.thedigitalark.com,aspatzenegger@thedigitalark.com
+GoogleAnalytics,https://github.com/omeka/plugin-GoogleAnalytics,1.3-2.0,,,,,,,,,2.1,2.1.4,Scholars' Lab,,A small plugin to include Google Analytics JavaScript code on pages.,"google,  analytics",,,https://github.com/erochest/GoogleAnalyticsErr/wiki,
+Groups,https://github.com/omeka/plugin-Groups,1.1,,,,,,,,,,,,GPL,Zotero-like groups,,RecordRelations,GuestUser,,
+Guest User,https://github.com/omeka/plugin-GuestUser,1.1.1,Yes,,,Guest User,https://github.com/biblibre/omeka-s-module-GuestUser,,,1.1.1,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,"Adds a guest user role. Can't access backend, but allows plugins to use an authenticated user",,,,http://omeka.org/codex/Plugins/GuestUser_2.0,http://omeka.org/forums/forum/plugins
+Hide Elements,https://github.com/zerocrates/HideElements,1.3,,,,,,,,1.3,2.0,,John Flatness,GPLv3,Hide admin-specified metadata elements.,,,,https://github.com/zerocrates/HideElements#readme,https://github.com/zerocrates/HideElements/issues
+History Log,https://github.com/UCSCLibrary/HistoryLog,2.9.1,,,,,,,,2.6,2.1,,UC Santa Cruz University Library and Daniel Berthereau,GPLv3,"Creates a log of basic curatorial events for each item, collection and file, including ingress, updates, and pushes, and compute statistics on evolution.",,,,https://github.com/UCSCLibrary/HistoryLog,https://github.com/UCSCLibrary/HistoryLog/issues
+Honor Thy Contributors,https://github.com/lmullen/plugin-HonorThyContributors,0.1.3,,,,,,,,0.1.3,2.0,,Lincoln A. Mullen,GPLv3,Give credit to people who have added or edited items in your Omeka database,,,,https://github.com/lmullen/plugin-HonorThyContributors,https://github.com/lmullen/plugin-HonorThyContributors/issues
+Hotlink URLs,https://github.com/uklibraries/HotlinkUrls,0.0.0,,,,,,,,,2.0,,Michael Slone,MIT,Hotlinks URLs in the identifier field,,,,https://github.com/uklibraries/HotlinkUrls,https://github.com/uklibraries/HotlinkUrls/issues
+HTML5 Media,https://github.com/zerocrates/Html5Media,2.6,,,,,,,,2.6,2.0,,John Flatness,GPLv3,Enables HTML5 for media files using MediaElement.js.,,,,https://github.com/zerocrates/Html5Media#readme,https://github.com/zerocrates/Html5Media/issues
+HTML Viewer,https://github.com/ozmeka/plugin-HtmlViewer,0.2.3,,,,,,,,,2.0,,Thom Mc,GPLv3,Include content of attached HTML file in item page,"html, documents, viewer",,,http://github.com/ozmeka,http://github.com/ozmeka
+Identity,https://github.com/uklibraries/IdentityPlugin,0.0.0,,,,,,,master/plugin.ini.public,,2.0,,Richard Maiti,MIT,Identity plugin to make sure that each item in the digital library has an ARK identifier,,,,,
+Idref,https://github.com/jsicot/idref,0.1,Yes,,,IdRef,https://github.com/biblibre/omeka-s-module-IdRef,,master/idref/plugin.ini,,1.4,1.4,Julien Sicot,,"Adds an autocomplete text box to the Dublin Core's Subject and Creator elements, drawing from the French Subject Headings. This plugin uses IdRef, a Web application dedicated to Sudoc authority data. Sudoc is the French academic union catalogue, maintained by ABES. Also, it requires installation of SimpleVocab plugin","IdRef,  subject headings,  autocomplete,  Rameau,  Sudoc,  Abes",,SimpleVocab,,
+IIIF,https://github.com/klokantech/omeka-plugin-IIIF,1.0,,,,,,,,1.0,2.3,,Klokan Technologies GmbH,GPLv3,"IIIF Storage Adapter, items with images from IIIF, zoomable viewer, upload to IIIFHosting, manifest.json","iiif, viewer, zoom",,,https://github.com/klokantech/omeka-plugin-IIIF,http://www.klokantech.com
+Image Annotation,https://github.com/omeka/plugin-ImageAnnotation,1.0.1,,,,,,,,,1.3,1.3,Center for History & New Media,,Allows users to annotate images.,"presentation,  images,  annotation",,GuestLogin,http://omeka.org/codex/Plugins/ImageAnnotation,
+Image Resize,https://github.com/omeka/plugin-ImageResize,1.0,,,,,,,,,1.5,,Roy Rosenzweig Center for History and New Media,GPLv3,Gives administrators the ability to resize image derivatives.,"image, resize, derivative",,,http://omeka.org/codex/Plugins/ImageResize,http://omeka.org/forums/forum/plugins
+Import,https://github.com/biblibre/omeka-plugin-Import,0.1.0,,,,,,,,,2.0,,BibLibre,GPL,Extensible import plugin,import,,,https://github.com/biblibre/omeka-plugin-Import,https://github.com/biblibre/omeka-plugin-Import/issues
+Import Hyperlink,https://github.com/BGSU-LITS/omeka-plugin-ImportHyperlink,1.1,,,,,,,,,2.0,,Bowling Green State University,MIT,Imports details about a Hyperlink including embed code.,,,,https://github.com/BGSU-LITS/omeka-plugin-ImportHyperlink,https://github.com/BGSU-LITS/omeka-plugin-ImportHyperlink/issues
+Item Duplicate Check,https://github.com/biblibre/omeka-plugin-ItemDuplicateCheck,0.1,,,,,,,,,2.0,,Julian Maurice,GPLv3,Check for duplicates before saving item,,,,https://github.com/jajm/omeka-plugin-ItemDuplicateCheck,https://github.com/jajm/omeka-plugin-ItemDuplicateCheck/issues
+Item Order,https://github.com/omeka/plugin-ItemOrder,2.0.2,,,,,,,,2.0.2,2.3,,Roy Rosenzweig Center for History and New Media,GPLv3,Gives administrators the ability to custom order items in collections.,,,,http://omeka.org/codex/Plugins/ItemOrder_2.0,http://omeka.org/forums/forum/plugins
+Item References,https://github.com/GerZah/plugin-ItemReferences,0.1,,,,,,,,,2.0,,Gero Zahn / Githanjalli Elangovan,GPLv3,Creates references between items.,,,,,
+Item Relations,https://github.com/omeka/plugin-itemrelations,2.0.2,Yes,,,[Integrated],,,,2.0.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Allows administrators to define relations between items.,"item, relation, rdf",,,http://omeka.org/codex/Plugins/ItemRelations_2.0,http://omeka.org/forums/forum/plugins
+Item Review,https://github.com/UCSCLibrary/ItemReview,1.1,,,,,,,,1.1,2.1,,UC Santa Cruz University Library,GPLv3,Adds the ability to mark all item created by certain user roles for administrative review before publication.,,,,https://github.com/UCSCLibrary/ItemReview,https://github.com/UCSCLibrary/ItemReview/issues
+Koha Authority Suggest,https://github.com/biblibre/omeka-plugin-KohaAuthoritySuggest,0.1,,,,,,,,,2.0,,Julian Maurice,GPLv3,Suggest terms from a Z39.50 server,,ElementTypes,,,
+KUDL Identity Client,https://github.com/uklibraries/KudlIdentityClient,0.0.0,,,,,,,,,2.1.4,2.1.4,Michael Slone,GPLv3,Uses the KUDL Identity service to generate identifiers.,,,,https://github.com/uklibraries/KudlIdentityClient,
+LC Suggest,https://github.com/omeka/plugin-LcSuggest,2.0.2,Yes,,,Value Suggest,https://github.com/omeka-s-modules/ValueSuggest,,,2.0.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Enable an autosuggest feature for Omeka elements using the Library of Congress Authorities and Vocabularies service: http://id.loc.gov,"authority, vocabulary",,,http://omeka.org/codex/Plugins/Library_of_Congress_Suggest_2.0,http://omeka.org/forums/forum/plugins
+Ldap,https://github.com/BGSU-LITS/LDAP-Plugin,0.4.0,,,,,,,,,2.2.2,,Bowling Green State University,,Sign onto Omeka using your local LDAP. Based on the work done by Lehigh University.,"authentication, users, login, ldap",,,https://github.com/BGSU-LITS/LDAP-Plugin,https://github.com/BGSU-LITS/LDAP-Plugin
+Lightbox Gallery,https://github.com/annamichelle/LightboxGallery,1.2.0,,,,,,,,,2.0,,Anna Michelle Martinez-Montavon,GPLv3,"Adds new gallery, file with text, and book layouts to Exhibit Builder that display files using Lightbox.","exhibits, display, lightbox",,,https://github.com/annamichelle/LightboxGallery,https://github.com/annamichelle/LightboxGallery/issues
+Linked Data Elements,https://github.com/ozmeka/plugin-LinkedDataElements,2.5,,,,,,,,,2.3.1,,Thom Mc,GPLv3,Overrides core ElementText class to add a URI field,,,LcSuggest,https://github.com/ozmeka,https://github.com/ozmeka
+Linkify URL,https://github.com/Daniel-KM/LinkifyUrl,2.1,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILLv2.1,Add a filter that converts a url into a link.,display,,,https://github.com/Daniel-KM/LinkifyUrl,https://github.com/Daniel-KM/LinkifyUrl/issues
+Live Book,https://github.com/jsicot/Plugin-bibnum,2.8,,,,,,,,,2.0,,Daniel Berthereau (from bibnum of Julien Sicot (Université de Rennes 2)),GPLv3,"Manages scanned books with Omeka: zoom and flip of pages, extraction and displaying of table of contents from PDF, full text search from an XML content (KWIC), etc.","visualization,  book,  digitalization",,,https://github.com/Daniel-KM/LiveBook,https://github.com/Daniel-KM/LiveBook/Issues
+Locale,https://github.com/omeka/plugin-Locale,1.0,,,,,,,,,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Configure language for your Omeka site.,,,,http://omeka.org/codex/Plugins/Locale,http://omeka.org/forums/forum/plugins
+Maintenance,https://github.com/biblibre/omeka-plugin-Maintenance,0.1.0,,,,,,,,,2.0,,BibLibre,GPL,Put Omeka site in maintenance mode,maintenance,,,https://github.com/biblibre/omeka-plugin-Maintenance,https://github.com/biblibre/omeka-plugin-Maintenance/issues
+Mall Extensions,https://github.com/omeka/plugin-MallExtensions,0.1,,,,,,,,,2.0,,Kim Nguyen,,Scavenger Hunt layouts for Exhibit Builder and other functionality to be used on the Histories of the National Mall mobile website.,,ExhibitBuilder,,,
+Mall Map,https://github.com/omeka/MallMap,1.0-dev,,,,,,,,,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,,,"Geolocation, SimpleVocab",,,
+MapFig,https://github.com/AcuGIS/MapFig-Omeka-Plugin,2.0.1,,,,,,,,,2.0,,MapFig,GPLv3,"Add Leaflet maps to your pages, exhibits, and collections",,,,https://www.mapfig.com,https://www.acugis.com/docs/omeka-leaflet-plugin/
+Measurement Search,https://github.com/GerZah/plugin-MeasurementSearch,0.1,,,,,,,,,2.0,,Gero Zahn,GPLv3,Measurement Search is similar to Range Search: It will pre-process height x width x depth triples followed by a unit stored in item texts to be able to search for ranges. — Works great with enhanced Item Relations featuring relation comments.,,,ItemRelations,,
+Media Buckets,https://github.com/patrickmj/MediaBuckets,1.0,,,,,,,,,2.2,,Patrick Murray-John,GPLv3,Creates an Item Type to use a a dumping ground for non-'Item' media.,,,,http://omeka.org/codex/Plugins/MediaBuckets,https://github.com/patrickmj/MediaBuckets/issues
+MediaRSS,https://github.com/omeka/plugin-MediaRss,1.0,,,,,,,,,1.0,1.0,Center for History & New Media,,"Adds a MediaRSS feed to your page templates, which makes your Omeka content readable by any application or service that supports Media RSS.","visualization,  rssm",,,http://omeka.org/codex/Plugins/MediaRss_for_Cooliris,
+Metadata Browser,https://github.com/Daniel-KM/MetadataBrowser,2.11,Yes,,,Metadata Browse,https://github.com/omeka-s-modules/MetadataBrowse,,,,2.2.2,,"Kevin Reiss, digitalMETRO project (upgraded by Daniel Berthereau)",GPLv3,Set up public theme browsing display for selected Omeka Elements. Selected browsing choices also appear in sitemap file if XmlSitemap plugin is also installed. digitalMETRO Project [http://nycdigital.org/],"metadata,  browsing",,,https://github.com/Daniel-KM/MetadataBrowser,https://github.com/Daniel-KM/MetadataBrowser/issues
+METS Export,https://github.com/UCSCLibrary/MetsExport,1.2.4,,,,,,,,1.2.4,2.1,,UC Santa Cruz University Library,GPLv3,"Adds functionality to export Omeka items as METS xml files, either at the item or the collection level",,,HistoryLog,https://github.com/UCSCLibrary/MetsExport,https://github.com/UCSCLibrary/MetsExport/issues
+MlaTei,https://github.com/patrickmj/MlaTei,1.0,,,,,,,,,,,,GPL,Plugin for the CoE MLA Variorum Shakespeare Challenge,,,,,
+More Metadata For Collections,https://gitlab.com/TIME_LAS/Omeka_Plugin_MoreMetadata4Collections,1.0,,,,,,,,,2.0,,Anne Garcia-Fernandez (LAS-CNRS),CC BY-NC-SA 4.0,Adds a custom metadata set to collections. Metadata should be customized directly in the file custom_metadata.php.,,,,https://gitlab.com/TIME_LAS/Omeka_Plugin_MoreMetadata4Collections/,https://gitlab.com/TIME_LAS/Omeka_Plugin_MoreMetadata4Collections/issues
+More User Roles,https://github.com/ebellempire/MoreUserRoles,1.0.1,Yes (auto),1.0,1.0.1,[Integrated],,,,,2.0,2.2.3,Erin Bell,,"Creates dedicated Author and Editor roles. When the plugin is uninstalled, Authors and Editors are downgraded to the Contributor role.","user,  roles,  privileges",,,https://github.com/ebellempire/MoreUserRoles,
+Mud,https://github.com/patrickmj/Mud,-,,,,,,,,,,,,,,,,,,
+Multiple Collections,https://github.com/omeka/plugin-MultiCollections,1.0,Yes,,,[Integrated],,,,,1.4,,Center for History and New Media,,Adds multiple collection functionality to Omeka,,RecordRelations,,http://omeka.org/add-ons/plugins/multi-collections,
+Multimedia Display,https://github.com/UCSCLibrary/MultimediaDisplay,1.3,,,,,,,,,2.1,,Ned Henry,GPLv3,"This plugin facilitates customizable display of multimedia content including video, audio, images, books, and oral histories which may be stored on external servers.",,,,,
+My Omeka,https://github.com/omeka/plugin-MyOmeka,1.0,,,,,,,,,1.4,1.5.1,Roy Rosenzweig Center for History and New Media,GPLv3,"Creates user logins, item favoriting, and the ability for users to create posters with their favorited items.","social,  presentation,  tagging,  annotation",,TermsOfService,http://omeka.org/codex/Plugins/MyOmeka,http://omeka.org/forums/forum/plugins
+Neatline,https://github.com/scholarslab/Neatline,2.5.1,,,,,,,,2.5.1,2.0,,Scholars' Lab,"Apache License, Version 2.0",Plot your course in space and time.,,,,https://github.com/scholarslab/Neatline,https://github.com/scholarslab/Neatline/issues
+NeatlineFeatures,https://github.com/scholarslab/NeatlineFeatures,2.0.5,,,,,,,,2.0.5,2.0,2.0,Scholars' Lab,"Apache License, Version 2.0",Allows administrators to draw things on maps and associate them with an Omeka item.,geospatial,,,https://github.com/scholarslab/NeatlineFeatures,https://github.com/scholarslab/NeatlineFeatures
+Neatline Maps,https://github.com/scholarslab/NeatlineMaps,1.0.1,,,,,,,,,1.5,1.5.1,Scholars' Lab,"Apache License, Version 2.0","Connect Omeka with Geoserver, a powerful open-source geospatial server.",geospatial temporal,,,https://github.com/scholarslab/NeatlineMaps,https://github.com/scholarslab/NeatlineMaps
+Neatline ~ SIMILE Timeline,https://github.com/scholarslab/nl-widget-Simile,2.0.4,,,,,,,,2.0.4,2.0,,Scholars' Lab,"Apache License, Version 2.0",Add SIMILE Timeline to Neatline exhibits.,,Neatline,,https://github.com/scholarslab/nl-widget-Simile,https://github.com/scholarslab/nl-widget-Simile
+Neatline ~ Text,https://github.com/scholarslab/nl-widget-Text,1.1.0,,,,,,,,1.1.0,2.0,,Scholars' Lab,"Apache License, Version 2.0",Connect text documents to Neatline exibits.,,Neatline,,https://github.com/scholarslab/nl-widget-Text,https://github.com/scholarslab/nl-widget-Text/issues
+Neatline Time,https://github.com/scholarslab/NeatlineTime,2.1.0,,,,,,,,2.1.0,2.0,2.3,Scholars' Lab,"Apache License, Version 2.0",Create timelines in Omeka.,"timelines,  chronology",,,http://neatline.org/,http://github.com/scholarslab/NeatlineTime/issues
+Neatline ~ Waypoints,https://github.com/scholarslab/nl-widget-Waypoints,2.0.2,,,,,,,,2.0.2,2.0,,Scholars' Lab,"Apache License, Version 2.0",Adds a list of waypoints to Neatline exhibits.,,Neatline,,https://github.com/scholarslab/nl-widget-Waypoints,https://github.com/scholarslab/nl-widget-Waypoints
+Ngram,https://github.com/omeka/plugin-Ngram,1.1,,,,,,,,1.1,2.4,,Roy Rosenzweig Center for History and New Media,GPLv3,Generate ngram graphs from your collections,,,,http://omeka.org/codex/Plugins/NGram,https://forum.omeka.org/c/omeka-classic/plugins
+Nuxeo Link,https://github.com/UCSCLibrary/NuxeoLink,1.1.12,,,,,,,,,2.1,,Ned Henry,GPLv3,Adds the ability to navigate a Nuxeo DAMS and import Nuxeo documents as Omeka items. Designed specifically for use with the UCLDC Nuxeo DAMS.,,,,,https://github.com/UCSCLibrary/NuxeoLink
+OAI-PMH Gateway,https://github.com/Daniel-KM/OaiPmhGateway,2.3,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,Expose files and metadata of a standard OAI-PMH static repository through Omeka used as a gateway.,"archive,  repository,  import",OaiPmhRepository,"OaipmhHarvester,  OaiPmhStaticRepository,  ArchiveRepertory,  DublinCoreExtended",https://github.com/Daniel-KM/OaiPmhGateway,https://github.com/Daniel-KM/OaiPmhGateway/issues
+OAI-PMH Harvester,https://github.com/omeka/plugin-OaipmhHarvester,2.0.2,,,,,,,,2.0.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Harvests metadata from OAI-PMH data providers.,"import,  oaipmh,  metadata",,DublinCoreExtended,http://omeka.org/codex/Plugins/OaipmhHarvester_2.0,http://omeka.org/forums/forum/plugins
+OAI-PMH Repository,https://github.com/zerocrates/OaiPmhRepository,2.1.1,Yes,,,OAI-PMH Repository,https://github.com/biblibre/omeka-s-module-OaiPmhRepository,,,2.1.1,2.0,,John Flatness,GPLv3,Exposes Omeka items as an OAI-PMH repository.,,,,https://github.com/zerocrates/OaiPmhRepository#readme,https://github.com/zerocrates/OaiPmhRepository/issues
+OAI-PMH Static Repository,https://github.com/Daniel-KM/OaiPmhStaticRepository,2.6,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,Automatically build a standard OAI-PMH archive from files and metadata of a local or a distant folder.,"archive,  repository,  import","ArchiveDocument,  OaiPmhGateway","OaipmhHarvester,  ArchiveRepertory,  DublinCoreExtended,  OcrElementSet",https://github.com/Daniel-KM/OaiPmhStaticRepository,https://github.com/Daniel-KM/OaiPmhStaticRepository/issues
+OCR Element Set,https://github.com/Daniel-KM/OcrElementSet,2.6,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,Creates a file element set for OCR metadata and text.,"set,  metadata",,"ArchiveFolder,  OaiPmhStaticRepository,  HideElements,  Scripto",https://github.com/Daniel-KM/OcrElementSet,https://github.com/Daniel-KM/OcrElementSet/issues
+OHMSxml plugin for the SPOKEdb Database,https://github.com/uklibraries/OHMSExportPlugin,2.1,,,,,,,,,1.0,1.0,Eric C. Weig (University of Kentucky Libraries),,Adds a OHMS XML export to Omeka outputs.,"visualization,  ohms-xml",,,http://omeka.org/codex/Plugins/OHMS_Export,
+Omeka Api Import,https://github.com/omeka/plugin-OmekaApiImport,1.1.2,Yes,,,Omeka 2 Importer,https://github.com/omeka-s-modules/Omeka2Importer,,,1.1.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Import data from other Omeka 2.1 or higher sites using the API,,,,http://omeka.org/codex/Plugins/Omeka_API_Import,http://omeka.org/forums/forum/plugins
+Omeka On Ovh,https://github.com/Daniel-KM/OmekaOnOvh,2.2,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILLv2.1,Permet de créer les fichiers dérivés sur un serveur OVH.,compatibility,,,http://bibliothequedesphares.fr,http://bibliothequedesphares.fr
+OpenLayersZoom,https://github.com/Daniel-KM/OpenLayersZoom,2.7.1,,,,,,,,2.7,2.2.2,,Daniel Berthereau (upgrade of the release built by Matt Miller),GNU/GPL,An OpenLayers based image zoom widget,"viewer,  image,  zoom",,,https://github.com/Daniel-KM//OpenLayersZoom,https://github.com/Daniel-KM/OpenLayersZoom/issues
+OpenSeadragon,https://github.com/klokantech/omeka-OpenSeadragon,0.3.1,,,,,,,,,2.0,,Digital Public Library of America,GPLv3,Embeds an OpenSeadragon image viewer to provide zoomable images,"images, viewer, openseadragon",,,https://github.com/dpla/omeka-OpenSeadragon,https://github.com/dpla/omeka-OpenSeadragon
+Page Caching,https://github.com/Daniel-KM/PageCaching,2.1,,,,,,,,,2.1,,Center for History and New Media [upgraded by Daniel Berthereau],GPLv3,Adds page caching.,caching,,,https://omeka.org/codex/Plugins/PageCaching,https://omeka.org/forums/forum/plugins
+PBCore,https://github.com/annewootton/PBCore-Element-Set,1.0,,,,,,,,2.1,1.0,1.4,Pop Up Archive,,Creates PBCore element set and related output format.,"metadata,  pbcore",,,http://www.popuparchive.org,
+PDF Embed,https://github.com/zerocrates/PdfEmbed,1.0,,,,,,,,1.0,2.0,,John Flatness,GPLv3,Embeds PDF documents into item and file pages.,,,,https://github.com/zerocrates/PdfEmbed#readme,https://github.com/zerocrates/PdfEmbed/issues
+PDF Output,https://github.com/klokantech/plugin-PDFOutput,1.1,,,,,,,,,1.0,1.42,Klokan Technologies GmbH,,The PDF output format for item detail page /items/show?output=pdf,pdf,,,,
+PDF Search,https://github.com/omeka/plugin-PdfSearch,1.0.1,,,,,,,,,1.5,,Roy Rosenzweig Center for History and New Media,GPLv3,Extracts text from PDF files so they can be searched.,"pdf, search",,,http://omeka.org/codex/Plugins/PdfSearch,http://omeka.org/forums/forum/plugins
+PDF Text,https://github.com/omeka/plugin-PdfText,1.3,,,,,,,,1.3,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Extracts text from PDF files so they can be browsed and searched.,"pdf, search, text",,,http://omeka.org/codex/Plugins/PdfText,http://omeka.org/forums/forum/plugins
+PDF TOC,https://github.com/symac/Plugin-PdfToc,1.0.1,,,,,,,,1.0,2.0,,"Sylvain Machefert, based on PDF Search, from Roy Rosenzweig Center for History and New Media. (upgraded for Omeka 2.0 by Julien Sicot based on PDF Text)",GPLv3,Extracts table of contents from PDF files,"pdf, toc",,,https://github.com/symac/Plugin-PdfToc,https://github.com/symac/Plugin-PdfToc/issues
+Posters,https://github.com/omeka/plugin-Posters,1.0.1,,,,,,,,1.0.1,2.1,,Roy Rosenzweig Center for History and New Media,GPLv3,Create interpretive posters using Omeka items.,"posters,  presentation,  interpretation",GuestUser,,http://omeka.org/codex/Plugins/Posters,http://omeka.org/forums/forum/plugins
+Range Search,https://github.com/GerZah/plugin-RangeSearch,0.3,,,,,,,,,2.0,,Gero Zahn,GPLv3,"Range Search is similar to Date Search: It will pre-process currencies, weights, and other numbers followed by a unit stored in item texts and make them ranges — Works great with enhanced Item Relations featuring relation comments.",,,ItemRelations,,
+Rating,https://github.com/Daniel-KM/Rating,2.1,,,,,,,,,2.1,,Daniel Berthereau,CeCILL v2.1,Add a widget to allow users to rate a record instantly.,contribution,,GuestUser,https://github.com/Daniel-KM/Rating,https://github.com/Daniel-KM/Rating/Issues
+Ratings,https://github.com/anuragji/Omeka-Ratings,0.6,,,,,,,,,2.0,,The Digital Ark,GPLv3,Allows registered users to rate items and displays the average ratings,,GuestUser,,,aspatzenegger@thedigitalark.com
+Reassign Files,https://github.com/GerZah/plugin-ReassignFiles,0.1,,,,,,,,,2.0,,Gero Zahn / Githanjalli Elangovan,GPLv3,Reassignes files from one item to another.,,,,,
+Reassign Ownership,https://github.com/patrickmj/ReassignOwnership,1.0,,,,,,,,,2.0,,Patrick Murray-John,GPLv3,"Allows owners of collections and items, or 'super' and 'admin' user roles, to change ownership",,,,https://github.com/patrickmj/ReassignOwnership,https://github.com/patrickmj/ReassignOwnership/issues
+Record Relations,https://github.com/omeka/plugin-RecordRelations,2.0.1,Yes,,,[Integrated],,,,2.0.1,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Facilitates plugins creating relations across record types,,,,http://omeka.org/codex/Plugins/RecordRelations_2.0,http://omeka.org/forums/forum/plugins
+Recursive Suppression,https://github.com/uklibraries/RecursiveSuppression,0.0.1,,,,,,,,,2.0,,Michael Slone,MIT,Allows records to be suppressed recursively,,SpokeRelationships,,https://github.com/uklibraries/RecursiveSuppression,https://github.com/uklibraries/RecursiveSuppression/issues
+Redact Elements,https://github.com/omeka/plugin-RedactElements,1.0,,,,,,,,1.0,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Redact admin-specified metadata elements.,,,,http://omeka.org/codex/Plugins/RedactElements,http://omeka.org/forums/forum/plugins
+Reference,https://github.com/Daniel-KM/Reference,2.4.1,,,,,,,,2.4.1,2.2.2,,Daniel Berthereau,GPLv3,Adds pages with the alphabetical indexes of specified item types and elements.,"browsing,  tree view",,,https://github.com/Daniel-KM/Reference,https://github.com/Daniel-KM/Reference/issues
+refNum Element Set,https://github.com/Daniel-KM/RefnumElementSet,2.4,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,"Creates a file element set for refNum, a standard for digitalized documents, especially books and manuscripts (see http://bibnum.bnf.fr/refNum).","set,  metadata",,,https://github.com/Daniel-KM/RefnumElementSet,https://github.com/Daniel-KM/RefnumElementSet/issues
+Reorder Element Texts,https://github.com/GerZah/plugin-ReorderElementTexts,0.1,,,,,,,,,2.0,,Gero Zahn,GPLv3,Re-order element texts after adding additional input for the same field.,,,,,
+Replace DC:Title in all views,https://github.com/popuparchive/ReplaceDcTitle,1.2,,,,,,,,1.2,2.0,2.0,Pop Up Archive,GPLv3,Replaces DC:Title field in all public/admin views with the PBCore:Title field.,"pbcore,  custom element set",,,http://www.popuparchive.org,https://github.com/popuparchive/ReplaceDcTitle/issues
+Reports,https://github.com/omeka/plugin-Reports,2.0.2,,,,,,,,2.0.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Generates item reports in HTML and QR Codes of items in PDFs.,,,,http://omeka.org/codex/Plugins/Reports_2.0,http://omeka.org/forums/forum/plugins
+Rotate Picture,https://github.com/symac/plugin-RotatePicture,1.0.1,,,,,,,,,2.2,,"Sylvain Machefert, Bordeaux 3 (@symac)",GPL,Allow picture rotation.,"file, image, rotate, rotation",,,,
+Scripto,https://github.com/omeka/plugin-Scripto,2.2,,,,,,,,2.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Adds the ability to transcribe items using the Scripto library.,"scripto,  transcription,  crowdsource,  documents",,,http://omeka.org/codex/Plugins/Scripto_2.0,https://forum.omeka.org/c/omeka-classic/plugins
+Search By Metadata,https://github.com/omeka/plugin-SearchByMetadata,1.2.1,,,,,,,,1.2.1,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Allows administrators to configure metadata fields to link to items with same field value,,,,http://omeka.org/codex/Plugins/SearchByMetadata,http://omeka.org/forums/forum/plugins
+Search Tweaks,https://github.com/ozmeka/plugin-SearchTweaks,0.3,,,,,,,,,2.0,,Thom Mc,GPLv3,Customise advanced search,,,SolrSearch,https://github.com/ozmeka,https://github.com/ozmeka
+Select Owner,https://github.com/BGSU-LITS/omeka-plugin-SelectOwner,1.0,,,,,,,,,2.0,,Bowling Green State University Libraries,MIT,Assign an owner to an item or collection.,,,,https://github.com/BGSU-LITS/omeka-plugin-SelectOwner,https://github.com/BGSU-LITS/omeka-plugin-SelectOwner/issues
+Select2,https://github.com/biblibre/omeka-plugin-Select2,0.3,,,,,,,,0.3,2.0,,Julian Maurice,GPLv3,Apply Select2 JS library to existing dropdown lists,,,,https://github.com/biblibre/omeka-plugin-Select2,https://github.com/biblibre/omeka-plugin-Select2/issues
+Shared Shelf Link,https://github.com/omeka/SharedShelfLink,1.0,,,,,,,,2.0,1.5.3,1.5.3,"ARTstor, INC",,"Allows Shared Shelf users to publish image files and data records from a project in Shared Shelf, an online media management software from ARTstor, to Omeka collections. Shared Shelf is a subscription-based service.","import,  artstor,  sharedshelf,  metadata",,,,http://help.artstor.org/sshelp/index.php/Contact
+Shortcode Carousel,https://github.com/omeka/plugin-ShortcodeCarousel,1.0.1,,,,,,,,1.0.1,2.2,,Roy Rosenzweig Center for History and New Media,GPLv3,Adds a shortcode to insert a carousel item viewer,,,,http://omeka.org/codex/Plugins/ShortcodeCarousel,http://omeka.org/forums/forum/plugins
+Simple Contact,https://github.com/Daniel-KM/SimpleContact,0.7,,,,,,,,,2.0,,Roy Rosenzweig Center for History & New Media,GPLv3,Adds anywhere a simple contact form for users to contact the administrator.,"captcha,  email",,,https://omeka.org/codex/Plugins/SimpleContactForm_2.0,https://omeka.org/forums/forum/plugins
+SimpleContactForm,https://github.com/omeka/plugin-SimpleContactForm,0.5,,,,,,,,0.5,2.0,,Roy Rosenzweig Center for History & New Media,GPLv3,Adds a simple contact form for users to contact the administrator.,"captcha,  email",,,http://omeka.org/codex/Plugins/SimpleContactForm_2.0,http://omeka.org/forums/forum/plugins
+Simple Pages,https://github.com/omeka/plugin-SimplePages,3.0.8,Yes (auto),3.0.8,3.0.8,[Integrated],,,,3.0.8,2.2,,Roy Rosenzweig Center for History and New Media,GPLv3,Allows administrators to create simple web pages for their public site.,,,,http://omeka.org/codex/Plugins/SimplePages_2.0,http://omeka.org/forums/forum/plugins
+Simple Vocab,https://github.com/omeka/plugin-SimpleVocab,2.1,Yes,,,Custom Vocab,https://github.com/omeka-s-modules/CustomVocab,,,2.1,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,A simple way to create controlled vocabularies.,"controlled vocabulary,  vocabulary",,,http://omeka.org/codex/Plugins/SimpleVocab_2.0,http://omeka.org/forums/forum/plugins
+Simple Vocab Plus,https://github.com/UCSCLibrary/SimpleVocabPlus,2.4,,,,,,,,2.4,2.1,,UC Santa Cruz University Library,GPLv3,Allows for cloud based vocabulary definition and autosuggest features for Omeka elements,,,,https://github.com/UCSCLibrary/SimpleVocabPlus,https://github.com/UCSCLibrary/SimpleVocabPlus/issues
+Site Notes,https://github.com/omeka/plugin-SiteNotes,1.0.1,,,,,,,,,1.3,1.3,Center for History & New Media,,Administrative users can write notes about the site in an an editable space.,administration,,,http://omeka.org/codex/Plugins/SiteNotes,
+Sites,https://github.com/omeka/plugin-Sites,1.2,,,,,,,,,,,,GPL,For Omeka Commons -- data about participating institutions,,RecordRelations,,,
+Social Bookmarking,https://github.com/omeka/plugin-SocialBookmarking,2.0.2,Yes (auto),2.0,2.2,Sharing,https://github.com/omeka-s-modules/Sharing,"Only common social networks (Facebook, Twitter, Pinterest, Tumblr, email) and embed, but not AddThis.",,2.0.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Uses AddThis to insert a customizable list of social bookmarking sites on each item page.,"social,  syndication",,,http://omeka.org/codex/Plugins/SocialBookmarking_2.0,http://omeka.org/forums/forum/plugins
+SocialMediaElementSet,https://github.com/patrickmj/SocialMediaElementSet,1.0,,,,,,,,1.0,2.0,,Patrick Murray-John,GPLv3,"Adds an element set for social media. Rarely appropriate, unless you are hardcore about your metadata specs.",,,,http://omeka.org/add-ons/plugins/social-media-element-set,https://github.com/patrickmj/SocialMediaElementSet/issues
+Solr Search,https://github.com/scholarslab/SolrSearch,2.3.0,Yes,,,Solr Search,https://github.com/biblibre/omeka-s-module-Solr,,,2.3.0,2.0,2.1,Scholars' Lab,Apache 2.0,Integrate Apache Solr into Omeka for primary searching.,"solr,  search",,,https://github.com/scholarslab/SolrSearch,https://github.com/scholarslab/SolrSearch/issues
+Spoke Relationships,https://github.com/uklibraries/SpokeRelationships,0.0.0,,,,,,,,,2.0,,Michael Slone,GPLv3,Implements relationships needed for SPOKEdb.,,ItemRelations,,https://github.com/uklibraries/SpokeRelationships,https://github.com/uklibraries/SpokeRelationships/issues
+Stats,https://github.com/Daniel-KM/Stats,2.2.2,,,,,,,,,2.2.2,,Daniel Berthereau,CeCILL v2.1,Logger that counts views of pages and records and makes stats about usage and users of the site.,,,,https://github.com/Daniel-KM/Stats,https://github.com/Daniel-KM/Stats/issues
+Structured Names,https://github.com/uklibraries/StructuredNames,0.0.0,,,,,,,,,2.0,,Michael Slone,GPLv3,Allows the input and display of structured names,,ElementTypes,,https://github.com/uklibraries/StructuredNames,https://github.com/uklibraries/StructuredNames/issues
+SubjectBrowse,https://github.com/pobocks/SubjectBrowse,1.0,,,,,,Replaced by Reference.,,2.3,1.0,1.4,William Mayo <mayow@simmons.edu>,,Adds alphabetical browse on DC:Subject field to Omeka.,"browsing,  subject,  Dublin Core",,,http://github.com/pobocks/SubjectBrowse/,http://github.com/pobocks/SubjectBrowse/issues
+Suggest Anything,https://github.com/ozmeka/plugin-SuggestAnything,2.3.2,,,,,,,,,2.0,,UTS eResearch mods to code by Roy Rosenzweig Center for History and New Media,GPLv3,"Enable an autosuggest feature for Omeka elements using the Library of Congress Authorities and Vocabularies service: http://id.loc.gov, SCOT and Geonames via FillMyList","authority, vocabulary",,,http://github.com/ozmeka/,http://github.com/ozmeka/
+Switch Language,https://gitlab.com/TIME_LAS/Omeka_Plugin_SwitchLang,1.1,,,,,,,,,2.0,,Anne Garcia-Fernandez (LAS-CNRS) and Yifan Zhang (ENSIIE) - Supported by the Labex TransferS,CC BY-NC-SA 4.0,Allow users to choose the website language. Admin can configure the public languages available and the default website language.,,,,https://gitlab.com/TIME_LAS/Omeka_Plugin_SwitchLang/,https://gitlab.com/TIME_LAS/Omeka_Plugin_SwitchLang/issues
+Tagging,https://github.com/Daniel-KM/Tagging,2.2.1,,,,,,,,,2.1,,Daniel Berthereau,CeCILL v2.1,Allows free tagging on items to create folksonomy.,"tag,  contribution",,GuestUser,https://github.com/Daniel-KM/Tagging,https://github.com/Daniel-KM/Tagging/issues
+Taxonomy,https://github.com/biblibre/omeka-plugin-Taxonomy,0.2.0,,,,,,,,,2.0,,Julian Maurice,GPLv3,Allow to define taxonomies and declare an element type 'taxonomy-term',,ElementTypes,,https://github.com/biblibre/omeka-plugin-Taxonomy,https://github.com/biblibre/omeka-plugin-Taxonomy/issues
+TCs Dialogue,https://github.com/ozmeka/plugin-TCsDialogue,0.3,,,,,,,,,2.0,,Thom Mc,GPLv3,Provides a dialogue where user must accept terms & conditions to continue,,,,https://github.com/ozmeka,https://github.com/ozmeka
+TEI Display,https://github.com/scholarslab/TeiDisplay,1.0,,,,,,,,,2.0-dev,,Scholars' Lab,"Apache License, Version 2.0",Attach TEI documents to Omeka items.,"tei,  xml,  xsl",,,https://github.com/scholarslab/TeiDisplay,https://github.com/scholarslab/TeiDisplay
+Terms Of Service,https://github.com/omeka/plugin-TermsOfService,0.2.2,,,,,,,,,1.5.3,2.0,Roy Rosenzweig Center for History & New Media,,Allows administrators to specify their website terms of service and privacy policy.,administration,,,http://omeka.org,
+Text Analysis,https://github.com/omeka/plugin-TextAnalysis,1.1,,,,,,,,1.1,2.4,,Roy Rosenzweig Center for History and New Media,GPLv3,Analyze your text using AlchemyAPI,,,,http://omeka.org/codex/Plugins/Text_Analysis,https://forum.omeka.org/c/omeka-classic/plugins
+Text Annotation,https://github.com/omeka/plugin-TextAnnotation,0.2,,,,,,,,0.2,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Allows for annotation of text content on a page.,,,,http://omeka.org/codex/Plugins/Text_Annotation,https://forum.omeka.org/c/omeka-classic/plugins
+TinyMCE Mod,https://github.com/jaguillette/TinyMceMod,-,,,,,,,,,,,Jeremy Guillette,"GNU General Public License, Version 3.0",Modify tinyMCE settings without hacking core,,,,https://github.com/jaguillette/TinyMceMod,https://github.com/jaguillette/TinyMceMod/issues
+Tumbleka,https://github.com/NedHenry/Tumbleka,1.0,,,,,,,,1.0,2.0,,Ned Henry,MIT,Autoposts items to Tumblr.,,,,,https://github.com/NedHenry/Tumbleka
+UniversalViewer,https://github.com/Daniel-KM/UniversalViewer4Omeka,2.4.2,Yes (auto),2.4.2,2.4.2,Universal Viewer,https://github.com/Daniel-KM/Omeka-S-module-UniversalViewer,,,2.4.2,2.2.2,,Daniel Berthereau,CeCILL v2.1,"Integrates the IIIF specifications and the Universal Viewer in order to create carousels of virtual books from image files and to display any media file (pdf, audio, video, 3D...) in a unified player.","viewer,  book,  digital library",,"OpenLayersZoom,  CollectionTree,  ArchiveRepertory,  ExhibitBuilder",https://github.com/Daniel-KM/UniversalViewer4Omeka,https://github.com/Daniel-KM/UniversalViewer4Omeka/issues
+Upgrade to Omeka Semantic,https://github.com/Daniel-KM/UpgradeToOmekaS,2.0.2,Yes (auto),2.0.1,,Upgrade From Omeka Classic,https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic,Install the compatibility layer for themes.,,,2.3.1,,Daniel Berthereau,CeCILL v2.1,"Upgrade automatically your archive from Omeka 2 to Omeka S (metadata, files, parameters, exhibits, common plugins, and themes).","archive,  upgrade",,,https://github.com/Daniel-KM/UpgradeToOmekaS,https://github.com/Daniel-KM/UpgradeToOmekaS/issues
+User Profiles,https://github.com/omeka/plugin-UserProfiles,1.1.1,,,,,,,,1.1.1,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Adds configurable user profiles to omeka,,RecordRelations,GuestUser,http://omeka.org/codex/Plugins/UserProfile_2.0,http://omeka.org/forums/forum/plugins
+User Tags,https://github.com/omeka/plugin-UserTags,1.0,,,,,,,,,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Allows users to add private tags to items.,,,,https://omeka.org/codex/Plugins/UserTags,https://omeka.org/forums/forum/plugins
+VideoStream,https://github.com/Daniel-KM/VideoStream,2.3,,,,,,,,2.3,2.0,,Indiana University Library,GPLv3,Embeds a JW Player video segment player into item show pages.,"viewer,  video",,,http://www.dlib.indiana.edu/projects/omeka2/,https://github.com/wgcowan/videostreaming/issues
+Vimeo Import,https://github.com/UCSCLibrary/VimeoImport,1.3,,,,,,,,1.2,2.0,,UC Santa Cruz University Library,GPLv3,Adds the ability to import Vimeo videos into Omeka as items while preserving as much metadata as possible,,,,https://github.com/UCSCLibrary/VimeoImport,https://github.com/UCSCLibrary/VimeoImport/issues
+VRA Core Element Set,https://github.com/scholarslab/VraCoreElementSet,1.0,,,,,,,,1.2,1.0,1.2.1,Scholars' Lab,,Create VRA Core element set in Omeka database.,elements,,,http://www.scholarslab.org/projects/omeka-plugins/,
+Web Services Shortcodes,https://github.com/omeka/plugin-WebServicesShortcodes,0.1,,,,,,,,,2.0,,Roy Rosenweig Center for History and New Media,GPLv3,Makes shortcodes available for embedding content from web services.,shortcodes,,,http://omeka.org/add-ons/plugins/web-services-shortcodes,http://omeka.org/forums/forum/plugins
+XML Import,https://github.com/Daniel-KM/XmlImport,2.16,,,,,,,,,2.2.2,,Daniel Berthereau (based on GenericXmlImporter of Scholars' Lab),Apache v2,Imports metadata and files from one or multiple XML via a generic or a custom XSLT sheet and via CSV Import+.,"import,  update,  xml,  csv,  metadata",CsvImportPlus,,https://github.com/Daniel-KM/XmlImport,https://github.com/Daniel-KM/XmlImport/issues
+Sitemap 2,https://github.com/UCSCLibrary/Sitemap,2.3,,,,,,,,2.3,2.0,2.3,UC Santa Cruz University Library,GPL3,"This Omeka 2.0+ plugin provides a persistent url for a dynamically generated XML Sitemap, for SEO purposes.","xml sitemap, search engine optimization",,,https://github.com/UCSCLibrary/Sitemap,https://github.com/UCSCLibrary/Sitemap/issues
+YouTube Import,https://github.com/UCSCLibrary/YouTubeImport,1.3,,,,,,,,1.1.11,2.0,,UC Santa Cruz Library,GPLv3,Adds the ability to import Youtube videos into Omeka as items while preserving as much metadata as possible,,,,,https://github.com/UCSCLibrary/YouTubeImport
+Zoom.it,https://github.com/omeka/plugin-Zoomit,2.0,,,,,,,,2.0,2.0,,Roy Rosenzweig Center for History and New Media,GPLv3,Embeds a Zoom.it image viewer into item show pages.,"images, viewer, microsoft, zoom.it",,,http://omeka.org/codex/Plugins/Zoomit_2.0,http://omeka.org/forums/forum/plugins
+Zotero Import,https://github.com/omeka/plugin-ZoteroImport,2.1,,,,Zotero Import,https://github.com/omeka-s-modules/ZoteroImport,,,2.1,2.0,2.0,Roy Rosenzweig Center for History and New Media,GPLv3,Imports libraries and collections from Zotero user and group accounts.,"zotero, import",,,http://omeka.org/codex/Plugins/ZoteroImport_2.0,http://omeka.org/forums/forum/plugins
+,,,,,,Basket,https://github.com/biblibre/omeka-s-module-Basket,,,,,,,,,,,,,
+,,,,,,jQuery UI,https://github.com/biblibre/omeka-s-module-jQueryUI,,,,,,,,,,,,,
+,,,,,,PSL Search Form,https://github.com/biblibre/omeka-s-module-PslSearchForm,,,,,,,,,,,,,
+,,,,,,Rights Statements,https://github.com/zerocrates/RightsStatements,,,,,,,,,,,,,
+,,,,,,Search,https://github.com/biblibre/omeka-s-module-Search,,,,,,,,,,,,,
+,,,,,,UnApi,https://github.com/omeka-s-modules/UnApi,,,,,,,,,,,,,
