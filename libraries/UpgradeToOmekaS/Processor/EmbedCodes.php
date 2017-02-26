@@ -17,7 +17,7 @@ class UpgradeToOmekaS_Processor_EmbedCodes extends UpgradeToOmekaS_Processor_Abs
         'version' => '1.0.0-beta',
         'url' => 'https://github.com/omeka-s-modules/Sharing/releases/download/v%s/Sharing.zip',
         'size' => 8217,
-        'md5' => '442c579734ca64c6f5f011d4e95da914',
+        'sha1' => '036bf0b79a50faa8a322d10479e0f74725aaff67',
         'type' => 'equivalent',
         'partial' => true,
         'note' => 'No embedded statistics.',

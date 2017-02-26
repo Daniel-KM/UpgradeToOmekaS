@@ -376,7 +376,7 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
                 $this->markTestIncomplete(__('An empty file "%s" exists: replace it by the true omeka-s.zip.', $path));
             }
             elseif ($filesize != $processor->module['size']
-                    || md5_file($path) != $processor->module['md5']
+                    || sha1_file($path) != $processor->module['sha1']
                 ) {
                 $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));
             }
@@ -404,6 +404,6 @@ class UpgradeToOmekaS_Processor_CoreServerTest extends UpgradeToOmekaS_Test_AppT
 
         $baseDir = $processor->getParam('base_dir');
         $indexFile = $baseDir . DIRECTORY_SEPARATOR . 'index.php';
-        $this->assertEquals('13ceb3fef1651b438721315340702ce4', md5_file($indexFile));
+        $this->assertEquals('6e6929c94363fc5059cae795233d91465e1d89be', sha1_file($indexFile));
     }
 }

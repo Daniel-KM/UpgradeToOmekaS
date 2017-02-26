@@ -20,7 +20,7 @@ class UpgradeToOmekaS_Processor_Geolocation extends UpgradeToOmekaS_Processor_Ab
         'version' => '1.0.0-beta',
         'url' => 'https://github.com/omeka-s-modules/Mapping/releases/download/v%s/Mapping.zip',
         'size' => 230015,
-        'md5' => '2b1919eabef364f14cbe9cdc71eb4467',
+        'sha1' => '40803d0157a444cb1d657f31b4fa5af41fd8c45e',
         'type' => 'equivalent',
         'partial' => true,
         'note' => 'Really free (no Google Map but Leaflet/OpenStreetMap), smarter, with multipoints and layers.',

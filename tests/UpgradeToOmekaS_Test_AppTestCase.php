@@ -302,7 +302,7 @@ PLUGIN;
         else {
             $processor = new UpgradeToOmekaS_Processor_CoreServer();
             if (filesize($path) != $processor->module['size']
-                   || md5_file($path) != $processor->module['md5']
+                   || sha1_file($path) != $processor->module['sha1']
                 ) {
                 $this->markTestSkipped(__('A file "%s" exists and this is not a test one.', $path));
             }

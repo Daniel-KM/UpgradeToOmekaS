@@ -1248,7 +1248,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                     . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url));
             }
             if ($filesize != $this->module['size']
-                    || md5_file($path) != $this->module['md5']
+                    || sha1_file($path) != $this->module['sha1']
                 ) {
                 throw new UpgradeToOmekaS_Exception(
                     __('A file "%s" exists in the temp directory and this is not the release %s.',
@@ -1270,7 +1270,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                     . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path));
             }
             if (filesize($path) != $this->module['size']
-                    || md5_file($path) != $this->module['md5']
+                    || sha1_file($path) != $this->module['sha1']
                 ) {
                 throw new UpgradeToOmekaS_Exception(
                     __('The downloaded file is corrupted.')

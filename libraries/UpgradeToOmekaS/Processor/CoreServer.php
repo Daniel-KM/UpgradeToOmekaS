@@ -20,7 +20,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         'version' => '1.0.0-beta2',
         'url' => 'https://github.com/omeka/omeka-s/releases/download/v%s/omeka-s.zip',
         'size' => 11526232,
-        'md5' => '45283a20f3a8e13dac1a9cfaeeaa9c51',
+        'sha1' => '6e6929c94363fc5059cae795233d91465e1d89be',
         'type' => 'equivalent',
         'requires' => array(
             'minDb' => array(
