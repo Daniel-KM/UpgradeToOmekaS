@@ -129,5 +129,21 @@ echo head(array(
     <?php else: ?>
     <p class="explanation note"><?php echo __('Omeka logs are not enabled with the minimum level of "info", so previous messages won’t be kept in case of a new process.'); ?></p>
     <?php endif; ?>
+    <?php
+        if ($livingRunningJobs):
+            echo common('upgrade-to-omeka-s-running-jobs', array(
+                'type' => 'living',
+                'runningJobs' => $livingRunningJobs,
+                'isStopped' => $isStopped,
+            ));
+        endif;
+        if ($deadRunningJobs):
+            echo common('upgrade-to-omeka-s-running-jobs', array(
+                'type' => 'dead',
+                'runningJobs' => $deadRunningJobs,
+                'isStopped' => $isStopped,
+            ));
+        endif;
+    ?>
 </div>
 <?php echo foot();

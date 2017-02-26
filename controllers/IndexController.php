@@ -299,7 +299,14 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
 
     public function logsAction()
     {
+        $hasLivingJob = $this->_hasLivingRunningJobs();
         $isProcessing = $this->_isProcessing();
+
+        if (!$hasLivingJob && $isProcessing) {
+            $this->_cleanFatalError();
+            $isProcessing = false;
+        }
+
         $isCompleted = $this->_isCompleted();
         $isError = $this->_isError();
         $isStopped = $this->_isStopped();
@@ -307,6 +314,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $progress = $this->_checkProgress();
         $hasPreviousUpgrade = $this->_hasPreviousUpgrade();
         $previousParams = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
+        $deadRunningJobs = $this->_getDeadRunningJobs();
+        $livingRunningJobs = $this->_getLivingRunningJobs();
 
         $isLogEnabled = $this->_isLogEnabled();
         $isSiteDown = $this->_isSiteDown();
@@ -321,6 +330,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->previousParams = $previousParams;
         $this->view->isLogEnabled = $isLogEnabled;
         $this->view->isSiteDown = $isSiteDown;
+        $this->view->deadRunningJobs = $deadRunningJobs;
+        $this->view->livingRunningJobs = $livingRunningJobs;
 
         $logs = json_decode(get_option('upgrade_to_omeka_s_process_logs'), true);
 
@@ -421,24 +432,57 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
     public function cleanJobsAction()
     {
         $processes = $this->_getDeadRunningJobs();
+
         foreach ($processes as $process) {
-            $arguments = $process->getArguments();
-            $job = json_decode($arguments['job'], true);
-            $classname = isset($job['className']) ? $job['className'] : '';
-            $user = get_record_by_id('User', $process->user_id);
-            $username = $user ? $user->username : __('deleted user');
-            $message = empty($process->pid)
-                ? __('The status of process #%d (%s, started at %s by user #%d [%s]), without pid, has been set to error.',
-                    $process->id, $classname, $process->started, $process->user_id, $username)
-                : __('The status of process #%d (%s, started at %s by user #%d [%s]), with a non existing pid, has been set to error.',
-                    $process->id, $classname, $process->started, $process->user_id, $username);
-            $process->status = Process::STATUS_ERROR;
-            $process->save();
-            _log('[UpgradeToOmekaS]: ' . $message, Zend_Log::WARN);
-            $this->_helper->_flashMessenger($message, 'success');
+            $this->_setErrorJob($process);
         }
 
         $this->_helper->redirector->goto('index');
+    }
+
+    /**
+     * Stop current process after an fatal error.
+     *
+     * @return void
+     */
+    protected function _cleanFatalError()
+    {
+        set_option('upgrade_to_omeka_s_process_status', Process::STATUS_ERROR);
+
+        $processes = $this->_getDeadRunningJobs(0, true);
+
+        foreach ($processes as $process) {
+            $this->_setErrorJob($process);
+        }
+
+        $this->_helper->redirector->goto('index');
+    }
+
+    /**
+     * Helper to set error to processes.
+     *
+     * @param Process $process
+     * @return void
+     */
+    protected function _setErrorJob($process)
+    {
+        $arguments = $process->getArguments();
+        $job = json_decode($arguments['job'], true);
+
+        $classname = isset($job['className']) ? $job['className'] : '';
+        $user = get_record_by_id('User', $process->user_id);
+        $username = $user ? $user->username : __('deleted user');
+        $message = empty($process->pid)
+            ? __('The status of process #%d (%s, started at %s by user #%d [%s]), without pid, has been set to error.',
+                $process->id, $classname, $process->started, $process->user_id, $username)
+            : __('The status of process #%d (%s, started at %s by user #%d [%s]), with a non existing pid, has been set to error.',
+                $process->id, $classname, $process->started, $process->user_id, $username);
+
+        $process->status = Process::STATUS_ERROR;
+        $process->save();
+
+        _log('[UpgradeToOmekaS]: ' . $message, Zend_Log::WARN);
+        $this->_helper->_flashMessenger($message, 'success');
     }
 
     /**
@@ -478,18 +522,31 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
      * Get the list of dead running jobs.
      *
      * @param integer $limit
+     * @param boolean $onlyUpgrader
      * @return array The list of process objects.
      */
-    protected function _getDeadRunningJobs($limit = 10)
+    protected function _getDeadRunningJobs($limit = 10, $onlyUpgrader = false)
     {
         $processes = array();
-        $result = get_records('Process', array(
+        $params = array(
             'status' => array(Process::STATUS_STARTING, Process::STATUS_IN_PROGRESS),
             'sort_field' => 'id',
-        ), 0);
+        );
+        $result = get_records('Process', $params, 0);
 
         // Unselect processes with an existing pid.
         foreach ($result as $process) {
+            if ($onlyUpgrader) {
+                $arguments = $process->getArguments();
+                $job = json_decode($arguments['job'], true);
+                $classname = isset($job['className']) ? $job['className'] : '';
+                if (!in_array($classname, array(
+                        'UpgradeToOmekaS_Job_Upgrade',
+                        'UpgradeToOmekaS_Job_Remove',
+                    ))) {
+                    continue;
+                }
+            }
             // TODO The check of the pid works only with Linux.
             if (!$process->pid || !file_exists('/proc/' . $process->pid)) {
                 $processes[] = $process;
