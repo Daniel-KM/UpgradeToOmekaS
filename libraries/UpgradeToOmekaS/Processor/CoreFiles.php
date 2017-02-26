@@ -110,6 +110,10 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
             $records = $table->findBy(array(), $this->maxChunk, $page);
             foreach ($records as $record) {
                 foreach ($mapping as $type => $map) {
+                    if ($type != 'original' && !$record->has_derivative_image) {
+                        continue;
+                    }
+
                     // Original is an exception: the extension is the original
                     // one and may  be in uppercase or not.
                     $filename = $type == 'original'
@@ -152,7 +156,7 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
                     }
                     if (!$result) {
                         throw new UpgradeToOmekaS_Exception(
-                            __('The copy of the file "%s" to the directory "%s" failed (%s).',
+                            __('The copy of the file "%s" to the directory "%s" failed (mode: %s).',
                                 $source, dirname($destination) . DIRECTORY_SEPARATOR, $filesType));
                     }
                 }
@@ -167,7 +171,7 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
         }
         // Fine.
         else {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('All %d files have been copied (%s) into Omeka S.',
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('All %d files have been copied (mode: %s) into Omeka S.',
                 $totalCopied, $filesType), Zend_Log::INFO);
         }
     }
