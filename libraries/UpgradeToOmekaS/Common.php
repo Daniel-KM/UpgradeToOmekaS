@@ -494,12 +494,20 @@ class UpgradeToOmekaS_Common
             // Unzip via command line
             else {
                 // Check if the zip command exists.
-                self::executeCommand('unzip', $status, $output, $errors);
+                try {
+                    $this->executeCommand('unzip', $status, $output, $errors);
+                } catch (Exception $e) {
+                    $status = 1;
+                }
                 // A return value of 0 indicates the convert binary is working correctly.
-                $result = $status != 0;
+                $result = $status == 0;
                 if ($result) {
                     $command = 'unzip ' . escapeshellarg($input) . ' -d ' . escapeshellarg($path);
-                    self::executeCommand($command, $status, $output, $errors);
+                    try {
+                        self::executeCommand($command, $status, $output, $errors);
+                    } catch (\Exception $e) {
+                        $status = 1;
+                    }
                     $result = $status == 0;
                 }
             }
@@ -583,12 +591,20 @@ class UpgradeToOmekaS_Common
             // Unzip via command line
             else {
                 // Check if the zip command exists.
-                self::executeCommand('unzip', $status, $output, $errors);
+                try {
+                    $this->executeCommand('unzip', $status, $output, $errors);
+                } catch (Exception $e) {
+                    $status = 1;
+                }
                 // A return value of 0 indicates the convert binary is working correctly.
                 if ($status == 0) {
                     $outputFile = tempnam(sys_get_temp_dir(), basename($zipFile));
                     $command = 'unzip -p ' . escapeshellarg($input) . ' content.xml > ' . escapeshellarg($outputFile);
-                    self::executeCommand($command, $status, $output, $errors);
+                    try {
+                        self::executeCommand($command, $status, $output, $errors);
+                    } catch (Exception $e) {
+                        $status = 1;
+                    }
                     if ($status == 0 && filesize($outputFile)) {
                         $content = file_get_contents($outputFile);
                     }
