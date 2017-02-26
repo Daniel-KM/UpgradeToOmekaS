@@ -597,7 +597,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         $table = $db->getTable($recordType);
 
         $mapping = $this->getProcessor('Core/Elements')
-            ->getMappingElementsToProperties();
+            ->getMappingElementsToPropertiesIds();
 
         $totalRecordsUnmapped = 0;
 

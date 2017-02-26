@@ -421,6 +421,9 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
      * Get the default mapping from Omeka C elements to Omeka S properties.
      *
      * This method doesn't use the database of Omeka S, but the file "properties.php".
+     * Warning: It is not updated with the user specific mappings. Use
+     * getMappingElementsToPropertiesIds() and getMappingElementsToProperties()
+     * instead.
      *
      * @param string $elementFormat "set name:name" (default) or "id".
      * @param string $propertyFormat "prefix:name" (default), "label" or "id".
@@ -436,13 +439,13 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
         if (empty($elements)) {
             // Get the flat list of elements truly installed in Omeka.
             $select = $this->_db->getTable('Element')->getSelect()
-            ->reset(Zend_Db_Select::COLUMNS)
-            ->from(array(), array(
-                'id' => 'elements.id',
-                'name' => 'elements.name',
-                'set_name' => 'element_sets.name',
-            ))
-            ->order('elements.id');
+                ->reset(Zend_Db_Select::COLUMNS)
+                ->from(array(), array(
+                    'id' => 'elements.id',
+                    'name' => 'elements.name',
+                    'set_name' => 'element_sets.name',
+                ))
+                ->order('elements.id');
             $elements = $this->_db->fetchAll($select);
 
             // Get the flat list of property ids and prefix:name by prefix:name.
@@ -519,7 +522,7 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
      *
      * @return array
      */
-    public function getMappingElementsToProperties()
+    public function getMappingElementsToPropertiesIds()
     {
         $defaultMapping = $this->getDefaultMappingElementsToProperties('id', 'id', false);
         // Convert the mapping params into Omeka S id.
@@ -531,6 +534,28 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
                 : null;
         }
         return $mapping + $defaultMapping;
+    }
+
+    /**
+     * Get the mapping from Omeka C element names to Omeka S property names.
+     *
+     * @return array
+     */
+    public function getMappingElementsToProperties()
+    {
+        $defaultMapping = $this->getDefaultMappingElementsToProperties('set_name:name', 'prefix:name', false);
+        // Convert the mapping params into Omeka S id.
+        $mapping = $this->getParam('mapping_elements') ?: array();
+        $mappingByName = array();
+        foreach ($mapping as $elementId => $propertyName) {
+            $element = get_record_by_id('Element', $elementId);
+            if ($element) {
+                $elementSetName = $element->getElementSet()->name;
+                $elementName = $element->name;
+                $mappingByName[$elementSetName . ':' . $elementName] = $propertyName;
+            }
+        }
+        return $mappingByName + $defaultMapping;
     }
 
     /**
