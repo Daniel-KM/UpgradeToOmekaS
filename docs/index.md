@@ -1,18 +1,22 @@
 ---
 layout: page
-title: Plugins for Omeka 2 and matching modules for Omeka S
+title: Matching extensions
 ---
 
 {% assign total_plugins = 0 %}
 {% assign total_matchings = 0 %}
 {% assign total_upgraders = 0 %}
+{% assign total_upgradables = 0 %}
 {% for plugin in site.data.omeka_plugins %}
     {% unless plugin['Plugin'] == nil %}
         {% assign total_plugins = total_plugins | plus: 1 %}
         {% unless plugin['Module'] == nil %}
             {% assign total_matchings = total_matchings | plus: 1 %}
         {% endunless %}
-        {% if plugin['Upgrader'] == 'Yes' %}
+        {% if plugin['Upgradable'] == 'Yes' %}
+            {% assign total_upgradables = total_upgradables | plus: 1 %}
+        {% endif %}
+        {% if plugin['Upgradable'] == 'Yes (auto)' %}
             {% assign total_upgraders = total_upgraders | plus: 1 %}
         {% endif %}
     {% endunless %}
@@ -26,6 +30,10 @@ title: Plugins for Omeka 2 and matching modules for Omeka S
 
 <style media="screen" type="text/css">
     .sort { cursor: pointer; }
+    .page-content .wrapper { max-width: inherit; }
+    .page-content .wrapper .post-header,
+    .page-content .wrapper .post-content p { max-width: calc(800px - 30px * 2); margin-left: auto; margin-right: auto; padding-left: 30px: padding-right: 30px; }
+    .page-content .wrapper .post-content .container-fluid { max-width: inherit; }
 </style>
 
 
@@ -34,6 +42,8 @@ All plugins can be downloaded freely on <https://github.com> or <https://gitlab.
 {% if total_plugins > 0 %}
 Already {{ total_matchings }} / {{ total_plugins }} (<strong>{{ total_matchings | times: 100 | divided_by: total_plugins | round }}%</strong>) plugins – the most used ones – have an equivalent module for [Omeka S], and {{ total_upgraders }} automatic upgraders are available.
 {% endif; %}
+
+See [more details on plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plugins.html' }}).
 
 Feel free to add missing plugins, to update versions or to create an upgrader processor for the plugin [Upgrade To Omeka S], or contact me.
 
@@ -51,8 +61,8 @@ Feel free to add missing plugins, to update versions or to create an upgrader pr
                 <tr>
                     <th><span class="sort" data-sort="plugin-link">Plugin</span></th>
                     <th><span class="sort" data-sort="plugin-account">Account</span></th>
-                    <th><span class="sort" data-sort="plugin-version">Current</span></th>
-                    <th><span class="sort" data-sort="plugin-upgrader">Upgrader</span></th>
+                    <th><span class="sort" data-sort="plugin-version">Last</span></th>
+                    <th><span class="sort" data-sort="plugin-upgradable">Upgradable</span></th>
                     <th><span class="sort" data-sort="plugin-minimum">Min</span></th>
                     <th><span class="sort" data-sort="plugin-maximum">Max</span></th>
                     <th><span class="sort" data-sort="module-link">Module</span></th>
@@ -74,12 +84,8 @@ Feel free to add missing plugins, to update versions or to create an upgrader pr
                         <a href="{{ account_url }}" class="link plugin-account">{{ account_name }}</a>
                     {% endunless %}
                     </td>
-                    <td class="plugin-version">
-                    {% unless plugin['Plugin'] == nil %}
-                        {{ plugin['Current Version'] }}
-                    {% endunless %}
-                    </td>
-                    <td class="plugin-upgrader">{{ plugin['Upgrader'] }}</td>
+                    <td class="plugin-version">{{ plugin['Last'] }}</td>
+                    <td class="plugin-upgradable">{{ plugin['Upgradable'] }}</td>
                     <td class="plugin-minimum">{{ plugin['Min Version'] }}</td>
                     <td class="plugin-maximum">{{ plugin['Max Version'] }}</td>
                     <td>
@@ -100,7 +106,7 @@ Feel free to add missing plugins, to update versions or to create an upgrader pr
 
 <script type="text/javascript">
     var options = {
-        valueNames: ['plugin-link', 'plugin-account', 'plugin-version', 'plugin-upgrader', 'plugin-minimum', 'plugin-maximum', 'module-link', 'plugin-note'],
+        valueNames: ['plugin-link', 'plugin-account', 'plugin-version', 'plugin-upgradable', 'plugin-minimum', 'plugin-maximum', 'module-link', 'plugin-note'],
         page: 500
     };
     var entryList = new List('entry-list', options);
