@@ -32,7 +32,7 @@ title: Plugins for Omeka 2 and matching modules for Omeka S
 All plugins can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are old, broken or unsupported. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/add-ons/plugins>.
 
 {% if total_plugins > 0 %}
-Already {{ total_matchings }} / {{ total_plugins }} (<strong>{{ total_matchings | times: 100 | divided_by: total_plugins | round }}%</strong>) plugins – the most used ones – have an equivalent module, and {{ total_upgraders }} automatic upgraders are available.
+Already {{ total_matchings }} / {{ total_plugins }} (<strong>{{ total_matchings | times: 100 | divided_by: total_plugins | round }}%</strong>) plugins – the most used ones – have an equivalent module for [Omeka S], and {{ total_upgraders }} automatic upgraders are available.
 {% endif; %}
 
 Feel free to add missing plugins, to update versions or to create an upgrader processor for the plugin [Upgrade To Omeka S], or contact me.
