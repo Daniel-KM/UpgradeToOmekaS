@@ -406,7 +406,7 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
                 if (isset($mappingLayouts[$record->layout])) {
                     $layout = $mappingLayouts[$record->layout];
                 } else {
-                    $layout = $record->layout;
+                    $layout = Inflector::variablize($record->layout);
                 }
 
                 // Initialize the first position (the page title).
