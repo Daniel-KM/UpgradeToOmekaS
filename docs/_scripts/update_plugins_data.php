@@ -38,13 +38,13 @@ if (empty($plugins)) {
 // Get headers by name.
 $headers = array_flip($plugins[0]);
 
-if (!isset($headers['Plugin'])) {
-    echo 'No header "Plugin".' . PHP_EOL;
+if (!isset($headers['Name'])) {
+    echo 'No header "Name".' . PHP_EOL;
     return;
 }
 
-if (!isset($headers['Plugin Url'])) {
-    echo 'No header "Plugin Url".' . PHP_EOL;
+if (!isset($headers['Url'])) {
+    echo 'No header "Url".' . PHP_EOL;
     return;
 }
 
@@ -56,7 +56,7 @@ if (empty($omekaPlugins)) {
 
 // Map of the keys of the plugin ini and the headers of the csv file.
 $mappingToUpdate = array(
-    'name' => 'Plugin',
+    'name' => 'Name',
     'author' => 'Author',
     'description' => 'Description',
     'license' => 'License',
@@ -78,8 +78,8 @@ foreach ($plugins as $key => &$plugin) {
     }
     $currentPlugin = $plugin;
 
-    $pluginName = $plugin[$headers['Plugin']];
-    $pluginUrl = trim($plugin[$headers['Plugin Url']], '/ ');
+    $pluginName = $plugin[$headers['Name']];
+    $pluginUrl = trim($plugin[$headers['Url']], '/ ');
     if (empty($pluginName) || empty($pluginUrl)) {
         continue;
     }
@@ -100,7 +100,7 @@ foreach ($plugins as $key => &$plugin) {
     switch ($server) {
         case 'github.com':
             $pluginIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $pluginUrl);
-            if ($plugin[$headers['Plugin.ini Path']]) {
+            if ($plugin[$headers['Ini Path']]) {
                 $pluginIniBase = str_replace('/tree/master/', '/master/', $pluginIniBase);
             }
             break;
@@ -112,7 +112,7 @@ foreach ($plugins as $key => &$plugin) {
             break;
     }
 
-    $pluginIni = $plugin[$headers['Plugin.ini Path']] ?: 'master/plugin.ini';
+    $pluginIni = $plugin[$headers['Ini Path']] ?: 'master/plugin.ini';
     $pluginIni = $pluginIniBase . '/' . $pluginIni;
     if ($debug) {
         echo 'Plugin ini: ' . $pluginIni . PHP_EOL;

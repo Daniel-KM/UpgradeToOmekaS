@@ -8,7 +8,7 @@ title: All Omeka Classic Plugins
 {% assign total_upgraders = 0 %}
 {% assign total_upgradables = 0 %}
 {% for plugin in site.data.omeka_plugins %}
-    {% unless plugin['Plugin'] == nil %}
+    {% unless plugin['Name'] == nil %}
         {% assign total_plugins = total_plugins | plus: 1 %}
         {% unless plugin['Module'] == nil %}
             {% assign total_matchings = total_matchings | plus: 1 %}
@@ -74,17 +74,17 @@ Feel free to add missing plugins, to update versions or to create an upgrader pr
             </thead>
             <tbody class="list">
             {% for plugin in site.data.omeka_plugins %}
-                {% if plugin['Plugin'] %}
+                {% if plugin['Name'] %}
                 <tr>
                     <td>
-                    {% unless plugin['Plugin'] == nil %}
-                        <a href="{{ plugin['Plugin Url'] }}" class="link plugin-link">{{ plugin['Plugin'] }}</a>
+                    {% unless plugin['Name'] == nil %}
+                        <a href="{{ plugin['Url'] }}" class="link plugin-link">{{ plugin['Name'] }}</a>
                     {% endunless %}
                     </td>
                     <td>
-                    {% unless plugin['Plugin'] == nil %}
-                        {% assign account_name = plugin['Plugin Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first %}
-                        {% assign account_url = plugin['Plugin Url'] | split: account_name | first | append: account_name %}
+                    {% unless plugin['Name'] == nil %}
+                        {% assign account_name = plugin['Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first %}
+                        {% assign account_url = plugin['Url'] | split: account_name | first | append: account_name %}
                         <a href="{{ account_url }}" class="link plugin-author">{{ plugin['Author'] }}</a>
                     {% endunless %}
                     </td>
@@ -92,7 +92,7 @@ Feel free to add missing plugins, to update versions or to create an upgrader pr
                     <td class="plugin-omeka-org">{{ plugin['Omeka.org'] }}</td>
                     <td class="plugin-upgradable">{{ plugin['Upgradable'] }}</td>
                     <td class="plugin-target">
-                    {% if plugin['Plugin'] == nil %}
+                    {% if plugin['Name'] == nil %}
                         {{ plugin['Omeka Target'] }}
                     {% else %}
                         {{ plugin['Omeka Min'] }}
