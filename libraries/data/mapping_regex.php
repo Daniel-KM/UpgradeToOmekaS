@@ -125,13 +125,13 @@ return array(
     sprintf($regexFunctionArguments[3], 'file')         => 'metadata($media, array(\3, \4), \5)',
     '~\b(nls2p)\((.*?)\)~'                              => 'implode(\'</p><p>\', explode(PHP_EOL, \2))',
 
-    '~\bplugin_append_to_items_show\(\)~'               => 'fire_plugin_hook(\'public_item_show\', array(\'view\' => $this, \'item\' => $item))',
-    '~\bplugin_append_to_collections_show\(\)~'         => 'fire_plugin_hook(\'public_collection_show\', array(\'view\' => $this, \'itemSet\' => $itemSet))',
-    '~\bplugin_append_to_files_show\(\)~'               => 'fire_plugin_hook(\'public_file_show\', array(\'view\' => $this, \'media\' => $media))',
-    '~\bplugin_append_to_items_browse\(\)~'             => 'fire_plugin_hook(\'public_item_browse\', array(\'view\' => $this))',
-    '~\bplugin_append_to_items_browse_each\(\)~'        => 'fire_plugin_hook(\'public_item_browse_each\', array(\'view\' => $this, \'item\' => $item))',
-    '~\bplugin_append_to_collections_browse\(\)~'       => 'fire_plugin_hook(\'public_collection_browse\', array(\'view\' => $this))',
-    '~\bplugin_append_to_collections_browse_each\(\)~'  => 'fire_plugin_hook(\'public_collection_browse_each\', array(\'view\' => $this, \'itemSet\' => $itemSet))',
+    '~\bplugin_append_to_items_show\(\)~'               => 'fire_plugin_hook(\'public_items_show\', array(\'view\' => $this, \'item\' => $item))',
+    '~\bplugin_append_to_collections_show\(\)~'         => 'fire_plugin_hook(\'public_collections_show\', array(\'view\' => $this, \'itemSet\' => $itemSet))',
+    '~\bplugin_append_to_files_show\(\)~'               => 'fire_plugin_hook(\'public_files_show\', array(\'view\' => $this, \'media\' => $media))',
+    '~\bplugin_append_to_items_browse\(\)~'             => 'fire_plugin_hook(\'public_items_browse\', array(\'view\' => $this))',
+    '~\bplugin_append_to_items_browse_each\(\)~'        => 'fire_plugin_hook(\'public_items_browse_each\', array(\'view\' => $this, \'item\' => $item))',
+    '~\bplugin_append_to_collections_browse\(\)~'       => 'fire_plugin_hook(\'public_collections_browse\', array(\'view\' => $this))',
+    '~\bplugin_append_to_collections_browse_each\(\)~'  => 'fire_plugin_hook(\'public_collections_browse_each\', array(\'view\' => $this, \'itemSet\' => $itemSet))',
     '~\bplugin_header\(\)~'                             => 'fire_plugin_hook(\'public_head\', array(\'view\' => $this))',
     '~\bplugin_page_header\(\)~'                        => 'fire_plugin_hook(\'public_header\', array(\'view\' => $this))',
     '~\bsimple_search\(\)~'                             => 'fire_plugin_hook(\'public_header\', array(\'view\' => $this))',
@@ -180,10 +180,14 @@ return array(
     '~\b(metadata|all_element_texts|record_image|item_type_elements|link_to|record_url)\((?:\$|\'|")exhibit_?page(?:\'|")~i'           => '\1($page',
     '~\b(metadata|all_element_texts|record_image|item_type_elements|link_to|record_url)\((?:\$|\'|")simple_?pages?_?page(?:\'|")~i'    => '\1($page',
     '~\b(metadata|all_element_texts|record_image|item_type_elements|link_to|record_url)\((?:\$|\'|")simple_?page(?:\'|")~i'            => '\1($page',
-    '~\b(metadata|all_element_texts|record_image|item_type_elements|link_to|record_url)\((?:\$|\'|")record(?:\'|")~i'                  => '\1($record',
+    '~\b(metadata|all_element_texts|record_image|item_type_elements|link_to|record_url)\((?:\$|\'|")record(?:\'|")~i'                  => '\1($resource',
     '~\b(metadata|all_element_texts|record_image|item_type_elements|link_to|record_url)\((?:\$|\'|")(\w+)(?:\'|")~i'                   => '\1($\2',
 
     // Update names of records.
+    '~\$record\b~'                                  => '$resource',
+    '~\$records\b~'                                 => '$resources',
+    '~\$recordType\b~'                              => '$resourceName',
+    '~\$recordTypes\b~'                             => '$resourceNames',
     // '~\$item\b~'                                    => '$item',
     // '~\$items\b~'                                   => '$items',
     '~\$collection\b~'                              => '$itemSet',
@@ -203,6 +207,8 @@ return array(
     '~\$simple_page_pages\b~'                       => '$pages',
     '~\$simple_pages\b~'                            => '$pages',
 
+    '~\$this\-\>record\b~'                          => '$resource',
+    '~\$this\-\>records\b~'                         => '$resources',
     '~\$this\-\>item\b~'                            => '$item',
     '~\$this\-\>items\b~'                           => '$items',
     '~\$this\-\>collection\b~'                      => '$itemSet',
@@ -449,7 +455,7 @@ return array(
     // Something else.
     '~\b(metadata)\((\$[a-z_]\w*)\b~i'              => '$this->upgrade()->\1 /* TODO Use \2->value(). */ (\2',
 
-    '~\b(all_element_texts)\(~'                     => '$this->upgrade()->\1 /* TODO Replace by $record->displayValues(). */ (',
+    '~\b(all_element_texts)\(~'                     => '$this->upgrade()->\1 /* TODO Replace by $resource->displayValues(). */ (',
 
     // These regex fix the skipped item in files_for_item().
     '~\b(files_for_item)\(~'                                                    => '$this->upgrade()->\1(',
