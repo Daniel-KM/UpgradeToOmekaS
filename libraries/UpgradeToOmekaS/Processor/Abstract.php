@@ -1781,4 +1781,40 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 Zend_Log::WARN);
         }
     }
+
+    /**
+     * Helper to fix a bug in Exhibit Builder.
+     *
+     * @param unknown $optionName
+     * @param unknown $themeName
+     */
+    protected function _getThemeOption($optionName, $theme = null)
+    {
+        if (empty($theme)) {
+            $theme = $this->getSiteTheme();
+        }
+
+        // It fails with the theme Neatscape (no config).
+        if ($theme == 'neatscape') {
+            return '';
+        }
+
+        // It fails with filters of old versions of Exhibit builder.
+        if (plugin_is_active('ExhibitBuilder', '3.3.4', '<')) {
+            $themeConfigOptions = get_option(Theme::getOptionName($theme));
+            $themeConfigOptions = $themeConfigOptions
+                ? unserialize($themeConfigOptions)
+                : array();
+
+            $themeOptionName = Inflector::underscore($optionName);
+            $themeOptionValue = null;
+            if ($themeConfigOptions && array_key_exists($themeOptionName, $themeConfigOptions)) {
+                $themeOptionValue = $themeConfigOptions[$themeOptionName];
+            }
+
+            return (string) $themeOptionValue;
+        }
+
+        return (string) get_theme_option($optionName, $theme);
+    }
 }

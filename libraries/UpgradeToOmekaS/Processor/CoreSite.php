@@ -875,12 +875,12 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
         // Upgrade options required by the site.
         $searchResourceTypes = $this->upgradeSearchRecordTypes();
+        $useAdvancedSearch = $this->_getThemeOption('use_advanced_search');
+
         $target->saveSiteSetting('upgrade_search_resource_types', $searchResourceTypes);
         $target->saveSiteSetting('upgrade_show_empty_properties', (string) get_option('show_empty_elements'));
         $target->saveSiteSetting('upgrade_show_vocabulary_headings', (string) get_option('show_element_set_headings'));
         $target->saveSiteSetting('upgrade_tag_delimiter', (string) get_option('tag_delimiter'));
-        // It fails with the theme Neatscape (no config).
-        $useAdvancedSearch = $theme == 'neatscape' ? '0' : (string) get_theme_option('use_advanced_search');
         $target->saveSiteSetting('upgrade_use_advanced_search', $useAdvancedSearch);
         $target->saveSiteSetting('upgrade_use_square_thumbnail', (string) get_option('use_square_thumbnail'));
 

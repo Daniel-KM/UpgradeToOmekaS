@@ -600,8 +600,7 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
         $showEmptyProperties = (string) get_option('show_empty_elements');
         $upgradeShowVocabularyHeadings = (string) get_option('show_element_set_headings');
         $tagDelimiter = (string) get_option('tag_delimiter');
-        // It fails with the theme Neatscape (no config).
-        $useAdvancedSearch = $this->getSiteTheme() == 'neatscape' ? '0' : (string) get_theme_option('use_advanced_search');
+        $useAdvancedSearch = $this->_getThemeOption('use_advanced_search');
         $useSquareThumbnail = (string) get_option('use_square_thumbnail');
 
         // The process uses the regular queries of Omeka in order to keep
