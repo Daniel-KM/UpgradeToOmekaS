@@ -1,6 +1,6 @@
 ---
 layout: page
-title: All Omeka Classic Plugins
+title: All Omeka Semantic Modules
 ---
 
 {% assign total_addons = 0 %}
@@ -37,13 +37,13 @@ title: All Omeka Classic Plugins
 </style>
 
 
-All plugins can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are old, broken or unsupported. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/add-ons/plugins>.
+All modules can be downloaded freely on <https://github.com> or <https://gitlab.com>. Usually, they work at least on one site. They are not listed in <https://omeka.org/s> currently.
 
 {% if total_addons > 0 %}
 Already {{ total_matchings }} / {{ total_addons }} (<strong>{{ total_matchings | times: 100 | divided_by: total_addons | round }}%</strong>) plugins – the most used ones – have an equivalent module for [Omeka S], and {{ total_upgraders }} automatic upgraders are available. See the page of [matching extensions]({{ site.url | append: '/UpgradeToOmekaS' }}).
 {% endif; %}
 
-Feel free to add missing plugins, or to create an upgrader processor for the plugin [Upgrade To Omeka S], or contact me.
+Feel free to add missing modules, or contact me for new ones.
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -51,29 +51,24 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_plugins.csv">csv source file</a>.
+    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_s_modules.csv">csv source file</a>.
     </em></p>
     <div class="row">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th><span class="sort" data-sort="addon-link">Plugin</span></th>
+                    <th><span class="sort" data-sort="addon-link">Module</span></th>
                     <th><span class="sort" data-sort="addon-author">Author</span></th>
                     <th><span class="sort" data-sort="addon-version">Last</span></th>
                     <th><span class="sort" data-sort="addon-omeka-org">Omeka.org</span></th>
-                    <th><span class="sort" data-sort="addon-upgradable">Upgradable</span></th>
-                    <th><span class="sort" data-sort="addon-target">Target</span></th>
+                    <th><span class="sort" data-sort="addon-constraint">Constraint</span></th>
                     <th><span class="sort" data-sort="addon-license">License</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
-                    <!--
-                    <th><span class="sort" data-sort="addon-required">Required plugins</span></th>
-                    <th><span class="sort" data-sort="addon-optional">Optional plugins</span></th>
-                    -->
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
                 </tr>
             </thead>
             <tbody class="list">
-            {% for addon in site.data.omeka_plugins %}
+            {% for addon in site.data.omeka_s_modules %}
                 {% if addon['Name'] %}
                 <tr>
                     <td>
@@ -84,28 +79,21 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
                     <td>
                     {% unless addon['Name'] == nil %}
                         {% unless addon['Author'] == nil %}
-                            {% assign account_name = addon['Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first %}
-                            {% assign account_url = addon['Url'] | split: account_name | first | append: account_name %}
+                            {% if addon['Author Link'] == nil %}
+                                {% assign account_name = addon['Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first %}
+                                {% assign account_url = addon['Url'] | split: account_name | first | append: account_name %}
+                            {% else %}
+                                {% assign account_name = addon['Author Link'] %}
+                            {% endif %}
                             <a href="{{ account_url }}" class="link addon-author">{{ addon['Author'] }}</a>
                         {% endunless %}
                     {% endunless %}
                     </td>
                     <td class="addon-version">{{ addon['Last'] }}</td>
                     <td class="addon-omeka-org">{{ addon['Omeka.org'] }}</td>
-                    <td class="addon-upgradable">{{ addon['Upgradable'] }}</td>
-                    <td class="addon-target">
-                    {% if addon['Name'] == nil %}
-                        {{ addon['Omeka Target'] }}
-                    {% else %}
-                        {{ addon['Omeka Min'] }}
-                    {% endif %}
-                    </td>
+                    <td class="addon-constraint">{{ addon['Constraint'] }}</td>
                     <td class="addon-license">{{ addon['License'] }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
-                    <!--
-                    <td class="addon-required">{{ addon['Required Plugins'] | replace: ',', ',<br />' }}</td>
-                    <td class="addon-required">{{ addon['Optional Plugins'] | replace: ',', ',<br />' }}</td>
-                    -->
                     <td class="addon-description">{{ addon['Description'] }}</td>
                 </tr>
                 {% endif %}
@@ -118,7 +106,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
 
 <script type="text/javascript">
     var options = {
-        valueNames: ['addon-link', 'addon-author', 'addon-version', 'addon-omeka-org', 'addon-upgradable', 'addon-target', 'addon-license', 'addon-tags', 'addon-required', 'addon-optional', 'addon-description'],
+        valueNames: ['addon-link', 'addon-author', 'addon-version', 'addon-omeka-org', 'addon-constraint', 'addon-license', 'addon-tags', 'addon-description'],
         page: 500
     };
     var entryList = new List('entry-list', options);

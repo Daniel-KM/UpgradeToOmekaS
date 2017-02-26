@@ -3,20 +3,20 @@ layout: page
 title: Matching extensions
 ---
 
-{% assign total_plugins = 0 %}
+{% assign total_addons = 0 %}
 {% assign total_matchings = 0 %}
 {% assign total_upgraders = 0 %}
 {% assign total_upgradables = 0 %}
-{% for plugin in site.data.omeka_plugins %}
-    {% unless plugin['Name'] == nil %}
-        {% assign total_plugins = total_plugins | plus: 1 %}
-        {% unless plugin['Module'] == nil %}
+{% for addon in site.data.omeka_plugins %}
+    {% unless addon['Name'] == nil %}
+        {% assign total_addons = total_addons | plus: 1 %}
+        {% unless addon['Module'] == nil %}
             {% assign total_matchings = total_matchings | plus: 1 %}
         {% endunless %}
-        {% if plugin['Upgradable'] == 'Yes' %}
+        {% if addon['Upgradable'] == 'Yes' %}
             {% assign total_upgradables = total_upgradables | plus: 1 %}
         {% endif %}
-        {% if plugin['Upgradable'] == 'Yes (auto)' %}
+        {% if addon['Upgradable'] == 'Yes (auto)' %}
             {% assign total_upgraders = total_upgraders | plus: 1 %}
         {% endif %}
     {% endunless %}
@@ -39,13 +39,11 @@ title: Matching extensions
 
 All plugins can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are old, broken or unsupported. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/add-ons/plugins>.
 
-{% if total_plugins > 0 %}
-Already {{ total_matchings }} / {{ total_plugins }} (<strong>{{ total_matchings | times: 100 | divided_by: total_plugins | round }}%</strong>) plugins – the most used ones – have an equivalent module for [Omeka S], and {{ total_upgraders }} automatic upgraders are available.
+{% if total_addons > 0 %}
+Already {{ total_matchings }} / {{ total_addons }} (<strong>{{ total_matchings | times: 100 | divided_by: total_addons | round }}%</strong>) plugins – the most used ones – have an equivalent module for [Omeka S], and {{ total_upgraders }} automatic upgraders are available. See more details on [plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plugins.html' }}) and [modules]({{ site.url | append: '/UpgradeToOmekaS/omeka_s_modules.html' }}).
 {% endif; %}
 
-See [more details on plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plugins.html' }}).
-
-Feel free to add missing plugins, to update versions or to create an upgrader processor for the plugin [Upgrade To Omeka S], or contact me.
+Feel free to add missing plugins, or to create an upgrader processor for the plugin [Upgrade To Omeka S], or contact me.
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -59,43 +57,43 @@ Feel free to add missing plugins, to update versions or to create an upgrader pr
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th><span class="sort" data-sort="plugin-link">Plugin</span></th>
-                    <th><span class="sort" data-sort="plugin-account">Account</span></th>
-                    <th><span class="sort" data-sort="plugin-version">Last</span></th>
-                    <th><span class="sort" data-sort="plugin-upgradable">Upgradable</span></th>
-                    <th><span class="sort" data-sort="plugin-minimum">Min</span></th>
-                    <th><span class="sort" data-sort="plugin-maximum">Max</span></th>
-                    <th><span class="sort" data-sort="module-link">Module</span></th>
-                    <th><span class="sort" data-sort="plugin-note">Note</span></th>
+                    <th><span class="sort" data-sort="addon-plugin-link">Plugin</span></th>
+                    <th><span class="sort" data-sort="addon-account">Account</span></th>
+                    <th><span class="sort" data-sort="addon-version">Last</span></th>
+                    <th><span class="sort" data-sort="addon-upgradable">Upgradable</span></th>
+                    <th><span class="sort" data-sort="addon-minimum">Min</span></th>
+                    <th><span class="sort" data-sort="addon-maximum">Max</span></th>
+                    <th><span class="sort" data-sort="addon-module-link">Module</span></th>
+                    <th><span class="sort" data-sort="addon-note">Note</span></th>
                 </tr>
             </thead>
             <tbody class="list">
-            {% for plugin in site.data.omeka_plugins %}
+            {% for addon in site.data.omeka_plugins %}
                 <tr>
                     <td>
-                    {% unless plugin['Name'] == nil %}
-                        <a href="{{ plugin['Url'] }}" class="link plugin-link">{{ plugin['Name'] }}</a>
+                    {% unless addon['Name'] == nil %}
+                        <a href="{{ addon['Url'] }}" class="link addon-plugin-link">{{ addon['Name'] }}</a>
                     {% endunless %}
                     </td>
                     <td>
-                    {% unless plugin['Name'] == nil %}
-                        {% assign account_name = plugin['Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first %}
-                        {% assign account_url = plugin['Url'] | split: account_name | first | append: account_name %}
-                        <a href="{{ account_url }}" class="link plugin-account">{{ account_name }}</a>
+                    {% unless addon['Name'] == nil %}
+                        {% assign account_name = addon['Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first %}
+                        {% assign account_url = addon['Url'] | split: account_name | first | append: account_name %}
+                        <a href="{{ account_url }}" class="link addon-account">{{ account_name }}</a>
                     {% endunless %}
                     </td>
-                    <td class="plugin-version">{{ plugin['Last'] }}</td>
-                    <td class="plugin-upgradable">{{ plugin['Upgradable'] }}</td>
-                    <td class="plugin-minimum">{{ plugin['Min Version'] }}</td>
-                    <td class="plugin-maximum">{{ plugin['Max Version'] }}</td>
+                    <td class="addon-version">{{ addon['Last'] }}</td>
+                    <td class="addon-upgradable">{{ addon['Upgradable'] }}</td>
+                    <td class="addon-minimum">{{ addon['Min Version'] }}</td>
+                    <td class="addon-maximum">{{ addon['Max Version'] }}</td>
                     <td>
-                    {% if plugin['Module Url'] == nil %}
-                        <span class="module-link"><em>{{ plugin['Module'] }}</em></span>
+                    {% if addon['Module Url'] == nil %}
+                        <span class="module-link"><em>{{ addon['Module'] }}</em></span>
                     {% else %}
-                        <a href="{{ plugin['Module Url'] }}" class="link module-link">{{ plugin['Module'] }}</a>
+                        <a href="{{ addon['Module Url'] }}" class="link addon-module-link">{{ addon['Module'] }}</a>
                     {% endif %}
                     </td>
-                    <td class="plugin-note">{{ plugin['Note'] }}</td>
+                    <td class="addon-note">{{ addon['Note'] }}</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -106,7 +104,7 @@ Feel free to add missing plugins, to update versions or to create an upgrader pr
 
 <script type="text/javascript">
     var options = {
-        valueNames: ['plugin-link', 'plugin-account', 'plugin-version', 'plugin-upgradable', 'plugin-minimum', 'plugin-maximum', 'module-link', 'plugin-note'],
+        valueNames: ['addon-plugin-link', 'addon-account', 'addon-version', 'addon-upgradable', 'addon-minimum', 'addon-maximum', 'addon-module-link', 'addon-note'],
         page: 500
     };
     var entryList = new List('entry-list', options);
