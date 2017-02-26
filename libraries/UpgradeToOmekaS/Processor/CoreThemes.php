@@ -475,7 +475,7 @@ OUTPUT;
 ; Upgraded from the theme "{$name}" of Omeka Classic on {$this->getDatetime()}.
 ;
 ; See https://github.com/Daniel-KM/UpgradeToOmekaS
-; See https://github.com/Daniel-KM/UpgradeFromOmekaClassic
+; See https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic
 ;;;;;;;
 
 [info]
@@ -778,7 +778,7 @@ OUTPUT;
             $output .= <<<'OUTPUT'
  *
  * @link https://github.com/Daniel-KM/UpgradeToOmekaS
- * @link https://github.com/Daniel-KM/UpgradeFromOmekaClassic
+ * @link https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic
  */
 
 // See the original "layout.phtml" files to rewrite this and to separate header,
@@ -958,7 +958,7 @@ OUTPUT;
             $base .= <<<'OUTPUT'
  *
  * @link https://github.com/Daniel-KM/UpgradeToOmekaS
- * @link https://github.com/Daniel-KM/UpgradeFromOmekaClassic
+ * @link https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic
  */
 
 // See the original "layout.phtml" files to rewrite this and to separate header,

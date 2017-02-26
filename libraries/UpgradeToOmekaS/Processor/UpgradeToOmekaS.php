@@ -15,7 +15,7 @@ class UpgradeToOmekaS_Processor_UpgradeToOmekaS extends UpgradeToOmekaS_Processo
     public $module = array(
         'name' => 'UpgradeFromOmekaClassic',
         'version' => '3.0.1',
-        'url' => 'https://github.com/Daniel-KM/UpgradeFromOmekaClassic/archive/%s.zip',
+        'url' => 'https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic/archive/%s.zip',
         'size' => 63278,
         'sha1' => 'd0081f6559271db86c0eaf0468effe0e5585fcd2',
         'type' => 'upgrade',
