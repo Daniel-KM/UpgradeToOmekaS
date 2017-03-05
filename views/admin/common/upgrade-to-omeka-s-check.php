@@ -41,6 +41,11 @@ if ($prechecksPlugins or $checksPlugins):
     echo '<p>' . __('The precheck processor deems that all active plugins with an available processor can be upgraded.') . '</p>';
 endif;
 ?>
+<p>
+<?php echo __('In all cases, you can find and install new %smodules%s and %sthemes%s.',
+    '<a href="https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_modules.html" target="_blank">', '</a>',
+    '<a href="https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_themes.html" target="_blank">', '</a>'); ?>
+</p>
 <table>
     <thead>
         <tr>
@@ -66,19 +71,18 @@ endif;
             $pluginProcessorPrecheck = $pluginProcessor ? $pluginProcessor->precheckProcessorPlugin() : null;
             $pluginProcessorNote = $pluginProcessor && !empty($pluginProcessor->module['note']) ? $pluginProcessor->module['note'] : null;
             $note = !empty($prechecksPlugins[$name]) || !empty($checksPlugins[$name]) || !empty($pluginProcessorPrecheck) || $pluginProcessorNote;
-            $span = $plugin['active'] ? 'plugin-enabled' : 'plugin-disabled';
-            $span .= $plugin['upgradable'] ? ' upgradable' : ' unupgradable';
-            $span = '<span class="' . $span . '">';
+            $spanClass = $plugin['active'] ? 'plugin-enabled' : 'plugin-disabled';
+            $spanClass .= $plugin['upgradable'] ? ' upgradable' : ' unupgradable';
         ?>
         <tr class="<?php echo $rowClass; ?>">
-            <td<?php echo $error || $note ? ' rowspan="2"' : ''; ?>><?php echo $span . $plugin['name']; ?></span></td>
+            <td<?php echo $error || $note ? ' rowspan="2"' : ''; ?>><span class="<?php echo $spanClass; ?>"><?php echo $plugin['name']; ?></span></td>
             <td><?php echo $plugin['installed'] ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['active'] ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['version']; ?></td>
             <td><?php echo $pluginProcessor ? $pluginProcessor->minVersion : ''; ?></td>
             <td><?php echo $pluginProcessor ? $pluginProcessor->maxVersion : ''; ?></td>
             <td><?php echo $pluginProcessor && !$pluginProcessorPrecheck ? __('Yes') : __('No'); ?></td>
-            <td><?php echo $span . ($plugin['upgradable'] ? __('Yes') : __('No')); ?></span></td>
+            <td><span class="<?php echo $spanClass; ?>"><?php echo $plugin['upgradable'] ? __('Yes') : __('No'); ?></span></td>
         </tr>
         <?php if ($error || $note): ?>
         <tr>
