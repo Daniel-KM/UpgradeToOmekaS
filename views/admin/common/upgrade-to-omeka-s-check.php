@@ -66,16 +66,19 @@ endif;
             $pluginProcessorPrecheck = $pluginProcessor ? $pluginProcessor->precheckProcessorPlugin() : null;
             $pluginProcessorNote = $pluginProcessor && !empty($pluginProcessor->module['note']) ? $pluginProcessor->module['note'] : null;
             $note = !empty($prechecksPlugins[$name]) || !empty($checksPlugins[$name]) || !empty($pluginProcessorPrecheck) || $pluginProcessorNote;
+            $span = $plugin['active'] ? 'plugin-enabled' : 'plugin-disabled';
+            $span .= $plugin['upgradable'] ? ' upgradable' : ' unupgradable';
+            $span = '<span class="' . $span . '">';
         ?>
         <tr class="<?php echo $rowClass; ?>">
-            <td<?php echo $error || $note ? ' rowspan="2"' : ''; ?>><?php echo $plugin['name']; ?></td>
+            <td<?php echo $error || $note ? ' rowspan="2"' : ''; ?>><?php echo $span . $plugin['name']; ?></span></td>
             <td><?php echo $plugin['installed'] ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['active'] ? __('Yes') : __('No'); ?></td>
             <td><?php echo $plugin['version']; ?></td>
             <td><?php echo $pluginProcessor ? $pluginProcessor->minVersion : ''; ?></td>
             <td><?php echo $pluginProcessor ? $pluginProcessor->maxVersion : ''; ?></td>
             <td><?php echo $pluginProcessor && !$pluginProcessorPrecheck ? __('Yes') : __('No'); ?></td>
-            <td><?php echo $plugin['upgradable'] ? __('Yes') : __('No'); ?></td>
+            <td><?php echo $span . ($plugin['upgradable'] ? __('Yes') : __('No')); ?></span></td>
         </tr>
         <?php if ($error || $note): ?>
         <tr>

@@ -21,6 +21,14 @@ p.explanation.note {
 .upgrade .check-error {
     color: red;
 }
+.upgrade .plugin-enabled.upgradable {
+    color: green;
+    font-weight: bold;
+}
+.upgrade .plugin-enabled.unupgradable {
+    color: red;
+    font-weight: bold;
+}
 #upgrade-logs .emergency,
 #upgrade-logs .alert,
 #upgrade-logs .critical {
