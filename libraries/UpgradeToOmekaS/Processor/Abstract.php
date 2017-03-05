@@ -41,6 +41,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected $_isCore = false;
 
     /**
+     * Indicate that the current plugin is replaced by multiple modules.
+     *
+     * @var boolean
+     */
+    public $multipleModules = false;
+
+    /**
      * Infos about the module for Omeka S, if any.
      *
      * @var array
@@ -1034,9 +1041,21 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         }
 
         $processor = $this->getProcessor($progress['processor']);
-        $filename = basename($processor->module['url']);
-        $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
-        $current = file_exists($path) ? filesize($path) : 0;
+        $modules = $processor->_listModules();
+        $current = 0;
+        foreach ($modules as $module) {
+            $filename = $processor->_moduleFilename($module);
+            $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
+            if (!file_exists($path)) {
+                continue;
+            }
+            $filesize = filesize($path);
+            if ($filesize == $module['size']) {
+                continue;
+           }
+           $current = $filesize;
+        }
+
         return $this->_progress($current);
     }
 
@@ -1099,75 +1118,44 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     protected function _installModule()
     {
-        $module = $this->_getModuleName();
+        //Set the default module name.
+        $moduleName = $this->_getModuleName();
 
-        // Check if the module have been installed by another processor.
-        $result = $this->_checkInstalledModule($module);
-        if ($result) {
-            // If installed and not active, there was an error already thrown.
-            if (!$result['is_active']) {
-                $this->_log('[' . __FUNCTION__ . ']: ' . __('The module is already installed, but not active.')
-                    . ' ' . __('An error may have occurred in a previous step.'),
-                    Zend_Log::WARN);
+        //Check if the plugin is replaced by multiple plugins.
+        $modules = $this->_listModules();
+        if ($this->multipleModules) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The plugin "%s" is replaced by %d modules.',
+                    $moduleName, count($modules)),
+                Zend_Log::INFO);
+        }
+
+        // Fetch all modules to avoid issues with undownloadable dependencies.
+        foreach ($modules as $module) {
+            if (empty($module['name'])) {
+                $module['name'] = $moduleName;
+            }
+            $result = $this->_fetchModule($module);
+            if (!$result) {
+                $this->_log('[' . __FUNCTION__ . ']: ' .
+                    __('An issue occurred during the preparation of the plugin "%s".', $moduleName),
+                        Zend_Log::ERR);
                 return;
             }
-
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The module is already installed and active.'),
-                Zend_Log::DEBUG);
-
-            $this->_upgradeSettings();
-            $this->_upgradeData();
-            return;
         }
 
-        // A useless second check.
-        $dir = $this->_getModuleDir();
-
-        // Check if the module is unzipped: it may have been downloaded by
-        // another processor. This is not the case for the core, that has its
-        // own checks.
-        if (file_exists($dir)) {
-            if (!is_dir($dir)) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('The path "%s" is a file.', $dir));
+        // Enable and install all modules.
+        foreach ($modules as $module) {
+            if (empty($module['name'])) {
+                $module['name'] = $moduleName;
             }
-            if (!UpgradeToOmekaS_Common::isDirEmpty($dir)) {
-                $this->_log('[' . __FUNCTION__ . ']: '
-                    . __('The plugin "%s" has already been unzipped.',
-                        $this->_getModuleName()), Zend_Log::DEBUG);
-
-                $this->_upgradeSettings();
-                $this->_upgradeData();
-                $this->_upgradeFiles();
+            $result = $this->_initializeModule($module);
+            if (!$result) {
+                $this->_log('[' . __FUNCTION__ . ']: ' .
+                    __('An issue occurred during the initialization of the module for the plugin "%s".', $moduleName),
+                    Zend_Log::ERR);
                 return;
             }
-            // This is strange, but proceeds.
         }
-        // Create dir.
-        else {
-            $this->_createDirectory();
-        }
-
-        // Download module.
-        // Don't stop on error, only continue to the next processor.
-        try {
-            $this->_downloadModule();
-        } catch (UpgradeToOmekaS_Exception $e) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . $e, Zend_Log::ERR);
-            return;
-        }
-
-        // Unzip module in the directory.
-        $this->_unzipModule();
-
-        // Process the install script.
-        $this->_prepareModule();
-
-        // Register the module.
-        $this->_registerModule();
-
-        // Activate the module.
-        $this->_activateModule();
 
         // Upgrade settings.
         $this->_upgradeSettings();
@@ -1177,19 +1165,6 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
         // Upgrade files.
         $this->_upgradeFiles();
-    }
-
-    /**
-     * Check if a module is installed.
-     *
-     * @return array|null Null if not installed.
-     */
-    protected function _checkInstalledModule($module)
-    {
-        $targetDb = $this->getTarget()->getDb();
-        $sql = 'SELECT * FROM module WHERE id = ' . $targetDb->quote($module);
-        $result = $targetDb->fetchRow($sql);
-        return $result;
     }
 
     /**
@@ -1205,45 +1180,179 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
-     * Helper to get the module dir.
+     * Helper to get the list of modules (generally alone) to upgrade a plugin.
      *
-     * @return string
+     * @return array
      */
-    protected function _getModuleDir()
+    protected function _listModules()
     {
-        $dir = $this->getParam('base_dir');
-        if (!$this->isCore()) {
-            $dir .= DIRECTORY_SEPARATOR . 'modules'
-                . DIRECTORY_SEPARATOR . $this->_getModuleName();
+        if ($this->multipleModules) {
+            // These allows to keepgeneric infos about the plugin replacement.
+            $modules = $this->module;
+            foreach ($modules as $key => $module) {
+                if (!is_array($module)) {
+                    unset($modules[$key]);
+                }
+            }
+        } else {
+            $modules = array($this->module);
         }
-        return $dir;
+        return $modules;
     }
 
-   /**
-     * Helper to create a directory.
+    /**
+     * Check if a module is installed.
+     *
+     * @param array $moduleName
+     * @return array|null Null if not installed.
      */
-    protected function _createDirectory()
+    protected function _checkInstalledModule($moduleName)
     {
-        $dir = $this->_getModuleDir();
+        $targetDb = $this->getTarget()->getDb();
+        $sql = 'SELECT * FROM module WHERE id = ' . $targetDb->quote($moduleName);
+        $result = $targetDb->fetchRow($sql);
+        return $result;
+    }
+
+    /**
+     * Helper to fetch and unzip a module.
+     *
+     * @internal These are the main cases where an error may occur.
+     *
+     * @param array $module
+     * @return boolean
+     */
+    protected function _fetchModule($module)
+    {
+        // Check if the module have been installed by another processor.
+        $result = $this->_checkInstalledModule($module['name']);
+        if ($result) {
+            // If installed and not active, there was an error already thrown.
+            if (!$result['is_active']) {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The module is already installed, but not active.')
+                    . ' ' . __('An error may have occurred in a previous step.'),
+                    Zend_Log::WARN);
+                return true;
+            }
+
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The module is already installed and active.'),
+                Zend_Log::DEBUG);
+            return true;
+        }
+
+        // A useless second check.
+        $dir = $this->_getModuleDir($module['name']);
+
+        // Check if the module is unzipped: it may have been downloaded by
+        // another processor. This is not the case for the core, that has its
+        // own checks.
+        if (file_exists($dir)) {
+            if (!is_dir($dir)) {
+                throw new UpgradeToOmekaS_Exception(
+                    __('The path "%s" is a file.', $dir));
+            }
+            if (!UpgradeToOmekaS_Common::isDirEmpty($dir)) {
+                $this->_log('[' . __FUNCTION__ . ']: '
+                    . __('The module "%s" has already been unzipped.',
+                        $module['name']), Zend_Log::DEBUG);
+            }
+            return true;
+        }
+
+        // Create dir.
         $result = UpgradeToOmekaS_Common::createDir($dir);
         if (!$result) {
             throw new UpgradeToOmekaS_Exception(
                 __('Unable to create the directory "%s".', $dir));
         }
+
+        // Download module. Don't stop on error, but continue to next processor.
+        try {
+            $this->_downloadModule($module);
+        } catch (UpgradeToOmekaS_Exception $e) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . $e, Zend_Log::ERR);
+            return false;
+        }
+
+        // Unzip module in the directory.
+        $this->_unzipModule($module);
+
+        return true;
+    }
+
+    /**
+     * Helper to fetch, unzip, register and enable a module.
+     *
+     * @internal These are the main cases wherre an error may occur.
+     *
+     * @param array $module
+     * @return boolean
+     */
+    protected function _initializeModule($module = null)
+    {
+        if (is_null($module)) {
+            $module = $this->module;
+        }
+
+        // Check if the module have been installed by another processor.
+        $result = $this->_checkInstalledModule($module['name']);
+        if ($result) {
+            // If installed and not active, there was an error already thrown.
+            if ($result['is_active']) {
+                return true;
+            }
+        }
+        // Downloaded, but not yet prepared and registered.
+        else {
+            // Process the install script.
+            $this->_prepareModule($module);
+
+            // Register the module.
+            $this->_registerModule($module);
+        }
+
+        // Activate the module.
+        $this->_activateModule($module);
+
+        return true;
+    }
+
+    /**
+     * Helper to get the module dir.
+     *
+     * @param string $moduleName
+     * @return string
+     */
+    protected function _getModuleDir($moduleName = null)
+    {
+        $dir = $this->getParam('base_dir');
+        if (!$this->isCore()) {
+            if (empty($moduleName)) {
+                $moduleName = $this->_getModuleName();
+            }
+            $dir .= DIRECTORY_SEPARATOR . 'modules'
+                . DIRECTORY_SEPARATOR . $moduleName;
+        }
+        return $dir;
     }
 
     /**
      * Download a module into the temp directory of the server.
      *
+     * @param array $module
      * @param boolean $throwsException
      * @return void
      */
-    protected function _downloadModule($throwsException = false)
+    protected function _downloadModule($module, $throwsException = false)
     {
-        $this->_progress(0, $this->module['size']);
+        if (is_null($module)) {
+            $module = $this->module;
+        }
 
-        $url = sprintf($this->module['url'], $this->module['version']);
-        $filename = $this->_moduleFilename();
+        $this->_progress(0, $module['size']);
+
+        $url = sprintf($module['url'], $module['version']);
+        $filename = $this->_moduleFilename($module);
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
 
         if (file_exists($path)) {
@@ -1259,12 +1368,12 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 // Download it below.
             }
             // Check with the filesize.
-            elseif ($filesize != $this->module['size']
-                    || sha1_file($path) != $this->module['sha1']
+            elseif ($filesize != $module['size']
+                    || sha1_file($path) != $module['sha1']
                 ) {
                 throw new UpgradeToOmekaS_Exception(
                     __('A file "%s" exists in the temp folder of Apache and this is not the release %s.',
-                        $filename, $this->module['version']));
+                        $filename, $module['version']));
             }
             // The file is the good one.
             else {
@@ -1275,7 +1384,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         }
 
         // Download the file.
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dKB, so wait a while.', ceil($this->module['size'] / 1000)),
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dKB, so wait a while.', ceil($module['size'] / 1000)),
             Zend_Log::INFO);
         $handle = fopen($url, 'rb');
         $result = file_put_contents($path, $handle);
@@ -1285,8 +1394,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 __('An issue occurred during the file download.')
                 . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $filename));
         }
-        if (filesize($path) != $this->module['size']
-                || sha1_file($path) != $this->module['sha1']
+        if (filesize($path) != $module['size']
+                || sha1_file($path) != $module['sha1']
             ) {
             throw new UpgradeToOmekaS_Exception(
                 __('The downloaded file is corrupted.')
@@ -1296,13 +1405,19 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
     /**
      * Unzip a module in its directory.
+     *
+     * @param array $module
      */
-    protected function _unzipModule()
+    protected function _unzipModule($module = null)
     {
-        $filename = $this->_moduleFilename();
+        if (is_null($module)) {
+            $module = $this->module;
+        }
+
+        $filename = $this->_moduleFilename($module);
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
 
-        $dir = $this->_getModuleDir();
+        $dir = $this->_getModuleDir($module['name']);
 
         // No check is done here: if the module is already installed, the
         // previous check skipped it.
@@ -1320,12 +1435,17 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * Helper to get a standard filename for the downloaded file in order to
      * avoid collisions and to avoid re-download.
      *
+     * @param array $module
      *  @return string
      */
-    protected function _moduleFilename()
+    protected function _moduleFilename($module = null)
     {
-        $url = sprintf($this->module['url'], $this->module['version']);
-        $filename = $this->module['name'] . '-' . $this->module['version'] . '.' . pathinfo(basename($url), PATHINFO_EXTENSION);
+        if (is_null($module)) {
+            $module = $this->module;
+        }
+
+        $url = sprintf($module['url'], $module['version']);
+        $filename = $module['name'] . '-' . $module['version'] . '.' . pathinfo(basename($url), PATHINFO_EXTENSION);
         return $filename;
     }
 
@@ -1339,30 +1459,39 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * inside "module.php".
      *
      * @todo Process the install script of the module, if needed.
+     * @param array $module
      */
-    protected function _prepareModule()
+    protected function _prepareModule($module = null)
     {
-        if (empty($this->module['install']['sql'])) {
+        if (is_null($module)) {
+            $module = $this->module;
+        }
+
+        if (empty($module['install']['sql'])) {
             return;
         }
 
         $targetDb = $this->getTarget()->getDb();
 
-        $result = $targetDb->prepare($this->module['install']['sql'])->execute();
+        $result = $targetDb->prepare($module['install']['sql'])->execute();
         if (!$result) {
             throw new UpgradeToOmekaS_Exception(
-                __('Unable to create the tables for the module "%s".', $this->_getModuleName()));
+                __('Unable to create the tables for the module "%s".', $module['name']));
         }
     }
 
     /**
      * Register the module.
+     *
+     * @param array $module
      */
-    protected function _registerModule()
+    protected function _registerModule($module = null)
     {
-        // Normally useless, except if this function is called directly..
-        $module = $this->_getModuleName();
-        $result = $this->_checkInstalledModule($module);
+        if (is_null($module)) {
+            $module = $this->module;
+        }
+
+        $result = $this->_checkInstalledModule($module['name']);
         if ($result) {
             return;
         }
@@ -1371,52 +1500,57 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         $targetDb = $target->getDb();
 
         $toInsert = array();
-        $toInsert['id'] = $module;
+        $toInsert['id'] = $module['name'];
         $toInsert['is_active'] = 0;
-        $toInsert['version'] = $this->module['version'];
+        $toInsert['version'] = $module['version'];
 
         $result = $targetDb->insert('module', $toInsert);
         if (!$result) {
             throw new UpgradeToOmekaS_Exception(
-                __('Unable to register the module.'));
+                __('Unable to register the module "%s".', $module['name']));
         }
     }
 
     /**
      * Activate the module.
+     *
+     * @param array $module
      */
-    protected function _activateModule()
+    protected function _activateModule($module = null)
     {
-        $module = $this->_getModuleName();
+        if (is_null($module)) {
+            $module = $this->module;
+        }
+
         $targetDb = $this->getTarget()->getDb();
         $bind = array();
         $bind['is_active'] = 1;
         $result = $targetDb->update(
             'module',
             $bind,
-            'id = ' . $targetDb->quote($module));
+            'id = ' . $targetDb->quote($module['name']));
         if (empty($result)) {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The module "%s" can’t be activated.',
-                $this->_getModuleName()), Zend_Log::WARN);
+                $module['name']), Zend_Log::WARN);
         }
     }
 
     /**
-     * Upgrade settings of a module once installed.
+     * Upgrade settings once installed the module(s) is installed.
      */
     protected function _upgradeSettings()
     {
     }
 
     /**
-     * Upgrade metadata of a module once installed.
+     * Upgrade metadata once the module(s) is installed.
      */
     protected function _upgradeData()
     {
     }
 
     /**
-     * Upgrade files of a module.
+     * Upgrade files of a module once the module(s) is installed.
      *
      * @internal There are generally nothing to add, because the processor for
      * themes upgrades all files inside the theme.

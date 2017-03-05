@@ -589,9 +589,21 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         return strpos(strtolower($serverSofware), 'apache') === 0;
     }
 
+    protected function _createDirectory()
+    {
+        $moduleName = $this->module['name'];
+        $dir = $this->_getModuleDir($moduleName);
+
+        $result = UpgradeToOmekaS_Common::createDir($dir);
+        if (!$result) {
+            throw new UpgradeToOmekaS_Exception(
+                __('Unable to create the directory "%s".', $dir));
+        }
+    }
+
     protected function _downloadOmekaS()
     {
-        $this->_downloadModule(true);
+        $this->_downloadModule($this->module, true);
     }
 
     protected function _unzipOmekaS()
