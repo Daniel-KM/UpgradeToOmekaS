@@ -1555,6 +1555,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         }
         $msg = ltrim($msg, ': ');
 
+        if (strlen($msg) > 10000) {
+            $msg = substr($msg, 0, 10000) . PHP_EOL
+            . __('See the end of this message in the logs of Omeka.');
+        }
+
         $msg = array(
             'date' => date(DateTime::ISO8601),
             'priority' => $priorities[$priority],
