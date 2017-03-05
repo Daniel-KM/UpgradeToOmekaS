@@ -20,13 +20,14 @@ equivalent module: [Dublin Core Extended], [Embed Codes], [Exhibit Builder],
 If enabled, the modules will be automatically installed. For other plugins,
 contact me.
 
-See the full list of [plugins for Omeka 2 and matching modules for Omeka S].
+See the full list of [plugins for Omeka 2 and matching modules for Omeka S], and
+all [modules] and [themes] that are already available for Omeka S.
 
 A compatibility layer is available for themes with the module [Upgrade from Omeka Classic],
 that is installed automatically too. The themes are restructured and upgraded,
-but custom functions may fail. In that case, use [official themes] or contact me
-too. Anyway, in all cases the theme should be reviewed, because there may be
-some visual glitches.
+but custom functions may fail. In that case, use new [themes], use the template
+engine [Twig] via the [module Twig], or contact me. Anyway, in all cases, the
+theme should be reviewed, because there may be some visual glitches.
 
 Omeka S is still in a beta phase, but it can be already used for common sites.
 
@@ -232,7 +233,10 @@ Copyright
 [Social Bookmarking]: http://omeka.org/add-ons/plugins/social-bookmarking/
 [Universal Viewer]: https://github.com/Daniel-KM/UniversalViewer4Omeka
 [plugins for Omeka 2 and matching modules for Omeka S]: https://daniel-km.github.com/UpgradeToOmekaS
-[official themes]: https://github.com/omeka-s-themes
+[modules]: https://daniel-km.github.com/UpgradeToOmekaS/omeka_s_modules.html
+[themes]: https://daniel-km.github.com/UpgradeToOmekaS/omeka_s_themes.html
+[Twig]: http://twig.sensiolabs.org
+[module Twig]: https://github.com/digihum/omeka-s-twig
 [Omeka 2 Importer]: https://github.com/omeka-s-modules/Omeka2Importer
 [Clean Url]: https://github.com/Daniel-KM/CleanUrl
 [Zend 3]: https://framework.zend.com/
