@@ -47,13 +47,11 @@ Feel free to add missing modules, or contact me for new ones.
                     <td>
                     {% unless addon['Name'] == nil %}
                         {% unless addon['Author'] == nil %}
-                            {% if addon['Author Link'] == nil %}
-                                {% assign account_name = addon['Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first %}
-                                {% assign account_url = addon['Url'] | split: account_name | first | append: account_name %}
+                            {% if addon['Author Link'] != nil %}
+                                <a href="{{ addon['Author Link'] }}" class="link addon-author">{{ addon['Author'] }}</a>
                             {% else %}
-                                {% assign account_name = addon['Author Link'] %}
+                                {{ addon['Author'] }}
                             {% endif %}
-                            <a href="{{ account_url }}" class="link addon-author">{{ addon['Author'] }}</a>
                         {% endunless %}
                     {% endunless %}
                     </td>
