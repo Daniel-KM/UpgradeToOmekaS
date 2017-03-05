@@ -193,41 +193,25 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
         // The first plugin to convert in order to keep ids and navigation.
         $baseProcessors['SimplePages'] = 'UpgradeToOmekaS_Processor_SimplePages';
         $baseProcessors['ExhibitBuilder'] = 'UpgradeToOmekaS_Processor_ExhibitBuilder';
-        // $processors['Dropbox'] = 'UpgradeToOmekaS_Processor_Dropbox';
         // $processors['ItemRelations'] = 'UpgradeToOmekaS_Processor_ItemRelations';
 
-        // Upgraded or equivalent plugins in Omeka S.
-        // $processors['CsvImport'] = 'UpgradeToOmekaS_Processor_CsvImport';
-        $processors['EmbedCodes'] = 'UpgradeToOmekaS_Processor_EmbedCodes';
-        $processors['Geolocation'] = 'UpgradeToOmekaS_Processor_Geolocation';
-        // $processors['SimpleVocab'] = 'UpgradeToOmekaS_Processor_SimpleVocab';
-        $processors['SocialBookmarking'] = 'UpgradeToOmekaS_Processor_SocialBookmarking';
-        // $processors['ZoteroImport'] = 'UpgradeToOmekaS_Processor_ZoteroImport';
+        // Other plugins are dynamically added.
+        $dir = dirname(__FILE__)
+            . DIRECTORY_SEPARATOR . 'libraries'
+            . DIRECTORY_SEPARATOR . 'UpgradeToOmekaS'
+            . DIRECTORY_SEPARATOR . 'Processor';
 
-        // Specific plugins not yet upgraded under Omeka S.
-        // $processors['ArchiveFolder'] = 'UpgradeToOmekaS_Processor_ArchiveFolder';
-        // $processors['Ark'] = 'UpgradeToOmekaS_Processor_Ark';
-        // $processors['BeamMeUpToInternetArchive'] = 'UpgradeToOmekaS_Processor_BeamMeUpToInternerArchive';
-        // $processors['BeamMeUpToSoundcloud'] = 'UpgradeToOmekaS_Processor_BeamMeUpToSoundCloud';
-        // $processors['CleanUrl'] = 'UpgradeToOmekaS_Processor_CleanUrl';
-        // $processors['Coins'] = 'UpgradeToOmekaS_Processor_CollectionTree';
-        // $processors['CollectionTree'] = 'UpgradeToOmekaS_Processor_CollectionTree';
-        // $processors['Commenting'] = 'UpgradeToOmekaS_Processor_Commenting';
-        // $processors['Contribution'] = 'UpgradeToOmekaS_Processor_Contribution';
-        // $processors['CsvImportPlus'] = 'UpgradeToOmekaS_Processor_CsvImportPlus';
-        // $processors['GuestUser'] = 'UpgradeToOmekaS_Processor_GuestUser';
-        // $processors['HistoryLog'] = 'UpgradeToOmekaS_Processor_HistoryLog';
-        // $processors['MultiCollections'] = 'UpgradeToOmekaS_Processor_MultiCollections';
-        // $processors['NeatlineTime'] = 'UpgradeToOmekaS_Processor_NeatlineTime';
-        // $processors['OpenlayersZoom'] = 'UpgradeToOmekaS_Processor_OpenLayersZoom';
-        // $processors['Rating'] = 'UpgradeToOmekaS_Processor_Rating';
-        // $processors['Scripto'] = 'UpgradeToOmekaS_Processor_Scripto';
-        // $processors['SimpleContact'] = 'UpgradeToOmekaS_Processor_SimpleContact';
-        // $processors['SimpleVocabPlus'] = 'UpgradeToOmekaS_Processor_SimpleVocabPlus';
-        // $processors['Stats'] = 'UpgradeToOmekaS_Processor_Stats';
-        // $processors['Tagging'] = 'UpgradeToOmekaS_Processor_Tagging';
-        // $processors['Taxonomy'] = 'UpgradeToOmekaS_Processor_Taxonomy';
-        $processors['UniversalViewer'] = 'UpgradeToOmekaS_Processor_UniversalViewer';
+        // From the plugin OAI-PMH Harvester.
+        $filenames = UpgradeToOmekaS_Common::listFilesInDir($dir);
+        $filenames = array_diff($filenames, array('Abstract.php', 'Base.php'));
+        foreach ($filenames as $filename) {
+            if (!preg_match('/^(.+)\.php$/', $filename, $matches)
+                    || strpos($filename, 'Core') === 0
+                ) {
+                continue;
+            }
+            $processors[$matches[1]] = 'UpgradeToOmekaS_Processor_' . $matches[1];
+        }
 
         return array_merge($baseProcessors, $processors);
     }

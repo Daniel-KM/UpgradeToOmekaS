@@ -107,6 +107,18 @@ The urls of the main page and of the login page are provided. If the main page
 is broken, fix the theme or log in and change the theme to one of the [official themes]
 or use on upgraded official theme of Omeka Classic.
 
+To add a new upgrader, simply add it in the directory `/libraries/UpgradeToOmekaS/Processor`
+or use the filter `upgrade_omekas`. You can look in the upgrader `Escher.php`
+for a basic upgrader.
+
+To add a new addon to the lists, simply add its main url in the matching csv
+file in the directory `docs/_data/` and run the php script (here from the root
+of Omeka):
+
+```
+    php -f plugins/UpgradeToOmekaS/docs/_scripts/update_data.php
+```
+
 
 Internal Upgrade Process
 ------------------------
