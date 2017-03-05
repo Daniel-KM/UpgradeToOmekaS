@@ -14,10 +14,10 @@ class UpgradeToOmekaS_Processor_Escher extends UpgradeToOmekaS_Processor_Abstrac
 
     public $module = array(
         'name' => 'EasyInstall',
-        'version' => '3.1',
+        'version' => '3.1.1',
         'url' => 'https://github.com/Daniel-KM/Omeka-S-module-EasyInstall/archive/%s.zip',
-        'size' => 12031,
-        'sha1' => 'f39a9cac3b026088edf2935cd9527b1ba62cbf16',
+        'size' => 12353,
+        'sha1' => 'b3cfb36426f5e73abf1020d385bc3170df0d5214',
         'type' => 'port',
     );
 
