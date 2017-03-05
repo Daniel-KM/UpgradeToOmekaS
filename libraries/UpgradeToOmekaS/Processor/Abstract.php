@@ -1149,7 +1149,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         }
 
         // Download module.
-        $this->_downloadModule();
+        // Don't stop on error, only continue to the next processor.
+        try {
+            $this->_downloadModule();
+        } catch (UpgradeToOmekaS_Exception $e) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . $e, Zend_Log::ERR);
+            return;
+        }
 
         // Unzip module in the directory.
         $this->_unzipModule();
@@ -1228,54 +1234,63 @@ abstract class UpgradeToOmekaS_Processor_Abstract
 
     /**
      * Download a module into the temp directory of the server.
+     *
+     * @param boolean $throwsException
+     * @return void
      */
-    protected function _downloadModule()
+    protected function _downloadModule($throwsException = false)
     {
         $this->_progress(0, $this->module['size']);
 
         $url = sprintf($this->module['url'], $this->module['version']);
-        $filename = basename($url);
-
-        // TODO Use a temp name, but it's important to avoid re-downloads.
+        $filename = $this->_moduleFilename();
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
 
         if (file_exists($path)) {
             $filesize = filesize($path);
             // Check if the file is empty, in particular for network issues.
             if (empty($filesize)) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('An empty file "%s" exists in the temp directory.', $filename)
-                    . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url));
+                $result = @unlink($path);
+                if (!$result) {
+                    throw new UpgradeToOmekaS_Exception(
+                        __('An empty file "%s" exists in the temp directory.', $filename)
+                        . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url));
+                }
+                // Download it below.
             }
-            if ($filesize != $this->module['size']
+            // Check with the filesize.
+            elseif ($filesize != $this->module['size']
                     || sha1_file($path) != $this->module['sha1']
                 ) {
                 throw new UpgradeToOmekaS_Exception(
-                    __('A file "%s" exists in the temp directory and this is not the release %s.',
+                    __('A file "%s" exists in the temp folder of Apache and this is not the release %s.',
                         $filename, $this->module['version']));
             }
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The file is already downloaded.'),
-                Zend_Log::INFO);
+            // The file is the good one.
+            else {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The file is already downloaded.'),
+                    Zend_Log::INFO);
+                return;
+            }
         }
+
         // Download the file.
-        else {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dKB, so wait a while.', ceil($this->module['size'] / 1000)),
-                Zend_Log::INFO);
-            $handle = fopen($url, 'rb');
-            $result = file_put_contents($path, $handle);
-            @fclose($handle);
-            if (empty($result)) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('An issue occurred during the file download.')
-                    . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path));
-            }
-            if (filesize($path) != $this->module['size']
-                    || sha1_file($path) != $this->module['sha1']
-                ) {
-                throw new UpgradeToOmekaS_Exception(
-                    __('The downloaded file is corrupted.')
-                    . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $path));
-            }
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dKB, so wait a while.', ceil($this->module['size'] / 1000)),
+            Zend_Log::INFO);
+        $handle = fopen($url, 'rb');
+        $result = file_put_contents($path, $handle);
+        @fclose($handle);
+        if (empty($result)) {
+            throw new UpgradeToOmekaS_Exception(
+                __('An issue occurred during the file download.')
+                . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $filename));
+        }
+        if (filesize($path) != $this->module['size']
+                || sha1_file($path) != $this->module['sha1']
+            ) {
+            throw new UpgradeToOmekaS_Exception(
+                __('The downloaded file is corrupted.')
+                . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $filename));
         }
     }
 
@@ -1284,8 +1299,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     protected function _unzipModule()
     {
-        $url = sprintf($this->module['url'], $this->module['version']);
-        $filename = basename($url);
+        $filename = $this->_moduleFilename();
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
 
         $dir = $this->_getModuleDir();
@@ -1296,9 +1310,23 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         $result = UpgradeToOmekaS_Common::extractZip($path, $dir);
         if (!$result) {
             throw new UpgradeToOmekaS_Exception(
-                __('Unable to extract the zip file "%s" into the destination "%s".', $path, $dir)
+                __('Unable to extract the zip file "%s" from the temp folder of Apache into the destination "%s".',
+                    $filename, $dir)
                 . ' ' . __('Check the rights of the folder. "%s".', dirname($dir)));
         }
+    }
+
+    /**
+     * Helper to get a standard filename for the downloaded file in order to
+     * avoid collisions and to avoid re-download.
+     *
+     *  @return string
+     */
+    protected function _moduleFilename()
+    {
+        $url = sprintf($this->module['url'], $this->module['version']);
+        $filename = $this->module['name'] . '-' . $this->module['version'] . '.' . pathinfo(basename($url), PATHINFO_EXTENSION);
+        return $filename;
     }
 
     /**

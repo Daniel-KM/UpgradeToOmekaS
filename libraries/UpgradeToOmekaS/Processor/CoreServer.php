@@ -591,7 +591,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
 
     protected function _downloadOmekaS()
     {
-        $this->_downloadModule();
+        $this->_downloadModule(true);
     }
 
     protected function _unzipOmekaS()
