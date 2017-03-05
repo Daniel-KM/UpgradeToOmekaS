@@ -3,11 +3,43 @@
 /**
  * Script to update the list of addons of Omeka with the last data.
  *
+ * @internal To use, simply run in the terminal, from the root of Omeka:
+ * ```
+ * php -f plugins/UpgradeToOmekaS/docs/_scripts/update_data.php
+ * ```
+ *
  * @author Daniel Berthereau
  * @license Cecill v2.1
  */
 
-$basepath = realpath(dirname(__FILE__) . '/../_data/');
+$options = array(
+    // Order addons.
+    'order' => 'Name',
+    // Update only one or more types of addon.
+    'processOnlyType' => array(),
+    // Update only one or more addons (set the addon name)..
+    'processOnlyAddon' => array(),
+    // Update data only for new urls (urls without name).
+    'processOnlyNewUrls' => true,
+    // Regenerate csv only (useful when edited in a spreadsheet).
+    'processRegenerateCsvOnly' => false,
+    // Allow to log (in terminal) the process of all the addons, else only
+    // updated one will be displayed at the end, and errors.
+    'logAllAddons' => true,
+    // To debug and to add some logs.
+    'debug' => false,
+    // To debug only the specified number of addons.
+    'debugMax' => 0,
+    // To display diff between old and new data. May be "none", "diff", "whole".
+    'debugDiff' => 'diff',
+    // If true, the updated whole csv is saved in the destination after debug.
+    'debugOutput' => false,
+);
+
+$basepath = realpath(dirname(__FILE__)
+    . DIRECTORY_SEPARATOR . '..'
+    . DIRECTORY_SEPARATOR . '_data'
+    . DIRECTORY_SEPARATOR);
 
 $types = array(
     'plugin' => array(
@@ -17,28 +49,19 @@ $types = array(
     'module' => array(
         'source' => $basepath . '/omeka_s_modules.csv',
         'destination' => $basepath . '/omeka_s_modules.csv',
-    )
-);
-
-$options = array(
-    // Allow to log (in terminal) the process of all the addons, else only
-    // updated one will be displayed, and errors.
-    'logAllAddons' => false,
-    // To debug and to add some logs.
-    'debug' => false,
-    // The next two options can be used to update only one addon.
-    // To debug only one type.
-    'debugType' => '',
-    // To debug an addon (set its name).
-    'debugAddon' => '',
-    // To debug only the specified number of addons.
-    'debugMax' => 0,
-    // If false, the result is not saved in the destination.
-    'debugOutput' => true,
+    ),
+    'theme' => array(
+        'source' => $basepath . '/omeka_themes.csv',
+        'destination' => $basepath . '/omeka_themes.csv',
+    ),
+    'template' => array(
+        'source' => $basepath . '/omeka_s_themes.csv',
+        'destination' => $basepath . '/omeka_s_themes.csv',
+    ),
 );
 
 foreach ($types as $type => $args) {
-    if ($options['debug'] && $options['debugType'] && $options['debugType'] != $type) {
+    if ($options['processOnlyType'] && !in_array($type, $options['processOnlyType'])) {
         continue;
     }
     $update = new UpdateDataExtensions($type, $args['source'], $args['destination'], $options);
@@ -78,12 +101,22 @@ class UpdateDataExtensions
             // Omeka 2.
             'omeka_target_version=' => 'Omeka Target',
         ),
+        'theme' => array(
+            'title' => 'Name',
+            'omeka_minimum_version' => 'Omeka Min',
+            'omeka_tested_up_to' => 'Omeka Target',
+            'omeka_target_version=' => 'Omeka Target',
+        ),
         // Omeka 3 / S.
         'module' => array(
             'omeka_version_constraint' => 'Omeka Constraint',
             'module_link' => 'Link',
             'author_link' => 'Author Link',
-        )
+        ),
+        'template' => array(
+            'theme_link' => 'Link',
+            'author_link' => 'Author Link',
+        ),
     );
 
     protected $updatedAddons = array();
@@ -117,7 +150,9 @@ class UpdateDataExtensions
             return false;
         }
 
-        $addons = $this->update($addons);
+        if (!$this->options['processRegenerateCsvOnly']) {
+            $addons = $this->update($addons);
+        }
         if (empty($addons)) {
             return false;
         }
@@ -127,6 +162,8 @@ class UpdateDataExtensions
         } else {
             $this->log('No line updated.');
         }
+
+        $addons = $this->order($addons);
 
         if ($this->options['debug'] && !$this->options['debugOutput']) {
             $this->log('Required no output.');
@@ -143,10 +180,20 @@ class UpdateDataExtensions
         return true;
     }
 
+    /**
+     * Regenerate data.
+     *
+     * @param array $addons
+     * @return array
+     */
     protected function update(array $addons)
     {
         // Get headers by name.
         $headers = array_flip($addons[0]);
+
+        if ($this->options['debug']) {
+            $this->log($headers);
+        }
 
         if (!isset($headers['Name'])) {
             $this->log(sprintf('No header "%s".', 'Name'));
@@ -168,30 +215,45 @@ class UpdateDataExtensions
             }
             $currentAddon = $addon;
 
-            $addonName = $addon[$headers['Name']];
             $addonUrl = trim($addon[$headers['Url']], '/ ');
-            if (empty($addonName) || empty($addonUrl)) {
+            if (empty($addonUrl)) {
                 continue;
             }
 
-            if ($this->options['debug']) {
-                if ($this->options['debugAddon']) {
-                    if ($addonName != $this->options['debugAddon']) {
-                        continue;
-                    }
+            $addonName = $addon[$headers['Name']];
+            if (empty($addonName)) {
+                // Set a temp addon name.
+                $addonName = basename($addonUrl);
+            }
+            else {
+                if ($this->options['processOnlyNewUrls']) {
+                    continue;
                 }
-                elseif ($this->options['debugMax'] && $key > $this->options['debugMax']) {
+                if ($this->options['processOnlyAddon'] && !in_array($addonName, $this->options['processOnlyAddon'])) {
+                    continue;
+                }
+            }
+
+            if ($this->options['debug']) {
+                if ($this->options['debugMax'] && $key > $this->options['debugMax']) {
                     break;
                 }
-                $this->log($addonName . ' (' . $addonUrl . ')');
+                // $this->log($addonName . ' (' . $addonUrl . ')');
             }
 
             $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
             switch ($server) {
                 case 'github.com':
                     $addonIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $addonUrl);
-                    if ($addon[$headers['Plugin.ini Path']]) {
-                        $addonIniBase = str_replace('/tree/master/', '/master/', $addonIniBase);
+                    if ($addon[$headers['Ini Path']]) {
+                        $replacements = array(
+                            '/tree/master/' => '/master/',
+                            '/tree/develop/' => '/develop/',
+                        );
+                        $addonIniBase = str_replace(
+                            array_keys($replacements),
+                            array_values($replacements),
+                            $addonIniBase);
                     }
                     break;
                 case 'gitlab.com':
@@ -206,19 +268,25 @@ class UpdateDataExtensions
                 case 'plugin':
                     $addonIni = $addon[$headers['Ini Path']] ?: 'master/plugin.ini';
                     break;
+                case 'theme':
+                    $addonIni = $addon[$headers['Ini Path']] ?: 'master/theme.ini';
+                    break;
                 case 'module':
                     $addonIni = $addon[$headers['Ini Path']] ?: 'master/config/module.ini';
+                    break;
+                case 'template':
+                    $addonIni = $addon[$headers['Ini Path']] ?: 'master/config/theme.ini';
                     break;
             }
 
             $addonIni = $addonIniBase . '/' . $addonIni;
-            if ($this->options['debug']) {
-                $this->log('Addon ini: ' . $addonIni);
-            }
 
-            $ini = file_get_contents($addonIni);
+            $ini = @file_get_contents($addonIni);
             if (empty($ini)) {
                 $this->log('[No ini      ]' . ' ' . $addonName);
+                if ($this->options['debug']) {
+                    $this->log(' Addon ini: ' . $addonIni);
+                }
                 continue;
             }
 
@@ -241,16 +309,24 @@ class UpdateDataExtensions
 
                     // Manage exceptions.
                     switch ($iniKey) {
-                        // Keep the name.
+                        // Keep the name when empty, and clean it.
                         case 'name':
+                        case 'title':
                             if (empty($iniValue)) {
-                                $iniValue = $addon[$headers[$header]];
+                                $iniValue = $addon[$headers[$header]] ?: $addonName;
                             }
-                            $iniValue = str_replace(array(
-                                ' Plugin',
-                                ' Widget',
+                            $iniValue = str_ireplace(array(
+                                ' plugin',
+                                'plugin ',
+                                ' module',
+                                'module ',
+                                ' theme',
+                                'theme ',
+                                ' widget',
+                                'widget ',
                                 ' public/admin',
                             ), '', $iniValue);
+                            $addonName = $iniValue;
                             break;
                         // Fill no version.
                         case 'version':
@@ -270,6 +346,13 @@ class UpdateDataExtensions
                 }
             }
 
+            // Check if the plugin is upgradable.
+            if ($this->type == 'plugin') {
+                if (!empty($addon[$headers['Module']]) && empty($addon[$headers['Upgradable']])) {
+                    $addon[$headers['Upgradable']] = 'Yes';
+                }
+            }
+
             $cleanName = $this->cleanAddonName($addonName);
             if (isset($omekaAddons[$cleanName])) {
                 $addon[$headers['Omeka.org']] = $omekaAddons[$cleanName]['version'];
@@ -284,23 +367,75 @@ class UpdateDataExtensions
                 $updatedAddons[] = $addonName;
                 echo '[Updated     ]' . ' ' . $addonName . PHP_EOL;
                 if ($this->options['debug']) {
-                    $this->log('Before');
-                    $this->log($currentAddon);
-                    $this->log('After');
-                    $this->log($addon);
+                    switch ($this->options['debugDiff']) {
+                        case 'diff':
+                            $this->log('Updated');
+                            $this->log(array_diff_assoc($currentAddon, $addon));
+                            $this->log(array_diff_assoc($addon, $currentAddon));
+                            break;
+                        case 'whole':
+                            $this->log('Before');
+                            $this->log($currentAddon);
+                            $this->log('After');
+                            $this->log($addon);
+                            break;
+                    }
                 }
             }
         }
 
-        foreach ($omekaAddons as $omekaAddon) {
-            if (empty($omekaAddon['checked'])) {
-                $this->log('[Unreferenced]' . ' ' . $omekaAddon['name']);
+        if (!$this->options['processOnlyNewUrls']) {
+            foreach ($omekaAddons as $omekaAddon) {
+                if (empty($omekaAddon['checked'])) {
+                    $unref = isset($omekaAddon['title'])
+                        ? $omekaAddon['title']
+                        : $omekaAddon['name'];
+                    $this->log('[Unreferenced]' . ' ' . $unref);
+                }
             }
         }
 
         $this->updatedAddons = $updatedAddons;
 
         return $addons;
+    }
+
+    /**
+     * Reorder data.
+     *
+     * @param array $addons
+     * @return array
+     */
+    protected function order(array $addons)
+    {
+        if (empty($this->options['order'])) {
+            return $addons;
+        }
+
+        // Get headers by name.
+        $headers = array_flip($addons[0]);
+
+        if ($this->options['debug']) {
+            $this->log($headers);
+        }
+
+        if (!isset($headers[$this->options['order']])) {
+            $this->log(sprintf('Order %s not found in headers.', $this->options['order']));
+            return $addons;
+        }
+        $order = $headers[$this->options['order']];
+        unset($addons[0]);
+
+        $addonsList = array();
+        foreach ($addons as $key => &$addon) {
+            $addonsList[$key] = $addon[$order];
+        }
+        natcasesort($addonsList);
+        $addonsList = array_replace($addonsList, $addons);
+        array_unshift($addonsList, null);
+        $addonsList[0] = array_keys($headers);
+
+        return $addonsList;
     }
 
     /**
@@ -344,6 +479,9 @@ class UpdateDataExtensions
             case 'plugin':
                 $source = 'https://omeka.org/add-ons/plugins/';
                 break;
+            case 'theme':
+                $source = 'https://omeka.org/add-ons/themes/';
+                break;
             default:
                 return array();
         }
@@ -364,7 +502,12 @@ class UpdateDataExtensions
             foreach ($pokemon_row as $row) {
                 $url = $row->nodeValue;
                 $filename = basename(parse_url($url, PHP_URL_PATH));
-                $result = preg_match("/(.*)-([0-9\.]*)\.zip/", $filename, $matches);
+                // Some addons have "-" in name; some have letters in version.
+                $result = preg_match('~([^\d]+)\-(\d.*)\.zip~', $filename, $matches);
+                // Manage for example "Select2".
+                if (empty($matches)) {
+                    $result = preg_match('~(.*?)\-(\d.*)\.zip~', $filename, $matches);
+                }
                 $addonName = $matches[1];
                 $cleanName = $this->cleanAddonName($addonName);
                 $addons[$cleanName] = array();
@@ -388,7 +531,10 @@ class UpdateDataExtensions
         // Manage exceptions with non standard characters (avoid duplicates).
         $addonName = str_replace(array('+'), array('Plus'), $name);
 
-        $cleanName = str_replace('plugin', '', strtolower(preg_replace('~[^\da-z]~i', '', $addonName)));
+        $cleanName = str_ireplace(
+            array('plugin', 'module', 'theme'),
+            '',
+            strtolower(preg_replace('~[^\da-z]~i', '', $addonName)));
 
         // Manage exception on Omeka.org.
         switch ($cleanName) {

@@ -1,49 +1,18 @@
 ---
 layout: page
 title: Matching extensions
+order: 1
 ---
 
-{% assign total_addons = 0 %}
-{% assign total_matchings = 0 %}
-{% assign total_upgraders = 0 %}
-{% assign total_upgradables = 0 %}
-{% for addon in site.data.omeka_plugins %}
-    {% unless addon['Name'] == nil %}
-        {% assign total_addons = total_addons | plus: 1 %}
-        {% unless addon['Module'] == nil %}
-            {% assign total_matchings = total_matchings | plus: 1 %}
-        {% endunless %}
-        {% if addon['Upgradable'] == 'Yes' %}
-            {% assign total_upgradables = total_upgradables | plus: 1 %}
-        {% endif %}
-        {% if addon['Upgradable'] == 'Yes (auto)' %}
-            {% assign total_upgraders = total_upgraders | plus: 1 %}
-        {% endif %}
-    {% endunless %}
-{% endfor %}
-
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-<style media="screen" type="text/css">
-    .sort { cursor: pointer; }
-    .page-content .wrapper { max-width: inherit; }
-    .page-content .wrapper .post-header,
-    .page-content .wrapper .post-content p { max-width: calc(800px - 30px * 2); margin-left: auto; margin-right: auto; padding-left: 30px: padding-right: 30px; }
-    .page-content .wrapper .post-content .container-fluid { max-width: inherit; }
-</style>
-
+{% include css_js.html %}
 
 All plugins can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are old, broken or unsupported. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/add-ons/plugins>.
 
-{% if total_addons > 0 %}
-Already {{ total_matchings }} / {{ total_addons }} (<strong>{{ total_matchings | times: 100 | divided_by: total_addons | round }}%</strong>) plugins – the most used ones – have an equivalent module for [Omeka S], and {{ total_upgraders }} automatic upgraders are available. See more details on [plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plugins.html' }}) and [modules]({{ site.url | append: '/UpgradeToOmekaS/omeka_s_modules.html' }}).
-{% endif; %}
+{% include stats_upgradable.md %}
 
-Feel free to add missing plugins, or to create an upgrader processor for the plugin [Upgrade To Omeka S], or contact me.
+See more details on [plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plugins.html' }}) and [modules]({{ site.url | append: '/UpgradeToOmekaS/omeka_s_modules.html' }}).
+
+Feel free to add missing plugins, or to create an upgrader processor for the plugin [Upgrade to Omeka S], or contact me.
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -111,6 +80,6 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
 </script>
 
 
-[Upgrade To Omeka S]: https://github.com/Daniel-KM/UpgradeToOmekaS
+[Upgrade to Omeka S]: https://github.com/Daniel-KM/UpgradeToOmekaS
 [Omeka Classic]: https://omeka.org
 [Omeka S]: https://omeka.org/s

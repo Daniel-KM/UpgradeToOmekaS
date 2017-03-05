@@ -1,0 +1,7 @@
+Name,Url,Last,Omeka.org,"Omeka Constraint",Author,"Author Link",License,Description,Tags,Link,"Support Link","Ini Path"
+AIDHP,https://github.com/unolibraries/aidph-omeka,1.0.0-beta,,,"Jason A. Heppler",http://jasonheppler.org,,,,,,
+"Center Row",https://github.com/omeka-s-themes/centerrow,1.0.0-beta,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
+Cozy,https://github.com/omeka-s-themes/cozy,1.0.0-beta,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,
+Default,https://github.com/omeka-s-themes/default,1.0.0-beta,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,develop/config/theme.ini
+PSL,https://github.com/biblibre/omeka-s-theme-psl,0.1,,,BibLibre,https://biblibre.com/,,"Omeka S theme for PSL",,https://github.com/biblibre/omeka-s-theme-psl,,
+"The Daily",https://github.com/omeka-s-themes/thedaily,1.0.0-beta,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,

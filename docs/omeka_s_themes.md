@@ -1,18 +1,16 @@
 ---
 layout: page
-title: Omeka S Modules
-order: 4
+title: Omeka S Themes
+order: 5
 ---
 
 {% include css_js.html %}
 
-All modules can be downloaded freely on <https://github.com> or <https://gitlab.com>. Usually, they work at least on one site. They are not listed in <https://omeka.org/s> currently.
+All themes can be downloaded freely on <https://github.com> or <https://gitlab.com>. They are not listed in <https://omeka.org/s> currently. New themes can be built with the template engine [Twig] via the [module twig] too.
 
-{% include stats_upgradable.md %}
+See the [modules]({{ site.url | append: '/UpgradeToOmekaS/omeka_s_modules.html' }}).
 
-See the page of [matching extensions]({{ site.url | append: '/UpgradeToOmekaS' }}) and [themes]({{ site.url | append: '/UpgradeToOmekaS/omeka_s_themes.html' }}).
-
-Feel free to add missing modules, or contact me for new ones.
+Feel free to add missing themes, or contact me for new ones.
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -20,7 +18,7 @@ Feel free to add missing modules, or contact me for new ones.
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_s_modules.csv">csv source file</a>.
+    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_s_themes.csv">csv source file</a>.
     </em></p>
     <div class="row">
         <table class="table table-striped">
@@ -29,14 +27,13 @@ Feel free to add missing modules, or contact me for new ones.
                     <th><span class="sort" data-sort="addon-link">Module</span></th>
                     <th><span class="sort" data-sort="addon-author">Author</span></th>
                     <th><span class="sort" data-sort="addon-version">Last</span></th>
-                    <th><span class="sort" data-sort="addon-constraint">Constraint</span></th>
                     <th><span class="sort" data-sort="addon-license">License</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
                 </tr>
             </thead>
             <tbody class="list">
-            {% for addon in site.data.omeka_s_modules %}
+            {% for addon in site.data.omeka_s_themes %}
                 {% if addon['Name'] %}
                 <tr>
                     <td>
@@ -58,7 +55,6 @@ Feel free to add missing modules, or contact me for new ones.
                     {% endunless %}
                     </td>
                     <td class="addon-version">{{ addon['Last'] }}</td>
-                    <td class="addon-constraint">{{ addon['Constraint'] }}</td>
                     <td class="addon-license">{{ addon['License'] }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
                     <td class="addon-description">{{ addon['Description'] }}</td>
@@ -83,3 +79,5 @@ Feel free to add missing modules, or contact me for new ones.
 [Upgrade to Omeka S]: https://github.com/Daniel-KM/UpgradeToOmekaS
 [Omeka Classic]: https://omeka.org
 [Omeka S]: https://omeka.org/s
+[Twig]: http://twig.sensiolabs.org
+[module Twig]: https://github.com/digihum/omeka-s-twig
