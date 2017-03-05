@@ -18,6 +18,12 @@
 // Doesn't work with some nested arguments like `function(array(array(), 'value'))`
 // but no false positive.
 $regexFunctionArguments = array(
+    // Check for simple words, space and punctuation and without anything else.
+    'basic' => '~ ( (?: \$|\b) %s) (
+        \(
+            (\'[\w\s\.\?\,\;\:]+\' | \"[\w\s\.\?\,\;\:]+\")
+        \)
+        ) ~xi',
     // Check one argument exactly, of any form, with a group by argument.
     1 => '~ ( (?: \$|\b) %s) (
         (?!
@@ -154,7 +160,7 @@ return array(
 
     '~\blink_to_previous_item\(\)~'                     => 'link_to_previous_item_show()',
     '~\blink_to_next_item\(\)~'                         => 'link_to_next_item_show()',
-    '~\blink_to_browse_items\(\)~'                      => 'link_to_items_browse(__(\'Browse Items\'))',
+    '~\blink_to_browse_items\(\)~'                      => 'link_to_items_browse($this->translate(\'Browse Items\'))',
     '~\blink_to_browse_items\(~'                        => 'link_to_items_browse(',
     '~\bitem_belongs_to_collection\(\)~'                => '(boolean) count($item->itemSets())',
     '~\bitem_citation\(\)~'                             => '$this->upgrade()->getCitation($item)',
@@ -266,6 +272,11 @@ return array(
     '~\b(get_user_roles)\(~'                        => '$this->upgrade()->\1(',
     '~\b(element_exists)\(~'                        => '$this->upgrade()->\1(',
     '~\b(plugin_is_active)\(~'                      => '$this->upgrade()->\1(',
+    sprintf($regexFunctionArguments['basic'], '__') => '$this->translate(\3)',
+    sprintf($regexFunctionArguments[1], '__')       => '$this->translate(\3)',
+    sprintf($regexFunctionArguments[2], '__')       => '$this->translate(new Omeka\Stdlib\Message\2)',
+    sprintf($regexFunctionArguments[3], '__')       => '$this->translate(new Omeka\Stdlib\Message\2)',
+    '~\b(__)(\(.+?\))\;~'                           => '$this->translate(new Omeka\Stdlib\Message\2);',
     '~\b(__)\(~'                                    => '$this->upgrade()->stranslate(',
     '~\b(plural)\(~'                                => '$this->upgrade()->\1(',
     '~\b(add_translation_source)\(~'                => '$this->upgrade()->\1(',
@@ -716,6 +727,9 @@ return array(
     '~(\$[a-z_]\w*)\s*\-\>\s*Tags\b~'               => 'null /* tags are not managed \1->tags() */',
 
     '~WEB_VIEW_SCRIPTS~'                            => '$this->assetUrl(\'\')',
+    // The web root may be converted into current site root or the main root.
+    '~WEB_ROOT~'                                    => '$this->url(\'site\', array(\'site-slug\' => $site->slug()))',
+    '~WEB_ROOT~'                                    => '$this->serverUrl() . $this->basePath()',
 
     '~(?:\'|")imageSize(?:\'|")\s*\=\>\s*(?:\'|")original(?:\'|")~i'            => "'imageSize' => 'original'",
     '~(?:\'|")imageSize(?:\'|")\s*\=\>\s*(?:\'|")fullsize(?:\'|")~i'            => "'imageSize' => 'large'",

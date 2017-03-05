@@ -134,7 +134,7 @@ $append = <<<'OUTPUT'
 <?php // Adapted from application/view-shared/common/pagination.phtml (added ul/li). ?>
 <?php // Remove this file to use the Omeka S template. ?>
 
-<nav class="pagination pagination-nav" role="navigation" aria-label="<?php echo $this->upgrade()->stranslate('Pagination'); ?>">
+<nav class="pagination pagination-nav" role="navigation" aria-label="<?php echo $this->translate('Pagination'); ?>">
 <?php if ($totalCount): ?>
     <ul class="pagination">
         <li class="page-input">
