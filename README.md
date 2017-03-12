@@ -112,9 +112,13 @@ To add a new upgrader, simply add it in the directory `/libraries/UpgradeToOmeka
 or use the filter `upgrade_omekas`. You can look in the upgrader `Escher.php`
 for a basic upgrader.
 
-To add a new addon to the lists, simply add its main url in the matching csv
-file in the directory `docs/_data/` and run the php script (here from the root
-of Omeka):
+
+Update of the list of plugins, modules and themes
+-------------------------------------------------
+
+To add a new addon to the lists of [available addons], simply add its main url
+in the matching csv file in the directory `docs/_data/` and run the php script
+(here from the root of Omeka):
 
 ```
     php -f plugins/UpgradeToOmekaS/docs/_scripts/update_data.php
@@ -232,9 +236,10 @@ Copyright
 [Simple Pages]: http://omeka.org/add-ons/plugins/simple-pages/
 [Social Bookmarking]: http://omeka.org/add-ons/plugins/social-bookmarking/
 [Universal Viewer]: https://github.com/Daniel-KM/UniversalViewer4Omeka
-[plugins for Omeka 2 and matching modules for Omeka S]: https://daniel-km.github.com/UpgradeToOmekaS
-[modules]: https://daniel-km.github.com/UpgradeToOmekaS/omeka_s_modules.html
-[themes]: https://daniel-km.github.com/UpgradeToOmekaS/omeka_s_themes.html
+[plugins for Omeka 2 and matching modules for Omeka S]: https://daniel-km.github.io/UpgradeToOmekaS
+[modules]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_modules.html
+[themes]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_themes.html
+[available addons]: https://daniel-km.github.io/UpgradeToOmekaS
 [Twig]: http://twig.sensiolabs.org
 [module Twig]: https://github.com/digihum/omeka-s-twig
 [Omeka 2 Importer]: https://github.com/omeka-s-modules/Omeka2Importer
