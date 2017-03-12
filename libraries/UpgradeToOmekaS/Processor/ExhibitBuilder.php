@@ -520,12 +520,12 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
         $target = $this->getTarget();
         $targetDb = $target->getDb();
 
-        // Prepare the mapping  of file ids.
+        // Prepare the mapping of file ids.
         $mappedFileIds = $this->fetchMappedIds('File');
         if (empty($mappedFileIds)) {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('Some exhibit block attachments (%d) can’t be upgraded because files are not upgraded.',
                     $totalRecords),
-                Zend_Log::NOTICE);
+                Zend_Log::WARN);
             return;
         }
 
