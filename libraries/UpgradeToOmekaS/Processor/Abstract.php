@@ -1592,6 +1592,15 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      */
     protected function _upgradeSettings()
     {
+        if (empty($this->module['install']['settings'])) {
+            return;
+        }
+
+        $target = $this->getTarget();
+
+        foreach ($this->module['install']['settings'] as $setting => $value) {
+            $target->saveSetting($setting, $value);
+        }
     }
 
     /**
