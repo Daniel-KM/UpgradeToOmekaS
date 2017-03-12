@@ -20,7 +20,7 @@ $options = array(
     // Update only one or more addons (set the addon name)..
     'processOnlyAddon' => array(),
     // Update data only for new urls (urls without name).
-    'processOnlyNewUrls' => true,
+    'processOnlyNewUrls' => false,
     // Regenerate csv only (useful when edited in a spreadsheet).
     'processRegenerateCsvOnly' => false,
     // Allow to log (in terminal) the process of all the addons, else only
@@ -509,6 +509,13 @@ class UpdateDataExtensions
                     $result = preg_match('~(.*?)\-(\d.*)\.zip~', $filename, $matches);
                 }
                 $addonName = $matches[1];
+                // Manage a bug.
+                if ($addonName == '-Media') {
+                    $addonName = 'HTML5 Media';
+                }
+                if ($addonName == 'Sitemap') {
+                    $addonName = 'Sitemap 2';
+                }
                 $cleanName = $this->cleanAddonName($addonName);
                 $addons[$cleanName] = array();
                 $addons[$cleanName]['name'] = $addonName;
@@ -534,7 +541,7 @@ class UpdateDataExtensions
         $cleanName = str_ireplace(
             array('plugin', 'module', 'theme'),
             '',
-            strtolower(preg_replace('~[^\da-z]~i', '', $addonName)));
+            preg_replace('~[^\da-z]~i', '', strtolower($addonName)));
 
         // Manage exception on Omeka.org.
         switch ($cleanName) {
@@ -545,6 +552,7 @@ class UpdateDataExtensions
             case 'sitemap2': return 'xmlsitemap';
             case 'vracore': return 'vracoreelementset';
             case 'pbcore': return 'pbcoreelementset';
+            case 'media': return 'html5media';
         }
 
         return $cleanName;
