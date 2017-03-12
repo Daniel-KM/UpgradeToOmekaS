@@ -16,19 +16,19 @@ class UpgradeToOmekaS_Processor_UniversalViewer extends UpgradeToOmekaS_Processo
     public $module = array(
         array(
             'name' => 'IiifServer',
-            'version' => '3.5.0',
+            'version' => '3.5.1',
             'url' => 'https://github.com/Daniel-KM/Omeka-S-module-IiifServer/archive/%s.zip',
-            'size' => 204970,
-            'sha1' => 'c8f7bc2c222425a69b39fcfc07b8832332b83f27',
+            'size' => 244038,
+            'sha1' => '02dabb99d5a7e9d2467228c54256ce8423cacf4c',
             'type' => 'port',
             'install' => array(),
         ),
         array(
             'name' => 'UniversalViewer',
-            'version' => '3.5.0',
+            'version' => '3.5.1',
             'url' => 'https://github.com/Daniel-KM/Omeka-S-module-UniversalViewer/archive/%s.zip',
-            'size' => 2143872,
-            'sha1' => 'bf12f776dc622af464e6583cec0150327bc2ed9d',
+            'size' => 2144036,
+            'sha1' => '890082e699055fe0db123f06ba8b9c5858ffc869',
             'type' => 'port',
             'install' => array(),
         ),
@@ -85,6 +85,14 @@ class UpgradeToOmekaS_Processor_UniversalViewer extends UpgradeToOmekaS_Processo
                     }
                     break;
             }
+            $target->saveSetting($setting, $value);
+        }
+
+        $mapOptions = array(
+            'iiifserver_image_tile_dir' => 'tile',
+            'iiifserver_image_tile_type' => 'deepzoom',
+        );
+        foreach ($mapOptions as $setting => $value) {
             $target->saveSetting($setting, $value);
         }
 
