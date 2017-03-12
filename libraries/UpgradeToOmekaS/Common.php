@@ -666,15 +666,15 @@ class UpgradeToOmekaS_Common
             1 => array("pipe", "w"), //STDOUT
             2 => array("pipe", "w"), //STDERR
         );
-        if ($proc = proc_open($cmd, $descriptorSpec, $pipes, getcwd())) {
-            $output = stream_get_contents($pipes[1]);
-            $errors = stream_get_contents($pipes[2]);
-            foreach ($pipes as $pipe) {
-                fclose($pipe);
-            }
-            $status = proc_close($proc);
-        } else {
+        $proc = proc_open($cmd, $descriptorSpec, $pipes, getcwd());
+        if (!is_resource($proc)) {
             throw new UpgradeToOmekaS_Exception(__('Failed to execute command: %s', $cmd));
         }
+        $output = stream_get_contents($pipes[1]);
+        $errors = stream_get_contents($pipes[2]);
+        foreach ($pipes as $pipe) {
+            fclose($pipe);
+        }
+        $status = proc_close($proc);
     }
 }
