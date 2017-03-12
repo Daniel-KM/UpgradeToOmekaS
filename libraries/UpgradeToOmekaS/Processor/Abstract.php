@@ -1349,7 +1349,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             $module = $this->module;
         }
 
-        $this->_progress(0, $module['size']);
+        if (isset($module['size'])) {
+            $this->_progress(0, $module['size']);
+        } else {
+            $this->_progress(0, -1);
+        }
 
         $url = sprintf($module['url'], $module['version']);
         $filename = $this->_moduleFilename($module);
@@ -1366,6 +1370,12 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                         . ' ' . __('You should remove it manually or replace it by the true file (%s).', $url));
                 }
                 // Download it below.
+            }
+            // The file seems to be downloaded, but no check is possible.
+            elseif (empty($module['size'])) {
+                $this->_log('[' . __FUNCTION__ . ']: ' . __('The file seems to be already downloaded.'),
+                    Zend_Log::INFO);
+                return;
             }
             // Check with the filesize.
             elseif ($filesize != $module['size']
@@ -1393,6 +1403,11 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             throw new UpgradeToOmekaS_Exception(
                 __('An issue occurred during the file download.')
                 . ' ' . __('Try to download it manually (%s) and to save it as "%s" in the temp folder of Apache.', $url, $filename));
+        }
+        if (empty($module['size'])) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The file seems to be downloaded.'),
+                Zend_Log::INFO);
+            return;
         }
         if (filesize($path) != $module['size']
                 || sha1_file($path) != $module['sha1']
@@ -1496,19 +1511,56 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             return;
         }
 
+        $version = $this->_extractVersionOfModule($module);
+
         $target = $this->getTarget();
         $targetDb = $target->getDb();
 
         $toInsert = array();
         $toInsert['id'] = $module['name'];
         $toInsert['is_active'] = 0;
-        $toInsert['version'] = $module['version'];
+        $toInsert['version'] = $version;
 
         $result = $targetDb->insert('module', $toInsert);
         if (!$result) {
             throw new UpgradeToOmekaS_Exception(
                 __('Unable to register the module "%s".', $module['name']));
         }
+    }
+
+    /**
+     * Get the version of a master module.
+     *
+     * @internal This check avoids to upgrade the module once installed.
+     *
+     * @param array $module
+     * @return string
+     */
+    protected function _extractVersionOfModule($module)
+    {
+        $defaultVersion = $module['version'];
+        if (is_null($defaultVersion)) {
+            $defaultVersion = '';
+        }
+
+        $config = $this->_getModuleDir($module['name'])
+            . DIRECTORY_SEPARATOR . 'config'
+            . DIRECTORY_SEPARATOR . 'module.ini';
+
+        if (!file_exists($config)) {
+            return $defaultVersion;
+        }
+
+        $config = new Zend_Config_Ini($config, 'info');
+        if (!isset($config->version)) {
+            if (!isset($config->info->version)) {
+                return $defaultVersion;
+            }
+            return $defaultVersion;
+        }
+
+        $version = $config->version;
+        return (string) $version;
     }
 
     /**

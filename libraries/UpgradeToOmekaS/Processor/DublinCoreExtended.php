@@ -10,7 +10,7 @@ class UpgradeToOmekaS_Processor_DublinCoreExtended extends UpgradeToOmekaS_Proce
 
     public $pluginName = 'DublinCoreExtended';
     public $minVersion = '2.0';
-    public $maxVersion = '2.2';
+    public $maxVersion = '';
 
     public $module = array(
         'type' => 'integrated',

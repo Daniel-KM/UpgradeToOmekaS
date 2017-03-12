@@ -22,7 +22,7 @@ echo head(array(
                     str_replace('omeka s', 'Omeka S', Inflector::titleize(trim($progress['task'], '_'), 'first')),
                     $progress['start']
                 );
-            if (!empty($progress['total'])):
+            if (!empty($progress['total']) && $progress['total'] != -1):
                 $percent = $progress['current'] *100 / $progress['total'];
                 $start = new DateTime($progress['start']);
                 $now = new DateTime();
