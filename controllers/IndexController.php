@@ -305,6 +305,8 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         if (!$hasLivingJob && $isProcessing) {
             $this->_cleanFatalError();
             $isProcessing = false;
+            $message = __('A fatal error occurred during the last process.');
+            $this->_helper->flashMessenger($message, 'error');
         }
 
         $isCompleted = $this->_isCompleted();
@@ -482,7 +484,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $process->save();
 
         _log('[UpgradeToOmekaS]: ' . $message, Zend_Log::WARN);
-        $this->_helper->_flashMessenger($message, 'success');
+        $this->_helper->_flashMessenger($message, 'info');
     }
 
     /**
