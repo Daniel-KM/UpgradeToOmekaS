@@ -1460,7 +1460,9 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         }
 
         $url = sprintf($module['url'], $module['version']);
-        $filename = $module['name'] . '-' . $module['version'] . '.' . pathinfo(basename($url), PATHINFO_EXTENSION);
+        $filename = $module['name']
+            . ($module['version'] ? '-' . $module['version'] : '')
+            . '.' . pathinfo(basename($url), PATHINFO_EXTENSION);
         return $filename;
     }
 
