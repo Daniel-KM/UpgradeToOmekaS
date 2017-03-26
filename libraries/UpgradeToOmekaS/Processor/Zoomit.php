@@ -14,10 +14,10 @@ class UpgradeToOmekaS_Processor_Zoomit extends UpgradeToOmekaS_Processor_Abstrac
 
     public $module = array(
         'name' => 'IiifServer',
-        'version' => '3.5.2',
+        'version' => '3.5.3',
         'url' => 'https://github.com/Daniel-KM/Omeka-S-module-IiifServer/releases/download/%s/IiifServer.zip',
-        'size' => 263817,
-        'sha1' => 'ce238cc4c79a9f8b9d38aeb6bf6bfa523a5080af',
+        'size' => 260582,
+        'sha1' => '3f6157c930276961dabcffe44e9b003571a4f583',
         'type' => 'integrated',
         'note' => 'The module IIIF Server may create tiles automatically for the default viewer OpenSeadragon.',
         'install' => array(
