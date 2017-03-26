@@ -27,6 +27,8 @@ class UpgradeToOmekaS_Processor_ArchiveRepertory extends UpgradeToOmekaS_Process
 
     protected function _upgradeSettings()
     {
+        $target = $this->getTarget();
+
         $mapOptions = array(
             // Collections options.
             'archive_repertory_collection_folder' => 'archive_repertory_item_set_folder',
@@ -34,12 +36,12 @@ class UpgradeToOmekaS_Processor_ArchiveRepertory extends UpgradeToOmekaS_Process
             'archive_repertory_collection_names' => '',
             'archive_repertory_collection_convert' => 'archive_repertory_item_set_prefix',
             // Items options.
-            'archive_repertory_item_folder' => archive_repertory_item_folder,
+            'archive_repertory_item_folder' => 'archive_repertory_item_folder',
             'archive_repertory_item_prefix' => 'archive_repertory_item_prefix',
             'archive_repertory_item_convert' => 'archive_repertory_item_convert',
             // Files options.
             'archive_repertory_file_keep_original_name' => '',
-            'archive_repertory_file_convert' => 'archive_repertory_file_convert',
+            'archive_repertory_file_convert' => 'archive_repertory_media_convert',
             'archive_repertory_file_base_original_name' => '',
             // Other derivative folders.
             'archive_repertory_derivative_folders' => '',
@@ -55,6 +57,14 @@ class UpgradeToOmekaS_Processor_ArchiveRepertory extends UpgradeToOmekaS_Process
             $value = get_option($option);
             // Manage exceptions.
             switch ($option) {
+                case 'archive_repertory_collection_folder':
+                case 'archive_repertory_item_folder':
+                    $value = strtolower($value);
+                    if ($value == 'none') {
+                        $value = '';
+                    }
+                    break;
+
                 case 'archive_repertory_collection_convert':
                 case 'archive_repertory_item_convert':
                     $value = strtolower($value);
@@ -62,8 +72,11 @@ class UpgradeToOmekaS_Processor_ArchiveRepertory extends UpgradeToOmekaS_Process
                         $value = 'keep';
                     }
                     break;
+
                 case 'archive_repertory_file_convert':
-                    if (get_option('archive_repertory_file_keep_original_name')) {
+                    // Manage the remove of the option in 2.14.1.
+                    $keep = get_option('archive_repertory_file_keep_original_name');
+                    if ($keep || is_null($keep)) {
                         $value = strtolower($value);
                         if ($value == 'keep name') {
                             $value = 'keep';
@@ -76,8 +89,27 @@ class UpgradeToOmekaS_Processor_ArchiveRepertory extends UpgradeToOmekaS_Process
             $target->saveSetting($setting, $value);
         }
 
+        $ingesters = array(
+            'upload' => array(),
+            'url' => array(),
+        );
+        if (plugin_is_active('OpenLayersZoom')
+                || plugin_is_active('OpenSeadragon')
+                || plugin_is_active('UniversalViewer')
+                || plugin_is_active('Zoomit')
+            ) {
+            $ingesters['tile'] = array(
+                'path' => 'tile',
+                'extension' => array(
+                    '.dzi',
+                    '.js',
+                    '_files',
+                    '_zdata',
+                ),
+            );
+        }
         $mapOptions = array(
-            'archive_repertory_ingesters' => array('upload' => array(), 'url' => array()),
+            'archive_repertory_ingesters' => $ingesters,
         );
         foreach ($mapOptions as $setting => $value) {
             $target->saveSetting($setting, $value);

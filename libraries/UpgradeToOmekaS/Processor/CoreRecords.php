@@ -423,13 +423,14 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                         break;
                     case 'File':
                         // Clean the filename to manage broken filenames if needed.
-                        $source = trim($record->original_filename, '/\\');
+                        $source = trim($record->original_filename, '/\\' . DIRECTORY_SEPARATOR);
                         $scheme = parse_url($source, PHP_URL_SCHEME);
                         $isRemote = UpgradeToOmekaS_Common::isRemote($source);
                         $extension = pathinfo($source, PATHINFO_EXTENSION);
                         // Clean the filename to manage broken filenames if needed.
-                        $filename = trim($record->filename, '/\\');
+                        $filename = trim($record->filename, '/\\' . DIRECTORY_SEPARATOR);
                         // This allows to manage the plugin Archive Repertory.
+                        $filename = str_replace(array('/', '\\', DIRECTORY_SEPARATOR), '/', $filename);
                         $storageId = $extension
                             ? substr($filename, 0, strrpos($filename, $extension) - 1)
                             : $filename;

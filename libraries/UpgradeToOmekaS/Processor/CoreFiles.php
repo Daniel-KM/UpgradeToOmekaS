@@ -121,7 +121,7 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
                         : $record->getDerivativeFilename($type);
 
                     // Clean the filename to manage broken filenames if needed.
-                    $filename = trim($filename, '/\\');
+                    $filename = trim($filename, '/\\' . DIRECTORY_SEPARATOR);
 
                     if ($isDummy) {
                         $mainMimeType = strtok($record->mime_type, '/');
@@ -139,7 +139,8 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
 
                     // A check is done to manage the plugin Archive Repertory,
                     // that creates a relative dir for each record.
-                    if (strpos($filename, DIRECTORY_SEPARATOR) !== false) {
+                    $filenameArchiveRepertory = str_replace(array('/', '\\', DIRECTORY_SEPARATOR), '/', $filename);
+                    if (strpos($filenameArchiveRepertory, '/') !== false) {
                         $result = UpgradeToOmekaS_Common::createDir(dirname($destination));
                         if (!$result) {
                             throw new UpgradeToOmekaS_Exception(
