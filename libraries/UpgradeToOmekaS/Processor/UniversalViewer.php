@@ -10,7 +10,7 @@ class UpgradeToOmekaS_Processor_UniversalViewer extends UpgradeToOmekaS_Processo
 
     public $pluginName = 'UniversalViewer';
     public $minVersion = '2.4.2';
-    public $maxVersion = '2.4.2';
+    public $maxVersion = '';
 
     public $multipleModules = true;
     public $module = array(
