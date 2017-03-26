@@ -355,8 +355,7 @@ class UpgradeToOmekaS_Common
         if (is_dir($path)
                 && is_readable($path)
                 && is_writable($path)
-                && ((count(@scandir($path)) == 2) // Only '.' and '..'.
-                    || $evenNonEmpty)
+                && ($evenNonEmpty || count(array_diff(@scandir($path), array('.', '..'))) == 0)
             ) {
             $result = self::_rrmdir($path);
             return is_null($result) || $result;
