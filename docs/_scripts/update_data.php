@@ -119,7 +119,9 @@ class UpdateDataExtensions
         ),
     );
 
-    protected $updatedAddons = array();
+    protected $headers;
+    protected $omekaAddons;
+    protected $updatedAddons;
 
     public function __construct($type, $source, $destination = '', array $options = array())
     {
@@ -190,6 +192,7 @@ class UpdateDataExtensions
     {
         // Get headers by name.
         $headers = array_flip($addons[0]);
+        $this->headers = $headers;
 
         if ($this->options['debug']) {
             $this->log($headers);
@@ -206,15 +209,15 @@ class UpdateDataExtensions
         }
 
         $omekaAddons = $this->fetchOmekaAddons();
+        $this->omekaAddons = $omekaAddons;
 
         $updatedAddons = array();
+        $this->updatedAddons = $updatedAddons;
 
         foreach ($addons as $key => &$addon) {
             if ($key == 0) {
                 continue;
             }
-            $currentAddon = $addon;
-
             $addonUrl = trim($addon[$headers['Url']], '/ ');
             if (empty($addonUrl)) {
                 continue;
@@ -241,147 +244,7 @@ class UpdateDataExtensions
                 // $this->log($addonName . ' (' . $addonUrl . ')');
             }
 
-            $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
-            switch ($server) {
-                case 'github.com':
-                    $addonIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $addonUrl);
-                    if ($addon[$headers['Ini Path']]) {
-                        $replacements = array(
-                            '/tree/master/' => '/master/',
-                            '/tree/develop/' => '/develop/',
-                        );
-                        $addonIniBase = str_replace(
-                            array_keys($replacements),
-                            array_values($replacements),
-                            $addonIniBase);
-                    }
-                    break;
-                case 'gitlab.com':
-                    $addonIniBase = $addonUrl . '/raw';
-                    break;
-                default:
-                    $addonIniBase = $addonUrl;
-                    break;
-            }
-
-            switch ($this->type) {
-                case 'plugin':
-                    $addonIni = $addon[$headers['Ini Path']] ?: 'master/plugin.ini';
-                    break;
-                case 'theme':
-                    $addonIni = $addon[$headers['Ini Path']] ?: 'master/theme.ini';
-                    break;
-                case 'module':
-                    $addonIni = $addon[$headers['Ini Path']] ?: 'master/config/module.ini';
-                    break;
-                case 'template':
-                    $addonIni = $addon[$headers['Ini Path']] ?: 'master/config/theme.ini';
-                    break;
-            }
-
-            $addonIni = $addonIniBase . '/' . $addonIni;
-
-            $ini = @file_get_contents($addonIni);
-            if (empty($ini)) {
-                $this->log('[No ini      ]' . ' ' . $addonName);
-                if ($this->options['debug']) {
-                    $this->log(' Addon ini: ' . $addonIni);
-                }
-                continue;
-            }
-
-            $ini = parse_ini_string($ini);
-            if (empty($ini)) {
-                $this->log('[No ini keys ]' . ' ' . $addonName);
-                continue;
-            }
-
-            foreach ($this->mappingToUpdate as $typeKey => $typeValues) {
-                if ($typeKey != 'common' && $typeKey != $this->type) {
-                    continue;
-                }
-                foreach ($typeValues as $iniKey => $header) {
-                    if (empty($header) || !isset($ini[$iniKey])) {
-                        continue;
-                    }
-
-                    $iniValue = trim($ini[$iniKey]);
-
-                    // Manage exceptions.
-                    switch ($iniKey) {
-                        // Keep the name when empty, and clean it.
-                        case 'name':
-                        case 'title':
-                            if (empty($iniValue)) {
-                                $iniValue = $addon[$headers[$header]] ?: $addonName;
-                            }
-                            $iniValue = str_ireplace(array(
-                                ' plugin',
-                                'plugin ',
-                                ' module',
-                                'module ',
-                                ' theme',
-                                'theme ',
-                                ' widget',
-                                'widget ',
-                                ' public/admin',
-                            ), '', $iniValue);
-                            $addonName = $iniValue;
-                            break;
-                        // Fill no version.
-                        case 'version':
-                            if ($iniValue == '') {
-                                $iniValue = '-';
-                            }
-                            break;
-                        // Clean lists.
-                        case 'tags':
-                        case 'required_plugins':
-                        case 'optional_plugins':
-                            $iniValue = implode(', ', array_map('trim', explode(',', $iniValue)));
-                            break;
-                    }
-
-                    $addon[$headers[$header]] = $iniValue;
-                }
-            }
-
-            // Check if the plugin is upgradable.
-            if ($this->type == 'plugin') {
-                if (!empty($addon[$headers['Module']]) && empty($addon[$headers['Upgradable']])) {
-                    $addon[$headers['Upgradable']] = 'Yes';
-                }
-            }
-
-            $cleanName = $this->cleanAddonName($addonName);
-            if (isset($omekaAddons[$cleanName])) {
-                $addon[$headers['Omeka.org']] = $omekaAddons[$cleanName]['version'];
-                $omekaAddons[$cleanName]['checked'] = true;
-            }
-
-            if ($currentAddon == $addon) {
-                if ($this->options['logAllAddons']) {
-                    $this->log('[No update   ]' . ' ' . $addonName);
-                }
-            } else {
-                $updatedAddons[] = $addonName;
-                echo '[Updated     ]' . ' ' . $addonName . PHP_EOL;
-                if ($this->options['debug']) {
-                    switch ($this->options['debugDiff']) {
-                        case 'diff':
-                            $this->log('Updated');
-                            $this->log(array_diff_assoc($currentAddon, $addon));
-                            $this->log(array_diff_assoc($addon, $currentAddon));
-                            break;
-                        case 'whole':
-                            $this->log('Before');
-                            $this->log($currentAddon);
-                            $this->log('After');
-                            $this->log($addon);
-                            break;
-                    }
-                }
-            }
+            $addon = $this->updateAddon($addon);
         }
 
         if (!$this->options['processOnlyNewUrls']) {
@@ -395,9 +258,170 @@ class UpdateDataExtensions
             }
         }
 
-        $this->updatedAddons = $updatedAddons;
-
         return $addons;
+    }
+
+    /**
+     * Regenerate data for one row.
+     *
+     * @param array $addon
+     * @return array
+     */
+    protected function updateAddon(array $addon)
+    {
+        $headers = $this->headers;
+        $omekaAddons = &$this->omekaAddons;
+        $updatedAddons = &$this->updatedAddons;
+        $currentAddon = $addon;
+
+        // Set the name or a temp addon name.
+        $addonUrl = trim($addon[$headers['Url']], '/ ');
+        $addonName = $addon[$headers['Name']] ?: basename($addonUrl);
+
+        $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
+        switch ($server) {
+            case 'github.com':
+                $addonIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $addonUrl);
+                if ($addon[$headers['Ini Path']]) {
+                    $replacements = array(
+                        '/tree/master/' => '/master/',
+                        '/tree/develop/' => '/develop/',
+                    );
+                    $addonIniBase = str_replace(
+                        array_keys($replacements),
+                        array_values($replacements),
+                        $addonIniBase);
+                }
+                break;
+            case 'gitlab.com':
+                $addonIniBase = $addonUrl . '/raw';
+                break;
+            default:
+                $addonIniBase = $addonUrl;
+                break;
+        }
+
+        switch ($this->type) {
+            case 'plugin':
+                $addonIni = $addon[$headers['Ini Path']] ?: 'master/plugin.ini';
+                break;
+            case 'theme':
+                $addonIni = $addon[$headers['Ini Path']] ?: 'master/theme.ini';
+                break;
+            case 'module':
+                $addonIni = $addon[$headers['Ini Path']] ?: 'master/config/module.ini';
+                break;
+            case 'template':
+                $addonIni = $addon[$headers['Ini Path']] ?: 'master/config/theme.ini';
+                break;
+        }
+
+        $addonIni = $addonIniBase . '/' . $addonIni;
+
+        $ini = @file_get_contents($addonIni);
+        if (empty($ini)) {
+            $this->log('[No ini      ]' . ' ' . $addonName);
+            if ($this->options['debug']) {
+                $this->log(' Addon ini: ' . $addonIni);
+            }
+            return $addon;
+        }
+
+        $ini = parse_ini_string($ini);
+        if (empty($ini)) {
+            $this->log('[No ini keys ]' . ' ' . $addonName);
+            return $addon;
+        }
+
+        // Update each keys of the ini file.
+        foreach ($this->mappingToUpdate as $typeKey => $typeValues) {
+            if ($typeKey != 'common' && $typeKey != $this->type) {
+                continue;
+            }
+            foreach ($typeValues as $iniKey => $header) {
+                if (empty($header) || !isset($ini[$iniKey])) {
+                    continue;
+                }
+
+                $iniValue = trim($ini[$iniKey]);
+
+                // Manage exceptions.
+                switch ($iniKey) {
+                    // Keep the name when empty, and clean it.
+                    case 'name':
+                    case 'title':
+                        if (empty($iniValue)) {
+                            $iniValue = $addon[$headers[$header]] ?: $addonName;
+                        }
+                        $iniValue = str_ireplace(array(
+                            ' plugin',
+                            'plugin ',
+                            ' module',
+                            'module ',
+                            ' theme',
+                            'theme ',
+                            ' widget',
+                            'widget ',
+                            ' public/admin',
+                        ), '', $iniValue);
+                        $addonName = $iniValue;
+                        break;
+                    // Fill no version.
+                    case 'version':
+                        if ($iniValue == '') {
+                            $iniValue = '-';
+                        }
+                        break;
+                    // Clean lists.
+                    case 'tags':
+                    case 'required_plugins':
+                    case 'optional_plugins':
+                        $iniValue = implode(', ', array_map('trim', explode(',', $iniValue)));
+                        break;
+                }
+
+                $addon[$headers[$header]] = $iniValue;
+            }
+        }
+
+        // Set if the plugin is upgradable.
+        if ($this->type == 'plugin') {
+            if (!empty($addon[$headers['Module']]) && empty($addon[$headers['Upgradable']])) {
+                $addon[$headers['Upgradable']] = 'Yes';
+            }
+        }
+
+        $cleanName = $this->cleanAddonName($addonName);
+        if (isset($omekaAddons[$cleanName])) {
+            $addon[$headers['Omeka.org']] = $omekaAddons[$cleanName]['version'];
+            $omekaAddons[$cleanName]['checked'] = true;
+        }
+
+        if ($currentAddon == $addon) {
+            if ($this->options['logAllAddons']) {
+                $this->log('[No update   ]' . ' ' . $addonName);
+            }
+        } else {
+            $updatedAddons[] = $addonName;
+            echo '[Updated     ]' . ' ' . $addonName . PHP_EOL;
+            if ($this->options['debug']) {
+                switch ($this->options['debugDiff']) {
+                    case 'diff':
+                        $this->log('Updated');
+                        $this->log(array_diff_assoc($currentAddon, $addon));
+                        $this->log(array_diff_assoc($addon, $currentAddon));
+                        break;
+                    case 'whole':
+                        $this->log('Before');
+                        $this->log($currentAddon);
+                        $this->log('After');
+                        $this->log($addon);
+                        break;
+                }
+            }
+        }
+
+        return $addon;
     }
 
     /**
