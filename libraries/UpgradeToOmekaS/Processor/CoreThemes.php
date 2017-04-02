@@ -709,7 +709,7 @@ OUTPUT;
 {
   "name": "%1$s",
   "version": "%2$s",
-  "description": "A theme for Omeka S upgraded with the plugin "Upgrade To Omeka S" on %3$s.",
+  "description": "A theme for Omeka S upgraded with the plugin “Upgrade To Omeka S” on %3$s.",
   "main": "gulpfile.js",
   "scripts": {
     "test": "test"
