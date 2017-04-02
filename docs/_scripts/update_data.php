@@ -17,7 +17,8 @@ $options = array(
     'order' => 'Name',
     // Update only one or more types of addon.
     'processOnlyType' => array(),
-    // Update only one or more addons (set the addon name)..
+    // Update only one or more addons (set the addon url).
+    // 'processOnlyAddon' => array('https://github.com/Daniel-KM/UpgradeToOmekaS'),
     'processOnlyAddon' => array(),
     // Update data only for new urls (urls without name).
     'processOnlyNewUrls' => false,
@@ -211,10 +212,9 @@ class UpdateDataExtensions
         $omekaAddons = $this->fetchOmekaAddons();
         $this->omekaAddons = $omekaAddons;
 
-        $updatedAddons = array();
-        $this->updatedAddons = $updatedAddons;
+        $this->updatedAddons = array();
 
-        foreach ($addons as $key => &$addon) {
+        foreach ($addons as $key => $addon) {
             if ($key == 0) {
                 continue;
             }
@@ -223,18 +223,18 @@ class UpdateDataExtensions
                 continue;
             }
 
-            $addonName = $addon[$headers['Name']];
-            if (empty($addonName)) {
-                // Set a temp addon name.
-                $addonName = basename($addonUrl);
+            if ($this->options['processOnlyAddon'] && !in_array($addonUrl, $this->options['processOnlyAddon'])) {
+                continue;
             }
-            else {
-                if ($this->options['processOnlyNewUrls']) {
-                    continue;
-                }
-                if ($this->options['processOnlyAddon'] && !in_array($addonName, $this->options['processOnlyAddon'])) {
-                    continue;
-                }
+
+            $addonName = $addon[$headers['Name']];
+            if ($addonName && $this->options['processOnlyNewUrls']) {
+                continue;
+            }
+
+            // Set a temp addon name.
+            if (empty($addonName)) {
+                $addonName = basename($addonUrl);
             }
 
             if ($this->options['debug']) {
@@ -244,18 +244,29 @@ class UpdateDataExtensions
                 // $this->log($addonName . ' (' . $addonUrl . ')');
             }
 
-            $addon = $this->updateAddon($addon);
+            $addons[$key] = $this->updateAddon($addon);
         }
 
         if (!$this->options['processOnlyNewUrls']) {
-            foreach ($omekaAddons as $omekaAddon) {
+            foreach ($this->omekaAddons as $omekaAddon) {
                 if (empty($omekaAddon['checked'])) {
                     $unref = isset($omekaAddon['title'])
                         ? $omekaAddon['title']
                         : $omekaAddon['name'];
-                    if ($this->options['processOnlyAddon']
-                            && !in_array($unref, $this->options['processOnlyAddon'])
-                        ) {
+                    $url = '';
+                    foreach ($addons as $addon) {
+                        if ($addon[$headers['Name']] == $unref) {
+                            $url = trim($addon[$headers['Url']], '/ ');
+                            if ($addon[$headers['Name']]) {
+                                $unref = $addon[$headers['Name']];
+                            }
+                            break;
+                        }
+                    }
+                    if (empty($url)
+                            || ($this->options['processOnlyAddon']
+                                && !in_array($url, $this->options['processOnlyAddon'])
+                        )) {
                         continue;
                     }
                     $this->log('[Unreferenced]' . ' ' . $unref);
