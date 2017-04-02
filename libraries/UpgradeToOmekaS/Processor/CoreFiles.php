@@ -157,8 +157,16 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
                     }
                     if (!$result) {
                         throw new UpgradeToOmekaS_Exception(
-                            __('The copy of the file "%s" to the directory "%s" failed (mode: %s).',
-                                $source, dirname($destination) . DIRECTORY_SEPARATOR, $filesType));
+                            __('The copy of the file "%s" (%sfile #%d%s, %sitem #%d%s) to the directory "%s" failed (mode: %s).',
+                                $source,
+                                '<a href="' . /* WEB_ROOT . */ '../../../admin/files/show/' . $record->id . '">',
+                                $record->id,
+                                '</a>',
+                                '<a href="' . /* WEB_ROOT . */ '../../../admin/items/show/' . $record->item_id . '">',
+                                $record->item_id,
+                                '</a>',
+                                dirname($destination) . DIRECTORY_SEPARATOR,
+                                $filesType));
                     }
                 }
                 // Count only one copy by record.

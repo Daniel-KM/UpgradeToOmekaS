@@ -316,7 +316,7 @@ OUTPUT;
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All themes (%d) have been copied with default scripts into Omeka S.',
             count($themes))
-                . ' ' . __('You can find new ones on %shttps://omeka.org/s%s.', '<a href="omeka.org/s" target="_blank">', '</a>'),
+                . ' ' . __('You can find new ones on %shttps://omeka.org/s%s.', '<a href="https://omeka.org/s" target="_blank">', '</a>'),
             Zend_Log::INFO);
     }
 

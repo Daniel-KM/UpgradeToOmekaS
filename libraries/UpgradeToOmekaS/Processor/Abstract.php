@@ -1394,8 +1394,13 @@ abstract class UpgradeToOmekaS_Processor_Abstract
         }
 
         // Download the file.
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dKB, so wait a while.', ceil($module['size'] / 1000)),
-            Zend_Log::INFO);
+        if ($module['size']) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The size of the file to download is %dKB, so wait a while.', ceil($module['size'] / 1000)),
+                Zend_Log::INFO);
+        } else {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The file is downloading, so wait a while.'),
+                Zend_Log::INFO);
+        }
         $handle = fopen($url, 'rb');
         $result = file_put_contents($path, $handle);
         @fclose($handle);
