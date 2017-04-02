@@ -12,7 +12,13 @@
  * @license Cecill v2.1
  */
 
+// The token is required only to update dates. If empty, the limit will be 60
+// requests an hour.
+$tokenGithub = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'token_github.txt';
+$tokenGithub = file_exists($tokenGithub) ? trim(file_get_contents($tokenGithub)) : '';
+
 $options = array(
+    'token' => array('api.github.com' => $tokenGithub),
     // Order addons.
     'order' => 'Name',
     // Update only one or more types of addon.
@@ -25,7 +31,7 @@ $options = array(
     // Regenerate csv only (useful when edited in a spreadsheet).
     'processRegenerateCsvOnly' => false,
     // Allow to log (in terminal) the process of all the addons, else only
-    // updated one will be displayed at the end, and errors.
+    // updated one will be displayed, and errors.
     'logAllAddons' => true,
     // To debug and to add some logs.
     'debug' => false,
@@ -89,7 +95,7 @@ class UpdateDataExtensions
             'license' => 'License',
             'link' => 'Link',
             'support_link' => 'Support Link',
-            'version' => 'Last',
+            'version' => 'Last Version',
             'tags' => 'Tags',
         ),
         // Omeka 1 / 2.
@@ -293,6 +299,17 @@ class UpdateDataExtensions
         // Set the name or a temp addon name.
         $addonUrl = trim($addon[$headers['Url']], '/ ');
         $addonName = $addon[$headers['Name']] ?: basename($addonUrl);
+
+        // Set the date of the creation and the last update, that doesn't depend
+        // on ini, and don't update if empty.
+        $date = $this->findDate($addonUrl, 'creation date');
+        if ($date) {
+            $addon[$headers['Creation Date']] = $date;
+        }
+        $date = $this->findDate($addonUrl, 'last update');
+        if ($date) {
+            $addon[$headers['Last Update']] = $date;
+        }
 
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
         switch ($server) {
@@ -596,6 +613,122 @@ class UpdateDataExtensions
         }
 
         return $cleanName;
+    }
+
+    /**
+     * Get the date and time of the creation of the repository.
+     *
+     * @param string $addonUrl
+     * @param string $dateToFind
+     * @return string
+     */
+    protected function findDate($addonUrl, $dateToFind)
+    {
+        static $data = array();
+
+        $project = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
+        $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
+        if (!isset($data[$addonUrl])) {
+            switch ($server) {
+                case 'github.com':
+                    $user = strtok($project, '/');
+                    $projectName= strtok('/');
+                    $url = 'https://api.github.com/repos/' . $user . '/' . $projectName;
+                    $data[$addonUrl] = $this->curl($url);
+                    break;
+                default:
+                    $data[$addonUrl] = '';
+                    return '';
+            }
+        }
+
+        if (empty($data[$addonUrl])) {
+            return '';
+        }
+
+        $response = $data[$addonUrl];
+        switch ($server) {
+            case 'github.com':
+                switch ($dateToFind) {
+                    case 'creation date':
+                        return $response->created_at;
+                    case 'last update';
+                        // $url = 'https://api.github.com/repos/' . $project . '/commits/HEAD';
+                        // $date = $response->commit->committer->date;
+                        return $response->updated_at;
+                }
+        }
+    }
+
+    /**
+     * Helper to get the response of a web service.
+     *
+     * @param string $url
+     * @return string
+     */
+    protected function curl($url)
+    {
+        static $flag;
+
+        // Allows only one main error.
+        if ($flag) {
+            return '';
+        }
+
+        $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0';
+
+        $curl = curl_init();
+
+        $server = strtolower(parse_url($url, PHP_URL_HOST));
+        if (!empty($this->options['token'][$server])) {
+            switch ($server) {
+                case 'api.github.com':
+                    // curl_setopt($curl, CURLOPT_HEADER, 'Authorization: token ' . $this->options['token'][$server]);
+                    $url .= '?access_token=' . $this->options['token'][$server];
+                    break;
+            }
+        }
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
+        // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        if ($response === false) {
+            if (empty($flag)) {
+                $flag = true;
+                $this->log(sprintf('No response from curl for url %s.', $url));
+            }
+            return '';
+        }
+
+
+        $response = json_decode($response);
+        if (empty($response)) {
+            if (empty($flag)) {
+                $flag = true;
+                $this->log(sprintf('Empty response from curl for url %s.', $url));
+            }
+            return '';
+        }
+        if (!empty($response->message)) {
+            if (empty($flag)) {
+                $this->log(
+                    sprintf(
+                        'Error on url %s: %s.',
+                        $url,
+                        $response->message
+                    )
+                );
+            }
+            return '';
+        }
+
+        return $response;
     }
 
     /**

@@ -28,7 +28,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
                 <tr>
                     <th><span class="sort" data-sort="addon-link">Plugin</span></th>
                     <th><span class="sort" data-sort="addon-author">Author</span></th>
-                    <th><span class="sort" data-sort="addon-version">Last</span></th>
+                    <th><span class="sort" data-sort="addon-updated">Updated</span></th>
                     <th><span class="sort" data-sort="addon-omeka-org">Omeka.org</span></th>
                     <th><span class="sort" data-sort="addon-upgradable">Upgradable</span></th>
                     <th><span class="sort" data-sort="addon-target">Target</span></th>
@@ -59,7 +59,14 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
                         {% endunless %}
                     {% endunless %}
                     </td>
-                    <td class="addon-version">{{ addon['Last'] }}</td>
+                    <td class="addon-updated">
+                        {% if addon['Last Update'] %}
+                            {{ addon['Last Update'] | slice: 0, 10 }}
+                        {% endif %}
+                        {% if addon['Last Version'] %}
+                            ({{ addon['Last Version'] }})
+                        {% endif %}
+                    </td>
                     <td class="addon-omeka-org">{{ addon['Omeka.org'] }}</td>
                     <td class="addon-upgradable">{{ addon['Upgradable'] }}</td>
                     <td class="addon-target">
@@ -87,10 +94,11 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
 
 <script type="text/javascript">
     var options = {
-        valueNames: ['addon-link', 'addon-author', 'addon-version', 'addon-omeka-org', 'addon-upgradable', 'addon-target', 'addon-license', 'addon-tags', 'addon-required', 'addon-optional', 'addon-description'],
+        valueNames: ['addon-link', 'addon-author', 'addon-updated', 'addon-omeka-org', 'addon-upgradable', 'addon-target', 'addon-license', 'addon-tags', 'addon-required', 'addon-optional', 'addon-description'],
         page: 500
     };
     var entryList = new List('entry-list', options);
+    entryList.sort('addon-updated', { order: "desc" });
 </script>
 
 

@@ -28,6 +28,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
                 <tr>
                     <th><span class="sort" data-sort="addon-plugin-link">Plugin</span></th>
                     <th><span class="sort" data-sort="addon-account">Account</span></th>
+                    <th><span class="sort" data-sort="addon-updated">Updated</span></th>
                     <th><span class="sort" data-sort="addon-version">Last</span></th>
                     <th><span class="sort" data-sort="addon-upgradable">Upgradable</span></th>
                     <th><span class="sort" data-sort="addon-minimum">Min</span></th>
@@ -51,7 +52,8 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
                         <a href="{{ account_url }}" class="link addon-account">{{ account_name }}</a>
                     {% endunless %}
                     </td>
-                    <td class="addon-version">{{ addon['Last'] }}</td>
+                    <td class="addon-updated">{{ addon['Last Update'] | slice: 0, 10 }}</td>
+                    <td class="addon-version">{{ addon['Last Version'] }}</td>
                     <td class="addon-upgradable">{{ addon['Upgradable'] }}</td>
                     <td class="addon-minimum">{{ addon['Min Version'] }}</td>
                     <td class="addon-maximum">{{ addon['Max Version'] }}</td>
@@ -73,7 +75,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
 
 <script type="text/javascript">
     var options = {
-        valueNames: ['addon-plugin-link', 'addon-account', 'addon-version', 'addon-upgradable', 'addon-minimum', 'addon-maximum', 'addon-module-link', 'addon-note'],
+        valueNames: ['addon-plugin-link', 'addon-account', 'addon-updated', 'addon-version', 'addon-upgradable', 'addon-minimum', 'addon-maximum', 'addon-module-link', 'addon-note'],
         page: 500
     };
     var entryList = new List('entry-list', options);

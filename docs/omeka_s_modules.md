@@ -28,7 +28,7 @@ Feel free to add missing modules, or contact me for new ones.
                 <tr>
                     <th><span class="sort" data-sort="addon-link">Module</span></th>
                     <th><span class="sort" data-sort="addon-author">Author</span></th>
-                    <th><span class="sort" data-sort="addon-version">Last</span></th>
+                    <th><span class="sort" data-sort="addon-updated">Updated</span></th>
                     <th><span class="sort" data-sort="addon-constraint">Constraint</span></th>
                     <th><span class="sort" data-sort="addon-license">License</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
@@ -55,7 +55,14 @@ Feel free to add missing modules, or contact me for new ones.
                         {% endunless %}
                     {% endunless %}
                     </td>
-                    <td class="addon-version">{{ addon['Last'] }}</td>
+                    <td class="addon-updated">
+                        {% if addon['Last Update'] %}
+                            {{ addon['Last Update'] | slice: 0, 10 }}
+                        {% endif %}
+                        {% if addon['Last Version'] %}
+                            ({{ addon['Last Version'] }})
+                        {% endif %}
+                    </td>
                     <td class="addon-constraint">{{ addon['Constraint'] }}</td>
                     <td class="addon-license">{{ addon['License'] }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
@@ -71,10 +78,11 @@ Feel free to add missing modules, or contact me for new ones.
 
 <script type="text/javascript">
     var options = {
-        valueNames: ['addon-link', 'addon-author', 'addon-version', 'addon-omeka-org', 'addon-constraint', 'addon-license', 'addon-tags', 'addon-description'],
+        valueNames: ['addon-link', 'addon-author', 'addon-updated', 'addon-omeka-org', 'addon-constraint', 'addon-license', 'addon-tags', 'addon-description'],
         page: 500
     };
     var entryList = new List('entry-list', options);
+    entryList.sort('addon-updated', { order: "desc" });
 </script>
 
 
