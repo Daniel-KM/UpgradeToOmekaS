@@ -14,10 +14,10 @@ class UpgradeToOmekaS_Processor_UpgradeToOmekaS extends UpgradeToOmekaS_Processo
 
     public $module = array(
         'name' => 'UpgradeFromOmekaClassic',
-        'version' => '3.0.2',
-        'url' => 'https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic/archive/%s.zip',
-        'size' => 64652,
-        'sha1' => '3b96f0315390dc5b21271569c2ad6525533f95a7',
+        'version' => null,
+        'url' => 'https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic/archive/master.zip',
+        'size' => null,
+        'sha1' => null,
         'type' => 'upgrade',
         'partial' => false,
         'note' => 'Install the compatibility layer for upgraded themes.',
