@@ -253,6 +253,11 @@ class UpdateDataExtensions
                     $unref = isset($omekaAddon['title'])
                         ? $omekaAddon['title']
                         : $omekaAddon['name'];
+                    if ($this->options['processOnlyAddon']
+                            && !in_array($unref, $this->options['processOnlyAddon'])
+                        ) {
+                        continue;
+                    }
                     $this->log('[Unreferenced]' . ' ' . $unref);
                 }
             }
