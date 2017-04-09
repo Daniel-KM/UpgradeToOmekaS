@@ -744,6 +744,8 @@ return array(
 
     // Functions of plugins.
     '~\b(exhibit_builder_display_random_featured_exhibit)\(\)~' => '$this->upgrade()->fallback(\1)',
+    '~neatline(?:-|_)time~'                             => 'timeline',
+    '~Neatline_Time_Timeline~'                          => 'timeline',
 
     // Functions of themes.
     '~\b(custom_show_item_metadata)\(\)~'               => '$this->upgrade()->fallback(\'\1\')',
