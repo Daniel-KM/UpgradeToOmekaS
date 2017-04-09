@@ -63,7 +63,7 @@ Feel free to add missing modules, or contact me for new ones.
                             ({{ addon['Last Version'] }})
                         {% endif %}
                     </td>
-                    <td class="addon-constraint">{{ addon['Constraint'] }}</td>
+                    <td class="addon-constraint">{{ addon['Omeka Constraint'] }}</td>
                     <td class="addon-license">{{ addon['License'] }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
                     <td class="addon-description">{{ addon['Description'] }}</td>
