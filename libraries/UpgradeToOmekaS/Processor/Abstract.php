@@ -1401,8 +1401,12 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The file is downloading, so wait a while.'),
                 Zend_Log::INFO);
         }
-        $handle = fopen($url, 'rb');
-        $result = file_put_contents($path, $handle);
+        $handle = @fopen($url, 'rb');
+        if ($handle === false) {
+            $result = false;
+        } else {
+            $result = file_put_contents($path, $handle);
+        }
         @fclose($handle);
         if (empty($result)) {
             throw new UpgradeToOmekaS_Exception(
