@@ -28,6 +28,8 @@ $options = array(
     'processOnlyAddon' => array(),
     // Update data only for new urls (urls without name).
     'processOnlyNewUrls' => false,
+    // Process search for topics on github.
+    'processSearch' => true,
     // Regenerate csv only (useful when edited in a spreadsheet).
     'processRegenerateCsvOnly' => false,
     // Allow to log (in terminal) the process of all the addons, else only
@@ -52,18 +54,30 @@ $types = array(
     'plugin' => array(
         'source' => $basepath . '/omeka_plugins.csv',
         'destination' => $basepath . '/omeka_plugins.csv',
+        'topic' => 'omeka-plugin',
+        'keywords' => 'Omeka+plugin',
+        'ini' => 'plugin.ini',
     ),
     'module' => array(
         'source' => $basepath . '/omeka_s_modules.csv',
         'destination' => $basepath . '/omeka_s_modules.csv',
+        'topic' => 'omeka-s-module',
+        'keywords' => '"Omeka S"+module',
+        'ini' => 'config/module.ini',
     ),
     'theme' => array(
         'source' => $basepath . '/omeka_themes.csv',
         'destination' => $basepath . '/omeka_themes.csv',
+        'topic' => 'omeka-theme',
+        'keywords' => 'Omeka+theme',
+        'ini' => 'theme.ini',
     ),
     'template' => array(
         'source' => $basepath . '/omeka_s_themes.csv',
         'destination' => $basepath . '/omeka_s_themes.csv',
+        'topic' => 'omeka-s-theme',
+        'keywords' => '"Omeka S"+theme',
+        'ini' => 'config/theme.ini',
     ),
 );
 
@@ -71,7 +85,7 @@ foreach ($types as $type => $args) {
     if ($options['processOnlyType'] && !in_array($type, $options['processOnlyType'])) {
         continue;
     }
-    $update = new UpdateDataExtensions($type, $args['source'], $args['destination'], $options);
+    $update = new UpdateDataExtensions($type, $args, $options);
     $result = $update->process();
 }
 
@@ -80,8 +94,7 @@ return;
 class UpdateDataExtensions
 {
     protected $type = '';
-    protected $source = '';
-    protected $destination = '';
+    protected $args = array();
     protected $options = array();
 
     /**
@@ -130,11 +143,13 @@ class UpdateDataExtensions
     protected $omekaAddons;
     protected $updatedAddons;
 
-    public function __construct($type, $source, $destination = '', array $options = array())
+    public function __construct($type, $args = array(), $options = array())
     {
         $this->type = $type;
-        $this->source = $source;
-        $this->destination = $destination ?: $source;
+        if (empty($args['destination'])) {
+            $args['destination'] = $args['source'];
+        }
+        $this->args = $args;
         $this->options = $options;
     }
 
@@ -143,20 +158,42 @@ class UpdateDataExtensions
         // May avoid an issue with Apple Mac.
         ini_set('auto_detect_line_endings', true);
 
-        $this->log(sprintf('Start update of "%s".', $this->source));
+        $this->log(sprintf('Start update of "%s".', $this->args['source']));
 
         if ($this->options['debug']) {
             $this->log('Debug mode enabled.');
         }
 
-        if (!$this->checkFiles($this->source, $this->destination)) {
+        if (!$this->checkFiles($this->args['source'], $this->args['destination'])) {
             return false;
         }
 
-        $addons = array_map('str_getcsv', file($this->source));
+        $addons = array_map('str_getcsv', file($this->args['source']));
         if (empty($addons)) {
-            $this->log(sprintf('No content in the csv file "%s".', $this->source));
+            $this->log(sprintf('No content in the csv file "%s".', $this->args['source']));
             return false;
+        }
+
+        // Get headers by name.
+        $headers = array_flip($addons[0]);
+        $this->headers = $headers;
+
+        if ($this->options['debug']) {
+            $this->log($headers);
+        }
+
+        if (!isset($headers['Name'])) {
+            $this->log(sprintf('No header "%s".', 'Name'));
+            return false;
+        }
+
+        if (!isset($headers['Url'])) {
+            $this->log(sprintf('No header "%s".', 'Url'));
+            return false;
+        }
+
+        if ($this->options['processSearch']) {
+            $addons = $this->search($addons);
         }
 
         if (!$this->options['processRegenerateCsvOnly']) {
@@ -177,9 +214,9 @@ class UpdateDataExtensions
         if ($this->options['debug'] && !$this->options['debugOutput']) {
             $this->log('Required no output.');
         } else {
-            $result = $this->saveToCsvFile($this->destination, $addons);
+            $result = $this->saveToCsvFile($this->args['destination'], $addons);
             if (!$result) {
-                $this->log(sprintf('An error occurred during saving the csv into the file "%s".', $this->destination));
+                $this->log(sprintf('An error occurred during saving the csv into the file "%s".', $this->args['destination']));
                 return false;
             }
         }
@@ -190,6 +227,76 @@ class UpdateDataExtensions
     }
 
     /**
+     *
+     * @param array $addons
+     * @return array
+     */
+    protected function search(array $addons)
+    {
+        $headers = $this->headers;
+
+        // Get the list of urls.
+        $urls = array_map(function ($v) use ($headers) {
+            return $v[$headers['Url']];
+        }, $addons);
+
+        $newUrls = array();
+
+        $addonBase = array_fill(0, count($headers), null);
+
+        // Search on github.
+        // Search topics are only available in preview currently.
+        $curlHeaders = array('Accept: application/vnd.github.mercy-preview+json');
+        $searches = array(
+            // Search via topic.
+            'topic' => 'https://api.github.com/search/repositories?q=topic:' . $this->args['topic'],
+            'keywords' => 'https://api.github.com/search/repositories?q=' . $this->args['keywords'] . '+in:name,description,readme',
+        );
+        foreach ($searches as $searchType => $url) {
+            $response = $this->curl($url, $curlHeaders);
+            if ($response) {
+                if ($this->options['debug']) {
+                    $this->log(sprintf('The search for %s with %s gives %d results.',
+                        $this->type, $searchType, $response->total_count));
+                }
+                if ($response->total_count > 0) {
+                    foreach ($response->items as $repo) {
+                        if (in_array($repo->html_url, $urls)) {
+                            continue;
+                        }
+                        if ($repo->fork) {
+                            continue;
+                        }
+                        // Check if there is a config file to avoid false result.
+                        $addonIni = str_ireplace('github.com', 'raw.githubusercontent.com', $repo->html_url)
+                            . '/master/' . $this->args['ini'];
+                        $ini = @file_get_contents($addonIni);
+                        if (empty($ini)) {
+                            continue;
+                        }
+
+                        $addon = $addonBase;
+                        $addon[$headers['Url']] = $repo->html_url;
+                        $addons[] = $addon;
+                        $urls[] = $repo->html_url;
+                        $newUrls[] = $repo->html_url;
+                    }
+                }
+            } else {
+                $this->log('No search on github.');
+                break;
+            }
+        }
+
+        if ($newUrls) {
+            $this->log(sprintf('%d new urls for %s.', count($newUrls), $this->type));
+            $this->log($newUrls);
+        }
+
+        return $addons;
+    }
+
+    /**
      * Regenerate data.
      *
      * @param array $addons
@@ -197,23 +304,7 @@ class UpdateDataExtensions
      */
     protected function update(array $addons)
     {
-        // Get headers by name.
-        $headers = array_flip($addons[0]);
-        $this->headers = $headers;
-
-        if ($this->options['debug']) {
-            $this->log($headers);
-        }
-
-        if (!isset($headers['Name'])) {
-            $this->log(sprintf('No header "%s".', 'Name'));
-            return false;
-        }
-
-        if (!isset($headers['Url'])) {
-            $this->log(sprintf('No header "%s".', 'Url'));
-            return false;
-        }
+        $headers = $this->headers;
 
         $omekaAddons = $this->fetchOmekaAddons();
         $this->omekaAddons = $omekaAddons;
@@ -334,20 +425,7 @@ class UpdateDataExtensions
                 break;
         }
 
-        switch ($this->type) {
-            case 'plugin':
-                $addonIni = $addon[$headers['Ini Path']] ?: 'master/plugin.ini';
-                break;
-            case 'theme':
-                $addonIni = $addon[$headers['Ini Path']] ?: 'master/theme.ini';
-                break;
-            case 'module':
-                $addonIni = $addon[$headers['Ini Path']] ?: 'master/config/module.ini';
-                break;
-            case 'template':
-                $addonIni = $addon[$headers['Ini Path']] ?: 'master/config/theme.ini';
-                break;
-        }
+        $addonIni = $addon[$headers['Ini Path']] ?: ('master/' . $this->args['ini']);
 
         $addonIni = $addonIniBase . '/' . $addonIni;
 
@@ -664,9 +742,10 @@ class UpdateDataExtensions
      * Helper to get the response of a web service.
      *
      * @param string $url
+     * @param array $headers
      * @return string
      */
-    protected function curl($url)
+    protected function curl($url, $headers = array())
     {
         static $flag;
 
@@ -683,8 +762,7 @@ class UpdateDataExtensions
         if (!empty($this->options['token'][$server])) {
             switch ($server) {
                 case 'api.github.com':
-                    // curl_setopt($curl, CURLOPT_HEADER, 'Authorization: token ' . $this->options['token'][$server]);
-                    $url .= '?access_token=' . $this->options['token'][$server];
+                    $headers[] = 'Authorization: token ' . $this->options['token'][$server];
                     break;
             }
         }
@@ -694,6 +772,10 @@ class UpdateDataExtensions
         // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        if ($headers) {
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        }
 
         $response = curl_exec($curl);
         curl_close($curl);
