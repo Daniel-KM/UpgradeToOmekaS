@@ -518,7 +518,7 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
     }
 
     /**
-     * Get the mapping from Omeka C elements to Omeka S properties.
+     * Get the mapping from Omeka C elements to Omeka S properties ids.
      *
      * @return array
      */
@@ -531,6 +531,25 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
         foreach ($mapping as &$param) {
             $param = isset($propertiesIds[$param])
                 ? $propertiesIds[$param]
+                : null;
+        }
+        return $mapping + $defaultMapping;
+    }
+
+    /**
+     * Get the mapping from Omeka C element ids to Omeka S properties.
+     *
+     * @return array
+     */
+    public function getMappingElementIdsToProperties()
+    {
+        $defaultMapping = $this->getDefaultMappingElementsToProperties('id', 'prefix:name', false);
+        // Convert the mapping params into Omeka S id.
+        $mapping = $this->getParam('mapping_elements') ?: array();
+        $propertiesIds = $this->getPropertyIds();
+        foreach ($mapping as &$param) {
+            $param = isset($propertiesIds[$param])
+                ? $param
                 : null;
         }
         return $mapping + $defaultMapping;
