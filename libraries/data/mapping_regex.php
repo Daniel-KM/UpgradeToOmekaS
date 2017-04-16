@@ -8,8 +8,8 @@
  * not for plugins (get_view()). Parsing errors are generally related to
  * comments /¯* *_/ or multiline functions.
  *
- * @note When an error occurs, check the default view in application/view-shared
- * and use directly the syntax and functions of Omeka S.
+ * @note When an error occurs, check the default view in application/view and
+ * use directly the syntax and functions of Omeka S.
  *
  * @internal This file is merged during the init of processors of the plugins.
  */

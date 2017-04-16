@@ -11,9 +11,9 @@ return array(
     // So this is the list of original files from Omeka C application/views/scripts
     // that were already moved according to the structure of themes of Omeka S.
     // Other files remain in place.
-    // When a file exists in Omeka S (default files in application/view-shared)
-    // but not in Omeka C, it will be used. Conversely, some files are useless
-    // in Omeka S.
+    // When a file exists in Omeka S (default files in application/view), but
+    // not in Omeka C, it will be used. Conversely, some files are useless in
+    // Omeka S.
 
     // Assets.
     'favicon.ico'                                       => 'asset/img/favicon.ico',

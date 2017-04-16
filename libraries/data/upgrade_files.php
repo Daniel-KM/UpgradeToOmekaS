@@ -65,7 +65,7 @@ $upgrade['view/common/admin-bar.phtml'] = array(
 
 $prepend = <<<'OUTPUT'
 <?php
-// TODO This file can be removed, because this is only a copy of the file "application/view-shared/common/advanced-search.phtml".
+// TODO This file can be removed, because this is only a copy of the file "application/view/common/advanced-search.phtml".
 
 ?>
 
@@ -73,7 +73,7 @@ OUTPUT;
 
 $upgrade['view/common/advanced-search.phtml'] = array(
     'comment' => true,
-    'file' => 'application/view-shared/common/advanced-search.phtml',
+    'file' => 'application/view/common/advanced-search.phtml',
     'replace' => array(
         'echo $this->upgrade()->js_tag(\'items-search\');' => '$this->headScript()->appendFile($this->assetUrl(\'js/advanced-search.js\')); ',
     ),
@@ -131,7 +131,7 @@ $upgrade['view/common/output-format-list.phtml'] = array(
 );
 
 $append = <<<'OUTPUT'
-<?php // Adapted from application/view-shared/common/pagination.phtml (added ul/li). ?>
+<?php // Adapted from application/view/common/pagination.phtml (added ul/li). ?>
 <?php // Remove this file to use the Omeka S template. ?>
 
 <nav class="pagination pagination-nav" role="navigation" aria-label="<?php echo $this->translate('Pagination'); ?>">
@@ -184,7 +184,7 @@ $upgrade['view/common/pagination.phtml'] = array(
 
 $prepend = <<<'OUTPUT'
 <?php
-// Remove this file to use the Omeka S template "application/view-shared/common/resource-values.phtml".
+// Remove this file to use the Omeka S template "application/view/common/resource-values.phtml".
 // In that case, either replace `all_element_texts($record)` by `$record->displayValues()`
 // in item/show.phtml, item-set/show.phtml and media/show.phtml, or set the
 // option `'partial' => 'common/resource-values.phtml'` as its second argument.
@@ -206,7 +206,7 @@ $upgrade['view/common/record-metadata.phtml'] = array(
 );
 
 $append = <<<'OUTPUT'
-<?php // Adapted from application/view-shared/common/search-filters.phtml (added ul/li). ?>
+<?php // Adapted from application/view/common/search-filters.phtml (added ul/li). ?>
 <?php // Remove this file to use the Omeka S template. ?>
 
 <?php $escape = $this->plugin('escapeHtml'); ?>
@@ -237,7 +237,7 @@ $upgrade['view/common/search-filters.phtml'] = array(
 );
 
 $append = <<<'OUTPUT'
-<?php // Adapted from application/view-admin/layout/header.phtml and application/view-shared/layout/layout.phtml. ?>
+<?php // Adapted from application/view-admin/layout/header.phtml and application/view/layout/layout.phtml. ?>
 
 <?php $escape = $this->plugin('escapeHtml'); ?>
 <?php $showAdvanced = isset($options['show_advanced'])
@@ -465,7 +465,7 @@ $total_results = $this->api()->search('items', $query)->getTotalResults();
 ?>
 
 <?php
-// Copied from application/view-shared/omeka/site/item/browse.phtml
+// Copied from application/view/omeka/site/item/browse.phtml
 $escape = $this->plugin('escapeHtml');
 $this->htmlElement('body')->appendAttribute('class', 'item resource browse');
 $query = $this->params()->fromQuery();

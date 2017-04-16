@@ -784,8 +784,8 @@ OUTPUT;
 // See the original "layout.phtml" files to rewrite this and to separate header,
 // content and footer.
 // - default theme: themes/default/view/layout/layout.phtml
-// - shared theme: application/view-shared/layout/layout.phtml
-// - admin theme: application/view-admin/layout/layout.phtml
+// - base theme: application/view/layout/layout.phtml
+// - admin theme: application/view/layout/layout-admin.phtml
 
 // TODO Upgrade the custom functions into standard helpers for Omeka S.
 $customFunctions = realpath(__DIR__ . '/../../helper/custom.php');
@@ -964,8 +964,8 @@ OUTPUT;
 // See the original "layout.phtml" files to rewrite this and to separate header,
 // content and footer.
 // - default theme: themes/default/view/layout/layout.phtml
-// - shared theme: application/view-shared/layout/layout.phtml
-// - admin theme: application/view-admin/layout/layout.phtml
+// - base theme: application/view/layout/layout.phtml
+// - admin theme: application/view/layout/layout-admin.phtml
 
 // TODO Upgrade the custom functions into standard helpers for Omeka S.
 $customFunctions = realpath(__DIR__ . '/../../helper/custom.php');
