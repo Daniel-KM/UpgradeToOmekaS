@@ -291,6 +291,8 @@ class UpdateDataExtensions
         if ($newUrls) {
             $this->log(sprintf('%d new urls for %s.', count($newUrls), $this->type));
             $this->log($newUrls);
+        } else {
+            $this->log(sprintf('No new urls for %s.', $this->type));
         }
 
         return $addons;
