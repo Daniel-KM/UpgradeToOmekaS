@@ -86,7 +86,7 @@ $append = <<<'OUTPUT'
 <?php if ($output_formats): ?>
     <?php
     $params = $this->params()->fromRoute();
-    $base = $this->basePath() . '/api/' . $this->upgrade()->mapModel($params['__CONTROLLER__'], true, 'underscore');
+    $base = $this->basePath() . '/api/' . $this->upgrade()->mapModel($params['controller']);
     $isSearch = in_array($params['action'], array('browse', 'search'));
     $totalOutputFormats = count($output_formats);
     ?>
