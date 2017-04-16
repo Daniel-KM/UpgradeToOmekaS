@@ -652,7 +652,7 @@ $upgrade['view/omeka/site/page/homepage.phtml'] = array(
 $prepend = <<<'OUTPUT'
 <?php
 // Use a specific template for the home page (the upgraded Omeka Classic one).
-if ($this->themeSetting('use_homepage_template')) {
+if ($this->themeSetting('use_homepage_template') && $this->upgrade()->isHomePage()) {
     echo $this->partial('omeka/site/page/homepage.phtml');
     return;
 }
