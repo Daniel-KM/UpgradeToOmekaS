@@ -117,10 +117,10 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
             Zend_Log::INFO);
     }
 
-    protected function _convertNavigationPageToLink($page, $args, $site)
+    protected function _convertNavigationPageToLink($page, $parsed, $site)
     {
         // Check if this is a slug.
-        $slug = ltrim($args['path'], '/');
+        $slug = ltrim($parsed['path'], '/');
         if (strlen($slug) == 0) {
             return;
         }

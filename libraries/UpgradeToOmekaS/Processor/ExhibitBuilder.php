@@ -868,7 +868,7 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
         return $result;
     }
 
-    protected function _convertNavigationPageToLink($page, $args, $site)
+    protected function _convertNavigationPageToLink($page, $parsed, $site)
     {
         // TODO Get the matching slug in exhibit pages.
         return;
@@ -876,7 +876,7 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
         static $slugs;
 
         // Check if this is a slug.
-        $slug = ltrim($args['path'], '/');
+        $slug = ltrim($parsed['path'], '/');
         if (strlen($slug) == 0) {
             return;
         }
