@@ -70,7 +70,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
                     <td class="addon-omeka-org">{{ addon['Omeka.org'] }}</td>
                     <td class="addon-upgradable">{{ addon['Upgradable'] }}</td>
                     <td class="addon-target">
-                    {% if addon['Name'] == nil %}
+                    {% if addon['Omeka Target'] %}
                         {{ addon['Omeka Target'] }}
                     {% else %}
                         {{ addon['Omeka Min'] }}
