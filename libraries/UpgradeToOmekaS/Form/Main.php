@@ -155,7 +155,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             // TODO Clean the form for separate database.
             // 'errorMessages' => array(__('The password is asked twice.')),
         ));
-        // Currently, Omeka S doesn't allow a table prefix.
+        // Omeka S doesn't allow a table prefix: use doctrine if needed.
         /*
         $this->addElement('text', 'database_prefix', array(
             'label' => __('Table Prefix'),
@@ -175,13 +175,13 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'errorMessages' => array(__('A prefix should have only alphanumeric characters, no space, and end with an underscore "_".')),
         ));
         */
-        // An hidden value is set, but it won't be used until Omeka S allows it.
+        // An hidden value is set, but it won't be used.
         $this->addElement('hidden', 'database_prefix', array(
             'value' => $databasePrefix == 'omekas_' ? 'omekasemantic_' : 'omekas_',
         ));
-        $this->addElement('note', 'database_prefix_note', array(
-            'description' => __('Currently, Omeka S doesn’t allow to use a prefix.'),
-        ));
+        // $this->addElement('note', 'database_prefix_note', array(
+        //     'description' => __('Currently, Omeka S doesn’t allow to use a prefix.'),
+        // ));
 
         $multiOptions = array();
         if ($allowHardLink) {
@@ -190,7 +190,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             $multiOptions['dummy'] = __('Dummy files');
             $multiOptions['dummy_hard'] = __('Dummy files (hard link)');
             $description = __('Define what to do with files of the archive (original files, thumbnails, etc.).')
-                . ' ' . __('To create hard links avoids to waste space and to speed copy.')
+                . ' ' . __('To create hard links avoids to waste space and to speed copy on the same disk.')
                 . ' ' . __('The dummy files can be used for testing purposes.')
                 . ' ' . __('Original files are never modified or deleted.')
                 . ' ' . __('It seems the server allows hard links, but a second check will be done to avoid issues with mounted volumes.');
@@ -411,7 +411,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         ));
 
         $this->addElement('checkbox', 'skip_hash_files', array(
-            'label' => __('Skip Hash files'),
+            'label' => __('Skip Hash Files'),
             'description' => __('To check integrity of files, the hashing algorithm is md5 in Omeka Classic and sha256 in Omeka S.')
                 . ' ' . __('This process is the longer upgrade step.')
                 . ' ' . __('If checked, the hashing will be skipped, so you’ll have to hash files directly in Omeka S, if wished.')

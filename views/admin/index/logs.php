@@ -18,7 +18,7 @@ echo head(array(
         <?php if ($progress): ?>
             <p><?php
                 echo __('Current task: %s / %s,  since %s.',
-                    $progress['processor'],
+                    strpos($progress['processor'], 'Core/') === 0 ? str_replace('/', ' / ', $progress['processor']) : $progress['processor'],
                     str_replace('omeka s', 'Omeka S', Inflector::titleize(trim($progress['task'], '_'), 'first')),
                     $progress['start']
                 );
