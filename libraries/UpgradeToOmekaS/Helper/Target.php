@@ -268,6 +268,21 @@ class UpgradeToOmekaS_Helper_Target
     }
 
     /**
+     * Helper to get an array of a table.
+     *
+     * @param string $table
+     * @return array
+     */
+    public function fetchTable($table)
+    {
+        $db = $this->getDb();
+        $select = $db->select()
+            ->from($table);
+        $result = $db->fetchAll($select);
+        return $result;
+    }
+
+    /**
      * Helper to insert multiple quoted rows in a table of the target database.
      *
      * @uses self::_insertRowsInTables()
