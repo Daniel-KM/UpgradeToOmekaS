@@ -1008,6 +1008,10 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             $params['mapping_roles']['contribution-anonymous'] = $params['mapping_roles']['contributionanonymous'];
         }
 
+        if (plugin_is_active('Tagging')) {
+            $params['install_folksonomy'] = true;
+        }
+
         return $params;
     }
 

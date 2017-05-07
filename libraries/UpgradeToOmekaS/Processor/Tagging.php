@@ -68,6 +68,14 @@ CREATE TABLE `tagging` (
         '_installModule',
     );
 
+    protected function _installModule()
+    {
+        // Don't install twice: Core/Tags installed it automatically.
+        if ($this->isCore()) {
+            parent::_installModule();
+        }
+    }
+
     protected function _upgradeSettings()
     {
         if (!plugin_is_active('Tagging')) {

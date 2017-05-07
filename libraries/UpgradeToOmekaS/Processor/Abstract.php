@@ -500,6 +500,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             $activePlugins[] = 'Core/Elements';
             $activePlugins[] = 'Core/Records';
             $activePlugins[] = 'Core/Files';
+            $activePlugins[] = 'Core/Tags';
             $activePlugins[] = 'Core/Themes';
             $activePlugins[] = 'Core/Checks';
 
@@ -1326,7 +1327,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     protected function _getModuleDir($moduleName = null)
     {
         $dir = $this->getParam('base_dir');
-        if (!$this->isCore()) {
+        if (!$this->isCore() || ($this->pluginName === 'Core/Tags')) {
             if (empty($moduleName)) {
                 $moduleName = $this->_getModuleName();
             }

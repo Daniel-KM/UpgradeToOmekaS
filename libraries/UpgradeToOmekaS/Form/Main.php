@@ -401,6 +401,23 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             $elementNames[] = $elementName;
         }
 
+        $totalTags = total_records('Tag');
+        $tagging = plugin_is_active('Tagging');
+        $this->addElement('checkbox', 'install_folksonomy', array(
+            'label' => __('Tags To Folksonomy'),
+            'description' => __('Tags were removed in Omeka S in order to use only the Dublin Core Subject or another standard element.')
+                . ' ' . __('A module replaces this core feature: %sFolksonomy%s.',
+                    '<a href="https://github.com/Daniel-KM/Omeka-S-module-Folksonomy" target="_blank">', '</a>')
+                . ' ' . ($tagging
+                    ? __('The plugin "Tagging" is enabled, so the module will be automatically installed.')
+                    : __('It can be installed automatically.')
+                        . ($totalTags? ' ' . __('Without it, the %d tags will be lost.', $totalTags) : '')
+                ),
+            'required' => false,
+            'value' => (boolean) $totalTags,
+            'disabled' => $tagging,
+        ));
+
         $this->addElement('text', 'first_user_password', array(
             'label' => __('First User Password'),
             'description'   => __('The password of users will be lost and they have to request a new one on the login form.')
@@ -573,6 +590,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
 
         $this->addDisplayGroup(
             array(
+                'install_folksonomy',
                 'first_user_password',
                 'skip_hash_files',
             ),

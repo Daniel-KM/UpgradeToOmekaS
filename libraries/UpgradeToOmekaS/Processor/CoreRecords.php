@@ -54,16 +54,6 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The record status "Featured" doesn’t exist in Omeka S.'),
             Zend_Log::INFO);
-
-        $totalTags = total_records('tags');
-        if ($totalTags) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('Currently, the tags don’t exist in Omeka S.')
-                    . ' ' . __('So, the %d tags are not imported.', $totalTags),
-                Zend_Log::WARN);
-        } else {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('Currently, the tags don’t exist in Omeka S.'),
-                Zend_Log::INFO);
-        }
     }
 
     protected function _createItemSetForSite()
