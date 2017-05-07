@@ -431,8 +431,11 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                         $filename = trim($record->filename, '/\\' . DIRECTORY_SEPARATOR);
                         // This allows to manage the plugin Archive Repertory.
                         $filename = str_replace(array('/', '\\', DIRECTORY_SEPARATOR), '/', $filename);
-                        $storageId = $extension
-                            ? substr($filename, 0, strrpos($filename, $extension) - 1)
+                        $storageId = strlen($extension)
+                            ? (strlen(pathinfo($filename, PATHINFO_EXTENSION))
+                                ? substr($filename, 0, strrpos($filename, pathinfo($filename, PATHINFO_EXTENSION)) - 1)
+                                : $filename
+                            )
                             : $filename;
                         $toInsert['item_id'] = $item->id;
                         $toInsert['ingester'] = $isRemote ? 'url' : 'upload';
