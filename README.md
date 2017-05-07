@@ -29,6 +29,8 @@ but custom functions may fail. In that case, use new [themes], use the template
 engine [Twig] via the [module Twig], or contact me. Anyway, in all cases, the
 theme should be reviewed, because there may be some visual glitches.
 
+This compatibility layer is needed only when an upgraded theme is used.
+
 Omeka S is still in a beta phase, but it can be already used for common sites.
 
 
@@ -167,8 +169,8 @@ Warning
 
 Use it at your own risk.
 
-It’s always recommended to backup your files and database regularly so you can
-roll back if needed.
+It’s always recommended to backup your files and your databases and to check
+your archives regularly so you can roll back if needed.
 
 
 Troubleshooting
