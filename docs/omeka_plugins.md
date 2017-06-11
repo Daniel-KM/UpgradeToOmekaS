@@ -20,7 +20,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_plugins.csv">csv source file</a>.
+    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_plugins.csv">csv source file</a>, updated once a week.
     </em></p>
     <div class="row">
         <table class="table table-striped">
