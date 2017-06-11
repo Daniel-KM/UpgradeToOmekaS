@@ -1136,7 +1136,7 @@ OUTPUT;
 <?php $this->headLink()->prependStylesheet($this->assetUrl('css/style.css')); ?>
 <?php $this->headLink()->prependStylesheet($this->assetUrl('css/iconfonts.css', 'Omeka')); ?>
 <?php // $this->headLink()->prependStylesheet('//fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,700italic,700'); ?>
-<?php $this->headScript()->prependFile($this->assetUrl('js/jquery.js', 'Omeka')); ?>
+<?php $this->headScript()->prependFile($this->assetUrl('vendor/jquery/jquery.min.js', 'Omeka')); ?>
 
 <?php // From Omeka Classic.
 $this->headScript()
