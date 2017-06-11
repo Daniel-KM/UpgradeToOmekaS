@@ -7,9 +7,8 @@
  *
  * @package UpgradeToOmekaS
  */
-class UpgradeToOmekaS_Processor_Base extends UpgradeToOmekaS_Processor_Abstract
+class UpgradeToOmekaS_Processor_Base extends UpgradeToOmekaS_Processor_AbstractCore
 {
 
     public $pluginName = 'Base';
-    protected $_isCore = true;
 }

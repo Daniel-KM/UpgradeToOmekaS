@@ -207,7 +207,7 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
 
         // From the plugin OAI-PMH Harvester.
         $filenames = UpgradeToOmekaS_Common::listFilesInDir($dir);
-        $filenames = array_diff($filenames, array('Abstract.php', 'Base.php'));
+        $filenames = array_diff($filenames, array('Abstract.php', 'AbstractCore.php', 'Base.php'));
         foreach ($filenames as $filename) {
             if (!preg_match('/^(.+)\.php$/', $filename, $matches)
                     || strpos($filename, 'Core') === 0

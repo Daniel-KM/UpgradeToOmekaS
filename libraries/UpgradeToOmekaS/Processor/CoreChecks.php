@@ -5,17 +5,10 @@
  *
  * @package UpgradeToOmekaS
  */
-class UpgradeToOmekaS_Processor_CoreChecks extends UpgradeToOmekaS_Processor_Abstract
+class UpgradeToOmekaS_Processor_CoreChecks extends UpgradeToOmekaS_Processor_AbstractCore
 {
 
     public $pluginName = 'Core/Checks';
-    public $minVersion = '2.3.1';
-    public $maxVersion = '2.5.9';
-    protected $_isCore = true;
-
-    public $module = array(
-        'type' => 'integrated',
-    );
 
     /**
      * Store the translated files from Omeka C to Omeka S.

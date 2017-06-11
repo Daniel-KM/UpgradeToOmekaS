@@ -4,6 +4,7 @@
  * Upgrade Tags to Omeka S.
  *
  * Note: Extends UpgradeToOmekaS_Processor_Tagging.
+ * @todo Extends UpgradeToOmekaS_Processor_AbstractCore
  *
  * @package UpgradeToOmekaS
  */

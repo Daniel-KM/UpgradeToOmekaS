@@ -5,17 +5,10 @@
  *
  * @package UpgradeToOmekaS
  */
-class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abstract
+class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_AbstractCore
 {
 
     public $pluginName = 'Core/Files';
-    public $minVersion = '2.3.1';
-    public $maxVersion = '2.5.9';
-    protected $_isCore = true;
-
-    public $module = array(
-        'type' => 'integrated',
-    );
 
     public $processMethods = array(
         '_copyFiles',

@@ -7,13 +7,10 @@
  *
  * @package UpgradeToOmekaS
  */
-class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abstract
+class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_AbstractCore
 {
 
     public $pluginName = 'Core/Server';
-    public $minVersion = '2.3.1';
-    public $maxVersion = '2.5.9';
-    protected $_isCore = true;
 
     public $module = array(
         'name' => 'Omeka S',

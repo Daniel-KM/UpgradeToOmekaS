@@ -5,17 +5,10 @@
  *
  * @package UpgradeToOmekaS
  */
-class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Abstract
+class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_AbstractCore
 {
 
     public $pluginName = 'Core/Records';
-    public $minVersion = '2.3.1';
-    public $maxVersion = '2.5.9';
-    protected $_isCore = true;
-
-    public $module = array(
-        'type' => 'integrated',
-    );
 
     public $processMethods = array(
         // Items are upgraded before collections in order to keep their ids.
