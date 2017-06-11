@@ -129,7 +129,15 @@ abstract class UpgradeToOmekaS_Job_Abstract extends Omeka_Job_AbstractJob
             $priority = Zend_Log::ERR;
         }
 
-        $logs = json_decode(get_option('upgrade_to_omeka_s_process_logs'), true);
+        $logs = get_option('upgrade_to_omeka_s_process_logs');
+        $isZipped = !($logs === '' || $logs === '[]' || $logs === '{}'
+            || (substr($logs, 0, 1) === '{' && substr($logs, -1) === '}')
+            || (substr($logs, 0, 1) === '[' && substr($logs, -1) === ']')
+        );
+        if ($isZipped) {
+            $logs = gzinflate(base64_decode($logs));
+        }
+        $logs = json_decode($logs, true);
 
         $msg = $message;
         $processor = '';
@@ -160,13 +168,25 @@ abstract class UpgradeToOmekaS_Job_Abstract extends Omeka_Job_AbstractJob
 
         // Options are limited to 65535 bytes, about 32760 characters in the
         // common non English cases.
-        while (strlen($this->toJson($logs)) > 32760) {
-            // Keep key, unlike array_shift().
-            reset($logs);
-            unset($logs[key($logs)]);
+        if (function_exists('gzdeflate')) {
+            while (strlen(base64_encode(gzdeflate($this->toJson($logs), 9))) > 65520) {
+                // Keep key, unlike array_shift().
+                reset($logs);
+                unset($logs[key($logs)]);
+            }
+            $saveLogs = base64_encode(gzdeflate($this->toJson($logs), 9));
+        }
+        // No zip, so cut some logs if too long.
+        else {
+            while (strlen($this->toJson($logs)) > 32760) {
+                // Keep key, unlike array_shift().
+                reset($logs);
+                unset($logs[key($logs)]);
+            }
+            $saveLogs = $this->toJson($logs);
         }
 
-        set_option('upgrade_to_omeka_s_process_logs', $this->toJson($logs));
+        set_option('upgrade_to_omeka_s_process_logs', $saveLogs);
 
         $message = ltrim($message, ': ');
 

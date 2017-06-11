@@ -90,6 +90,10 @@ echo head(array(
 
     <h2><?php echo __('Logs'); ?></h2>
     <?php if ($logs): ?>
+    <?php
+    if (key($logs) > 0):
+        echo '<p><strong>' . __('Warning:') . '</strong>' . ' ' . __('Older keys can be found in the logs of Omeka.') . '</p>';
+    endif;?>
     <table id="upgrade-logs">
         <thead>
             <tr>

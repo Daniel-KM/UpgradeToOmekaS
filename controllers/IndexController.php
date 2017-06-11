@@ -335,9 +335,7 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         $this->view->deadRunningJobs = $deadRunningJobs;
         $this->view->livingRunningJobs = $livingRunningJobs;
 
-        $logs = json_decode(get_option('upgrade_to_omeka_s_process_logs'), true);
-
-        $this->view->logs = $logs;
+        $this->view->logs = $this->_getLogs();
     }
 
     public function stopAction()
@@ -741,6 +739,25 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             'Zend_Log::INFO',
             'Zend_Log::DEBUG',
         ));
+    }
+
+    /**
+     * Helper to get logs of the current process, because they can be zipped.
+     *
+     * @return array
+     */
+    protected function _getLogs()
+    {
+        $logs = get_option('upgrade_to_omeka_s_process_logs');
+        $isZipped = !($logs === '' || $logs === '[]' || $logs === '{}'
+            || (substr($logs, 0, 1) === '{' && substr($logs, -1) === '}')
+            || (substr($logs, 0, 1) === '[' && substr($logs, -1) === ']')
+        );
+        if ($isZipped) {
+            $logs = gzinflate(base64_decode($logs));
+        }
+        $logs = json_decode($logs, true);
+        return $logs;
     }
 
     /**
