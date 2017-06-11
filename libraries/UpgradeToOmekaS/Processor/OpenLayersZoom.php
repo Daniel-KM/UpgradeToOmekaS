@@ -14,10 +14,10 @@ class UpgradeToOmekaS_Processor_OpenLayersZoom extends UpgradeToOmekaS_Processor
 
     public $module = array(
         'name' => 'IiifServer',
-        'version' => '3.5.3',
+        'version' => '3.5.4',
         'url' => 'https://github.com/Daniel-KM/Omeka-S-module-IiifServer/releases/download/%s/IiifServer.zip',
-        'size' => 260582,
-        'sha1' => '3f6157c930276961dabcffe44e9b003571a4f583',
+        'size' => 261157,
+        'sha1' => '043ee0411374ec042a081bd50d2085d3a153cd18',
         'type' => 'port',
         'note' => 'OpenLayers can be replaced by OpenSeadragon, integrated in Omeka S, and the tiler is integrated in the module IIIF Server.',
         'install' => array(

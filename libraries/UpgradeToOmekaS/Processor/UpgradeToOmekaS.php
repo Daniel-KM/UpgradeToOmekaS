@@ -9,7 +9,7 @@ class UpgradeToOmekaS_Processor_UpgradeToOmekaS extends UpgradeToOmekaS_Processo
 {
 
     public $pluginName = 'UpgradeToOmekaS';
-    public $minVersion = '2.0.8';
+    public $minVersion = '2.0.9';
     public $maxVersion = '';
 
     public $module = array(

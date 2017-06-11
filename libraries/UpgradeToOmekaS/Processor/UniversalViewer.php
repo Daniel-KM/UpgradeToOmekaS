@@ -16,21 +16,46 @@ class UpgradeToOmekaS_Processor_UniversalViewer extends UpgradeToOmekaS_Processo
     public $module = array(
         array(
             'name' => 'IiifServer',
-            'version' => '3.5.3',
+            'version' => '3.5.4',
             'url' => 'https://github.com/Daniel-KM/Omeka-S-module-IiifServer/releases/download/%s/IiifServer.zip',
-            'size' => 260582,
-            'sha1' => '3f6157c930276961dabcffe44e9b003571a4f583',
+            'size' => 261157,
+            'sha1' => '043ee0411374ec042a081bd50d2085d3a153cd18',
             'type' => 'port',
-            'install' => array(),
+            'install' => array(
+                'settings' => array(
+                    'iiifserver_manifest_description_property' => 'dcterms:bibliographicCitation',
+                    'iiifserver_manifest_attribution_property' => '',
+                    'iiifserver_manifest_attribution_default' => 'Provided by Example Organization',
+                    'iiifserver_manifest_license_property' => 'dcterms:license',
+                    'iiifserver_manifest_license_default' => 'http://www.example.org/license.html',
+                    'iiifserver_manifest_logo_default' => '',
+                    'iiifserver_manifest_force_https' => false,
+                    'iiifserver_image_creator' => 'Auto',
+                    'iiifserver_image_max_size' => 10000000,
+                    'iiifserver_image_tile_dir' => 'tile',
+                    'iiifserver_image_tile_type' => 'deepzoom',
+                ),
+            ),
         ),
         array(
             'name' => 'UniversalViewer',
-            'version' => '3.5.1',
-            'url' => 'https://github.com/Daniel-KM/Omeka-S-module-UniversalViewer/archive/%s.zip',
-            'size' => 2144036,
-            'sha1' => '890082e699055fe0db123f06ba8b9c5858ffc869',
+            'version' => null,
+            'url' => 'https://github.com/Daniel-KM/Omeka-S-module-UniversalViewer/archive/master.zip',
+            'size' => null,
+            'sha1' => null,
             'type' => 'port',
-            'install' => array(),
+            'install' => array(
+                'settings' => array(
+                    'universalviewer_manifest_property' => '',
+                    'universalviewer_append_item_set_show' => true,
+                    'universalviewer_append_item_show' => true,
+                    'universalviewer_append_item_set_browse' => false,
+                    'universalviewer_append_item_browse' => false,
+                    'universalviewer_class' => '',
+                    'universalviewer_style' => 'background-color: #000; height: 600px;',
+                    'universalviewer_locale' => 'en-GB:English (GB),fr:French',
+                ),
+            ),
         ),
     );
 
@@ -41,6 +66,13 @@ class UpgradeToOmekaS_Processor_UniversalViewer extends UpgradeToOmekaS_Processo
     protected function _upgradeSettings()
     {
         $target = $this->getTarget();
+
+        // Set default settings, that will be overridden by current Omeka ones.
+        foreach ($this->module as $module) {
+            foreach ($module['install']['settings'] as $setting => $value) {
+                $target->saveSetting($setting, $value);
+            }
+        }
 
         $mapping = $this->getProcessor('Core/Elements')
             ->getMappingElementsToProperties();
@@ -85,14 +117,6 @@ class UpgradeToOmekaS_Processor_UniversalViewer extends UpgradeToOmekaS_Processo
                     }
                     break;
             }
-            $target->saveSetting($setting, $value);
-        }
-
-        $mapOptions = array(
-            'iiifserver_image_tile_dir' => 'tile',
-            'iiifserver_image_tile_type' => 'deepzoom',
-        );
-        foreach ($mapOptions as $setting => $value) {
             $target->saveSetting($setting, $value);
         }
 

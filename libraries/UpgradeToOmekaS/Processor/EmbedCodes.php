@@ -14,10 +14,10 @@ class UpgradeToOmekaS_Processor_EmbedCodes extends UpgradeToOmekaS_Processor_Abs
 
     public $module = array(
         'name' => 'Sharing',
-        'version' => '1.0.0-beta',
-        'url' => 'https://github.com/omeka-s-modules/Sharing/releases/download/v%s/Sharing.zip',
-        'size' => 8217,
-        'sha1' => '036bf0b79a50faa8a322d10479e0f74725aaff67',
+        'version' => '1.0.0-beta2',
+        'url' => 'https://github.com/omeka-s-modules/Sharing/releases/download/v%s/Sharing-%s.zip',
+        'size' => 20587,
+        'sha1' => '5b7192ab855032d695a7911ad1a65389a19c14f9',
         'type' => 'equivalent',
         'partial' => true,
         'note' => 'No embedded statistics.',

@@ -1356,7 +1356,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             $this->_progress(0, -1);
         }
 
-        $url = sprintf($module['url'], $module['version']);
+        $url = sprintf($module['url'], $module['version'], $module['version']);
         $filename = $this->_moduleFilename($module);
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $filename;
 
@@ -1469,7 +1469,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
             $module = $this->module;
         }
 
-        $url = sprintf($module['url'], $module['version']);
+        $url = sprintf($module['url'], $module['version'], $module['version']);
         $filename = $module['name']
             . ($module['version'] ? '-' . $module['version'] : '')
             . '.' . pathinfo(basename($url), PATHINFO_EXTENSION);
