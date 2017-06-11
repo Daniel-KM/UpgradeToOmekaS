@@ -689,6 +689,7 @@ return array(
 
     // Other functions.
     '~' . preg_quote('$this->shortcodes(') . '~'    => '$this->upgrade()->fallback(\'shortcodes\', ',
+    '~\bgetFiles\(\)~'                              => 'media()',
 
     // Some fixes.
     '~' . preg_quote('$this->$this->') . '~'                => '$this->',
