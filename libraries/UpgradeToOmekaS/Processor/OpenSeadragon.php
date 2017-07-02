@@ -16,8 +16,8 @@ class UpgradeToOmekaS_Processor_OpenSeadragon extends UpgradeToOmekaS_Processor_
         'name' => 'IiifServer',
         'version' => '3.5.4',
         'url' => 'https://github.com/Daniel-KM/Omeka-S-module-IiifServer/releases/download/%s/IiifServer.zip',
-        'size' => 261157,
-        'sha1' => '043ee0411374ec042a081bd50d2085d3a153cd18',
+        'size' => 261218,
+        'sha1' => '475b1a28c8ffbbb8e34d438fdb27304dfc4a102d',
         'type' => 'integrated',
         'note' => 'OpenSeadragon is integrated in Omeka S and the module IIIF Server may create tiles automatically.',
         'install' => array(

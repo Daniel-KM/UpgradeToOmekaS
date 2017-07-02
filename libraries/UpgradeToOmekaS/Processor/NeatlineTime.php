@@ -38,6 +38,7 @@ class UpgradeToOmekaS_Processor_NeatlineTime extends UpgradeToOmekaS_Processor_A
 
         $mapOptions = array(
             'neatline_time_library' => 'timeline_library',
+            'neatline_time_internal_assets' => 'timeline_internal_assets',
             'neatline_time_link_to_nav' => null,
             'neatline_time_link_to_nav_main' => null,
             'neatline_time_defaults' => 'timeline_defaults',

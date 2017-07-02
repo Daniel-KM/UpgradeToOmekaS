@@ -14,7 +14,7 @@ class UpgradeToOmekaS_Processor_SocialBookmarking extends UpgradeToOmekaS_Proces
     // public $maxVersion = '2.0.2';
     // Not yet included Improvements.
     // public $minVersion = '2.1';
-    public $maxVersion = '2.2';
+    public $maxVersion = '2.3';
 
     public $module = array(
         'name' => 'Sharing',
