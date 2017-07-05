@@ -733,9 +733,11 @@ class UpdateDataExtensions
                     case 'creation date':
                         return $response->created_at;
                     case 'last update';
+                        // "updated_at" means the last update in metadata,
+                        // whereas "pushed_at" means the last commit.
                         // $url = 'https://api.github.com/repos/' . $project . '/commits/HEAD';
                         // $date = $response->commit->committer->date;
-                        return $response->updated_at;
+                        return $response->pushed_at;
                 }
         }
     }
