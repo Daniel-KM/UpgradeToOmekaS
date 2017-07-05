@@ -21,7 +21,7 @@ $options = array(
     'token' => array('api.github.com' => $tokenGithub),
     // Order addons.
     'order' => 'Name',
-    // Update only one or more types of addon.
+    // Update only one or more types of addon ("plugin", "module", "theme", "template").
     'processOnlyType' => array(),
     // Update only one or more addons (set the addon url).
     // 'processOnlyAddon' => array('https://github.com/Daniel-KM/UpgradeToOmekaS'),
@@ -62,7 +62,7 @@ $types = array(
         'source' => $basepath . '/omeka_s_modules.csv',
         'destination' => $basepath . '/omeka_s_modules.csv',
         'topic' => 'omeka-s-module',
-        'keywords' => '"Omeka S"+module',
+        'keywords' => '"Omeka%20S"+module',
         'ini' => 'config/module.ini',
     ),
     'theme' => array(
@@ -76,7 +76,7 @@ $types = array(
         'source' => $basepath . '/omeka_s_themes.csv',
         'destination' => $basepath . '/omeka_s_themes.csv',
         'topic' => 'omeka-s-theme',
-        'keywords' => '"Omeka S"+theme',
+        'keywords' => '"Omeka%20S"+theme',
         'ini' => 'config/theme.ini',
     ),
 );
@@ -768,6 +768,8 @@ class UpdateDataExtensions
                     break;
             }
         }
+
+        $headers[] = 'Accept: application/vnd.github.v3+json';
 
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
