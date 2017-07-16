@@ -1,5 +1,26 @@
 <?php
 
+// Make this class compliant outside of Omeka.
+if (!function_exists('__')) {
+    function __($msgid)
+    {
+        if (is_array($msgid)) {
+            $string = ($msgid[2] === 1) ? $msgid[0] : $msgid[1];
+        } else {
+            $string = $msgid;
+        }
+
+        $args = func_get_args();
+        array_shift($args);
+
+        if (!empty($args)) {
+            return vsprintf($string, $args);
+        }
+
+        return $string;
+    }
+}
+
 /**
  * UpgradeToOmekaS_Common class
  *
