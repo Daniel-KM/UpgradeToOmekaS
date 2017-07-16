@@ -1,6 +1,6 @@
 Name,Url,"Creation Date","Last Update","Last Version",Omeka.org,"Omeka Constraint",Author,"Author Link",License,Description,Tags,Link,"Support Link","Ini Path"
 AIDHP,https://github.com/unolibraries/aidph-omeka,2017-02-06T21:48:50Z,2017-02-07T14:18:58Z,1.0.0-beta,,,"Jason A. Heppler",http://jasonheppler.org,,,,,,
-"Center Row",https://github.com/omeka-s-themes/centerrow,2016-09-15T16:13:49Z,2017-06-19T18:18:24Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
+"Center Row",https://github.com/omeka-s-themes/centerrow,2016-09-15T16:13:49Z,2017-07-12T10:47:09Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
 Cozy,https://github.com/omeka-s-themes/cozy,2016-04-06T21:03:39Z,2017-06-19T17:51:15Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,
 Default,https://github.com/omeka-s-themes/default,2016-08-04T03:43:55Z,2017-06-28T17:52:57Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,develop/config/theme.ini
 Istanbul,https://github.com/hajoki/istanbul,2017-05-26T13:41:27Z,2017-05-26T13:45:51Z,1.0.0-beta,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
