@@ -431,9 +431,13 @@ class UpgradeToOmekaS_Common
             return true;
         }
 
-        if (strlen($source) == 0 || strlen($destination) == 0) {
-            $message = __('The source "%s" or the destination "%s" are not defined.',
-                $source, $destination);
+        if (strlen($source) == 0) {
+            $message = __('The source "%s" is not defined.', $source);
+            return $message;
+        }
+
+        if (strlen($destination) == 0) {
+            $message = __('The destination "%s" are not defined.', $destination);
             return $message;
         }
 
