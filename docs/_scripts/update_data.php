@@ -242,45 +242,52 @@ class UpdateDataExtensions
 
         $newUrls = array();
 
-        $addonBase = array_fill(0, count($headers), null);
-
         // Search on github.
         // Search topics are only available in preview currently.
         $curlHeaders = array('Accept: application/vnd.github.mercy-preview+json');
         $searches = array(
             // Search via topic.
-            'topic' => 'https://api.github.com/search/repositories?q=topic:' . $this->args['topic'],
-            'keywords' => 'https://api.github.com/search/repositories?q=' . $this->args['keywords'] . '+in:name,description,readme',
+            'topic' => 'https://api.github.com/search/repositories?q=topic:' . $this->args['topic'] . '+fork%3Afalse',
+            'keywords' => 'https://api.github.com/search/repositories?q=' . $this->args['keywords'] . '+fork%3Afalse' . '+in:name,description,readme',
         );
+
         foreach ($searches as $searchType => $url) {
+            // // Limit the search to the last month.
+            // $date = (new DateTime('first day of previous month'))->format('Y-m-d');
+            // $url .= '++pushed%3A%3E' . $date;
+            // Sort by last updated to get the new plugins first.
+            $url .= '&s=updated';
+
+            $url .= '&per_page=100';
+
             $response = $this->curl($url, $curlHeaders);
             if ($response) {
                 if ($this->options['debug']) {
                     $this->log(sprintf('The search for %s with %s gives %d results.',
                         $this->type, $searchType, $response->total_count));
                 }
-                if ($response->total_count > 0) {
-                    foreach ($response->items as $repo) {
-                        if (in_array($repo->html_url, $urls)) {
-                            continue;
+                $totalCount = $response->total_count;
+                if ($totalCount > 0) {
+                    $totalProcessed = 0;
+                    $page = 1;
+                    do {
+                        // $this->log(sprintf('The search for %s on %s gives %d results. Wait for processing.' . $searchType, $this->type, $totalCount));
+                        $this->log('.');
+                        if ($page > 1) {
+                            $urlPage = $url . '&page=' . $page;
+                            $response = $this->curl($urlPage, $curlHeaders);
+                            // A special check to avoid an infinite loop.
+                            if (!$response || $response->total_count == 0 || count($response->items) == 0) {
+                                break;
+                            }
                         }
-                        if ($repo->fork) {
-                            continue;
-                        }
-                        // Check if there is a config file to avoid false result.
-                        $addonIni = str_ireplace('github.com', 'raw.githubusercontent.com', $repo->html_url)
-                            . '/master/' . $this->args['ini'];
-                        $ini = @file_get_contents($addonIni);
-                        if (empty($ini)) {
-                            continue;
-                        }
-
-                        $addon = $addonBase;
-                        $addon[$headers['Url']] = $repo->html_url;
-                        $addons[] = $addon;
-                        $urls[] = $repo->html_url;
-                        $newUrls[] = $repo->html_url;
-                    }
+                        $resultNewUrls = $this->filterNewUrlsFromSearchResults($response, $urls);
+                        $addons = array_merge($addons, $resultNewUrls['new_addons']);
+                        $urls = array_merge($urls, $resultNewUrls['new_urls']);
+                        $newUrls = array_merge($newUrls, $resultNewUrls['new_urls']);
+                        $totalProcessed += count($response->items);
+                        ++$page;
+                    } while ($totalProcessed < $totalCount);
                 }
             } else {
                 $this->log('No search on github.');
@@ -296,6 +303,62 @@ class UpdateDataExtensions
         }
 
         return $addons;
+    }
+
+    /**
+     * Helper to process results of a search.
+     *
+     * @param Object $response
+     * @param array $urls The list of existing urls to filter the response.
+     * @result array A list of new addons and new urls.
+     */
+    protected function filterNewUrlsFromSearchResults($response, $urls)
+    {
+        $headers = $this->headers;
+        $addonBase = array_fill(0, count($headers), null);
+        $newAddons = array();
+        $newUrls = array();
+
+        foreach ($response->items as $repo) {
+            if (in_array($repo->html_url, $urls)) {
+                if ($this->options['debug']) {
+                    $this->log(sprintf('Exists    : %s', $repo->html_url));
+                }
+                continue;
+            }
+            if ($repo->fork) {
+                if ($this->options['debug']) {
+                    $this->log(sprintf('Is fork   : %s', $repo->html_url));
+                }
+                continue;
+            }
+            // Check if there is a config file to avoid false result.
+            $addonIni = str_ireplace('github.com', 'raw.githubusercontent.com', $repo->html_url)
+                . '/master/' . $this->args['ini'];
+            $ini = @file_get_contents($addonIni);
+            if (empty($ini)) {
+                if ($this->options['debug']) {
+                    $m = 'No config';
+                    $this->log(sprintf('No config : %s', $repo->html_url));
+                }
+                continue;
+            }
+
+            if ($this->options['debug']) {
+                $this->log(sprintf('NEW       : %s', $repo->html_url));
+            }
+
+            $addon = $addonBase;
+            $addon[$headers['Url']] = $repo->html_url;
+            $newAddons[] = $addon;
+            $urls[] = $repo->html_url;
+            $newUrls[] = $repo->html_url;
+        }
+
+        return array(
+            'new_addons' => $newAddons,
+            'new_urls' => $newUrls,
+        );
     }
 
     /**
