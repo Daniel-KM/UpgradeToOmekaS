@@ -55,7 +55,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
                         {% unless addon['Author'] == nil %}
                             {% assign account_name = addon['Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first %}
                             {% assign account_url = addon['Url'] | split: account_name | first | append: account_name %}
-                            <a href="{{ account_url }}" class="link addon-author">{{ addon['Author'] }}</a>
+                            <a href="{{ account_url }}" class="link addon-author">{{ addon['Author'] | xml_escape }}</a>
                         {% endunless %}
                     {% endunless %}
                     </td>
@@ -76,13 +76,13 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
                         {{ addon['Omeka Min'] }}
                     {% endif %}
                     </td>
-                    <td class="addon-license">{{ addon['License'] }}</td>
+                    <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
                     <!--
                     <td class="addon-required">{{ addon['Required Plugins'] | replace: ',', ',<br />' }}</td>
                     <td class="addon-required">{{ addon['Optional Plugins'] | replace: ',', ',<br />' }}</td>
                     -->
-                    <td class="addon-description">{{ addon['Description'] }}</td>
+                    <td class="addon-description">{{ addon['Description']  | xml_escape }}</td>
                 </tr>
                 {% endif %}
             {% endfor %}

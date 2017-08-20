@@ -48,9 +48,9 @@ Feel free to add missing modules, or contact me for new ones.
                     {% unless addon['Name'] == nil %}
                         {% unless addon['Author'] == nil %}
                             {% if addon['Author Link'] != nil %}
-                                <a href="{{ addon['Author Link'] }}" class="link addon-author">{{ addon['Author'] }}</a>
+                                <a href="{{ addon['Author Link'] }}" class="link addon-author">{{ addon['Author'] | xml_escape }}</a>
                             {% else %}
-                                {{ addon['Author'] }}
+                                {{ addon['Author'] | xml_escape }}
                             {% endif %}
                         {% endunless %}
                     {% endunless %}
@@ -64,9 +64,9 @@ Feel free to add missing modules, or contact me for new ones.
                         {% endif %}
                     </td>
                     <td class="addon-constraint">{{ addon['Omeka Constraint'] }}</td>
-                    <td class="addon-license">{{ addon['License'] }}</td>
+                    <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
-                    <td class="addon-description">{{ addon['Description'] }}</td>
+                    <td class="addon-description">{{ addon['Description'] | xml_escape }}</td>
                 </tr>
                 {% endif %}
             {% endfor %}

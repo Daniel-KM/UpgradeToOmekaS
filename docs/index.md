@@ -64,7 +64,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
                         <a href="{{ addon['Module Url'] }}" class="link addon-module-link">{{ addon['Module'] }}</a>
                     {% endif %}
                     </td>
-                    <td class="addon-note">{{ addon['Note'] }}</td>
+                    <td class="addon-note">{{ addon['Note'] | xml_escape }}</td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -47,7 +47,7 @@ Feel free to add missing themes, or contact me for new ones.
                         {% unless addon['Author'] == nil %}
                             {% assign account_name = addon['Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first %}
                             {% assign account_url = addon['Url'] | split: account_name | first | append: account_name %}
-                            <a href="{{ account_url }}" class="link addon-author">{{ addon['Author'] }}</a>
+                            <a href="{{ account_url }}" class="link addon-author">{{ addon['Author'] | xml_escape }}</a>
                         {% endunless %}
                     {% endunless %}
                     </td>
@@ -59,9 +59,9 @@ Feel free to add missing themes, or contact me for new ones.
                             ({{ addon['Last Version'] }})
                         {% endif %}
                     </td>
-                    <td class="addon-license">{{ addon['License'] }}</td>
+                    <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
-                    <td class="addon-description">{{ addon['Description'] }}</td>
+                    <td class="addon-description">{{ addon['Description'] | xml_escape }}</td>
                 </tr>
                 {% endif %}
             {% endfor %}
