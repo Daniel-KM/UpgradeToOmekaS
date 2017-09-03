@@ -126,9 +126,9 @@ class UpgradeToOmekaS_Common
         if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
             return;
         }
-        return array_filter(scandir($dir), function($file) use ($dir) {
+        return array_values(array_filter(scandir($dir), function($file) use ($dir) {
             return is_file($dir . DIRECTORY_SEPARATOR . $file);
-        });
+        }));
     }
 
     /**
@@ -142,9 +142,9 @@ class UpgradeToOmekaS_Common
         if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
             return;
         }
-        return array_filter(array_diff(scandir($dir), array('.', '..')), function($file) use ($dir) {
+        return array_values(array_filter(array_diff(scandir($dir), array('.', '..')), function($file) use ($dir) {
             return is_dir($dir . DIRECTORY_SEPARATOR . $file);
-        });
+        }));
     }
 
     /**
