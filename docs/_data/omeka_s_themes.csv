@@ -1,8 +1,8 @@
 Name,Url,"Creation Date","Last Update","Last Version",Omeka.org,"Omeka Constraint",Author,"Author Link",License,Description,Tags,Link,"Support Link","Ini Path"
 AIDHP,https://github.com/unolibraries/aidph-omeka,2017-02-06T21:48:50Z,2017-02-07T14:18:58Z,1.0.0-beta,,,"Jason A. Heppler",http://jasonheppler.org,,,,,,
-"Center Row",https://github.com/omeka-s-themes/centerrow,2016-09-15T16:13:49Z,2017-08-04T14:52:55Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
-Cozy,https://github.com/omeka-s-themes/cozy,2016-04-06T21:03:39Z,2017-08-02T13:16:40Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,
-Default,https://github.com/omeka-s-themes/default,2016-08-04T03:43:55Z,2017-08-02T13:19:14Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,develop/config/theme.ini
+"Center Row",https://github.com/omeka-s-themes/centerrow,2016-09-15T16:13:49Z,2017-09-01T20:52:56Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
+Cozy,https://github.com/omeka-s-themes/cozy,2016-04-06T21:03:39Z,2017-09-01T21:09:19Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,
+Default,https://github.com/omeka-s-themes/default,2016-08-04T03:43:55Z,2017-09-01T21:19:54Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,develop/config/theme.ini
 Istanbul,https://github.com/hajoki/istanbul,2017-05-26T13:41:27Z,2017-05-26T13:45:51Z,1.0.0-beta,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
-PSL,https://github.com/biblibre/omeka-s-theme-psl,2016-09-21T08:08:17Z,2017-08-02T11:22:50Z,0.1,,,BibLibre,https://biblibre.com/,,"Omeka S theme for PSL",,https://github.com/biblibre/omeka-s-theme-psl,,
-"The Daily",https://github.com/omeka-s-themes/thedaily,2016-09-09T20:43:05Z,2017-08-10T21:11:55Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,
+PSL,https://github.com/biblibre/omeka-s-theme-psl,2016-09-21T08:08:17Z,2017-08-29T08:38:24Z,0.1,,,BibLibre,https://biblibre.com/,,"Omeka S theme for PSL",,https://github.com/biblibre/omeka-s-theme-psl,,
+"The Daily",https://github.com/omeka-s-themes/thedaily,2016-09-09T20:43:05Z,2017-09-01T21:21:39Z,1.0.0-beta3,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,
