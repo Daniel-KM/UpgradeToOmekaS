@@ -194,10 +194,12 @@ class UpgradeToOmekaS_Helper_Target
 
         if (!isset($this->_tablesColumns[$table])) {
             $db = $this->getDb();
+            $config = $db->getConfig();
+            $dbname = isset($config['dbname']) ? $config['dbname'] : '';
             $sql = '
             SELECT COLUMN_NAME
             FROM INFORMATION_SCHEMA.COLUMNS
-            WHERE TABLE_NAME = ' . $db->quote($table) . ';';
+            WHERE TABLE_SCHEMA = ' . $db->quote($dbname) . ' AND TABLE_NAME = ' . $db->quote($table) . ';';
             $result = $db->fetchCol($sql);
             $this->_tablesColumns[$table] = $result;
         }
@@ -354,13 +356,11 @@ class UpgradeToOmekaS_Helper_Target
             unset($rows);
         }
 
-        // Prepare the transaction.
-        $sql = 'BEGIN;' . PHP_EOL;
+        // Prepare the insert statements 
         foreach ($rowsByTable as $table => $rows) {
             $sql .= sprintf('INSERT INTO `%s` (`%s`) VALUES ', $table, implode('`, `', $columns[$table])) . PHP_EOL;
             $sql .= '(' . implode('),' . PHP_EOL . '(', $rows) . ');' . PHP_EOL;
         }
-        $sql .= 'COMMIT;' . PHP_EOL;
 
         $db = $this->getDb();
         $result = $db->prepare($sql)->execute();
