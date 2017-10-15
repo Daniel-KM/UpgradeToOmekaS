@@ -126,6 +126,9 @@ in the matching csv file in the directory `docs/_data/` and run the php script
     php -f plugins/UpgradeToOmekaS/docs/_scripts/update_data.php
 ```
 
+You may need to add a file with a token from your github account in `docs/_scripts/token_github.txt`
+to be allowed to fetch more than 50 results.
+
 
 Internal Upgrade Process
 ------------------------
