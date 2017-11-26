@@ -15,7 +15,7 @@
         $key = 0;
         foreach ($runningJobs as $process):
             $arguments = $process->getArguments();
-            $job = json_decode($arguments['job'], true);
+            $job = isset($arguments['job']) ? json_decode($arguments['job'], true) : [];
             $classname = isset($job['className']) ? $job['className'] : '';
             $user = get_record_by_id('User', $process->user_id);
             $username = $user ? $user->username : __('deleted user');
