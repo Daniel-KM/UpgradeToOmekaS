@@ -580,6 +580,23 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
         }
         // No process, and the status is reset.
         else {
+            $params = json_decode(get_option('upgrade_to_omeka_s_process_params'), true);
+            $baseDir = @$params['base_dir'];
+            if (empty($baseDir) || !file_exists($baseDir)) {
+                $message = __('The base dir "%s" does not exist.', $baseDir);
+                $this->_helper->flashMessenger($message, 'error');
+                $this->_helper->redirector->goto('index');
+                return;
+            }
+
+            $result = UpgradeToOmekaS_Form_Validator::validateBaseDirToRemove($baseDir);
+            if (empty($result)) {
+                $message = __('The base dir %s cannot be deleted. It may contains symlinks or files with specific rights.', $baseDir);
+                $this->_helper->flashMessenger($message, 'error');
+                $this->_helper->redirector->goto('index');
+                return;
+            }
+
             $this->_launchRemoveProcess();
             $this->_helper->redirector->goto('logs');
         }

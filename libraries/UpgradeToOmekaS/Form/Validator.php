@@ -84,6 +84,10 @@ class UpgradeToOmekaS_Form_Validator extends Zend_Validate_Callback
     static public function validateBaseDirToRemove($value)
     {
         $result = self::_validateBaseDir($value);
+        // Specific check for symlinks: to remove them is risky on some systems.
+        if ($result) {
+            return !UpgradeToOmekaS_Common::containsSymlinks($value);
+        }
         return $result;
     }
 
