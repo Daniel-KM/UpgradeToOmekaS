@@ -38,6 +38,54 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
      */
     protected $_itemSetSiteId;
 
+    /**
+     * @see /application/data/migrations/20170601084322_DedupeMediaTypes.php
+     */
+    public $mediaTypeAliases = array(
+        // application/ogg
+        'application/x-ogg' => 'application/ogg',
+        // application/rtf
+        'text/rtf' => 'application/rtf',
+        // audio/midi
+        'audio/mid' => 'audio/midi',
+        'audio/x-midi' => 'audio/midi',
+        // audio/mpeg
+        'audio/mp3' => 'audio/mpeg',
+        'audio/mpeg3' => 'audio/mpeg',
+        'audio/x-mp3' => 'audio/mpeg',
+        'audio/x-mpeg' => 'audio/mpeg',
+        'audio/x-mpeg3' => 'audio/mpeg',
+        'audio/x-mpegaudio' => 'audio/mpeg',
+        'audio/x-mpg' => 'audio/mpeg',
+        // audio/ogg
+        'audio/x-ogg' => 'audio/ogg',
+        // audio/x-aac
+        'audio/aac' => 'audio/x-aac',
+        // audio/x-aiff
+        'audio/aiff' => 'audio/x-aiff',
+        // audio/x-ms-wma
+        'audio/x-wma' => 'audio/x-ms-wma',
+        'audio/wma' => 'audio/x-ms-wma',
+        // audio/mp4
+        'audio/x-mp4' => 'audio/mp4',
+        'audio/x-m4a' => 'audio/mp4',
+        // audio/x-wav
+        'audio/wav' => 'audio/x-wav',
+        // image/bmp
+        'image/x-ms-bmp' => 'image/bmp',
+        // image/x-icon
+        'image/icon' => 'image/x-icon',
+        // video/mp4
+        'video/x-m4v' => 'video/mp4',
+        // video/x-ms-asf
+        'video/asf' => 'video/x-ms-asf',
+        // video/x-ms-wmv
+        'video/wmv' => 'video/x-ms-wmv',
+        // video/x-msvideo
+        'video/avi' => 'video/x-msvideo',
+        'video/msvideo' => 'video/x-msvideo',
+    );
+
     protected function _upgradeItems()
     {
         // Because items are the first resource upgraded, their ids are kept.
@@ -420,12 +468,16 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                                 : $filename
                             )
                             : $filename;
+                        // Normalize the media type if needed.
+                        $mediaType = isset($this->mediaTypeAliases[$record->mime_type])
+                            ? $this->mediaTypeAliases[$record->mime_type]
+                            : $record->mime_type;
                         $toInsert['item_id'] = $item->id;
                         $toInsert['ingester'] = $isRemote ? 'url' : 'upload';
                         $toInsert['renderer'] = 'file';
                         $toInsert['data'] = null;
                         $toInsert['source'] = $source;
-                        $toInsert['media_type'] = $record->mime_type;
+                        $toInsert['media_type'] = $mediaType;
                         $toInsert['storage_id'] = $storageId;
                         $toInsert['extension'] = $extension;
                         // The sha256 is optional and set later (here or in the
@@ -760,7 +812,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
      * Prepare properties for a resource.
      *
      * @param integer|string $resourceId A number or equivalent sql expression.
-     * @param unknown $properties
+     * @param array $properties
      * @return void
      */
     protected function _prepareRowsForProperties($resourceId, $properties)
@@ -814,7 +866,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
      * @uses self::_insertRows()
      *
      * @param integer|string $resourceId A number or equivalent sql expression.
-     * @param unknown $properties
+     * @param array $properties
      * @return void
      */
     protected function _insertProperties($resourceId, $properties)

@@ -17,6 +17,7 @@ return array(
 
     // Assets.
     'favicon.ico'                                       => 'asset/img/favicon.ico',
+    'asset/css/admin-bar.css'                           => 'asset/css/user-bar.css',
     // The same template can be used for item sets (collections) now.
     'asset/js/items-search.js'                          => 'asset/js/advanced-search.js',
 
@@ -31,8 +32,8 @@ return array(
     // May be:
     // 'index.phtml'                                    => 'view/omeka/site/index/index.phtml',
 
-    // No more admin bar currently, kept for memo.
-    'view/common/admin-bar.phtml'                       => 'view/common/admin-bar.phtml',
+    'view/common/admin-bar.phtml'                       => 'view/common/user-bar.phtml',
+
     // Used only in the admin interface.
     'view/common/delete-confirm.phtml'                  => '_unused/common/delete-confirm.phtml',
     'view/common/footer.phtml'                          => 'view/layout/footer.phtml',
@@ -86,7 +87,7 @@ return array(
     'view/omeka/site/media/show.omeka-xml.phtml'        => '_unused//media/show.omeka-xml.phtml',
     'view/omeka/site/media/show.phtml'                  => 'view/omeka/site/media/show.phtml',
 
-    'view/omeka/site/record/index.phtml'                => '_unused/record/browse.phtml',
+    'view/omeka/site/record/index.phtml'                => '_unused/resource/browse.phtml',
     'view/omeka/site/record/search-filters.phtml'       => 'view/common/search-filters.phtml',
     // This may be merged in the header.
     'view/omeka/site/record/search-form.phtml'          => 'view/common/search-main.phtml',

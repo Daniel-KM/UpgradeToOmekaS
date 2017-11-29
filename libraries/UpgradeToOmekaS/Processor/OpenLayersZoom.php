@@ -108,10 +108,6 @@ class UpgradeToOmekaS_Processor_OpenLayersZoom extends UpgradeToOmekaS_Processor
         $this->_log('[' . __FUNCTION__ . ']: ' . __('%d zoomed images where upgraded.',
             $totalZoomed),
             Zend_Log::INFO);
-
-        $this->_log('[' . __FUNCTION__ . ']: '
-            . __('The display of zoomed files requires OpenSeadragon 2.2.2 or above, but only the version 2.1.0 is currently integrated in Omeka S, so add it yourself.'),
-            Zend_Log::WARN);
     }
 
     protected function _upgradeFiles()

@@ -13,7 +13,7 @@ class UpgradeToOmekaS_Processor_CoreTags extends UpgradeToOmekaS_Processor_Taggi
 
     public $pluginName = 'Core/Tags';
     public $minVersion = '2.3.1';
-    public $maxVersion = '2.5.9';
+    public $maxVersion = '2.6.9';
     protected $_isCore = true;
 
     protected function _installModule()

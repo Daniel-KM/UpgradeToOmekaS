@@ -1,4 +1,4 @@
--- Exported from OmekaS v1.0.0-beta2
+-- Exported from OmekaS v1.0.1
 
 SET foreign_key_checks = 0;
 
@@ -66,7 +66,7 @@ INSERT INTO `property` (`id`, `owner_id`, `vocabulary_id`, `local_name`, `label`
 (60,	NULL,	3,	'cites',	'cites',	'Relates a document to another document that is cited\nby the first document as reference, comment, review, quotation or for\nanother purpose.'),
 (61,	NULL,	3,	'contributorList',	'list of contributors',	'An ordered list of contributors. Normally, this list is seen as a priority list that order contributors by importance.'),
 (62,	NULL,	3,	'court',	'court',	'A court associated with a legal document; for example, that which issues a decision.'),
-(63,	NULL,	3,	'degree',	'status',	'The thesis degree.'),
+(63,	NULL,	3,	'degree',	'degree',	'The thesis degree.'),
 (64,	NULL,	3,	'director',	'director',	'A Film director.'),
 (65,	NULL,	3,	'distributor',	'distributor',	'Distributor of a document or a collection of documents.'),
 (66,	NULL,	3,	'editor',	'editor',	'A person having managerial and sometimes policy-making responsibility for the editorial part of a publishing firm or of a newspaper, magazine, or other publication.'),
@@ -78,7 +78,7 @@ INSERT INTO `property` (`id`, `owner_id`, `vocabulary_id`, `local_name`, `label`
 (72,	NULL,	3,	'owner',	'owner',	'Owner of a document or a collection of documents.'),
 (73,	NULL,	3,	'performer',	'performer',	NULL),
 (74,	NULL,	3,	'presentedAt',	'presented at',	'Relates a document to an event; for example, a paper to a conference.'),
-(75,	NULL,	3,	'presents',	'presented at',	'Relates an event to associated documents; for example, conference to a paper.'),
+(75,	NULL,	3,	'presents',	'presents',	'Relates an event to associated documents; for example, conference to a paper.'),
 (76,	NULL,	3,	'producer',	'producer',	'Producer of a document or a collection of documents.'),
 (77,	NULL,	3,	'recipient',	'recipient',	'An agent that receives a communication document.'),
 (78,	NULL,	3,	'reproducedIn',	'reproducedIn',	'The resource in which another resource is reproduced.'),
@@ -261,7 +261,7 @@ INSERT INTO `resource_class` (`id`, `owner_id`, `vocabulary_id`, `local_name`, `
 (68,	NULL,	3,	'Manual',	'Manual',	'A small reference book, especially one giving instructions.'),
 (69,	NULL,	3,	'Manuscript',	'Manuscript',	'An unpublished Document, which may also be submitted to a publisher for publication.'),
 (70,	NULL,	3,	'Map',	'Map',	'A graphical depiction of geographic features.'),
-(71,	NULL,	3,	'MultiVolumeBook',	'Series',	'A loose, thematic, collection of Documents, often Books.'),
+(71,	NULL,	3,	'MultiVolumeBook',	'Multivolume Book',	'A loose, thematic, collection of Documents, often Books.'),
 (72,	NULL,	3,	'Newspaper',	'Newspaper',	'A periodical of documents, usually issued daily or weekly, containing current news, editorials, feature articles, and usually advertising.'),
 (73,	NULL,	3,	'Note',	'Note',	'Notes or annotations about a resource.'),
 (74,	NULL,	3,	'Patent',	'Patent',	'A document describing the exclusive right granted by a government to an inventor to manufacture, use, or sell an invention for a certain number of years.'),

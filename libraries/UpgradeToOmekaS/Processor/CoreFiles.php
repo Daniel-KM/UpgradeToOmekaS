@@ -169,7 +169,7 @@ class UpgradeToOmekaS_Processor_CoreFiles extends UpgradeToOmekaS_Processor_Abst
 
         if ($totalCopied != $totalFiles) {
             $this->_log('[' . __FUNCTION__ . ']: ' . __('All %d files of records have been copied (mode: %s) into Omeka S, but there are %d files in Omeka Classic.',
-                $totalCopied, $filesType, $totalFiles), Zend_Log::NOTICE);
+                $totalCopied, $filesType, $totalFiles), Zend_Log::WARN);
         }
         // Fine.
         else {

@@ -35,6 +35,11 @@ $thisView->addHelperPath(
 OUTPUT;
 
 return array(
+    '#admin-bar' => '#user-bar',
+    '"admin-bar"' => '"user-bar"',
+    "'admin-bar'" => "'user-bar'",
+    '"admin-bar "' => '"user-bar "',
+    "'admin-bar '" => "'user-bar '",
     '$this->upgrade()->public_nav_main()' => $mainNav,
     $bootstrapTwitterInput => $bootstrapTwitterOutput,
 );

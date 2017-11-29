@@ -55,7 +55,7 @@ class UpgradeToOmekaS_Job_Upgrade extends UpgradeToOmekaS_Job_Abstract
             // $startMessage .= __('Database prefix: %s', $params['database']['prefix']) . PHP_EOL;
             $startMessage .= __('Database name: %s', $params['database']['dbname']) . PHP_EOL;
             $startMessage .= __('Database username: %s', $params['database']['username']) . PHP_EOL;
-            $startMessage .= __('Database password: %s', 'xxxxxxxxxxxxxxxx') . PHP_EOL;
+            $startMessage .= __('Database password: %s', '****************') . PHP_EOL;
         }
         // Database is shared.
         else {

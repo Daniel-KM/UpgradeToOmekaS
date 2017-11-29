@@ -14,8 +14,9 @@ return array(
     'css' => 'asset/css',
     '_sass' => 'asset/sass',
     'sass' => 'asset/sass',
-    'font' => 'asset/font',
-    'fonts' => 'asset/font',
+    'font' => 'asset/fonts',
+    'fonts' => 'asset/fonts',
+    'javascript' => 'asset/js',
     'javascripts' => 'asset/js',
     'js' => 'asset/js',
     'images' => 'asset/img',
@@ -38,11 +39,12 @@ return array(
     'collections' => 'view/omeka/site/item-set',
     'files' => 'view/omeka/site/media',
 
-    // Removed in Omeka S, but kept for a possible global "record" search.
-    'search' => 'view/omeka/site/record',
+    // Removed in Omeka S, but kept for a possible global "resource" search.
+    'search' => 'view/omeka/site/resource',
 
-    // If not merged, the other plugins folders wilm move in "view/omeka/site".
+    // If not merged, the other plugins folders will move in "view/omeka/site".
 
     // Other folders to keep in place.
     '.git' => '.git',
+    '.tx' => '.tx',
 );

@@ -9,7 +9,7 @@ abstract class UpgradeToOmekaS_Processor_AbstractCore extends UpgradeToOmekaS_Pr
 {
 
     public $minVersion = '2.3.1';
-    public $maxVersion = '2.5.9';
+    public $maxVersion = '2.6.9';
     protected $_isCore = true;
 
     public $module = array(

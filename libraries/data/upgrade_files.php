@@ -20,7 +20,7 @@ $prepend = <<<'OUTPUT'
 // This hack allows to use the functions of Omeka Classic "globals.php" upgraded
 // via the module inside custom functions.
 global $thisView;
-$thisView = $this
+$thisView = $this;
 
 ?>
 
@@ -57,7 +57,7 @@ foreach ($links as $link) {
 
 OUTPUT;
 
-$upgrade['view/common/admin-bar.phtml'] = array(
+$upgrade['view/common/user-bar.phtml'] = array(
     'preg_replace' => array(
         '~(' . preg_quote('echo $this->upgrade()->nav($links, \'public_navigation_admin_bar\');') . ')~' => '// \1' . PHP_EOL . $replace,
     ),

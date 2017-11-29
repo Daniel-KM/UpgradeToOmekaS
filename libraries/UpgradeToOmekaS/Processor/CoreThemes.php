@@ -427,6 +427,7 @@ OUTPUT;
         $this->_reorganizeFolders($path);
         $this->_renameFiles($path);
         $this->_replaceImagesByImgInCss($path);
+        $this->_upgradeAdminBar($path);
     }
 
     /**
@@ -1032,6 +1033,33 @@ OUTPUT;
         $content = file_get_contents($file);
         $content = str_replace('/images/', '/img/', $content);
         $result = file_put_contents($file, $content);
+    }
+
+    protected function _upgradeAdminBar()
+    {
+        $path = $this->getParam('base_dir')
+           . DIRECTORY_SEPARATOR . 'themes';
+
+        $files = UpgradeToOmekaS_Common::listFilesInFolder($path, array('css', 'sass', 'scss'));
+        $this->_progress(0, count($files));
+
+        $replace = array(
+            '#admin-bar' => '#user-bar',
+            '"admin-bar"' => '"user-bar"',
+            "'admin-bar'" => "'user-bar'",
+            '"admin-bar "' => '"user-bar "',
+            "'admin-bar '" => "'user-bar '",
+        );
+
+        $totalCalls = 0;
+        $i = 0;
+        $flag = false;
+        foreach ($files as $file) {
+            $this->_progress(++$i);
+            $content = file_get_contents($file);
+            $content = str_replace(array_keys($replace), array_values($replace), $content);
+            $result = file_put_contents($file, $content);
+        }
     }
 
     protected function _upgradeFunctionsAndVariables()

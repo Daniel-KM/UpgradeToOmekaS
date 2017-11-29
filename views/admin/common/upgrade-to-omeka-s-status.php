@@ -12,7 +12,11 @@
     <p><?php echo __('Go to your %snew site%s built on Omeka Semantic and %slogin%s to see the new world.',
         '<a href="' . $previousParams['url'] . '" target="_blank">', '</a>',
         '<a href="' . $previousParams['url'] . '/login" target="_blank">', '</a>'); ?> </p>
-    <p class="explanation note"><?php echo __('Note') . ': ' . __('The url may be wrong if the config of the server is hardly customized.'); ?></p>
+    <p class="explanation note"><?php
+        echo __('Note') . ': ' . __('The url may be wrong if the config of the server is hardly customized.');
+        echo ' ';
+        echo __('If the public page doesn’t work, reset the theme to the default in the Omeka S admin board.');
+    ?></p>
     <?php endif; ?>
 
     <?php if ($isError): ?>

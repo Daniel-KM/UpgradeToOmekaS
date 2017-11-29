@@ -69,7 +69,10 @@ class UpgradeToOmekaS_Common
         $path = realpath($dir);
         if($path!==false){
             foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $object){
-                $bytestotal += $object->getSize();
+                try {
+                    $bytestotal += $object->getSize();
+                } catch (Exception $e) {
+                }
             }
         }
         return $bytestotal;
@@ -529,7 +532,7 @@ class UpgradeToOmekaS_Common
                     $command = 'unzip ' . escapeshellarg($input) . ' -d ' . escapeshellarg($path);
                     try {
                         self::executeCommand($command, $status, $output, $errors);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         $status = 1;
                     }
                     $result = $status == 0;

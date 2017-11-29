@@ -14,10 +14,10 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
 
     public $module = array(
         'name' => 'Omeka S',
-        'version' => '1.0.0-beta4',
-        'url' => 'https://github.com/omeka/omeka-s/releases/download/v%s/omeka-s.zip',
-        'size' => 14150011,
-        'sha1' => 'c49fb833643cf23d10f38b9b539dc5949e840440',
+        'version' => '1.0.1',
+        'url' => 'https://github.com/omeka/omeka-s/releases/download/v%s/omeka-s-%s.zip',
+        'size' => 14601495,
+        'sha1' => '69a63686fb90e6854580ca05424d692be1d0f68f',
         'type' => 'equivalent',
         'requires' => array(
             'minDb' => array(
@@ -96,6 +96,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         // See Omeka S ['installer']['pre_tasks']: CheckEnvironmentTask.php
         $this->_precheckPhp();
         $this->_precheckPhpModules();
+        $this->_precheckRandomGenerator();
         // See Omeka S ['installer']['pre_tasks']: CheckDbConfigurationTask.php
         $this->_precheckDatabaseServer();
         $this->_precheckZip();
@@ -176,6 +177,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         $requiredExtensions = array(
             'pdo',
             'pdo_mysql',
+            'xml',
         );
         foreach ($requiredExtensions as $extension) {
             if (!extension_loaded($extension)) {
@@ -184,6 +186,15 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
                     $this->_prechecks[] = __('Omeka Semantic requires the php extension "%s".', $extension);
                 }
             }
+        }
+    }
+
+    protected function _precheckRandomGenerator()
+    {
+        try {
+            random_bytes(32);
+        } catch (Exception $e) {
+            $this->_prechecks[] = __('Omeka Semantic must be able to generate secured random numbers.');
         }
     }
 

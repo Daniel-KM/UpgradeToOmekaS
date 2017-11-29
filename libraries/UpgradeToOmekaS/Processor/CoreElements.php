@@ -423,8 +423,11 @@ class UpgradeToOmekaS_Processor_CoreElements extends UpgradeToOmekaS_Processor_A
      * @param boolean $bySet Return a one or a two levels associative array.
      * @return array
      */
-    public function getDefaultMappingElementsToProperties($elementFormat = 'set_name:name', $propertyFormat = 'prefix:name', $bySet = false)
-    {
+    public function getDefaultMappingElementsToProperties(
+        $elementFormat = 'set_name:name',
+        $propertyFormat = 'prefix:name',
+        $bySet = false
+    ) {
         static $elements;
         static $properties;
         static $mapping;

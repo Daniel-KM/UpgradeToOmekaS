@@ -1,4 +1,4 @@
--- Exported from OmekaS v1.0.0-beta2
+-- Exported from OmekaS v1.0.1
 
 SET foreign_key_checks = 0;
 

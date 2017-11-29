@@ -13,7 +13,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
     public $module = array(
         'type' => 'integrated',
         // The version is required here only to save it in the database.
-        'version' => '1.0.0-beta4',
+        'version' => '1.0.1',
     );
 
     public $processMethods = array(
@@ -31,7 +31,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         'resource_class', 'resource_template', 'resource_template_property',
         'session', 'setting', 'site', 'site_block_attachment', 'site_item_set',
         'site_page', 'site_page_block', 'site_permission', 'site_setting',
-        'user', 'value', 'vocabulary',
+        'user', 'user_setting', 'value', 'vocabulary',
     );
 
     /**
@@ -55,35 +55,43 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         'cli' => array(
             'phpcli_path' => null,
         ),
-        'file_manager' => array(
-            'thumbnailer' => 'Omeka\File\ImageMagickThumbnailer',
-            'thumbnail_types' => array(
+        'thumbnails' => array(
+            'types' => array(
                 'large' => array('constraint' => 800),
                 'medium' => array('constraint' => 200),
                 'square' => array('constraint' => 200),
             ),
-            'thumbnail_options' => array(
+            'thumbnailer_options' => array(
                 'imagemagick_dir' => null,
             ),
         ),
         'translator' => array(
             'locale' => 'en_US',
         ),
+        'service_manager' => array(
+            'aliases' => array(
+                'Omeka\File\Store' => 'Omeka\File\Store\Local',
+                'Omeka\File\Thumbnailer' => 'Omeka\File\Thumbnailer\ImageMagick',
+            ),
+        ),
     );
 
     /**
      * The target extension whitelist.
      *
-     * Removed from the default white list of Omeka 2: "audio/x-m4a",
-     * "video/x-m4v" and "video/webm".
-     *
      * @var array
      */
     protected $_omekaSMediaTypeWhitelist = array(
-        'application/msword', 'application/ogg', 'application/pdf',
-        'application/rtf', 'application/vnd.ms-access',
-        'application/vnd.ms-excel', 'application/vnd.ms-powerpoint',
-        'application/vnd.ms-project', 'application/vnd.ms-write',
+        // application/*
+        'application/msword',
+        'application/ogg',
+        'application/pdf',
+        'application/rtf',
+        'application/vnd.ms-access',
+        'application/vnd.ms-excel',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.ms-project',
+        'application/vnd.ms-write',
         'application/vnd.oasis.opendocument.chart',
         'application/vnd.oasis.opendocument.database',
         'application/vnd.oasis.opendocument.formula',
@@ -91,36 +99,60 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         'application/vnd.oasis.opendocument.presentation',
         'application/vnd.oasis.opendocument.spreadsheet',
         'application/vnd.oasis.opendocument.text',
-        'application/x-ms-wmp', 'application/x-ogg', 'application/x-gzip',
-        'application/x-msdownload', 'application/x-shockwave-flash',
-        'application/x-tar', 'application/zip', 'audio/aac', 'audio/aiff',
-        'audio/mid', 'audio/midi', 'audio/mp3', 'audio/mp4', 'audio/mpeg',
-        'audio/mpeg3', 'audio/ogg', 'audio/wav', 'audio/wma', 'audio/x-aac',
-        'audio/x-aiff', 'audio/x-midi', 'audio/x-mp3', 'audio/x-mp4',
-        'audio/x-mpeg', 'audio/x-mpeg3', 'audio/x-mpegaudio', 'audio/x-ms-wax',
-        'audio/x-realaudio', 'audio/x-wav', 'audio/x-wma', 'image/bmp',
-        'image/gif', 'image/icon', 'image/jpeg', 'image/pjpeg', 'image/png',
-        'image/tiff', 'image/x-icon', 'image/x-ms-bmp', 'text/css',
-        'text/plain', 'text/richtext', 'text/rtf', 'video/asf', 'video/avi',
-        'video/divx', 'video/mp4', 'video/mpeg', 'video/msvideo',
-        'video/ogg', 'video/quicktime', 'video/x-ms-wmv', 'video/x-msvideo',
+        'application/x-gzip',
+        'application/x-ms-wmp',
+        'application/x-msdownload',
+        'application/x-shockwave-flash',
+        'application/x-tar',
+        'application/zip',
+        // audio/*
+        'audio/midi',
+        'audio/mp4',
+        'audio/mpeg',
+        'audio/ogg',
+        'audio/x-aac',
+        'audio/x-aiff',
+        'audio/x-ms-wma',
+        'audio/x-ms-wax',
+        'audio/x-realaudio',
+        'audio/x-wav',
+        // image/*
+        'image/bmp',
+        'image/gif',
+        'image/jpeg',
+        'image/pjpeg',
+        'image/png',
+        'image/tiff',
+        'image/x-icon',
+        // text/*
+        'text/css',
+        'text/plain',
+        'text/richtext',
+        // video/*
+        'video/divx',
+        'video/mp4',
+        'video/mpeg',
+        'video/ogg',
+        'video/quicktime',
+        'video/webm',
+        'video/x-ms-asf,',
+        'video/x-msvideo',
+        'video/x-ms-wmv',
     );
 
     /**
      * The target extension whitelist.
-     *
-     * Removed from the default white list of Omeka 2: "m4v", "opus" and "webm".
      *
      * @var array
      */
     protected $_omekaSExtensionWhitelist = array(
         'aac', 'aif', 'aiff', 'asf', 'asx', 'avi', 'bmp', 'c', 'cc', 'class',
         'css', 'divx', 'doc', 'docx', 'exe', 'gif', 'gz', 'gzip', 'h', 'ico',
-        'j2k', 'jp2', 'jpe', 'jpeg', 'jpg', 'm4a', 'mdb', 'mid', 'midi', 'mov',
+        'j2k', 'jp2', 'jpe', 'jpeg', 'jpg', 'm4a', 'm4v', 'mdb', 'mid', 'midi', 'mov',
         'mp2', 'mp3', 'mp4', 'mpa', 'mpe', 'mpeg', 'mpg', 'mpp', 'odb', 'odc',
-        'odf', 'odg', 'odp', 'ods', 'odt', 'ogg', 'pdf', 'png', 'pot', 'pps',
+        'odf', 'odg', 'odp', 'ods', 'odt', 'ogg', 'opus', 'pdf', 'png', 'pot', 'pps',
         'ppt', 'pptx', 'qt', 'ra', 'ram', 'rtf', 'rtx', 'swf', 'tar', 'tif',
-        'tiff', 'txt', 'wav', 'wax', 'wma', 'wmv', 'wmx', 'wri', 'xla', 'xls',
+        'tiff', 'txt', 'wav', 'wax', 'webm', 'wma', 'wmv', 'wmx', 'wri', 'xla', 'xls',
         'xlsx', 'xlt', 'xlw', 'zip',
     );
 
@@ -246,6 +278,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         // To simplify process for vocabularies, that Omeka doesn't manage, an
         // export of a fresh automatic install is used (the installer task
         // imports rdf vocabularies in application/data/vocabularies).
+        // Exported tables are: property, resource_class and vocabulary.
         $script = dirname(dirname(dirname(dirname(__FILE__))))
             . DIRECTORY_SEPARATOR . 'libraries'
             . DIRECTORY_SEPARATOR . 'data'
@@ -261,6 +294,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
         // See Omeka S ['installer']['tasks']: InstallDefaultTemplatesTask.php
         // Same note than vocabularies above.
+        // Exported tables are resource_template and resource_template_property.
         $script = dirname(dirname(dirname(dirname(__FILE__))))
             . DIRECTORY_SEPARATOR . 'libraries'
             . DIRECTORY_SEPARATOR . 'data'
@@ -299,8 +333,6 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
             $value = explode(',', $value);
         }
         $target->saveSetting('media_type_whitelist', $value);
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('These three media types have been removed from the default white list of Omeka 2: "audio/x-m4a", "video/x-m4v" and "video/webm".'),
-            Zend_Log::INFO);
 
         $value = get_option('file_extension_whitelist');
         if ($value == Omeka_Validate_File_Extension::DEFAULT_WHITELIST) {
@@ -309,8 +341,6 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
             $value = explode(',', $value);
         }
         $target->saveSetting('extension_whitelist', $value);
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('These three extensions have been removed from the default white list of Omeka 2: "m4v", "opus" and "webm".'),
-            Zend_Log::INFO);
 
         $user = $this->getParam('user');
         if (empty($user)) {
@@ -322,6 +352,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $target->saveSetting('administrator_email', $value);
         $target->saveSetting('installation_title', $this->getParam('installation_title'));
         $target->saveSetting('time_zone', $this->getParam('time_zone'));
+        $target->saveSetting('locale', $this->_getIniLocale());
 
         // Settings that are not set when the site is installed.
 
@@ -338,6 +369,14 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The main tables are created and default data inserted.'),
             Zend_Log::INFO);
+    }
+
+    protected function _getIniLocale()
+    {
+        $config = Zend_Registry::get('bootstrap')->config;
+        $targetConfig = $this->_omekaSLocalConfig;
+        $value = isset($config->locale->name) ? $config->locale->name : null;
+        return (string) $value;
     }
 
     protected function _upgradeLocalConfig()
@@ -524,10 +563,10 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
                 // Nothing to do: this is the default in Omeka S too.
                 break;
             case 'Omeka_File_Derivative_Strategy_Imagick':
-                $targetConfig['file_manager']['thumbnailer'] = 'Omeka\File\ImagickThumbnailer';
+                $targetConfig['service_manager']['aliases']['Omeka\File\Thumbnailer'] = 'Omeka\File\Thumbnailer\Imagick';
                 break;
             case 'Omeka_File_Derivative_Strategy_GD':
-                $targetConfig['file_manager']['thumbnailer'] = 'Omeka\File\GdThumbnailer';
+                $targetConfig['service_manager']['aliases']['Omeka\File\Thumbnailer'] = 'Omeka\File\Thumbnailer\Gd';
                 break;
             default:
                 $this->_log('[' . __FUNCTION__ . ']: ' . __('The derivative strategy "%s" is not supported by Omeka S.',
@@ -537,11 +576,11 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $values = isset($config->fileDerivativesy->strategyOptions) ? $config->fileDerivativesy->strategyOptions->toArray() : null;
         // ; fileDerivatives.strategyOptions.page = "0"
         if (isset($values['page']) && $values['page'] !== '0') {
-            $targetConfig['file_manager']['thumbnail_options']['page'] = (integer) $values['page'];
+            $targetConfig['thumbnails']['thumbnailer_options']['page'] = (integer) $values['page'];
         }
         // ; fileDerivatives.strategyOptions.gravity = "center"
         if (isset($values['gravity']) && $values['gravity'] !== 'center') {
-            $targetConfig['file_manager']['thumbnail_types']['square']['options']['gravity'] = $values['gravity'];
+            $targetConfig['thumbnails']['types']['square']['options']['gravity'] = $values['gravity'];
         }
         // ; fileDerivatives.strategyOptions.autoOrient = false
         if (isset($values['autoOrient']) && $values['autoOrient']) {
@@ -565,7 +604,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         // Add some settings options that are moved inside the local config.
         $value = get_option('path_to_convert');
         if ($value) {
-            $targetConfig['file_manager']['thumbnail_options']['imagemagick_dir'] = $value;
+            $targetConfig['thumbnails']['thumbnailer_options']['imagemagick_dir'] = $value;
         }
 
         // Omeka 2 and Omeka S use the same sizes.
@@ -592,11 +631,11 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         }
         foreach ($derivativeTypes as $derivativeType => $options) {
             if (!empty($options['added']) && $options['strategy'] != 'default') {
-                $targetConfig['file_manager']['thumbnail_types'][$options['type']]['strategy'] = $options['strategy'];
+                $targetConfig['thumbnails']['types'][$options['type']]['strategy'] = $options['strategy'];
             }
             $value = get_option($derivativeType . '_constraint');
             if ($value != $options['constraint'] || !empty($options['added'])) {
-                $targetConfig['file_manager']['thumbnail_types'][$options['type']]['constraint'] = $value;
+                $targetConfig['thumbnails']['types'][$options['type']]['constraint'] = $value;
             }
         }
 
@@ -696,6 +735,8 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
                 $toInserts[] = $target->cleanQuote($toInsert);
             }
 
+            // Don't need to upgrade the user settings: they are default.
+
             $target->insertRows('user', $toInserts);
         }
 
@@ -738,6 +779,8 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The username of users has been removed; the displayed name is unchanged.'),
             Zend_Log::NOTICE);
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All users must request a new password in the login page.'),
+            Zend_Log::WARN);
+        $this->_log('[' . __FUNCTION__ . ']: ' . __('The session data are not upgraded.'),
             Zend_Log::WARN);
     }
 
@@ -1275,7 +1318,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
      * @todo Check if a visible page is under an invisible page.
      *
      * @param string $visible
-     * @return unknown
+     * @return int
      */
     protected function _countNavigationPages($visible = true)
     {

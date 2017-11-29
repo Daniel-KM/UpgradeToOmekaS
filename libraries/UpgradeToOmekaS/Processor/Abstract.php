@@ -536,7 +536,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * Get a processor.
      *
      * @param string $name
-     * @return Processor
+     * @return UpgradeToOmekaS_Processor_Abstract
      */
     public function getProcessor($name)
     {
@@ -1838,7 +1838,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      *
      * @internal The database is Unicode and this is allowed since php 5.4.
      *
-     * @param var $value
+     * @param mixed $value
      * @return string
      */
     public function toJson($value)
@@ -1877,8 +1877,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      * @internal The output of the upgraded plugins is useless, because they are
      * upgraded.
      *
-     * @param unknown $hookName
-     * @param unknown $args
+     * @param string $hookName
+     * @param array $args
      */
     protected function _upgradeGetOutputHook($hookName, $args)
     {
@@ -2046,8 +2046,8 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     /**
      * Helper to fix a bug in Exhibit Builder.
      *
-     * @param unknown $optionName
-     * @param unknown $themeName
+     * @param string $optionName
+     * @param string $themeName
      */
     protected function _getThemeOption($optionName, $theme = null)
     {
