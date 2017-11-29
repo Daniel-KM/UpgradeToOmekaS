@@ -356,7 +356,8 @@ class UpgradeToOmekaS_Helper_Target
             unset($rows);
         }
 
-        // Prepare the insert statements 
+        // Prepare the insert statements.
+        $sql = '';
         foreach ($rowsByTable as $table => $rows) {
             $sql .= sprintf('INSERT INTO `%s` (`%s`) VALUES ', $table, implode('`, `', $columns[$table])) . PHP_EOL;
             $sql .= '(' . implode('),' . PHP_EOL . '(', $rows) . ');' . PHP_EOL;

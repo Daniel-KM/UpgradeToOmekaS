@@ -562,7 +562,7 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
                 $toInsert['block_id'] = $blockId;
                 $toInsert['item_id'] = $record->item_id;
                 $toInsert['media_id'] = $mediaId;
-                $toInsert['caption'] = $record->caption;
+                $toInsert['caption'] = (string) $record->caption;
                 $toInsert['position'] = $record->order;
                 $toInserts['site_block_attachment'][] = $target->cleanQuote($toInsert);
             }
