@@ -31,17 +31,17 @@ class UpgradeToOmekaS_Processor_ArchiveRepertory extends UpgradeToOmekaS_Process
 
         $mapOptions = array(
             // Collections options.
-            'archive_repertory_collection_folder' => 'archive_repertory_item_set_folder',
-            'archive_repertory_collection_prefix' => 'archive_repertory_item_set_prefix',
+            'archive_repertory_collection_folder' => 'archiverepertory_item_set_folder',
+            'archive_repertory_collection_prefix' => 'archiverepertory_item_set_prefix',
             'archive_repertory_collection_names' => '',
-            'archive_repertory_collection_convert' => 'archive_repertory_item_set_prefix',
+            'archive_repertory_collection_convert' => 'archiverepertory_item_set_prefix',
             // Items options.
-            'archive_repertory_item_folder' => 'archive_repertory_item_folder',
-            'archive_repertory_item_prefix' => 'archive_repertory_item_prefix',
-            'archive_repertory_item_convert' => 'archive_repertory_item_convert',
+            'archive_repertory_item_folder' => 'archiverepertory_item_folder',
+            'archive_repertory_item_prefix' => 'archiverepertory_item_prefix',
+            'archive_repertory_item_convert' => 'archiverepertory_item_convert',
             // Files options.
             'archive_repertory_file_keep_original_name' => '',
-            'archive_repertory_file_convert' => 'archive_repertory_media_convert',
+            'archive_repertory_file_convert' => 'archiverepertory_media_convert',
             'archive_repertory_file_base_original_name' => '',
             // Other derivative folders.
             'archive_repertory_derivative_folders' => '',
@@ -86,32 +86,6 @@ class UpgradeToOmekaS_Processor_ArchiveRepertory extends UpgradeToOmekaS_Process
                     }
                     break;
             }
-            $target->saveSetting($setting, $value);
-        }
-
-        $ingesters = array(
-            'upload' => array(),
-            'url' => array(),
-        );
-        if (plugin_is_active('OpenLayersZoom')
-                || plugin_is_active('OpenSeadragon')
-                || plugin_is_active('UniversalViewer')
-                || plugin_is_active('Zoomit')
-            ) {
-            $ingesters['tile'] = array(
-                'path' => 'tile',
-                'extension' => array(
-                    '.dzi',
-                    '.js',
-                    '_files',
-                    '_zdata',
-                ),
-            );
-        }
-        $mapOptions = array(
-            'archive_repertory_ingesters' => $ingesters,
-        );
-        foreach ($mapOptions as $setting => $value) {
             $target->saveSetting($setting, $value);
         }
 
