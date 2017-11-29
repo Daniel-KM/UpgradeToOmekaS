@@ -35,7 +35,7 @@
     <a class="medium blue button" href="<?php echo url('/upgrade-to-omeka-s/index/reset'); ?>"><?php echo __('Reset Status'); ?></a>
     <?php endif; ?>
 
-    <?php if ($isReset): ?>
+    <?php if ($isReset && !empty($previousParams['database'])): ?>
     <p><?php echo __('You can safely remove automatically the created tables (%s), the Omeka S folder (%s) and the copied files of the previous process, if wished.',
         $previousParams['database']['type'] == 'share'
             ? __('shared database')
