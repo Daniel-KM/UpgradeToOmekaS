@@ -10,7 +10,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
 
     public $pluginName = 'SimplePages';
     public $minVersion = '3.0.8';
-    public $maxVersion = '3.0.8';
+    public $maxVersion = null;
 
     public $module = array(
         'type' => 'integrated',
