@@ -6,32 +6,33 @@ upgrade automatically your installation from [Omeka 2] to [Omeka S]. It upgrades
 records, files, config, themes and some plugins.
 
 [Omeka S] is a remastered, up-to-date and improved release of Omeka, built for
-the semantic web, multi-sites and multilingual. So this plugin allows to use new
-features without the mess-up of a manual upgrade process. The original install
-of Omeka Classic is kept and not modified: it remains available. If the upgrade
-is fine for your digital library or your exhibit, simply modify the paths on
-your server.
+the semantic web, multi-sites and multilingual. So, this plugin allows to use
+this new features without the mess-up of a manual upgrade process. The main
+point is to keep original metadata unchanged, but improved to take care of new
+features of Omeka S.
+
+The original install of Omeka Classic is kept and not modified: it remains
+available. If the upgrade is fine for your digital library or your exhibit,
+generally with a new standard theme, simply modify the paths on your server.
+
+A compatibility layer is available for themes with the module [Upgrade from Omeka Classic],
+that is installed automatically too. The themes are restructured and upgraded,
+but custom functions may fail. In that case, use new [themes], or use the
+template engine [Twig] via the [module Twig], or contact me. Anyway, in all
+cases, the theme should be reviewed, because there will be visual glitches and
+fixes in most of the cases. This compatibility layer is needed only when an
+upgraded theme is used.
 
 Of course, if a plugin doesn’t exist under Omeka S, it won’t be upgraded.
 Furthermore, a processor should be written to upgrade data. There are already
 such a  processor for the most common plugins, that are integrated or have an
 equivalent module: [Dublin Core Extended], [Embed Codes], [Exhibit Builder],
-[Geolocation],  [More User Roles],  [Simple Pages], [Social Bookmarking], [Universal Viewer].
-If enabled, the modules will be automatically installed. For other plugins,
-contact me.
+[Geolocation],  [More User Roles],  [Simple Pages], [Social Bookmarking], [Universal Viewer],
+[Guest User], etc. If enabled, the modules will be automatically installed. For
+other plugins, contact me.
 
 See the full list of [plugins for Omeka 2 and matching modules for Omeka S], and
 all [modules] and [themes] that are already available for Omeka S.
-
-A compatibility layer is available for themes with the module [Upgrade from Omeka Classic],
-that is installed automatically too. The themes are restructured and upgraded,
-but custom functions may fail. In that case, use new [themes], use the template
-engine [Twig] via the [module Twig], or contact me. Anyway, in all cases, the
-theme should be reviewed, because there may be some visual glitches.
-
-This compatibility layer is needed only when an upgraded theme is used.
-
-Omeka S is still in a beta phase, but it can be already used for common sites.
 
 
 Benefits
@@ -42,9 +43,10 @@ Benefits
 One important benefit against the standard upgrade process or via [Omeka 2 Importer]
 is that the id of items are kept, so the common urls publicly used on the web
 are not lost. The id of collections and files are lost. This is related to the
-fact that Omeka Semantic uses a single id for all resources. Users are upgraded
-too, but they have to ask for a new password on the login page. The pages and
-exhibits keep their slugs.
+fact that Omeka Semantic uses a single id for all resources.
+
+Users are upgraded too, but they have to ask for a new password on the login
+page. The pages and exhibits keep their slugs.
 
 Anyway, it’s always recommended you set your own single and permanent
 identifiers that don’t depend on an internal position in a database. The term
@@ -53,9 +55,9 @@ single identifiers. There are many possibilities: named number like in a library
 or a museum, isbn for books, or random id like with ark, noid, doi, etc. In
 Omeka 2, they can be displayed in the public url with the plugin [Clean Url].
 
-Furthermore, the compatibility layer adds a route for old urls `items/show/#id`
+Furthermore, the compatibility layer adds aliases for old urls `items/show/#id`
 to the new format `item/#id` and redirects them to the items of the specified
-site of Omeka S.
+site of Omeka S, and the same for collections, files and homepage.
 
 * Automatic process and speed
 
@@ -87,15 +89,12 @@ backup your database AND your files before the process and check them before the
 process.
 
 The plugin has been tested from v2.3.1, but it probably works with Omeka v2.2.2.
-Just change the setting in plugin.ini to try it.
+Just change the setting in plugin.ini to try it. Nevertheless, it’s always
+recommended to upgrade the core, all the plugins and the theme to the last
+version.
 
 You may need to upgrade your plugins to the current version. Only enabled and
-up-to-date plugins are processed.
-
-There will be no update of this plugin for a version of Omeka S after the first
-one, because Omeka S manages its own upgrades and migrations processes. But
-there will be update for new versions of Omeka Classic and integration of
-processors for plugins.
+managed plugins are processed.
 
 
 Usage
@@ -114,6 +113,10 @@ To add a new upgrader, simply add it in the directory `/libraries/UpgradeToOmeka
 or use the filter `upgrade_omekas`. You can look in the upgrader `Escher.php`
 for a basic upgrader.
 
+The last update of this plugin install the last stable version of Omeka S and
+try to install the last version of the modules, when possible, but you may have
+to update the modules inside Omeka S.
+
 
 Update of the list of plugins, modules and themes
 -------------------------------------------------
@@ -128,6 +131,9 @@ in the matching csv file in the directory `docs/_data/` and run the php script
 
 You may need to add a file with a token from your github account in `docs/_scripts/token_github.txt`
 to be allowed to fetch more than 50 results.
+
+Anyway, all the plugins, modules and themes on Github are automatically added if
+they are well referenced on Github (via a readme or via a topic).
 
 
 Internal Upgrade Process
@@ -241,6 +247,7 @@ Copyright
 [Simple Pages]: http://omeka.org/add-ons/plugins/simple-pages/
 [Social Bookmarking]: http://omeka.org/add-ons/plugins/social-bookmarking/
 [Universal Viewer]: https://github.com/Daniel-KM/UniversalViewer4Omeka
+[Guest User]: https://github.com/omeka/plugin-GuestUser
 [plugins for Omeka 2 and matching modules for Omeka S]: https://daniel-km.github.io/UpgradeToOmekaS
 [modules]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_modules.html
 [themes]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_themes.html
