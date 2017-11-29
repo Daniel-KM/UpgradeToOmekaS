@@ -433,6 +433,15 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'filters' => array('StringTrim'),
         ));
 
+        $this->addElement('checkbox', 'add_old_routes', array(
+            'label' => __('Add aliases for old record urls and the home page'),
+            'description' => __('Set aliases for items/show/#id to item/#id, and the same for collections, files and home page.')
+                . ' ' . __('This option can be set in the config page of UpgradeFromOmekaClassic too.')
+                . ' ' . __('For more advanced aliases, install the module Clean Url.'),
+            'required' => false,
+            'value' => false,
+        ));
+
         $this->addElement('checkbox', 'skip_error_metadata', array(
             'label' => __('Skip error in metadata'),
             'description' => __('With an old install or a badly managed server, the database may contain element texts that doesn’t belong to any records anymore.')
@@ -609,6 +618,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             array(
                 'install_folksonomy',
                 'first_user_password',
+                'add_old_routes',
                 'skip_error_metadata',
                 'skip_hash_files',
             ),

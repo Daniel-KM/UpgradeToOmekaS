@@ -34,19 +34,18 @@ class UpgradeToOmekaS_Processor_UpgradeToOmekaS extends UpgradeToOmekaS_Processo
             . DIRECTORY_SEPARATOR . 'config'
             . DIRECTORY_SEPARATOR . 'module.config.php';
 
-        $siteSlug = $this->getSiteSlug();
-
-        $input = file_get_contents($source);
-        $output = preg_replace('~' . preg_quote('$siteSlug = \'\';') . '~', "\$siteSlug = '$siteSlug';", $input);
-        $result = file_put_contents($destination, $output);
+        $target = $this->getTarget();
+        if ($this->getParam('add_old_routes')) {
+            $target->saveSetting('upgrade_add_old_routes', true);
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('Aliases for old routes were added via the module UpgradeFromOmekaClassic.'),
+                Zend_Log::INFO);
+        } else {
+            $target->saveSetting('upgrade_add_old_routes', false);
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('No aliases were added for old routes.'),
+                Zend_Log::INFO);
+        }
 
         $this->_log('[' . __FUNCTION__ . ']: ' . __('The compatibility layer translates only standard functions: check your theme if there are custom ones.'),
             Zend_Log::INFO);
-
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('It adds two aliases for the home page and for the items, so main links from the web are maintained.'),
-            Zend_Log::INFO);
-
-        $this->_log('[' . __FUNCTION__ . ']: ' . __('Update the site slug in "modules/UpgradeFromOmekaClassic/config/module.config.php" if you change the main site slug.'),
-            Zend_Log::NOTICE);
     }
 }
