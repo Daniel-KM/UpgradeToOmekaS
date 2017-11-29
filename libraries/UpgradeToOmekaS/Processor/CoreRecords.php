@@ -638,6 +638,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         $mapping = $this->getProcessor('Core/Elements')
             ->getMappingElementsToPropertiesIds();
 
+        $totalRecordsSkipped = 0;
         $totalRecordsUnmapped = 0;
 
         $loops = floor(($totalRecords - 1) / $this->maxChunk) + 1;
@@ -658,9 +659,16 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                 else {
                     $mappedIds = $this->fetchMappedIds($etRecordType);
                     if (!isset($mappedIds[$etRecordId])) {
-                        throw new UpgradeToOmekaS_Exception(
-                            __('The %s #%d can’t be found in Omeka S.',
-                                $etRecordType, $etRecordId));
+                        $message = __('The %s #%d in Omeka Classic can’t be found in Omeka S (seen in element text #%d).',
+                            $etRecordType, $etRecordId, $record->id);
+                        $skipErrorMetadata = $this->getParam('skip_error_metadata');
+                        if ($skipErrorMetadata) {
+                            $this->_log($message, Zend_Log::WARN);
+                            ++$totalRecordsSkipped;
+                            continue;
+                        } else {
+                            throw new UpgradeToOmekaS_Exception($message);
+                        }
                     }
                     $resourceId = $mappedIds[$etRecordId];
                 }
@@ -699,16 +707,31 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
         $result = $targetDb->fetchAll($sql);
 
         if ($totalRecordsMapped > $totalTarget) {
-            throw new UpgradeToOmekaS_Exception(
-                __('Only %d/%d %s have been upgraded into "%s".',
-                    $totalTarget, $totalRecordsMapped, $recordTypePlural, $mappedType));
+            $message = __('Only %d/%d %s have been upgraded into "%s".',
+                $totalTarget, $totalRecordsMapped, $recordTypePlural, $mappedType);
+            $skipErrorMetadata = $this->getParam('skip_error_metadata');
+            if ($skipErrorMetadata) {
+                $this->_log($message, Zend_Log::WARN);
+            } else {
+                throw new UpgradeToOmekaS_Exception($message);
+            }
         }
+
         // May be possible with plugins?
         if ($totalRecords < $totalTarget) {
             throw new UpgradeToOmekaS_Exception(
                 __('An error occurred: there are %d upgraded "%s" in Omeka S, but only %d %s in Omeka C.',
                     $totalTarget, $mappedType, $totalRecordsMapped, $recordType)
                 . ' ' . __('Check the processors of the plugins.'));
+        }
+
+        if ($totalRecordsSkipped) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('%d element texts don’t belong to an existing record and were skipped.',
+                $totalRecordsSkipped), Zend_Log::WARN);
+        }
+        else {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('All element texts belong to an existing record.'),
+                Zend_Log::INFO);
         }
 
         if ($totalRecordsUnmapped) {

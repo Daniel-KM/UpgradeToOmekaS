@@ -433,6 +433,16 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             'filters' => array('StringTrim'),
         ));
 
+        $this->addElement('checkbox', 'skip_error_metadata', array(
+            'label' => __('Skip error in metadata'),
+            'description' => __('With an old install or a badly managed server, the database may contain element texts that doesn’t belong to any records anymore.')
+                . ' ' . __('These metadata cannot be upgraded, so the process will stop, unless you check this box.')
+                . ' ' . __('This option may be used in plugins too.')
+                . ' ' . __('In all cases, the ids of the bad data are logged.'),
+            'required' => false,
+            'value' => false,
+        ));
+
         $this->addElement('checkbox', 'skip_hash_files', array(
             'label' => __('Skip Hash Files'),
             'description' => __('To check integrity of files, the hashing algorithm is md5 in Omeka Classic and sha256 in Omeka S.')
@@ -599,6 +609,7 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
             array(
                 'install_folksonomy',
                 'first_user_password',
+                'skip_error_metadata',
                 'skip_hash_files',
             ),
             'various',
