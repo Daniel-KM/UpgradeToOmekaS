@@ -157,9 +157,9 @@ license = "CeCILL v2.1"
 link = "https://github.com/Daniel-KM/UpgradeToOmekaS"
 support_link = "https://github.com/Daniel-KM/UpgradeToOmekaS/issues"
 optional_plugins = ""
-version = "2.2"
-omeka_minimum_version = "2.2.2"
-omeka_target_version = "2.5"
+version = "2.3"
+omeka_minimum_version = "2.3.1"
+omeka_target_version = "2.6.9"
 tags = "archive, upgrade"
 PLUGIN;
         $result = file_put_contents($path, $content);

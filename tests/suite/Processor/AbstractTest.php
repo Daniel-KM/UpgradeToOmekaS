@@ -48,7 +48,7 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
         $processor->minVersion = '2.2.2';
         $processor->maxVersion = '2.1.2';
         $result = $processor->precheckProcessorPlugin();
-        $this->assertEquals('The processor for Stub requires a version between 2.2.2 and 2.1.2 (current is 2.2).', $result);
+        $this->assertEquals('The processor for Stub requires a version between 2.2.2 and 2.1.2 (current is 2.3).', $result);
         $result = $processor->precheckConfig();
         $this->assertEquals(1, count($result));
         $this->assertEquals('The plugin is not installed or not active.', $result[0]);
@@ -109,7 +109,7 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
     {
         $processor = $this->getMockForAbstractClass('UpgradeToOmekaS_Processor_Abstract');
         $result = $processor->getMerged('mapping_roles');
-        $this->assertEquals(9, count($result));
+        $this->assertEquals(12, count($result));
         $this->assertEquals('site_admin', $result['admin']);
     }
 
@@ -117,7 +117,7 @@ class UpgradeToOmekaS_Processor_AbstractTest extends UpgradeToOmekaS_Test_AppTes
     {
         $processor = $this->getMockForAbstractClass('UpgradeToOmekaS_Processor_Abstract');
         $result = $processor->getMergedList('tables');
-        $this->assertEquals(27, count($result));
+        $this->assertEquals(30, count($result));
     }
 
     public function testGetMergedHooks()

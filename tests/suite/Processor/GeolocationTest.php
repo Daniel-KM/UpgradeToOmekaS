@@ -41,9 +41,6 @@ class UpgradeToOmekaS_Processor_GeolocationTest extends UpgradeToOmekaS_Test_App
 
         $result = $this->invokeMethod($processor, '_prepareModule');
 
-        // The item is not imported (the process was not launched), so this is a
-        // false location, so it is not imported.
-        $result = $this->invokeMethod($processor, '_upgradeData');
         $result = $target->totalRows('mapping_marker');
         $this->assertEmpty(0, $result);
 
