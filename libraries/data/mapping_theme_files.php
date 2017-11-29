@@ -72,8 +72,8 @@ return array(
     'view/omeka/site/item/show.dcmes-xml.phtml'         => '_unused/item/show.dcmes-xml.phtml',
     // A simple helper for lists.
     'view/omeka/site/item/single.phtml'                 => 'view/omeka/site/item/single.phtml',
-    // No tags in Omeka, but kept for possible evolution or module.
-    'view/omeka/site/item/tags.phtml'                   => '_unused/record/tags.phtml',
+    // No tags in Omeka, but available via module Folksonomy.
+    'view/omeka/site/item/tags.phtml'                   => 'view/omeka/site/tag/browse.phtml',
 
     'view/omeka/site/item-set/browse.phtml'             => 'view/omeka/site/item-set/browse.phtml',
     'view/omeka/site/item-set/show.omeka-json.phtml'    => '_unused/item-set/show.omeka-json.phtml',

@@ -31,10 +31,10 @@ CREATE TABLE `tag` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 CREATE TABLE `tagging` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` varchar(190) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tag_id` int(11) DEFAULT NULL,
   `resource_id` int(11) DEFAULT NULL,
   `owner_id` int(11) DEFAULT NULL,
+  `status` varchar(190) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -51,10 +51,14 @@ CREATE TABLE `tagging` (
             'settings' => array(
                 'folksonomy_public_allow_tag' => true,
                 'folksonomy_public_require_moderation' => false,
+                'folksonomy_public_notification' => true,
                 'folksonomy_max_length_tag' => 190,
                 'folksonomy_max_length_total' => 1000,
                 'folksonomy_message' => '+',
                 'folksonomy_legal_text' => '',
+                'folksonomy_append_item_set_show' => true,
+                'folksonomy_append_item_show' => true,
+                'folksonomy_append_media_show' => true,
             ),
         ),
     );
@@ -62,6 +66,11 @@ CREATE TABLE `tagging` (
     public $tables = array(
         'tagging',
         'tag',
+    );
+
+    public $mapping_models = array(
+        'tag' => 'tag',
+        'tagging' => 'tagging',
     );
 
     public $processMethods = array(
@@ -242,10 +251,10 @@ CREATE TABLE `tagging` (
 
                 $toInsert = array();
                 $toInsert['id'] = $record->id;
-                $toInsert['status'] = $status;
                 $toInsert['tag_id'] = $record->tag_id;
                 $toInsert['resource_id'] = $record->record_id;
                 $toInsert['owner_id'] = $ownerId;
+                $toInsert['status'] = $status;
                 $toInsert['created'] = $created;
                 $toInsert['modified'] = $modified;
                 $toInserts['tagging'][] = $target->cleanQuote($toInsert);
@@ -368,10 +377,10 @@ CREATE TABLE `tagging` (
 
                 $toInsert = array();
                 $toInsert['id'] = null;
-                $toInsert['status'] = $record->status;
                 $toInsert['tag_id'] = $tagId;
                 $toInsert['resource_id'] = $resourceId;
                 $toInsert['owner_id'] = $ownerId;
+                $toInsert['status'] = $record->status;
                 $toInsert['created'] = $record->added;
                 $toInsert['modified'] = null;
                 $toInserts['tagging'][] = $target->cleanQuote($toInsert);
@@ -397,11 +406,12 @@ CREATE TABLE `tagging` (
         }
 
         switch ($path) {
-            case '/items/tags':
+            case strpos($path, '/items/tags') === 0:
                 return array(
-                    'type' => 'browseTags',
+                    'type' => 'url',
                     'data' => array(
                         'label' => $page['label'],
+                        'url' => $site['omekaSSitePath'] . '/tags',
                 ));
         }
     }
