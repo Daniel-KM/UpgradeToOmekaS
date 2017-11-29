@@ -685,6 +685,10 @@ abstract class UpgradeToOmekaS_Processor_Abstract
                 if (!isset($processor->$name) || empty($processor->$name)) {
                     continue;
                 }
+                // Don't merge two times the same thing from the core.
+                if ($processor->isCore() && $processor->pluginName !== 'Core/Server') {
+                    continue;
+                }
                 $this->_merged[$name] = $processor->$name + $this->_merged[$name];
             }
         }
