@@ -18,10 +18,9 @@ return array(
     'reviewer'          => 'reviewer',
     'author'            => 'author',
     'researcher'        => 'researcher',
-    // TODO Currently not managed automatically.
     // Plugin Guest User.
-    // 'guest'                     => 'guest',
-    // Plugin Contribution.
-    // 'contribution-anonymous'    => 'anonymous',
-    // 'contribution_anonymous'    => 'anonymous',
+    'guest'             => 'guest',
+    // Plugin Contribution (Collecting).
+    'contribution-anonymous'    => 'anonymous',
+    'contribution_anonymous'    => 'anonymous',
 );

@@ -199,6 +199,9 @@ class UpgradeToOmekaSPlugin extends Omeka_Plugin_AbstractPlugin
         // Replacement module.
         $baseProcessors['Tagging'] = 'UpgradeToOmekaS_Processor_Tagging';
 
+        // Specific module, used in main form.
+        $baseProcessors['GuestUser'] = 'UpgradeToOmekaS_Processor_GuestUser';
+
         // Other plugins are dynamically added.
         $dir = dirname(__FILE__)
             . DIRECTORY_SEPARATOR . 'libraries'

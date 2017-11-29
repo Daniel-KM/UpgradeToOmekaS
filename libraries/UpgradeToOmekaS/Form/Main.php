@@ -228,6 +228,12 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                 : ($usedRole['total_users'] == 1
                     ? __('%d user has this role.', $usedRole['total_users'])
                     :  __('%d users have this role.', $usedRole['total_users']));
+            if ($usedRole['role'] === 'guest' && $usedRole['total_users']) {
+                $description .= ' ' . __('The module "GuestUser" will be automatically installed.');
+                if (!plugin_is_active('GuestUser')) {
+                    $description .= ' ' . __('To upgrade params and new user tokens, the plugin "GuestUser" must be active in Omeka Classic.');
+                }
+            }
 
             $this->addElement('select', $roleName, array(
                 'label' => __($usedRole['role']),
@@ -529,7 +535,8 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
         if (count($usedRoles)) {
             $description = __('By default, Omeka S uses six roles from researcher (the lowest person) to the global administrator.')
                 . ' ' . __('The current user will be the global admin.')
-                . ' ' . __('The users with  role that is not mapped won’t be upgraded.')
+                . ' ' . __('The users with a role that is not mapped won’t be upgraded.')
+                . ' ' . __('The role "anonymous" is not used in Omeka S Core, but may be used to keep data temporarily.')
                 . '<br /><br /><button id="display-mapped-roles" class="green button" name="display-mapped-roles" type="button" value="show">' . __('Hide/show mapped roles') . '</button>';
         }
         $this->addDisplayGroup(

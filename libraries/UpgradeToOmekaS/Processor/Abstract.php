@@ -201,7 +201,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     /**
      * Short to the database of Omeka Classic.
      *
-     * @var object
+     * @var \Omeka_Db
      */
     protected $_db;
 
