@@ -300,7 +300,7 @@ return array(
 
     // These regex fix the skipped record.
     '~\bget_collection_for_item\(\)~'               => 'reset($item->itemSets()) /* TODO Manage multiple item sets. */ ',
-    '~\bget_collection_for_item\((.+)\)~'           => 'reset(\1->itemSets()) /* TODO Manage multiple item sets. */ ',
+    '~\bget_collection_for_item\((.+?)\)~'          => 'reset(\1->itemSets()) /* TODO Manage multiple item sets. */ ',
     '~\b(get_collection_for_item)\(~'               => '$this->upgrade()->\1 /* TODO Manage multiple item sets. */ (',
 
     '~\b(get_recent_collections)\(~'                => '$this->upgrade()->\1(',
@@ -550,8 +550,11 @@ return array(
     '~\b(link_to_items_rss)\(~'                     => '$this->upgrade()->\1(',
 
     // NOTE No item passed.
-    '~\b(link_to_next_item_show)\(~'                => '$this->upgrade()->\1(',
-    '~\b(link_to_previous_item_show)\(~'            => '$this->upgrade()->\1(',
+    '~\b(link_to_next_item_show)\s*\(~'             => '$this->upgrade()->\1(',
+    '~\b(link_to_previous_item_show)\s*\(~'         => '$this->upgrade()->\1(',
+
+    '~\b(bootstrap_browse_sort_links)\s*\(~'        => '$this->upgrade()->\1(',
+    '~\b(' . preg_quote('public_nav_items()->setUiClass') . ')\(~'  => '$this->upgrade()->public_nav_items([], 0, ',
 
     // These regex fix the skipped item in link_to_collection().
     '~\b(link_to_collection)\(~'                                                => '$this->upgrade()->\1(',
@@ -752,6 +755,7 @@ return array(
     '~\b(custom_show_item_metadata)\(\)~'               => '$this->upgrade()->fallback(\'\1\')',
     '~\b(rhythm_display_date_added)\(\)~'               => '$this->upgrade()->fallback(\'\1\')',
     '~\b(santaFe_flash)\(\)~'                           => '$this->messages()',
+    '~\b(custom_files_for_item)\(\)~'               => '$this->upgrade()->fallback(\'\1\')',
 
     '~if\s*' . preg_quote('($this->upgrade()->has_loop_records') . '.*?\(\'items\'\)\)\s*\:~'                       => '$items = $this->upgrade()->get_loop_records(\'items\', false); if ($items):',
     '~if\s*' . preg_quote('($this->upgrade()->has_loop_records') . '.*?\(\'(?:collections|item_sets)\'\)\)\s*\:~'   => '$itemSets = $this->upgrade()->get_loop_records(\'itemSets\', false); if ($itemSets):',
