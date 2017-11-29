@@ -189,7 +189,7 @@ abstract class UpgradeToOmekaS_Processor_Abstract
      *
      * @var integer
      */
-    public $maxChunk = 100;
+    public $maxChunk = 10;
 
     /**
      * The full dir where Omeka Semantic will be installed.
