@@ -17,10 +17,10 @@ class UpgradeToOmekaS_Processor_Geolocation extends UpgradeToOmekaS_Processor_Ab
 
     public $module = array(
         'name' => 'Mapping',
-        'version' => '1.0.0-beta3',
+        'version' => '1.0.0',
         'url' => 'https://github.com/omeka-s-modules/Mapping/releases/download/v%s/Mapping-%s.zip',
-        'size' => 233654,
-        'sha1' => '487f5c0a6931f81b8452804a582a873767a3f4db',
+        'size' => 247555,
+        'sha1' => '1d00930bcfc7fce2bfc1e99afca27c107b152860',
         'type' => 'equivalent',
         'partial' => true,
         'note' => 'Really free (no Google Map but Leaflet/OpenStreetMap), smarter, with multipoints and layers.',
