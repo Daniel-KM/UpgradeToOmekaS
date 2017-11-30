@@ -191,10 +191,14 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
 
     protected function _precheckRandomGenerator()
     {
-        try {
-            random_bytes(32);
-        } catch (Exception $e) {
-            $this->_prechecks[] = __('Omeka Semantic must be able to generate secured random numbers.');
+        if (function_exists('random_bytes')) {
+            try {
+                random_bytes(32);
+            } catch (\Exception $e) {
+                $this->_prechecks[] = __('Omeka S is unable to securely generate random numbers. Check your server and https://secure.php.net/manual/en/intro.csprng.php');
+            }
+        } else {
+            $this->_prechecks[] = __('Omeka S v1.0.1 is unable to securely generate random numbers. Install random compat (https://packagist.org/packages/paragonie/random_compat).');
         }
     }
 
