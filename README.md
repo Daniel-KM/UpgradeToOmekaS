@@ -250,6 +250,7 @@ Copyright
 [Guest User]: https://github.com/omeka/plugin-GuestUser
 [plugins for Omeka 2 and matching modules for Omeka S]: https://daniel-km.github.io/UpgradeToOmekaS
 [modules]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_modules.html
+[official themes]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_themes.html
 [themes]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_themes.html
 [available addons]: https://daniel-km.github.io/UpgradeToOmekaS
 [Twig]: http://twig.sensiolabs.org
