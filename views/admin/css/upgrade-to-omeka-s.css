@@ -21,6 +21,7 @@ p.explanation.note {
 .upgrade .check-error {
     color: red;
 }
+.upgrade .has-processor.upgradable,
 .upgrade .plugin-enabled.upgradable {
     color: green;
     font-weight: bold;
