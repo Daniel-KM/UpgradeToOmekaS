@@ -203,6 +203,10 @@ class UpgradeToOmekaS_IndexController extends Omeka_Controller_AbstractActionCon
             $confirm = $this->getParam('check_confirm_backup')
                 && $this->getParam('check_confirm_license');
             if (!$confirm) {
+                $message = __('First step checks are fine. New buttons appeared in the bottom of the form.');
+                $this->_helper->_flashMessenger($message, 'success');
+                $message = __('Don’t forget to set the password of the base, it may not be kept between the two steps.');
+                $this->_helper->_flashMessenger($message, 'error');
                 $message = __('Parameters are fine.') . ' ' . __('Confirm the upgrade below.');
                 $this->_helper->_flashMessenger($message, 'success');
                 return;
