@@ -458,10 +458,7 @@ $prepend = <<<'OUTPUT'
 // The item set metadata are displayed only when the variable is set. To use the
 // item-set/show template, load it as a partial and skip the current one.
 
-// TODO Avoid to repeat the query: get the result from the paginator.
-$query = $this->params()->fromQuery();
-unset($query['page']);
-$total_results = $this->api()->search('items', $query)->getTotalResults();
+$total_results = $this->pagination()->getPaginator()->getTotalCount();
 ?>
 
 <?php
@@ -562,10 +559,7 @@ $prepend = <<<'OUTPUT'
 // metadata of the item set can be displayed when it is set.
 // This template is used mainly for the result of the search on item sets.
 
-// TODO Avoid to repeat the query: get the result from the paginator.
-$query = $this->params()->fromQuery();
-unset($query['page']);
-$total_results = $this->api()->search('item_sets', $query)->getTotalResults();
+$total_results = $this->pagination()->getPaginator()->getTotalCount();
 ?>
 
 OUTPUT;
@@ -581,7 +575,7 @@ $upgrade['view/omeka/site/item-set/browse.phtml'] = array(
         '~\bwhile\s*' . preg_quote('($this->upgrade()->loop($itemSets)') . '\s*\)\s*(\{|\:)~'
             => 'foreach ($itemSets as $itemSet)\1 $this->upgrade()->set_current_record(\'itemSet\', $itemSet);',
         '~\bendwhile~' => 'endforeach',
-        '~\btotal_results\(\)~' => '$this->api()->search(\'item_sets\', $query)->getTotalResults()',
+        '~\btotal_results\(\)~' => '$this->pagination()->getPaginator()->getTotalCount();',
     ),
     'preg_replace_single' => array(
         '~(' . preg_quote('echo $this->pagination(') . ')~' => $replace . ' \1',
