@@ -83,7 +83,9 @@ class UpgradeToOmekaS_Job_Upgrade extends UpgradeToOmekaS_Job_Abstract
                     $processor->setAssetPaths();
                     $processor->setDatetime($datetime);
                     $result = $processor->precheckConfig();
-                    if (!empty($result)) {
+                    if (empty($result)) {
+                        $this->_log(__('Precheck "%s" succeeded.', $name), Zend_Log::DEBUG);
+                    } else {
                         $this->_processError(__('An error occurred during precheck of "%s".',
                             $processor->pluginName), $result);
                         return;
@@ -96,7 +98,9 @@ class UpgradeToOmekaS_Job_Upgrade extends UpgradeToOmekaS_Job_Abstract
             }
             // Process stopped externally.
             else {
-                $this->_log(__('The process has been stopped outside of the processor.'), Zend_Log::WARN);
+                $this->_log(__('The precheck process has been stopped outside of the processor (%s).', $name)
+                    . ' ' . __('Check the log of your server.'),
+                    Zend_Log::WARN);
                 return;
             }
         }
@@ -107,7 +111,9 @@ class UpgradeToOmekaS_Job_Upgrade extends UpgradeToOmekaS_Job_Abstract
             if ($this->_isProcessing()) {
                 try {
                     $result = $processor->checkConfig();
-                    if (!empty($result)) {
+                    if (empty($result)) {
+                        $this->_log(__('Check "%s" succeeded.', $name), Zend_Log::DEBUG);
+                    } else {
                         $this->_processError(__('An issue occurred during check of "%s".',
                             $processor->pluginName), $result);
                         return;
@@ -120,7 +126,9 @@ class UpgradeToOmekaS_Job_Upgrade extends UpgradeToOmekaS_Job_Abstract
             }
             // Process stopped externally.
             else {
-                $this->_log(__('The process has been stopped outside of the processor.'), Zend_Log::WARN);
+                $this->_log(__('The check process has been stopped outside of the processor (%s).', $name)
+                    . ' ' . __('Check the log of your server.'),
+                    Zend_Log::WARN);
                 return;
             }
         }
@@ -148,7 +156,9 @@ class UpgradeToOmekaS_Job_Upgrade extends UpgradeToOmekaS_Job_Abstract
             }
             // Process stopped externally.
             else {
-                $this->_log(__('The process has been stopped outside of the processor.'), Zend_Log::WARN);
+                $this->_log(__('The main process has been stopped outside of the processor (%s).', $name)
+                    . ' ' . __('Check the log of your server.'),
+                    Zend_Log::WARN);
                 return;
             }
         }
