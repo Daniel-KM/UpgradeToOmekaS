@@ -409,20 +409,31 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
 
         $totalTags = total_records('Tag');
         $tagging = plugin_is_active('Tagging');
-        $this->addElement('checkbox', 'install_folksonomy', array(
-            'label' => __('Tags To Folksonomy'),
-            'description' => __('Tags were removed in Omeka S in order to use only the Dublin Core Subject or another standard element.')
-                . ' ' . __('A module replaces this core feature: %sFolksonomy%s.',
-                    '<a href="https://github.com/Daniel-KM/Omeka-S-module-Folksonomy" target="_blank">', '</a>')
-                . ' ' . ($tagging
-                    ? __('The plugin "Tagging" is enabled, so the module will be automatically installed.')
-                    : __('It can be installed automatically.')
-                        . ($totalTags? ' ' . __('Without it, the %d tags will be lost.', $totalTags) : '')
-                ),
-            'required' => false,
-            'value' => (boolean) $totalTags,
-            'disabled' => $tagging,
-        ));
+        if ($tagging) {
+            $this->addElement('note', 'note_install_folksonomy', array(
+                'label' => __('Tags To Folksonomy'),
+                'description' => __('Tags were removed in Omeka S in order to use only the Dublin Core Subject or another standard element.')
+                    . ' ' . __('A module replaces this core feature: %sFolksonomy%s.',
+                        '<a href="https://github.com/Daniel-KM/Omeka-S-module-Folksonomy" target="_blank">', '</a>')
+                    . ' ' . __('The plugin "Tagging" is enabled, so the module will be automatically installed.')
+            ));
+            $this->addElement('hidden', 'install_folksonomy', array(
+                'value' => true,
+            ));
+        }
+        // Let the user choose.
+        else {
+            $this->addElement('checkbox', 'install_folksonomy', array(
+                'label' => __('Tags To Folksonomy'),
+                'description' => __('Tags were removed in Omeka S in order to use only the Dublin Core Subject or another standard element.')
+                    . ' ' . __('A module replaces this core feature: %sFolksonomy%s.',
+                        '<a href="https://github.com/Daniel-KM/Omeka-S-module-Folksonomy" target="_blank">', '</a>')
+                    . ' ' . __('It can be installed automatically.')
+                    . ($totalTags? ' ' . __('Without it, the %d tags will be lost.', $totalTags) : ''),
+                'required' => false,
+                'value' => ((boolean) $totalTags),
+            ));
+        }
 
         $this->addElement('text', 'first_user_password', array(
             'label' => __('First User Password'),
@@ -614,14 +625,19 @@ class UpgradeToOmekaS_Form_Main extends Omeka_Form
                     : __('All plugins are upgradable.'),
         ));
 
+        $elementVarious = array();
+        if ($tagging) {
+            $elementVarious[-1] = 'note_install_folksonomy';
+        }
+        $elementVarious += array(
+            'install_folksonomy',
+            'first_user_password',
+            'add_old_routes',
+            'skip_error_metadata',
+            'skip_hash_files',
+        );
         $this->addDisplayGroup(
-            array(
-                'install_folksonomy',
-                'first_user_password',
-                'add_old_routes',
-                'skip_error_metadata',
-                'skip_hash_files',
-            ),
+            $elementVarious,
             'various',
             array(
                 'legend' => __('Various'),
