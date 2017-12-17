@@ -429,7 +429,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                 $toInsert['resource_template_id'] = $defaultResourceTemplateId;
                 $toInsert['is_public'] = $isPublic;
                 $toInsert['created'] = $record->added;
-                $toInsert['modified'] = $record->modified;
+                $toInsert['modified'] = $this->_cleanSqlTimestamp($record->modified);
                 $toInsert['resource_type'] = $this->_mappingRecordClasses[$recordType];
                 $toInserts['resource'][] = $target->cleanQuote($toInsert);
 

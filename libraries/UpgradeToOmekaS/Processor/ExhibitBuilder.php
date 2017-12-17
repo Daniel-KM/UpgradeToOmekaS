@@ -9,7 +9,7 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
 {
 
     public $pluginName = 'ExhibitBuilder';
-    public $minVersion = '3.3.3';
+    public $minVersion = '3.1';
     public $maxVersion = '3.3.3';
 
     public $module = array(
@@ -199,7 +199,7 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
                 $toInsert['navigation'] = $navigation;
                 $toInsert['item_pool'] = json_encode(array());
                 $toInsert['created'] = $record->added;
-                $toInsert['modified'] = $record->modified;
+                $toInsert['modified'] = $this->_cleanSqlTimestamp($record->modified);
                 $toInsert['is_public'] = $record->public;
                 $toInserts['site'][] = $target->cleanQuote($toInsert);
             }
@@ -291,7 +291,7 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
                 $toInsert['slug'] = $slug;
                 $toInsert['title'] = substr($record->title, 0, 190);
                 $toInsert['created'] = $record->added;
-                $toInsert['modified'] = $record->modified;
+                $toInsert['modified'] = $this->_cleanSqlTimestamp($record->modified);
                 $toInserts['site_page'][] = $target->cleanQuote($toInsert);
 
                 $pageId = 'LAST_INSERT_ID() + ' . $baseId;

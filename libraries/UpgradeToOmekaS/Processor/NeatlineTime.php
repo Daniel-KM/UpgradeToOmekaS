@@ -144,7 +144,7 @@ class UpgradeToOmekaS_Processor_NeatlineTime extends UpgradeToOmekaS_Processor_A
                 $toInsert['slug'] = $slug;
                 $toInsert['title'] = substr($record->title, 0, 190);
                 $toInsert['created'] = $record->added;
-                $toInsert['modified'] = $record->modified;
+                $toInsert['modified'] = $this->_cleanSqlTimestamp($record->modified);
                 $toInserts['site_page'][] = $target->cleanQuote($toInsert);
 
                 $id = 'LAST_INSERT_ID() + ' . $baseId;

@@ -1650,6 +1650,17 @@ abstract class UpgradeToOmekaS_Processor_Abstract
     }
 
     /**
+     * Replace the empty timestamp "0000-00-00" by null (for modified).
+     *
+     * @param string $timestamp
+     * @return NULL|string
+     */
+    protected function _cleanSqlTimestamp($timestamp)
+    {
+        return $timestamp === '0000-00-00 00:00:00' ? null : $timestamp;
+    }
+
+    /**
      * Helper to list the ids of a record type or any column with unique values.
      *
      * @param string $recordType

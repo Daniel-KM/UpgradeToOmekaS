@@ -80,7 +80,7 @@ class UpgradeToOmekaS_Processor_SimplePages extends UpgradeToOmekaS_Processor_Ab
                 $toInsert['slug'] = $slug;
                 $toInsert['title'] = substr($record->title, 0, 190);
                 $toInsert['created'] = $record->inserted;
-                $toInsert['modified'] = $record->updated;
+                $toInsert['modified'] = $this->_cleanSqlTimestamp($record->updated);
                 $toInserts['site_page'][] = $target->cleanQuote($toInsert);
 
                 if ($previousRecordsExistsExceptHomepage) {
