@@ -206,7 +206,16 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
             ? ';port     = '. PHP_EOL
             : 'port     = "' . $port . '"'. PHP_EOL;
         $databaseConfig .= ';unix_socket = "' . '' . '"'. PHP_EOL;
-        $databaseConfig .= ';log_path = "' . '' . '"'. PHP_EOL;
+
+        // Get the specific option "log.sql" from the config to move it here.
+        $value = $this-s_getIniLogSql();
+        if ($value) {
+            $databaseConfig .= "log_path = 'logs/sql.log'" . PHP_EOL;
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The config option "log.sql" has moved into database.ini.'),
+                Zend_Log::INFO);
+        } else {
+            $databaseConfig .= ";log_path = 'logs/sql.log'" . PHP_EOL;
+        }
 
         $databaseIni = $this->getFullPath('config/database.ini');
         $result = file_put_contents($databaseIni, $databaseConfig);
@@ -371,10 +380,16 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
             Zend_Log::INFO);
     }
 
+    protected function _getIniLogSql()
+    {
+        $config = Zend_Registry::get('bootstrap')->config;
+        $value = isset($config->log->sql) ? $config->log->sql : null;
+        return (string) $value;
+    }
+
     protected function _getIniLocale()
     {
         $config = Zend_Registry::get('bootstrap')->config;
-        $targetConfig = $this->_omekaSLocalConfig;
         $value = isset($config->locale->name) ? $config->locale->name : null;
         return (string) $value;
     }
@@ -431,18 +446,13 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
             $targetConfig['logger']['log'] = (boolean) $value;
         }
         // log.priority = Zend_Log::WARN
-        // The priority is kept to NOTICE, except if has been modified.
+        // The priority is kept to NOTICE, except if it has been modified.
         $value = isset($config->log->priority) ? $config->log->priority : null;
         if ($value && $value != 'Zend_Log::WARN') {
             $targetConfig['logger']['priority'] = '\Zend\Log\Logger::' . substr($value, 10);
         }
         // log.sql = false
-        // This value is not used in Omeka S.
-        $value = isset($config->log->sql) ? $config->log->sql : null;
-        if ($value) {
-            $this->_log('[' . __FUNCTION__ . ']: ' . __('The processor doesn’t convert the parameter "%s" currently.',
-                'log.sql'), Zend_Log::WARN);
-        }
+        // Now via the option "log_path" in database.ini.
 
         // Sessions.
         // TODO Manage the sessions config, but rarely modified.
