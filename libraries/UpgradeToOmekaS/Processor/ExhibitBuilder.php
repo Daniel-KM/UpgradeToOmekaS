@@ -179,7 +179,7 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
             foreach ($records as $record) {
                 ++$this->_progressCurrent;
                 $ownerId = isset($targetUserIds[$record->owner_id])
-                    ? $record->owner_id
+                    ? $targetUserIds[$record->owner_id]
                     : null;
                 $slug = substr($record->slug, 0, 190);
                 if ($slug == $mainSiteSlug) {

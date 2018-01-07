@@ -392,7 +392,7 @@ class UpgradeToOmekaS_Processor_CoreRecords extends UpgradeToOmekaS_Processor_Ab
                     case 'Item':
                         $id = $record->id;
                         $ownerId = isset($targetUserIds[$record->owner_id])
-                            ? $record->owner_id
+                            ? $targetUserIds[$record->owner_id]
                             : null;
                         if (empty($mappingItemTypes[$record->item_type_id])) {
                             $resourceClassId = null;

@@ -347,10 +347,10 @@ CREATE TABLE `tagging` (
 
                 // The removed records should have been removed by the plugin.
                 $resourceId = isset($targetResourceIds[$record->record_id])
-                    ? $record->record_id
+                    ? $targetResourceIds[$record->record_id]
                     : null;
                 $ownerId = isset($targetUserIds[$record->user_id])
-                    ? $record->user_id
+                    ? $targetUserIds[$record->user_id]
                     : null;
 
                 $name = isset($matchingTags[$record->name])
