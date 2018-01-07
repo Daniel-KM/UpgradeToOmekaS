@@ -56,6 +56,8 @@ CREATE TABLE `tagging` (
                 'folksonomy_max_length_total' => 1000,
                 'folksonomy_message' => '+',
                 'folksonomy_legal_text' => '',
+            ),
+            'site_settings' => array(
                 'folksonomy_append_item_set_show' => true,
                 'folksonomy_append_item_show' => true,
                 'folksonomy_append_media_show' => true,
