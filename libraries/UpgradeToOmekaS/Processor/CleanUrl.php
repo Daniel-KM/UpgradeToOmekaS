@@ -47,7 +47,7 @@ class UpgradeToOmekaS_Processor_CleanUrl extends UpgradeToOmekaS_Processor_Abstr
             'clean_url_file_default' => 'cleanurl_media_default',
             'clean_url_file_alloweds' => 'cleanurl_media_allowed',
             'clean_url_file_generic' => 'cleanurl_media_generic',
-            'clean_url_use_admin' => null,
+            'clean_url_use_admin' => 'cleanurl_use_admin',
             'clean_url_display_admin_browse_identifier' => 'cleanurl_display_admin_show_identifier',
             'clean_url_route_plugins' => null,
         );
