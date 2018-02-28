@@ -208,7 +208,7 @@ class UpgradeToOmekaS_Processor_CoreSite extends UpgradeToOmekaS_Processor_Abstr
         $databaseConfig .= ';unix_socket = "' . '' . '"'. PHP_EOL;
 
         // Get the specific option "log.sql" from the config to move it here.
-        $value = $this-s_getIniLogSql();
+        $value = $this->_getIniLogSql();
         if ($value) {
             $databaseConfig .= "log_path = 'logs/sql.log'" . PHP_EOL;
             $this->_log('[' . __FUNCTION__ . ']: ' . __('The config option "log.sql" has moved into database.ini.'),
