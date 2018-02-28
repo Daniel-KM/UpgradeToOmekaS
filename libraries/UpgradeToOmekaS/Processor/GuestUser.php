@@ -20,7 +20,7 @@ class UpgradeToOmekaS_Processor_GuestUser extends UpgradeToOmekaS_Processor_Abst
         'sha1' => null,
         'type' => 'port',
         'install' => array(
-            // Copied from the original module.php.
+            // Copied from the original Module.php.
             'sql' => '
 CREATE TABLE `guest_user_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

@@ -21,7 +21,7 @@ class UpgradeToOmekaS_Processor_Tagging extends UpgradeToOmekaS_Processor_Abstra
         'type' => 'port',
         'note' => 'Add tags to resources and a tagging form in public pages.',
         'install' => array(
-            // Copied from the original module.php.
+            // Copied from the original Module.php.
             'sql' => '
 CREATE TABLE `tag` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

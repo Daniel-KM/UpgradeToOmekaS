@@ -24,7 +24,7 @@ class UpgradeToOmekaS_Processor_Commenting extends UpgradeToOmekaS_Processor_Abs
         'note' => 'Improvements and full rewrite based on a fork of Commenting.',
         'original_ids' => true,
         'install' => array(
-            // Copied from the original module.php.
+            // Copied from the original Module.php.
             'sql' => '
 CREATE TABLE comment (
     id INT AUTO_INCREMENT NOT NULL,
