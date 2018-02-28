@@ -10,11 +10,11 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
 
     public $pluginName = 'ExhibitBuilder';
     public $minVersion = '3.1';
-    public $maxVersion = '3.3.3';
+    public $maxVersion = '3.3.4';
 
     public $module = array(
         'type' => 'integrated',
-        'note' => 'Exhibits are now standard sites.',
+        'note' => 'Exhibits are now standard sites. The new field "menu_title" is not yet upgradable (Exhibit >= 3.3.4).',
     );
 
     public $processMethods = array(
@@ -579,6 +579,12 @@ class UpgradeToOmekaS_Processor_ExhibitBuilder extends UpgradeToOmekaS_Processor
         $this->_log('[' . __FUNCTION__ . ']: ' . __('All exhibit block attachments (%d) have been upgraded.',
                 $totalRecords),
             Zend_Log::INFO);
+
+        $plugin = get_record('Plugin', array('name' => $this->pluginName));
+        if (version_compare($plugin->getDbVersion(), '3.3.4', '<')) {
+            $this->_log('[' . __FUNCTION__ . ']: ' . __('The new field "menu_title" is not yet upgradable (Exhibit >= 3.3.4).'),
+                Zend_Log::INFO);
+        }
     }
 
     protected function _upgradeDataExhibitSettings()
