@@ -30,7 +30,7 @@ class UpgradeToOmekaS_Processor_Reference extends UpgradeToOmekaS_Processor_Abst
                 'reference_slugs' => [
                     'dcterms:subject' => [
                         'type' => 'properties',
-                        'id' => 3,
+                        'term' => 3,
                         'label' => 'Subject',
                         'active' => true,
                     ],
@@ -39,8 +39,9 @@ class UpgradeToOmekaS_Processor_Reference extends UpgradeToOmekaS_Processor_Abst
                 'reference_list_headings' => true,
                 'reference_tree_enabled' => false,
                 'reference_tree_term' => 'dcterms:subject',
+                'reference_tree_hierarchy' => [],
+                'reference_tree_branch' => false,
                 'reference_tree_expanded' => true,
-                'reference_tree_hierarchy' => '',
             ),
         ),
     );
@@ -71,8 +72,8 @@ class UpgradeToOmekaS_Processor_Reference extends UpgradeToOmekaS_Processor_Abst
             'reference_list_skiplinks' => 'reference_list_skiplinks',
             'reference_list_headings' => 'reference_list_headings',
             'reference_tree_enabled' => 'reference_tree_enabled',
-            'reference_tree_expanded' => 'reference_tree_expanded',
             'reference_tree_hierarchy' => 'reference_tree_hierarchy',
+            'reference_tree_expanded' => 'reference_tree_expanded',
         );
         foreach ($mapOptions as $option => $setting) {
             if (empty($setting)) {
