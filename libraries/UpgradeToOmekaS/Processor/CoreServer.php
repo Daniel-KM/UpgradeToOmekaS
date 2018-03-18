@@ -181,10 +181,7 @@ class UpgradeToOmekaS_Processor_CoreServer extends UpgradeToOmekaS_Processor_Abs
         );
         foreach ($requiredExtensions as $extension) {
             if (!extension_loaded($extension)) {
-                // TODO Check under Windows.
-                if (!function_exists('dl') || !dl($extension . '.so')) {
-                    $this->_prechecks[] = __('Omeka Semantic requires the php extension "%s".', $extension);
-                }
+                $this->_prechecks[] = __('Omeka Semantic requires the php extension "%s".', $extension);
             }
         }
     }
