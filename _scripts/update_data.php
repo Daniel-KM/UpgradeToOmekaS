@@ -5,7 +5,7 @@
  *
  * @internal To use, simply run in the terminal, from the root of Omeka:
  * ```
- * php -f plugins/UpgradeToOmekaS/docs/_scripts/update_data.php
+ * php -f plugins/UpgradeToOmekaS/_scripts/update_data.php
  * ```
  *
  * @author Daniel Berthereau

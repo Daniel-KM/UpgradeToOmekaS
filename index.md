@@ -6,7 +6,7 @@ order: 1
 
 {% include css_js.html %}
 
-All plugins can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are old, broken or unsupported. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/add-ons/plugins>.
+All plugins can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are old, broken or unsupported. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/classic/plugins>.
 
 {% include stats_upgradable.md %}
 
@@ -20,7 +20,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type "yes" to filter only upgradable plugins. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_plugins.csv">csv source file</a>, updated once a week. Forks are not displayed.
+    Type "yes" to filter only upgradable plugins. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_plugins.csv">csv source file</a>, updated once a week. Forks are not displayed.
     </em></p>
     <div class="row">
         <table class="table table-striped">
@@ -82,6 +82,6 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
 </script>
 
 
-[Upgrade to Omeka S]: https://github.com/Daniel-KM/UpgradeToOmekaS
-[Omeka Classic]: https://omeka.org
+[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
+[Omeka Classic]: https://omeka.org/classic
 [Omeka S]: https://omeka.org/s

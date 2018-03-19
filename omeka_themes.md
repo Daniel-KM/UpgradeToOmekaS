@@ -18,7 +18,7 @@ Feel free to add missing themes, or contact me for new ones.
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_themes.csv">csv source file</a>, updated once a week. Forks are not displayed.
+    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_themes.csv">csv source file</a>, updated once a week. Forks are not displayed.
     </em></p>
     <div class="row">
         <table class="table table-striped">
@@ -81,6 +81,6 @@ Feel free to add missing themes, or contact me for new ones.
 </script>
 
 
-[Upgrade to Omeka S]: https://github.com/Daniel-KM/UpgradeToOmekaS
-[Omeka Classic]: https://omeka.org
+[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
+[Omeka Classic]: https://omeka.org/classic
 [Omeka S]: https://omeka.org/s

@@ -6,7 +6,7 @@ order: 4
 
 {% include css_js.html %}
 
-All modules can be downloaded freely on <https://github.com> or <https://gitlab.com>. Usually, they work at least on one site. They are not listed in <https://omeka.org/s> currently.
+All modules can be downloaded freely on <https://github.com> or <https://gitlab.com>. Usually, they work at least on one site. Only a part of them are listed in <https://omeka.org/s/modules/>.
 
 {% include stats_upgradable.md %}
 
@@ -20,7 +20,7 @@ Feel free to add missing modules, or contact me for new ones.
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_s_modules.csv">csv source file</a>, updated once a week. Forks are not displayed.
+    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_s_modules.csv">csv source file</a>, updated once a week. Forks are not displayed.
     </em></p>
     <div class="row">
         <table class="table table-striped">
@@ -86,6 +86,6 @@ Feel free to add missing modules, or contact me for new ones.
 </script>
 
 
-[Upgrade to Omeka S]: https://github.com/Daniel-KM/UpgradeToOmekaS
-[Omeka Classic]: https://omeka.org
+[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
+[Omeka Classic]: https://omeka.org/classic
 [Omeka S]: https://omeka.org/s

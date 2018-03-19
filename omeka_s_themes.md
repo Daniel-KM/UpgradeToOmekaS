@@ -6,7 +6,7 @@ order: 5
 
 {% include css_js.html %}
 
-All themes can be downloaded freely on <https://github.com> or <https://gitlab.com>. They are not listed in <https://omeka.org/s> currently. New themes can be built with the template engine [Twig] via the [module twig] too.
+All themes can be downloaded freely on <https://github.com> or <https://gitlab.com>. Only a part of them are listed in <https://omeka.org/s/themes>. New themes can be built with the template engine [Twig] via the [module twig] too.
 
 See the [modules]({{ site.url | append: '/UpgradeToOmekaS/omeka_s_modules.html' }}).
 
@@ -18,7 +18,7 @@ Feel free to add missing themes, or contact me for new ones.
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/docs/_data/omeka_s_themes.csv">csv source file</a>, updated once a week. Forks are not displayed.
+    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_s_themes.csv">csv source file</a>, updated once a week. Forks are not displayed.
     </em></p>
     <div class="row">
         <table class="table table-striped">
@@ -82,8 +82,8 @@ Feel free to add missing themes, or contact me for new ones.
 </script>
 
 
-[Upgrade to Omeka S]: https://github.com/Daniel-KM/UpgradeToOmekaS
-[Omeka Classic]: https://omeka.org
+[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
+[Omeka Classic]: https://omeka.org/classic
 [Omeka S]: https://omeka.org/s
 [Twig]: http://twig.sensiolabs.org
 [module Twig]: https://github.com/digihum/omeka-s-twig
