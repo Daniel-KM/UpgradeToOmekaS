@@ -1,1 +1,4 @@
 token_github.txt
+_site
+.sass-cache
+.jekyll-metadata
