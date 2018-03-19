@@ -315,7 +315,7 @@ class UpdateDataExtensions
     /**
      * Helper to process results of a search.
      *
-     * @param Object $response
+     * @param object $response
      * @param array $urls The list of existing urls to filter the response.
      * @result array A list of new addons and new urls.
      */
