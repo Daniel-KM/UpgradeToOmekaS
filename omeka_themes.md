@@ -59,6 +59,7 @@ Feel free to add missing themes, or contact me for new ones.
                             ({{ addon['Last Version'] }})
                         {% endif %}
                     </td>
+                    <td class="addon-omeka-org">{{ addon['Omeka.org'] }}</td>
                     <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
                     <td class="addon-description">{{ addon['Description'] | xml_escape }}</td>
