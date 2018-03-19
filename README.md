@@ -1,176 +1,32 @@
 Upgrade to Omeka Semantic
 =========================
 
-[Upgrade to Omeka Semantic] is a plugin for [Omeka Classic] that allows to
-upgrade automatically your installation from [Omeka 2] to [Omeka S]. It upgrades
-records, files, config, themes and some plugins.
+This repository contains the sources to build the [pages that list the plugins,
+modules and themes] of [Omeka Classic] and [Omeka S].
 
-[Omeka S] is a remastered, up-to-date and improved release of Omeka, built for
-the semantic web, multi-sites and multilingual. So, this plugin allows to use
-this new features without the mess-up of a manual upgrade process. The main
-point is to keep original metadata unchanged, but improved to take care of new
-features of Omeka S.
-
-The original install of Omeka Classic is kept and not modified: it remains
-available. If the upgrade is fine for your digital library or your exhibit,
-generally with a new standard theme, simply modify the paths on your server.
-
-A compatibility layer is available for themes with the module [Upgrade from Omeka Classic],
-that is installed automatically too. The themes are restructured and upgraded,
-but custom functions may fail. In that case, use new [themes], or use the
-template engine [Twig] via the [module Twig], or contact me. Anyway, in all
-cases, the theme should be reviewed, because there will be visual glitches and
-fixes in most of the cases. This compatibility layer is needed only when an
-upgraded theme is used.
-
-Of course, if a plugin doesn’t exist under Omeka S, it won’t be upgraded.
-Furthermore, a processor should be written to upgrade data. There are already
-such a  processor for the most common plugins, that are integrated or have an
-equivalent module: [Dublin Core Extended], [Embed Codes], [Exhibit Builder],
-[Geolocation],  [More User Roles],  [Simple Pages], [Social Bookmarking], [Universal Viewer],
-[Guest User], etc. If enabled, the modules will be automatically installed. For
-other plugins, contact me.
-
-See the full list of [plugins for Omeka 2 and matching modules for Omeka S], and
-all [modules] and [themes] that are already available for Omeka S.
-
-
-Benefits
---------
-
-* Ids of items
-
-One important benefit against the standard upgrade process or via [Omeka 2 Importer]
-is that the id of items are kept, so the common urls publicly used on the web
-are not lost. The id of collections and files are lost. This is related to the
-fact that Omeka Semantic uses a single id for all resources.
-
-Users are upgraded too, but they have to ask for a new password on the login
-page. The pages and exhibits keep their slugs.
-
-Anyway, it’s always recommended you set your own single and permanent
-identifiers that don’t depend on an internal position in a database. The term
-`Dublin Core Identifier` is designed for that and a record can have multiple
-single identifiers. There are many possibilities: named number like in a library
-or a museum, isbn for books, or random id like with ark, noid, doi, etc. In
-Omeka 2, they can be displayed in the public url with the plugin [Clean Url].
-
-Furthermore, the compatibility layer adds aliases for old urls `items/show/#id`
-to the new format `item/#id` and redirects them to the items of the specified
-site of Omeka S, and the same for collections, files and homepage.
-
-* Automatic process and speed
-
-A second benefit is that the process is fast and automatic. You don’t need to
-ask your IT department for a new server, or to process an initial setup, that is
-a little longer in Omeka S (even very simple) since there is no default site.
-Indeed, the config itself is upgraded. For example, the path to the php  cli, a
-common question on the forum of Omeka forum, is kept.
-
-This is mostly transparent to the admin and to the users: they won’t see
-anything change (if the theme is fully checked). Conversely, the curators will
-benefits from all the new features of Omeka S. The machines too: Omeka S is
-designed to share its resources larger and in a more standardized way than
-Omeka 2.
-
-The last important benefit is that your site will respond visibly faster,
-especially when PHP 7 is used, since Omeka S is based on [Zend 3] and [Doctrine].
-
-
-Installation
-------------
-
-Uncompress files and rename plugin folder `UpgradeToOmekaS`.
-
-Then install it like any other Omeka plugin and follow the config instructions.
-
-*IMPORTANT*: Even if the original files and the original database are only read,
-backup your database AND your files before the process and check them before the
-process.
-
-The plugin has been tested from v2.3.1, but it probably works with Omeka v2.2.2.
-Just change the setting in plugin.ini to try it. Nevertheless, it’s always
-recommended to upgrade the core, all the plugins and the theme to the last
-version.
-
-You may need to upgrade your plugins to the current version. Only enabled and
-managed plugins are processed.
-
-
-Usage
------
-
-The process is automatic from an up-to-date Omeka install. Log in as a super
-user, then simply click on "Upgrade" in the top admin bar, fill the short form,
-click the `Submit` button, wait from a few tens of seconds, and click on the
-provided url.
-
-The urls of the main page and of the login page are provided. If the main page
-is broken, fix the theme or log in and change the theme to one of the [official themes]
-or use on upgraded official theme of Omeka Classic.
-
-To add a new upgrader, simply add it in the directory `/libraries/UpgradeToOmekaS/Processor`
-or use the filter `upgrade_omekas`. You can look in the upgrader `Escher.php`
-for a basic upgrader.
-
-The last update of this plugin install the last stable version of Omeka S and
-try to install the last version of the modules, when possible, but you may have
-to update the modules inside Omeka S.
+To get the plugin that allows to upgrade automatically an Omeka Classic
+installation into Omeka Semantic, go to [this page].
 
 
 Update of the list of plugins, modules and themes
 -------------------------------------------------
 
-To add a new addon to the lists of [available addons], simply add its main url
-in the matching csv file in the directory `docs/_data/` and run the php script
-(here from the root of Omeka):
+The lists are automatically generated from public sources on github and gitlab.
+Nevertheless, the new addons should be well referenced (via a readme or via a
+topic). To be sure it will be included, add the topic `omeka`, `omeka-s`,
+`omeka-plugin`, `omeka-s-module`, `omeka-theme` or `omeka-s-theme` to it on the
+main page of the addon, or use "Omeka" in the main readme of the addon
+repository.
+
+To add bad referenced addons, simply fill its main url in the matching csv file
+in the directory `_data/` and run the php script:
 
 ```
-    php -f plugins/UpgradeToOmekaS/docs/_scripts/update_data.php
+    php -f _scripts/update_data.php
 ```
 
-You may need to add a file with a token from your github account in `docs/_scripts/token_github.txt`
+You may need to add a file with a token from your github account in `_scripts/token_github.txt`
 to be allowed to fetch more than 50 results.
-
-Anyway, all the plugins, modules and themes on Github are automatically added if
-they are well referenced on Github (via a readme or via a topic).
-
-
-Internal Upgrade Process
-------------------------
-
-The upgrade process follows these steps. All steps are automatic except the
-first and the last.
-
-* *IMPORTANT*: backup your database and your files manually and check them.
-* Optional: create manually the database if you want a separate one, else, the
-  database will be shared with the one of Omeka Classic. This is not a problem,
-  but currently, Omeka S doesn’t manage prefixes. Fortunately, there was one by
-  default in Omeka 2 ("omeka_"). Furthermore, Omeka 2 creates tables with plural
-  names (like "users") and Omeka S uses singular names ("user"), so even if the
-  prefix was removed during install, there won’t be issue. Anyway, it’s
-  recommended to create a separate database.
-* Checks.
-  * rights to write in the specified directory
-  * version and config of Omeka
-  * version of plugins
-* Set the site down, except for the super user.
-* Fetch last release of Omeka S from Github, uncompress it and install it.
-* Set parameters.
-  * new database or current one
-  * main settings
-* Conversion of all Omeka Classic tables (users, records, plugins...) into the
-Omeka Semantic ones via simple mysql queries.
-* Copy of files, hard links (recommended on linux servers), soft links or dummy
-  files.
-* Copy, reorganize and upgrade themes.
-* Install the compatibility layer and upgraded plugins.
-* Check manually main settings and parameters of each module of Omeka Semantic.
-
-The site will be available automatically at the end of the process with the
-specified link.
-
-Enjoy it!
 
 
 Warning
@@ -185,13 +41,13 @@ your archives regularly so you can roll back if needed.
 Troubleshooting
 ---------------
 
-See online issues on the [plugin issues] page on GitHub.
+See online issues on the [issues] page on GitHub.
 
 
 License
 -------
 
-This plugin is published under the [CeCILL v2.1] licence, compatible with
+This tool is published under the [CeCILL v2.1] licence, compatible with
 [GNU/GPL] and approved by [FSF] and [OSI].
 
 In consideration of access to the source code and the rights to copy, modify and
@@ -211,13 +67,6 @@ This Agreement may be freely reproduced and published, provided it is not
 altered, and that no provisions are either added or removed herefrom.
 
 
-TODO
-----
-
-* Include translations of Omeka Classic
-* Check "todo" in the source of the plugin.
-
-
 Contact
 -------
 
@@ -229,37 +78,14 @@ Current maintainers:
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2017
+* Copyright Daniel Berthereau, 2017-2018
 
 
-[Upgrade to Omeka Semantic]: https://github.com/Daniel-KM/UpgradeToOmekaS
-[Upgrade from Omeka Classic]: https://github.com/Daniel-KM/Omeka-S-module-UpgradeFromOmekaClassic
-[Omeka]: https://www.omeka.org
-[Omeka Classic]: https://omeka.org
-[Omeka Semantic]: https://omeka.org/s
-[Omeka 2]: https://omeka.org
+[pages that list the plugins, modules and themes]: https://daniel-km.github.io/UpgradeToOmekaS/
+[Omeka Classic]: https://omeka.org/classic
 [Omeka S]: https://omeka.org/s
-[Dublin Core Extended]: http://omeka.org/add-ons/plugins/dublin-core-extended/
-[Embed Codes]: http://omeka.org/add-ons/plugins/embed-codes/
-[Exhibit Builder]: http://omeka.org/add-ons/plugins/exhibit-builder/
-[Geolocation]: http://omeka.org/add-ons/plugins/geolocation/
-[More User Roles]: https://github.com/ebellempire/MoreUserRoles
-[Simple Pages]: http://omeka.org/add-ons/plugins/simple-pages/
-[Social Bookmarking]: http://omeka.org/add-ons/plugins/social-bookmarking/
-[Universal Viewer]: https://github.com/Daniel-KM/UniversalViewer4Omeka
-[Guest User]: https://github.com/omeka/plugin-GuestUser
-[plugins for Omeka 2 and matching modules for Omeka S]: https://daniel-km.github.io/UpgradeToOmekaS
-[modules]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_modules.html
-[official themes]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_themes.html
-[themes]: https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_themes.html
-[available addons]: https://daniel-km.github.io/UpgradeToOmekaS
-[Twig]: http://twig.sensiolabs.org
-[module Twig]: https://github.com/digihum/omeka-s-twig
-[Omeka 2 Importer]: https://github.com/omeka-s-modules/Omeka2Importer
-[Clean Url]: https://github.com/Daniel-KM/CleanUrl
-[Zend 3]: https://framework.zend.com/
-[Doctrine]: http://www.doctrine-project.org/
-[plugin issues]: https://github.com/Daniel-KM/UpgradeToOmekaS/issues
+[this page]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
+[issues]: https://github.com/Daniel-KM/UpgradeToOmekaS/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org
