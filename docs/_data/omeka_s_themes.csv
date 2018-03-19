@@ -1,1 +1,12 @@
-../../_data/omeka_s_themes.csv
+Name,Url,"Creation Date","Last Update","Last Version",Omeka.org,"Omeka Constraint",Author,"Author Link",License,Description,Tags,Link,"Support Link","Ini Path"
+AIDHP,https://github.com/unolibraries/aidph-omeka,2017-02-06T21:48:50Z,2017-02-07T14:18:58Z,1.0.0-beta,,,"Jason A. Heppler",http://jasonheppler.org,,,,,,
+"Center Row",https://github.com/omeka-s-themes/centerrow,2016-09-15T16:13:49Z,2018-01-08T18:57:16Z,1.0.0,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
+Cozy,https://github.com/omeka-s-themes/cozy,2016-04-06T21:03:39Z,2018-01-09T20:02:11Z,1.0.0,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,
+Default,https://github.com/omeka-s-themes/default,2016-08-04T03:43:55Z,2018-01-09T20:58:32Z,1.0.0,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,develop/config/theme.ini
+"GPP PoC",https://github.com/kingsdigitallab/omeka-s-gpppoc-theme,2017-12-14T15:23:04Z,2018-01-16T16:01:21Z,1.0.0,,,"King's Digital Lab",https://kdl.kcl.ac.uk/,,,,,,
+Istanbul,https://github.com/hajoki/istanbul,2017-05-26T13:41:27Z,2017-09-27T14:12:53Z,1.0.0-beta,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
+"Kanze Archive",https://github.com/nakamura196/omeka-s-theme-kanze,2018-03-10T11:33:30Z,2018-03-10T11:57:09Z,0.0.1,,,"Satoru Nakamura, BibLibre, updated by Daniel Berthereau",https://www.lib.u-tokyo.ac.jp/ja/library/contents/archives-top,,"Omeka S theme for kanze archive in the University of Tokyo [module Search required]",,,,
+PSL,https://github.com/biblibre/omeka-s-theme-psl,2016-09-21T08:08:17Z,2018-03-07T07:28:45Z,0.1,,,BibLibre,https://biblibre.com/,,"Omeka S theme for PSL",,https://github.com/biblibre/omeka-s-theme-psl,,
+"The Daily",https://github.com/omeka-s-themes/thedaily,2016-09-09T20:43:05Z,2018-01-09T19:20:59Z,1.0.0,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,
+"UTAAR type B",https://github.com/nakamura196/omeka-s-utaar-b-theme,2018-03-07T03:58:48Z,2018-03-07T04:06:55Z,0.0.1,,,"Satoru Nakamura, UTokyo Academic Archives Development Project Office",https://www.lib.u-tokyo.ac.jp/ja/library/contents/archives-top,,"Omeka S theme for default collection of UTokyo Academic Archives Repository [module Universal Viewer required]",,,,
+"UTAAR type C",https://github.com/nakamura196/omeka-s-utaar-c-theme,2018-03-13T13:14:37Z,2018-03-16T03:50:12Z,0.0.1,,,"Satoru Nakamura, UTokyo Academic Archives Development Project Office",https://www.lib.u-tokyo.ac.jp/ja/library/contents/archives-top,,"Omeka S theme for default collection of UTokyo Academic Archives Repository [module Universal Viewer & Search required]",,,,
