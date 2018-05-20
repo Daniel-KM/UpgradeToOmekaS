@@ -4,7 +4,7 @@ AIDHP,https://github.com/unolibraries/aidph-omeka,2017-02-06T21:48:50Z,2017-02-0
 Cozy,https://github.com/omeka-s-themes/cozy,2016-04-06T21:03:39Z,2018-04-13T15:25:53Z,1.1.0,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,
 Default,https://github.com/omeka-s-themes/default,2016-08-04T03:43:55Z,2018-04-13T15:18:24Z,1.1.0,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,develop/config/theme.ini
 "GPP PoC",https://github.com/kingsdigitallab/omeka-s-gpppoc-theme,2017-12-14T15:23:04Z,2018-01-16T16:01:21Z,1.0.0,,,"King's Digital Lab",https://kdl.kcl.ac.uk/,,,,,,
-"IIP Default",https://github.com/hxsllc/omekas-iip,2018-05-14T00:41:53Z,2018-05-14T01:03:49Z,1.1.0,,,"Ben Bakelaar < Roy Rosenzweig Center for History & New Media",http://iip.rutgers.edu/,,,,,,
+"IIP Default",https://github.com/hxsllc/omekas-iip,2018-05-14T00:41:53Z,2018-05-14T19:06:41Z,1.1.0,,,"Ben Bakelaar < Roy Rosenzweig Center for History & New Media",http://iip.rutgers.edu/,,,,,,
 Istanbul,https://github.com/hajoki/istanbul,2017-05-26T13:41:27Z,2017-09-27T14:12:53Z,1.0.0-beta,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
 "Kanze Archive",https://github.com/nakamura196/omeka-s-theme-kanze,2018-03-10T11:33:30Z,2018-03-10T11:57:09Z,0.0.1,,,"Satoru Nakamura, BibLibre, updated by Daniel Berthereau",https://www.lib.u-tokyo.ac.jp/ja/library/contents/archives-top,,"Omeka S theme for kanze archive in the University of Tokyo [module Search required]",,,,
 PSL,https://github.com/biblibre/omeka-s-theme-psl,2016-09-21T08:08:17Z,2018-05-07T13:02:14Z,0.1,,,BibLibre,https://biblibre.com/,,"Omeka S theme for PSL",,https://github.com/biblibre/omeka-s-theme-psl,,
