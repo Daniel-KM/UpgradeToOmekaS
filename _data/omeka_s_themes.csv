@@ -1,4 +1,5 @@
 Name,Url,"Creation Date","Last Update","Last Version",Omeka.org,"Omeka Constraint",Author,"Author Link",License,Description,Tags,Link,"Support Link","Ini Path"
+AHP,https://github.com/pols12/ahp-theme,2018-07-15T15:53:37Z,2018-07-15T15:54:33Z,0.3.0,,,Pols12,http://chnm.gmu.edu/,,,,,,
 AIDHP,https://github.com/unolibraries/aidph-omeka,2017-02-06T21:48:50Z,2017-02-07T14:18:58Z,1.0.0-beta,,,"Jason A. Heppler",http://jasonheppler.org,,,,,,
 BUM,https://github.com/bubdxm/Omeka-S-theme-bxm,2018-05-30T13:43:58Z,2018-06-15T15:10:14Z,1.1.2,,,"BibLibre, updated by Daniel Berthereau",https://biblibre.com/,,"Omeka S theme for Paris Sciences et Lettres [module Search required]",,https://github.com/biblibre/omeka-s-theme-psl,,
 "Center Row",https://github.com/omeka-s-themes/centerrow,2016-09-15T16:13:49Z,2018-07-05T18:46:08Z,1.1.0,,,"Roy Rosenzweig Center for History & New Media",http://rrchnm.org/,,,,,,
