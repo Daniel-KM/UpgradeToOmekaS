@@ -59,8 +59,10 @@ This list brings together all the existing [Omeka Classic](https://omeka.org/cla
                         {% if addon['Last Update'] %}
                             {{ addon['Last Update'] | slice: 0, 10 }}
                         {% endif %}
-                        {% if addon['Last Version'] %}
-                            ({{ addon['Last Version'] }})
+                        {% if addon['Last Version'] and addon['Last Version'] != '' %}
+                             <br/>
+                            {% assign version = addon['Last Version'] %}
+                            (v. {%- include addon_version.md version=version -%})
                         {% endif %}
                     </td>
                     <td class="addon-omeka-org">{{ addon['Omeka.org'] }}</td>

@@ -51,7 +51,10 @@ See more details on [plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plug
                     {% endunless %}
                     </td>
                     <td class="addon-updated">{{ addon['Last Update'] | slice: 0, 10 }}</td>
-                    <td class="addon-version">{{ addon['Last Version'] }}</td>
+                    <td class="addon-version">
+                        {% assign version = addon['Last Version'] %}
+                        {% include addon_version.md version=version %}
+                    </td>
                     <td class="addon-upgradable">{{ addon['Upgradable'] }}</td>
                     <td class="addon-minimum">{{ addon['Min Version'] }}</td>
                     <td class="addon-maximum">{{ addon['Max Version'] }}</td>

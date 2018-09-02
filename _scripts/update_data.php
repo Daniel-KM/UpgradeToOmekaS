@@ -558,8 +558,9 @@ class UpdateDataExtensions
                         ], '', $iniValue);
                         $addonName = $iniValue;
                         break;
-                    // Fill no version.
+                    // Remove the "v" and fill no version.
                     case 'version':
+                        $iniValue = trim(ltrim($iniValue, 'vV'));
                         if ($iniValue == '') {
                             $iniValue = '-';
                         }
