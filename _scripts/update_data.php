@@ -3,7 +3,7 @@
 /**
  * Script to update the list of addons of Omeka with the last data.
  *
- * @internal To use, simply run in the terminal, from the root of Omeka:
+ * To use, simply run in the terminal, from the root of Omeka:
  * ```
  * php -f plugins/UpgradeToOmekaS/_scripts/update_data.php
  * ```
@@ -94,7 +94,7 @@ foreach ($types as $type => $args) {
     $result = $update->process();
 }
 
-return;
+return $result;
 
 class UpdateDataExtensions
 {
@@ -158,6 +158,11 @@ class UpdateDataExtensions
         $this->options = $options;
     }
 
+    /**
+     * Do the full process.
+     *
+     * @return bool
+     */
     public function process()
     {
         // May avoid an issue with Apple Mac.
@@ -234,7 +239,6 @@ class UpdateDataExtensions
     }
 
     /**
-     *
      * @param array $addons
      * @return array
      */
@@ -270,8 +274,12 @@ class UpdateDataExtensions
             $response = $this->curl($url, $curlHeaders);
             if ($response) {
                 if ($this->options['debug']) {
-                    $this->log(sprintf('The search for %s with %s gives %d results.',
-                        $this->type, $searchType, $response->total_count));
+                    $this->log(sprintf(
+                        'The search for %s with %s gives %d results.',
+                        $this->type,
+                        $searchType,
+                        $response->total_count
+                    ));
                 }
                 $totalCount = $response->total_count;
                 if ($totalCount > 0) {
@@ -433,7 +441,8 @@ class UpdateDataExtensions
                         }
                     }
                     if (empty($url)
-                            || ($this->options['processOnlyAddon']
+                            || (
+                                $this->options['processOnlyAddon']
                                 && !in_array($url, $this->options['processOnlyAddon'])
                         )) {
                         continue;
@@ -486,7 +495,8 @@ class UpdateDataExtensions
                     $addonIniBase = str_replace(
                         array_keys($replacements),
                         array_values($replacements),
-                        $addonIniBase);
+                        $addonIniBase
+                    );
                 }
                 break;
             case 'gitlab.com':
@@ -712,7 +722,7 @@ class UpdateDataExtensions
      *
      * @param string $source
      * @param string $destination
-     * @return boolean
+     * @return bool
      */
     protected function checkFiles($source, $destination)
     {
@@ -727,7 +737,7 @@ class UpdateDataExtensions
         }
 
         if (!is_file($destination) && !is_writeable(dirname($destination))) {
-            $this->log( sprintf('The directory "%s" is not writeable.', dirname($destination)));
+            $this->log(sprintf('The directory "%s" is not writeable.', dirname($destination)));
             return false;
         }
 
@@ -810,7 +820,8 @@ class UpdateDataExtensions
         $cleanName = str_ireplace(
             array('plugin', 'module', 'theme'),
             '',
-            preg_replace('~[^\da-z]~i', '', strtolower($addonName)));
+            preg_replace('~[^\da-z]~i', '', strtolower($addonName))
+        );
 
         // Manage exception on Omeka.org.
         switch ($cleanName) {
@@ -844,7 +855,7 @@ class UpdateDataExtensions
             switch ($server) {
                 case 'github.com':
                     $user = strtok($project, '/');
-                    $projectName= strtok('/');
+                    $projectName = strtok('/');
                     $url = 'https://api.github.com/repos/' . $user . '/' . $projectName;
                     $data[$addonUrl] = $this->curl($url);
                     break;
@@ -864,7 +875,7 @@ class UpdateDataExtensions
                 switch ($dateToFind) {
                     case 'creation date':
                         return $response->created_at;
-                    case 'last update';
+                    case 'last update':
                         // "updated_at" means the last update in metadata,
                         // whereas "pushed_at" means the last commit.
                         // $url = 'https://api.github.com/repos/' . $project . '/commits/HEAD';
@@ -926,7 +937,6 @@ class UpdateDataExtensions
             return '';
         }
 
-
         $response = json_decode($response);
         if (empty($response)) {
             if (empty($flag)) {
@@ -956,7 +966,7 @@ class UpdateDataExtensions
      *
      * @param string $destination
      * @param array $array
-     * @return boolean
+     * @return bool
      */
     protected function saveToCsvFile($destination, array $array)
     {
@@ -964,7 +974,7 @@ class UpdateDataExtensions
         if (empty($handle)) {
             return false;
         }
-        foreach($array as $row) {
+        foreach ($array as $row) {
             fputcsv($handle, $row);
         }
         return fclose($handle);
@@ -974,7 +984,6 @@ class UpdateDataExtensions
      * Echo a message to the standard output.
      *
      * @param mixed $message
-     * @return void
      */
     protected function log($message)
     {
