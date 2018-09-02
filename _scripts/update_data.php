@@ -17,8 +17,8 @@
 $tokenGithub = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'token_github.txt';
 $tokenGithub = file_exists($tokenGithub) ? trim(file_get_contents($tokenGithub)) : '';
 
-$options = array(
-    'token' => array('api.github.com' => $tokenGithub),
+$options = [
+    'token' => ['api.github.com' => $tokenGithub],
     // Order addons.
     'order' => 'Name',
     // Filter duplicate addons.
@@ -27,10 +27,10 @@ $options = array(
     // identified as fork by github.
     'filterFalseForks' => true,
     // Update only one or more types of addon ("plugin", "module", "theme", "template").
-    'processOnlyType' => array(),
+    'processOnlyType' => [],
     // Update only one or more addons (set the addon url).
     // 'processOnlyAddon' => array('https://github.com/Daniel-KM/UpgradeToOmekaS'),
-    'processOnlyAddon' => array(),
+    'processOnlyAddon' => [],
     // Update data only for new urls (urls without name).
     'processOnlyNewUrls' => false,
     // Process search for topics on github.
@@ -48,43 +48,43 @@ $options = array(
     'debugDiff' => 'diff',
     // If true, the updated whole csv is saved in the destination after debug.
     'debugOutput' => false,
-);
+];
 
 $basepath = realpath(dirname(__FILE__)
     . DIRECTORY_SEPARATOR . '..'
     . DIRECTORY_SEPARATOR . '_data'
     . DIRECTORY_SEPARATOR);
 
-$types = array(
-    'plugin' => array(
+$types = [
+    'plugin' => [
         'source' => $basepath . '/omeka_plugins.csv',
         'destination' => $basepath . '/omeka_plugins.csv',
         'topic' => 'omeka-plugin',
         'keywords' => 'Omeka+plugin',
         'ini' => 'plugin.ini',
-    ),
-    'module' => array(
+    ],
+    'module' => [
         'source' => $basepath . '/omeka_s_modules.csv',
         'destination' => $basepath . '/omeka_s_modules.csv',
         'topic' => 'omeka-s-module',
         'keywords' => '"Omeka%20S"+module',
         'ini' => 'config/module.ini',
-    ),
-    'theme' => array(
+    ],
+    'theme' => [
         'source' => $basepath . '/omeka_themes.csv',
         'destination' => $basepath . '/omeka_themes.csv',
         'topic' => 'omeka-theme',
         'keywords' => 'Omeka+theme',
         'ini' => 'theme.ini',
-    ),
-    'template' => array(
+    ],
+    'template' => [
         'source' => $basepath . '/omeka_s_themes.csv',
         'destination' => $basepath . '/omeka_s_themes.csv',
         'topic' => 'omeka-s-theme',
         'keywords' => '"Omeka%20S"+theme',
         'ini' => 'config/theme.ini',
-    ),
-);
+    ],
+];
 
 foreach ($types as $type => $args) {
     if ($options['processOnlyType'] && !in_array($type, $options['processOnlyType'])) {
@@ -99,14 +99,14 @@ return $result;
 class UpdateDataExtensions
 {
     protected $type = '';
-    protected $args = array();
-    protected $options = array();
+    protected $args = [];
+    protected $options = [];
 
     /**
      * Map of the keys of the plugin ini and the headers of the csv file.
      */
-    protected $mappingToUpdate = array(
-        'common' => array(
+    protected $mappingToUpdate = [
+        'common' => [
             'name' => 'Name',
             'author' => 'Author',
             'description' => 'Description',
@@ -115,9 +115,9 @@ class UpdateDataExtensions
             'support_link' => 'Support Link',
             'version' => 'Last Version',
             'tags' => 'Tags',
-        ),
+        ],
         // Omeka 1 / 2.
-        'plugin' => array(
+        'plugin' => [
             'required_plugins' => 'Required Plugins',
             'optional_plugins' => 'Optional Plugins',
             'omeka_minimum_version' => 'Omeka Min',
@@ -125,30 +125,30 @@ class UpdateDataExtensions
             'omeka_tested_up_to' => 'Omeka Target',
             // Omeka 2.
             'omeka_target_version=' => 'Omeka Target',
-        ),
-        'theme' => array(
+        ],
+        'theme' => [
             'title' => 'Name',
             'omeka_minimum_version' => 'Omeka Min',
             'omeka_tested_up_to' => 'Omeka Target',
             'omeka_target_version=' => 'Omeka Target',
-        ),
+        ],
         // Omeka 3 / S.
-        'module' => array(
+        'module' => [
             'omeka_version_constraint' => 'Omeka Constraint',
             'module_link' => 'Link',
             'author_link' => 'Author Link',
-        ),
-        'template' => array(
+        ],
+        'template' => [
             'theme_link' => 'Link',
             'author_link' => 'Author Link',
-        ),
-    );
+        ],
+    ];
 
     protected $headers;
     protected $omekaAddons;
     protected $updatedAddons;
 
-    public function __construct($type, $args = array(), $options = array())
+    public function __construct($type, $args = [], $options = [])
     {
         $this->type = $type;
         if (empty($args['destination'])) {
@@ -251,16 +251,16 @@ class UpdateDataExtensions
             return $v[$headers['Url']];
         }, $addons);
 
-        $newUrls = array();
+        $newUrls = [];
 
         // Search on github.
         // Search topics are only available in preview currently.
-        $curlHeaders = array('Accept: application/vnd.github.mercy-preview+json');
-        $searches = array(
+        $curlHeaders = ['Accept: application/vnd.github.mercy-preview+json'];
+        $searches = [
             // Search via topic.
             'topic' => 'https://api.github.com/search/repositories?q=topic:' . $this->args['topic'] . '+fork%3Afalse',
             'keywords' => 'https://api.github.com/search/repositories?q=' . $this->args['keywords'] . '+fork%3Afalse' . '+in:name,description,readme',
-        );
+        ];
 
         foreach ($searches as $searchType => $url) {
             // // Limit the search to the last month.
@@ -331,8 +331,8 @@ class UpdateDataExtensions
     {
         $headers = $this->headers;
         $addonBase = array_fill(0, count($headers), null);
-        $newAddons = array();
-        $newUrls = array();
+        $newAddons = [];
+        $newUrls = [];
 
         foreach ($response->items as $repo) {
             if (in_array($repo->html_url, $urls)) {
@@ -370,10 +370,10 @@ class UpdateDataExtensions
             $newUrls[] = $repo->html_url;
         }
 
-        return array(
+        return [
             'new_addons' => $newAddons,
             'new_urls' => $newUrls,
-        );
+        ];
     }
 
     /**
@@ -389,7 +389,7 @@ class UpdateDataExtensions
         $omekaAddons = $this->fetchOmekaAddons();
         $this->omekaAddons = $omekaAddons;
 
-        $this->updatedAddons = array();
+        $this->updatedAddons = [];
 
         foreach ($addons as $key => $addon) {
             if ($key == 0) {
@@ -488,10 +488,10 @@ class UpdateDataExtensions
             case 'github.com':
                 $addonIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $addonUrl);
                 if ($addon[$headers['Ini Path']]) {
-                    $replacements = array(
+                    $replacements = [
                         '/tree/master/' => '/master/',
                         '/tree/develop/' => '/develop/',
-                    );
+                    ];
                     $addonIniBase = str_replace(
                         array_keys($replacements),
                         array_values($replacements),
@@ -546,7 +546,7 @@ class UpdateDataExtensions
                         if (empty($iniValue)) {
                             $iniValue = $addon[$headers[$header]] ?: $addonName;
                         }
-                        $iniValue = str_ireplace(array(
+                        $iniValue = str_ireplace([
                             ' plugin',
                             'plugin ',
                             ' module',
@@ -556,7 +556,7 @@ class UpdateDataExtensions
                             ' widget',
                             'widget ',
                             ' public/admin',
-                        ), '', $iniValue);
+                        ], '', $iniValue);
                         $addonName = $iniValue;
                         break;
                     // Fill no version.
@@ -643,7 +643,7 @@ class UpdateDataExtensions
         $order = $headers[$this->options['order']];
         unset($addons[0]);
 
-        $addonsList = array();
+        $addonsList = [];
         foreach ($addons as $key => &$addon) {
             $addonsList[$key] = $addon[$order];
         }
@@ -762,14 +762,14 @@ class UpdateDataExtensions
                 $source = 'https://omeka.org/add-ons/themes/';
                 break;
             default:
-                return array();
+                return [];
         }
 
-        $addons = array();
+        $addons = [];
 
         $html = file_get_contents($source);
         if (empty($html)) {
-            return array();
+            return [];
         }
 
         libxml_use_internal_errors(true);
@@ -796,7 +796,7 @@ class UpdateDataExtensions
                     $addonName = 'Sitemap 2';
                 }
                 $cleanName = $this->cleanAddonName($addonName);
-                $addons[$cleanName] = array();
+                $addons[$cleanName] = [];
                 $addons[$cleanName]['name'] = $addonName;
                 $addons[$cleanName]['url'] = $url;
                 $addons[$cleanName]['version'] = $matches[2];
@@ -815,10 +815,10 @@ class UpdateDataExtensions
     protected function cleanAddonName($name)
     {
         // Manage exceptions with non standard characters (avoid duplicates).
-        $addonName = str_replace(array('+'), array('Plus'), $name);
+        $addonName = str_replace(['+'], ['Plus'], $name);
 
         $cleanName = str_ireplace(
-            array('plugin', 'module', 'theme'),
+            ['plugin', 'module', 'theme'],
             '',
             preg_replace('~[^\da-z]~i', '', strtolower($addonName))
         );
@@ -847,7 +847,7 @@ class UpdateDataExtensions
      */
     protected function findDate($addonUrl, $dateToFind)
     {
-        static $data = array();
+        static $data = [];
 
         $project = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
@@ -892,7 +892,7 @@ class UpdateDataExtensions
      * @param array $headers
      * @return string
      */
-    protected function curl($url, $headers = array())
+    protected function curl($url, $headers = [])
     {
         static $flag;
 
