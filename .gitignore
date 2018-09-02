@@ -1,4 +1,11 @@
 token_github.txt
-_site
+
+/build
+/vendor
+/_site
 .sass-cache
 .jekyll-metadata
+.DS_Store
+.php_cs.cache
+composer.phar
+debug.log
