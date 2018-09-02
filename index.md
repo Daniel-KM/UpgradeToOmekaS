@@ -6,13 +6,15 @@ order: 1
 
 {% include css_js.html %}
 
-All plugins can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are old, broken or unsupported. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/classic/plugins>.
+This list is a mapping between [Omeka Classic] plugins and [Omeka S] modules.
+
+All plugins can be downloaded freely on <https://omeka.org>, <https://github.com> or <https://gitlab.com>. Some of them are old, broken, unsupported or a work in progress. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/classic/plugins>.
 
 {% include stats_upgradable.md %}
 
 See more details on [plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plugins.html' }}) and [modules]({{ site.url | append: '/UpgradeToOmekaS/omeka_s_modules.html' }}).
 
-Feel free to add missing plugins, or to create an upgrader processor for the plugin [Upgrade to Omeka S], or contact me.
+Feel free to add missing plugins, or to create an upgrader for the plugin [Upgrade to Omeka S], or an importer for the module [Omeka 2 Importer].
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -20,7 +22,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type "yes" to filter only upgradable plugins. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_plugins.csv">csv source file</a>, updated once a week. Forks are not displayed.
+    Type "yes" to filter only upgradable plugins. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_plugins.csv">csv source file</a>, updated once a week. Forks are not displayed, except when they add new features.
     </em></p>
     <div class="row">
         <table class="table table-striped">
@@ -82,6 +84,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
 </script>
 
 
-[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
 [Omeka Classic]: https://omeka.org/classic
 [Omeka S]: https://omeka.org/s
+[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
+[Omeka 2 Importer]: https://github.com/omeka-s-modules/Omeka2Importer
