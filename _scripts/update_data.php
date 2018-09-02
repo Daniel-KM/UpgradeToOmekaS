@@ -3,9 +3,9 @@
 /**
  * Script to update the list of addons of Omeka with the last data.
  *
- * To use, simply run in the terminal, from the root of Omeka:
+ * To use, simply run in the terminal, from the root of the sources:
  * ```
- * php -f plugins/UpgradeToOmekaS/_scripts/update_data.php
+ * php -f _scripts/update_data.php
  * ```
  *
  * @author Daniel Berthereau
@@ -353,7 +353,6 @@ class UpdateDataExtensions
             $ini = @file_get_contents($addonIni);
             if (empty($ini)) {
                 if ($this->options['debug']) {
-                    $m = 'No config';
                     $this->log(sprintf('No config : %s', $repo->html_url));
                 }
                 continue;
@@ -618,7 +617,7 @@ class UpdateDataExtensions
     }
 
     /**
-     * Reorder data.
+     * Reorder addons.
      *
      * @param array $addons
      * @return array
@@ -778,14 +777,15 @@ class UpdateDataExtensions
         $pokemon_xpath = new DOMXPath($pokemon_doc);
         $pokemon_row = $pokemon_xpath->query('//a[@class="omeka-addons-button"]/@href');
         if ($pokemon_row->length > 0) {
+            $matches = [];
             foreach ($pokemon_row as $row) {
                 $url = $row->nodeValue;
                 $filename = basename(parse_url($url, PHP_URL_PATH));
                 // Some addons have "-" in name; some have letters in version.
-                $result = preg_match('~([^\d]+)\-(\d.*)\.zip~', $filename, $matches);
+                preg_match('~([^\d]+)\-(\d.*)\.zip~', $filename, $matches);
                 // Manage for example "Select2".
                 if (empty($matches)) {
-                    $result = preg_match('~(.*?)\-(\d.*)\.zip~', $filename, $matches);
+                    preg_match('~(.*?)\-(\d.*)\.zip~', $filename, $matches);
                 }
                 $addonName = $matches[1];
                 // Manage a bug.
@@ -947,13 +947,7 @@ class UpdateDataExtensions
         }
         if (!empty($response->message)) {
             if (empty($flag)) {
-                $this->log(
-                    sprintf(
-                        'Error on url %s: %s.',
-                        $url,
-                        $response->message
-                    )
-                );
+                $this->log(sprintf('Error on url %s: %s.', $url, $response->message));
             }
             return '';
         }
