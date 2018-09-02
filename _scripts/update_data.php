@@ -223,6 +223,9 @@ class UpdateDataExtensions
 
         $addons = $this->filterDuplicates($addons);
 
+        // Re-order after deduplicating may fixes order issues.
+        $addons = $this->order($addons);
+
         if ($this->options['debug'] && !$this->options['debugOutput']) {
             $this->log('Required no output.');
         } else {
@@ -647,6 +650,8 @@ class UpdateDataExtensions
         foreach ($addons as $key => &$addon) {
             $addonsList[$key] = $addon[$order];
         }
+        // Duplicate sort to avoid an issue with multiple forks.
+        natcasesort($addonsList);
         natcasesort($addonsList);
         $addonsList = array_replace($addonsList, $addons);
         array_unshift($addonsList, null);
