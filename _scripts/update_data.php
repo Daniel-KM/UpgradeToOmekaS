@@ -901,7 +901,7 @@ class UpdateDataExtensions
             return '';
         }
 
-        $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0';
+        $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0';
 
         $curl = curl_init();
 
