@@ -6,11 +6,10 @@ order: 3
 
 {% include css_js.html %}
 
-All themes can be downloaded freely on <https://github.com> or <https://gitlab.com>. Only a part of them are listed in <https://omeka.org/add-ons/themes>.
+This list brings together all the existing [Omeka Classic](https://omeka.org/classic) themes.
+They can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are listed in <https://omeka.org/add-ons>.
 
-See the [plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plugins.html' }}).
-
-Feel free to add missing themes, or contact me for new ones.
+Feel free to add missing themes.
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -80,8 +79,3 @@ Feel free to add missing themes, or contact me for new ones.
     var entryList = new List('entry-list', options);
     // entryList.sort('addon-updated', { order: "desc" });
 </script>
-
-
-[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
-[Omeka Classic]: https://omeka.org/classic
-[Omeka S]: https://omeka.org/s

@@ -1,20 +1,16 @@
 ---
 layout: page
-title: Matching extensions
+title: Mapping extensions
 order: 1
 ---
 
 {% include css_js.html %}
 
-This list is a mapping between [Omeka Classic] plugins and [Omeka S] modules.
+This list is a mapping between all [Omeka Classic](https://omeka.org/classic) plugins and some [Omeka S](https://omeka.org/s) modules.
 
-All plugins can be downloaded freely on <https://omeka.org>, <https://github.com> or <https://gitlab.com>. Some of them are old, broken, unsupported or a work in progress. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/classic/plugins>.
-
-{% include stats_upgradable.md %}
+{% include intro_extensions.md %}
 
 See more details on [plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plugins.html' }}) and [modules]({{ site.url | append: '/UpgradeToOmekaS/omeka_s_modules.html' }}).
-
-Feel free to add missing plugins, or to create an upgrader for the plugin [Upgrade to Omeka S], or an importer for the module [Omeka 2 Importer].
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -82,9 +78,3 @@ Feel free to add missing plugins, or to create an upgrader for the plugin [Upgra
     };
     var entryList = new List('entry-list', options);
 </script>
-
-
-[Omeka Classic]: https://omeka.org/classic
-[Omeka S]: https://omeka.org/s
-[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
-[Omeka 2 Importer]: https://github.com/omeka-s-modules/Omeka2Importer

@@ -6,13 +6,9 @@ order: 2
 
 {% include css_js.html %}
 
-All plugins can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are old, broken or unsupported. Usually, they work at least on one site. But most of them are up-to-date for [Omeka Classic] and useful. Only a part of them are listed in <https://omeka.org/classic/plugins>.
+This list brings together all the existing [Omeka Classic](https://omeka.org/classic) plugins.
 
-{% include stats_upgradable.md %}
-
-See the page of [matching extensions]({{ site.url | append: '/UpgradeToOmekaS' }}) to check the upgradable ones and [themes]({{ site.url | append: '/UpgradeToOmekaS/omeka_themes.html' }}).
-
-Feel free to add missing plugins, or to create an upgrader processor for the plugin [Upgrade to Omeka S], or contact me.
+{% include intro_extensions.md %}
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -20,7 +16,7 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_plugins.csv">csv source file</a>, updated once a week. Forks are not displayed.
+    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_plugins.csv">csv source file</a>, updated once a week. Forks are not displayed, except when they add new features.
     </em></p>
     <div class="row">
         <table class="table table-striped">
@@ -100,8 +96,3 @@ Feel free to add missing plugins, or to create an upgrader processor for the plu
     var entryList = new List('entry-list', options);
     entryList.sort('addon-updated', { order: "desc" });
 </script>
-
-
-[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
-[Omeka Classic]: https://omeka.org/classic
-[Omeka S]: https://omeka.org/s

@@ -6,13 +6,9 @@ order: 4
 
 {% include css_js.html %}
 
-All modules can be downloaded freely on <https://github.com> or <https://gitlab.com>. Usually, they work at least on one site. Only a part of them are listed in <https://omeka.org/s/modules/>.
+This list brings together all the existing [Omeka S] modules.
 
-{% include stats_upgradable.md %}
-
-See the page of [matching extensions]({{ site.url | append: '/UpgradeToOmekaS' }}) and [themes]({{ site.url | append: '/UpgradeToOmekaS/omeka_s_themes.html' }}).
-
-Feel free to add missing modules, or contact me for new ones.
+{% include intro_extensions.md %}
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -20,7 +16,7 @@ Feel free to add missing modules, or contact me for new ones.
         <input type="text" class="search form-control" placeholder="Filter" />
     </div>
     <p><em>
-    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_s_modules.csv">csv source file</a>, updated once a week. Forks are not displayed.
+    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_s_modules.csv">csv source file</a>, updated once a week. Forks are not displayed, except when they add new features.
     </em></p>
     <div class="row">
         <table class="table table-striped">
@@ -84,8 +80,3 @@ Feel free to add missing modules, or contact me for new ones.
     var entryList = new List('entry-list', options);
     entryList.sort('addon-updated', { order: "desc" });
 </script>
-
-
-[Upgrade to Omeka S]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
-[Omeka Classic]: https://omeka.org/classic
-[Omeka S]: https://omeka.org/s
