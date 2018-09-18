@@ -114,35 +114,35 @@ class UpdateDataExtensions
             'description' => 'Description',
             'license' => 'License',
             'link' => 'Link',
-            'support_link' => 'Support Link',
-            'version' => 'Last Version',
+            'support_link' => 'Support link',
+            'version' => 'Last version',
             'tags' => 'Tags',
         ],
         // Omeka 1 / 2.
         'plugin' => [
-            'required_plugins' => 'Required Plugins',
-            'optional_plugins' => 'Optional Plugins',
-            'omeka_minimum_version' => 'Omeka Min',
+            'required_plugins' => 'Required plugins',
+            'optional_plugins' => 'Optional plugins',
+            'omeka_minimum_version' => 'Omeka min',
             // Omeka 1.
-            'omeka_tested_up_to' => 'Omeka Target',
+            'omeka_tested_up_to' => 'Omeka target',
             // Omeka 2.
-            'omeka_target_version=' => 'Omeka Target',
+            'omeka_target_version=' => 'Omeka target',
         ],
         'theme' => [
             'title' => 'Name',
-            'omeka_minimum_version' => 'Omeka Min',
-            'omeka_tested_up_to' => 'Omeka Target',
-            'omeka_target_version=' => 'Omeka Target',
+            'omeka_minimum_version' => 'Omeka min',
+            'omeka_tested_up_to' => 'Omeka target',
+            'omeka_target_version=' => 'Omeka target',
         ],
         // Omeka 3 / S.
         'module' => [
-            'omeka_version_constraint' => 'Omeka Constraint',
+            'omeka_version_constraint' => 'Omeka constraint',
             'module_link' => 'Link',
-            'author_link' => 'Author Link',
+            'author_link' => 'Author link',
         ],
         'template' => [
             'theme_link' => 'Link',
-            'author_link' => 'Author Link',
+            'author_link' => 'Author link',
         ],
     ];
 
@@ -488,20 +488,25 @@ class UpdateDataExtensions
 
         // Set the date of the creation and the last update, that doesn't depend
         // on ini, and don't update if empty.
-        $date = $this->findDate($addonUrl, 'creation date');
+        $date = $this->findData($addonUrl, 'creation date');
         if ($date) {
-            $addon[$headers['Creation Date']] = $date;
+            $addon[$headers['Creation date']] = $date;
         }
-        $date = $this->findDate($addonUrl, 'last update');
+        $date = $this->findData($addonUrl, 'last update');
         if ($date) {
-            $addon[$headers['Last Update']] = $date;
+            $addon[$headers['Last update']] = $date;
+        }
+
+        $forkSource = $this->findData($addonUrl, 'fork source');
+        if ($forkSource) {
+            $addon[$headers['Fork source']] = $forkSource;
         }
 
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
         switch ($server) {
             case 'github.com':
                 $addonIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $addonUrl);
-                if ($addon[$headers['Ini Path']]) {
+                if ($addon[$headers['Ini path']]) {
                     $replacements = [
                         '/tree/master/' => '/master/',
                         '/tree/develop/' => '/develop/',
@@ -521,7 +526,7 @@ class UpdateDataExtensions
                 break;
         }
 
-        $addonIni = $addon[$headers['Ini Path']] ?: ('master/' . $this->args['ini']);
+        $addonIni = $addon[$headers['Ini path']] ?: ('master/' . $this->args['ini']);
 
         $addonIni = $addonIniBase . '/' . $addonIni;
 
@@ -707,12 +712,12 @@ class UpdateDataExtensions
             // Get the name and last update of the first row.
             elseif ($key == 1) {
                 $previousName = $addon[$headers['Name']];
-                $previousLastUpdate = $addon[$headers['Last Update']];
+                $previousLastUpdate = $addon[$headers['Last update']];
                 $previousKey = $key;
                 continue;
             }
             $name = $addon[$headers['Name']];
-            $lastUpdate = $addon[$headers['Last Update']];
+            $lastUpdate = $addon[$headers['Last update']];
             if ($name === $previousName && $lastUpdate === $previousLastUpdate) {
                 ++$duplicates;
                 unset($addons[$key]);
@@ -863,13 +868,14 @@ class UpdateDataExtensions
     }
 
     /**
-     * Get the date and time of the creation of the repository.
+     * Get a data from the repository.
      *
      * @param string $addonUrl
-     * @param string $dateToFind
+     * @param string $dataToFind
+     * @param string $isRecursive
      * @return string
      */
-    protected function findDate($addonUrl, $dateToFind)
+    protected function findData($addonUrl, $dataToFind, $isRecursive = false)
     {
         static $data = [];
 
@@ -896,9 +902,10 @@ class UpdateDataExtensions
         $response = $data[$addonUrl];
         switch ($server) {
             case 'github.com':
-                switch ($dateToFind) {
+                switch ($dataToFind) {
                     case 'creation date':
                         return $response->created_at;
+
                     // "updated_at" means the last update in metadata or local
                     // commit, whereas "pushed_at" means the last commit, but it
                     // may be a commit on a fork if there is a pull request.
@@ -908,6 +915,12 @@ class UpdateDataExtensions
                         return $response->fork
                             ? $response->updated_at
                             : max($response->updated_at, $response->pushed_at);
+
+                    case 'fork source':
+                        if (!$response->fork) {
+                            return $isRecursive ? $addonUrl : '';
+                        }
+                        return $this->findData($response->parent->html_url, $dataToFind, true);
                 }
         }
     }
