@@ -21,11 +21,13 @@ $options = [
     'token' => ['api.github.com' => $tokenGithub],
     // Order addons.
     'order' => ['Name', 'Url'],
-    // Filter duplicate addons.
+    // Filter duplicate addons. A duplicate has the same name and date or version.
     'filterDuplicates' => true,
     // Filter forks only with name, so may remove extensions that are not
     // identified as fork by github.
     'filterFalseForks' => true,
+    // Keep forks that are new versions of the source,
+    'keepUpdatedForks' => true,
     // Update only one or more types of addon ("plugin", "module", "theme", "template").
     'processOnlyType' => [],
     // Update only one or more addons (set the addon url).
@@ -710,33 +712,50 @@ class UpdateDataExtensions
 
         $duplicates = 0;
         $unidentifiedForks = 0;
+        $updatedForks = 0;
         foreach ($addons as $key => $addon) {
             if ($key == 0) {
                 continue;
             }
             // Get the name and last update of the first row.
             elseif ($key == 1) {
+                $previousAddon = $addon;
                 $previousName = $addon[$headers['Name']];
                 $previousLastUpdate = $addon[$headers['Last update']];
+                $previousVersion = $addon[$headers['Last version']];
                 $previousKey = $key;
                 continue;
             }
             $name = $addon[$headers['Name']];
             $lastUpdate = $addon[$headers['Last update']];
-            if ($name === $previousName && $lastUpdate === $previousLastUpdate) {
+            $version = $addon[$headers['Last version']];
+            if ($name === $previousName && ($lastUpdate === $previousLastUpdate || $version === $previousVersion)) {
+                if ($this->options['debug']) {
+                    $this->log('Duplicate full: ' . $name);
+                }
                 ++$duplicates;
                 unset($addons[$key]);
             } elseif ($name === $previousName && !empty($this->options['filterFalseForks'])) {
-                ++$unidentifiedForks;
-                if ($previousLastUpdate < $lastUpdate) {
-                    unset($addons[$previousKey]);
+                if ($previousVersion < $version && !empty($this->options['keepUpdatedForks'])) {
+                    $this->log('Duplicate fork kept: ' . $name);
+                    ++$updatedForks;
                 } else {
-                    unset($addons[$key]);
-                    continue;
+                    if ($this->options['debug']) {
+                        $this->log('Duplicate fork removed: ' . $name);
+                    }
+                    ++$unidentifiedForks;
+                    if ($previousLastUpdate < $lastUpdate) {
+                        unset($addons[$previousKey]);
+                    } else {
+                        unset($addons[$key]);
+                        continue;
+                    }
                 }
             }
+            $previousAddon = $addon;
             $previousName = $name;
             $previousLastUpdate = $lastUpdate;
+            $previousVersion = $version;
             $previousKey = $key;
         }
 
@@ -744,7 +763,10 @@ class UpdateDataExtensions
             $this->log(sprintf('%d duplicate rows were removed.', $duplicates));
         }
         if ($unidentifiedForks) {
-            $this->log(sprintf('%d duplicate rows (unidentified forks with same name) were removed.', $unidentifiedForks));
+            $this->log(sprintf('%d duplicate rows were removed (unidentified forks with same name).', $unidentifiedForks));
+        }
+        if ($updatedForks) {
+            $this->log(sprintf('%d duplicate rows were kept (updated forks).', $updatedForks));
         }
 
         return array_values($addons);
