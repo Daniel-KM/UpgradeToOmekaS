@@ -20,7 +20,7 @@ $tokenGithub = file_exists($tokenGithub) ? trim(file_get_contents($tokenGithub))
 $options = [
     'token' => ['api.github.com' => $tokenGithub],
     // Order addons.
-    'order' => 'Name',
+    'order' => ['Name', 'Url'],
     // Filter duplicate addons.
     'filterDuplicates' => true,
     // Filter forks only with name, so may remove extensions that are not
@@ -639,19 +639,25 @@ class UpdateDataExtensions
             $this->log($headers);
         }
 
-        if (!isset($headers[$this->options['order']])) {
-            $this->log(sprintf('Order %s not found in headers.', $this->options['order']));
-            return $addons;
+        $orders = is_array($this->options['order']) ? $this->options['order'] : [$this->options['order']];
+        foreach ($orders as $key => $order) {
+            if (!isset($headers[$order])) {
+                $this->log(sprintf('Order %s not found in headers.', $order));
+                return $addons;
+            }
+            $orders[$key] = $headers[$order];
         }
-        $order = $headers[$this->options['order']];
+
         unset($addons[0]);
 
         $addonsList = [];
         foreach ($addons as $key => &$addon) {
-            $addonsList[$key] = $addon[$order];
+            $value = '';
+            foreach ($orders as $order) {
+                $value .= $addon[$order];
+            }
+            $addonsList[$key] = $value;
         }
-        // Duplicate sort to avoid an issue with multiple forks.
-        natcasesort($addonsList);
         natcasesort($addonsList);
         $addonsList = array_replace($addonsList, $addons);
         array_unshift($addonsList, null);
