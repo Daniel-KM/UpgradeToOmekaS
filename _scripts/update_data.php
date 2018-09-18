@@ -502,6 +502,11 @@ class UpdateDataExtensions
             $addon[$headers['Fork source']] = $forkSource;
         }
 
+        $lastReleasedZip = $this->findData($addonUrl, 'last released zip');
+        if ($lastReleasedZip) {
+            $addon[$headers['Last released zip']] = $lastReleasedZip;
+        }
+
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
         switch ($server) {
             case 'github.com':
@@ -921,6 +926,19 @@ class UpdateDataExtensions
                             return $isRecursive ? $addonUrl : '';
                         }
                         return $this->findData($response->parent->html_url, $dataToFind, true);
+
+                    case 'last released zip':
+                        $user = strtok($project, '/');
+                        $projectName = strtok('/');
+                        $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases/latest';
+                        $content = $this->curl($apiUrl, [], false);
+                        if (empty($content) || $content === 'Not Found') {
+                            return;
+                        }
+                        if (empty($content) || empty($content->assets)) {
+                            return;
+                        }
+                        return $content->assets[0]->browser_download_url;
                 }
         }
     }
@@ -930,9 +948,10 @@ class UpdateDataExtensions
      *
      * @param string $url
      * @param array $headers
+     * @param bool $messageResponse
      * @return string
      */
-    protected function curl($url, $headers = [])
+    protected function curl($url, $headers = [], $messageResponse = true)
     {
         static $flag;
 
@@ -987,7 +1006,10 @@ class UpdateDataExtensions
         }
         if (!empty($response->message)) {
             if (empty($flag)) {
-                $this->log(sprintf('Error on url %s: %s.', $url, $response->message));
+                // Don't update flag.
+                if ($messageResponse) {
+                    $this->log(sprintf('Error on url %s: %s.', $url, $response->message));
+                }
             }
             return '';
         }
