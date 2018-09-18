@@ -887,12 +887,15 @@ class UpdateDataExtensions
                 switch ($dateToFind) {
                     case 'creation date':
                         return $response->created_at;
+                    // "updated_at" means the last update in metadata or local
+                    // commit, whereas "pushed_at" means the last commit, but it
+                    // may be a commit on a fork if there is a pull request.
                     case 'last update':
-                        // "updated_at" means the last update in metadata,
-                        // whereas "pushed_at" means the last commit.
                         // $url = 'https://api.github.com/repos/' . $project . '/commits/HEAD';
                         // $date = $response->commit->committer->date;
-                        return $response->pushed_at;
+                        return $response->fork
+                            ? $response->updated_at
+                            : max($response->updated_at, $response->pushed_at);
                 }
         }
     }
