@@ -35,8 +35,10 @@ $options = [
     'processOnlyNewUrls' => false,
     // Process search for topics on github.
     'processSearch' => true,
-    // Regenerate csv only (useful when edited in a spreadsheet).
+    // Regenerate csv only (useful when edited in a spreadsheet, after other options).
     'processRegenerateCsvOnly' => false,
+    // Regenerate csv directly (useful when edited in a spreadsheet).
+    'processQuickRegenerateCsv' => false,
     // Allow to log (in terminal) the process of all the addons, else only
     // updated one will be displayed, and errors.
     'logAllAddons' => true,
@@ -182,6 +184,16 @@ class UpdateDataExtensions
         if (empty($addons)) {
             $this->log(sprintf('No content in the csv file "%s".', $this->args['source']));
             return false;
+        }
+
+        if ($this->options['processQuickRegenerateCsv']) {
+            $addons = $this->order($addons);
+            $result = $this->saveToCsvFile($this->args['destination'], $addons);
+            if (!$result) {
+                $this->log(sprintf('An error occurred during saving the csv into the file "%s".', $this->args['destination']));
+                return false;
+            }
+            return true;
         }
 
         // Get headers by name.
