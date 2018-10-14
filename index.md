@@ -20,6 +20,7 @@ See more details on [plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plug
     <p><em>
     Type "yes" to filter only upgradable plugins. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_plugins.csv">csv source file</a>, updated once a week. Forks are not displayed, except when they add new features.
     </em></p>
+
     <div class="row">
         <table class="table table-striped">
             <thead>
@@ -50,19 +51,19 @@ See more details on [plugins]({{ site.url | append: '/UpgradeToOmekaS/omeka_plug
                         <a href="{{ account_url }}" class="link addon-account">{{ account_name }}</a>
                     {% endunless %}
                     </td>
-                    <td class="addon-updated">{{ addon['Last Update'] | slice: 0, 10 }}</td>
+                    <td class="addon-updated">{{ addon['Last update'] | slice: 0, 10 }}</td>
                     <td class="addon-version">
-                        {% assign version = addon['Last Version'] %}
+                        {% assign version = addon['Last version'] %}
                         {% include addon_version.md version=version %}
                     </td>
                     <td class="addon-upgradable">{{ addon['Upgradable'] }}</td>
-                    <td class="addon-minimum">{{ addon['Min Version'] }}</td>
-                    <td class="addon-maximum">{{ addon['Max Version'] }}</td>
+                    <td class="addon-minimum">{{ addon['Min version'] }}</td>
+                    <td class="addon-maximum">{{ addon['Max version'] }}</td>
                     <td>
-                    {% if addon['Module Url'] == nil %}
+                    {% if addon['Module url'] == nil %}
                         <span class="module-link"><em>{{ addon['Module'] }}</em></span>
                     {% else %}
-                        <a href="{{ addon['Module Url'] }}" class="link addon-module-link">{{ addon['Module'] }}</a>
+                        <a href="{{ addon['Module url'] }}" class="link addon-module-link">{{ addon['Module'] }}</a>
                     {% endif %}
                     </td>
                     <td class="addon-note">{{ addon['Note'] | xml_escape }}</td>

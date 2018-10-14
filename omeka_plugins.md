@@ -56,29 +56,29 @@ This list brings together all the existing [Omeka Classic](https://omeka.org/cla
                     {% endunless %}
                     </td>
                     <td class="addon-updated">
-                        {% if addon['Last Update'] %}
-                            {{ addon['Last Update'] | slice: 0, 10 }}
+                        {% if addon['Last update'] %}
+                            {{ addon['Last update'] | slice: 0, 10 }}
                         {% endif %}
-                        {% if addon['Last Version'] and addon['Last Version'] != '' %}
+                        {% if addon['Last version'] and addon['Last version'] != '' %}
                              <br/>
-                            {% assign version = addon['Last Version'] %}
+                            {% assign version = addon['Last version'] %}
                             (v. {%- include addon_version.md version=version -%})
                         {% endif %}
                     </td>
                     <td class="addon-omeka-org">{{ addon['Omeka.org'] }}</td>
                     <td class="addon-upgradable">{{ addon['Upgradable'] }}</td>
                     <td class="addon-target">
-                    {% if addon['Omeka Target'] %}
-                        {{ addon['Omeka Target'] }}
+                    {% if addon['Omeka target'] %}
+                        {{ addon['Omeka target'] }}
                     {% else %}
-                        {{ addon['Omeka Min'] }}
+                        {{ addon['Omeka min'] }}
                     {% endif %}
                     </td>
                     <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
                     <!--
-                    <td class="addon-required">{{ addon['Required Plugins'] | replace: ',', ',<br />' }}</td>
-                    <td class="addon-required">{{ addon['Optional Plugins'] | replace: ',', ',<br />' }}</td>
+                    <td class="addon-required">{{ addon['Required plugins'] | replace: ',', ',<br />' }}</td>
+                    <td class="addon-required">{{ addon['Optional plugins'] | replace: ',', ',<br />' }}</td>
                     -->
                     <td class="addon-description">{{ addon['Description']  | xml_escape }}</td>
                 </tr>

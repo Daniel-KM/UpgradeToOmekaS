@@ -43,8 +43,8 @@ This list brings together all the existing [Omeka S] modules.
                     <td>
                     {% unless addon['Name'] == nil %}
                         {% unless addon['Author'] == nil %}
-                            {% if addon['Author Link'] != nil %}
-                                <a href="{{ addon['Author Link'] }}" class="link addon-author">{{ addon['Author'] | xml_escape }}</a>
+                            {% if addon['Author link'] != nil %}
+                                <a href="{{ addon['Author link'] }}" class="link addon-author">{{ addon['Author'] | xml_escape }}</a>
                             {% else %}
                                 {{ addon['Author'] | xml_escape }}
                             {% endif %}
@@ -52,16 +52,16 @@ This list brings together all the existing [Omeka S] modules.
                     {% endunless %}
                     </td>
                     <td class="addon-updated">
-                        {% if addon['Last Update'] %}
-                            {{ addon['Last Update'] | slice: 0, 10 }}
+                        {% if addon['Last update'] %}
+                            {{ addon['Last update'] | slice: 0, 10 }}
                         {% endif %}
-                        {% if addon['Last Version'] and addon['Last Version'] != '' %}
+                        {% if addon['Last version'] and addon['Last version'] != '' %}
                              <br/>
-                            {% assign version = addon['Last Version'] %}
+                            {% assign version = addon['Last version'] %}
                             (v. {%- include addon_version.md version=version -%})
                         {% endif %}
                     </td>
-                    <td class="addon-constraint">{{ addon['Omeka Constraint'] }}</td>
+                    <td class="addon-constraint">{{ addon['Omeka constraint'] }}</td>
                     <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
                     <td class="addon-description">{{ addon['Description'] | xml_escape }}</td>

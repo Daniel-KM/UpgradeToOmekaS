@@ -51,12 +51,12 @@ Feel free to add missing themes.
                     {% endunless %}
                     </td>
                     <td class="addon-updated">
-                        {% if addon['Last Update'] %}
-                            {{ addon['Last Update'] | slice: 0, 10 }}
+                        {% if addon['Last update'] %}
+                            {{ addon['Last update'] | slice: 0, 10 }}
                         {% endif %}
-                        {% if addon['Last Version'] and addon['Last Version'] != '' %}
+                        {% if addon['Last version'] and addon['Last version'] != '' %}
                              <br/>
-                            {% assign version = addon['Last Version'] %}
+                            {% assign version = addon['Last version'] %}
                             (v. {%- include addon_version.md version=version -%})
                         {% endif %}
                     </td>
