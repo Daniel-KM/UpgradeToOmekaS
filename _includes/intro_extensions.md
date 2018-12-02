@@ -4,4 +4,4 @@ All plugins can be downloaded freely on <https://omeka.org>, <https://github.com
 
 Feel free to add missing plugins or modules, or to create an upgrader for the plugin [Upgrade to Omeka S](https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS), or an importer for the module [Omeka 2 Importer](https://github.com/omeka-s-modules/Omeka2Importer).
 
-__Warning__: Don‘t install alpha or beta version of addons on a site in production, or help the developper to finalize it.
+__Warning__: Don’t install alpha or beta version of addons on a site in production, or help the developper to finalize it.
