@@ -12,9 +12,11 @@
  * @license Cecill v2.1
  */
 
+$datapath = realpath(dirname(__DIR__) . DIRECTORY_SEPARATOR . '_data') . DIRECTORY_SEPARATOR;
+
 // The token is required only to update dates. If empty, the limit will be 60
 // requests an hour.
-$tokenGithub = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'token_github.txt';
+$tokenGithub = $datapath . 'token_github.txt';
 $tokenGithub = file_exists($tokenGithub) ? trim(file_get_contents($tokenGithub)) : '';
 
 $options = [
@@ -28,6 +30,9 @@ $options = [
     'filterFalseForks' => true,
     // Keep forks that are new versions of the source,
     'keepUpdatedForks' => true,
+    // Filter false addons (students testing, etc.). See file excluded_urls.txt.
+    'filterFalseAddons' => true,
+    'excludedUrlsPath' => $datapath . 'excluded_urls.txt',
     // Update only one or more types of addon ("plugin", "module", "theme", "template").
     'processOnlyType' => [],
     // Update only one or more addons (set the addon url).
@@ -54,39 +59,34 @@ $options = [
     'debugOutput' => false,
 ];
 
-$basepath = realpath(dirname(__FILE__)
-    . DIRECTORY_SEPARATOR . '..'
-    . DIRECTORY_SEPARATOR . '_data'
-    . DIRECTORY_SEPARATOR);
-
 $types = [
     'plugin' => [
-        'source' => $basepath . '/omeka_plugins.csv',
-        'destination' => $basepath . '/omeka_plugins.csv',
+        'source' => $datapath . 'omeka_plugins.csv',
+        'destination' => $datapath . 'omeka_plugins.csv',
         'topic' => 'omeka-plugin',
         'keywords' => 'Omeka+plugin',
         'ini' => 'plugin.ini',
     ],
     'module' => [
-        'source' => $basepath . '/omeka_s_modules.csv',
-        'destination' => $basepath . '/omeka_s_modules.csv',
+        'source' => $datapath . 'omeka_s_modules.csv',
+        'destination' => $datapath . 'omeka_s_modules.csv',
         'topic' => 'omeka-s-module',
         'keywords' => '"Omeka%20S"+module',
-        'ini' => 'config/module.ini',
+        'ini' => 'config' . DIRECTORY_SEPARATOR . 'module.ini',
     ],
     'theme' => [
-        'source' => $basepath . '/omeka_themes.csv',
-        'destination' => $basepath . '/omeka_themes.csv',
+        'source' => $datapath . 'omeka_themes.csv',
+        'destination' => $datapath . 'omeka_themes.csv',
         'topic' => 'omeka-theme',
         'keywords' => 'Omeka+theme',
         'ini' => 'theme.ini',
     ],
     'template' => [
-        'source' => $basepath . '/omeka_s_themes.csv',
-        'destination' => $basepath . '/omeka_s_themes.csv',
+        'source' => $datapath . 'omeka_s_themes.csv',
+        'destination' => $datapath . 'omeka_s_themes.csv',
         'topic' => 'omeka-s-theme',
         'keywords' => '"Omeka%20S"+theme',
-        'ini' => 'config/theme.ini',
+        'ini' => 'config' . DIRECTORY_SEPARATOR . 'theme.ini',
     ],
 ];
 
@@ -232,6 +232,8 @@ class UpdateDataExtensions
         } else {
             $this->log('No line updated.');
         }
+
+        $addons = $this->filterFalseAddons($addons);
 
         $addons = $this->order($addons);
 
@@ -688,6 +690,47 @@ class UpdateDataExtensions
         $addonsList[0] = array_keys($headers);
 
         return $addonsList;
+    }
+
+    /**
+     * Filter false addons (students works, etc.).
+     *
+     * @param array $addons
+     * @return array
+     */
+    protected function filterFalseAddons(array $addons)
+    {
+        if (empty($this->options['filterFalseAddons'])) {
+            return $addons;
+        }
+
+        if (!file_exists($this->options['excludedUrlsPath'])) {
+            return $addons;
+        }
+
+        $toExclude = array_filter(array_map('trim', explode("\n", file_get_contents($this->options['excludedUrlsPath']))));
+        if (!count($toExclude)) {
+            return $addons;
+        }
+
+        // Get headers by name.
+        $headers = array_flip($addons[0]);
+        $totalExcluded = 0;
+        foreach ($addons as $key => $addon) {
+            $url = $addon[$headers['Url']];
+            if (in_array($url, $toExclude)) {
+                unset($addons[$key]);
+                ++$totalExcluded;
+            }
+        }
+
+        if ($totalExcluded) {
+            $this->log(sprintf('%d urls were excluded on a general list of %d urls.', $totalExcluded, count($toExclude)));
+        } else {
+            $this->log(sprintf('No url was excluded on a general list of %d urls.', count($toExclude)));
+        }
+
+        return array_values($addons);
     }
 
     /**
