@@ -352,11 +352,20 @@ class UpdateDataExtensions
         $addonBase = array_fill(0, count($headers), null);
         $newAddons = [];
         $newUrls = [];
+        $toExclude = !empty($this->options['filterFalseAddons']) && file_exists($this->options['excludedUrlsPath'])
+          ? array_filter(array_map('trim', explode("\n", file_get_contents($this->options['excludedUrlsPath']))))
+          : [];
 
         foreach ($response->items as $repo) {
             if (in_array($repo->html_url, $urls)) {
                 if ($this->options['debug']) {
                     $this->log(sprintf('Exists    : %s', $repo->html_url));
+                }
+                continue;
+            }
+            if (in_array($repo->html_url, $toExclude)) {
+                if ($this->options['debug']) {
+                    $this->log(sprintf('Excluded  : %s', $repo->html_url));
                 }
                 continue;
             }
