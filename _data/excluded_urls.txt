@@ -16,6 +16,7 @@ https://github.com/Kamelia3/Omeka_s_Module_FeedImport
 https://github.com/mcl12345/OMEKAS_MODULE_ReaderMarkdown
 https://github.com/NLagon/Omeka-S-module-SearchingAuthor
 https://github.com/Ouazenberg/HTMLIndexation
+https://github.com/Ouazenberg/OmekaS_Module_HTML_Indexer
 https://github.com/saliha-oudjidane/OmekaS_Module_XMLContent
 https://github.com/sidihamed/module-omeka-s-cacheProprietes
 https://github.com/tizirikais/Omeka_s_Module_Extract_DataXML
