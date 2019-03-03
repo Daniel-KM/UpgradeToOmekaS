@@ -141,6 +141,7 @@ class UpdateDataExtensions
             'omeka_version_constraint' => 'Omeka constraint',
             'module_link' => 'Link',
             'author_link' => 'Author link',
+            'dependencies' => 'Dependencies',
         ],
         'template' => [
             'theme_link' => 'Link',
@@ -499,8 +500,8 @@ class UpdateDataExtensions
         $addonUrl = trim($addon[$headers['Url']], '/ ');
         $addonName = $addon[$headers['Name']] ?: basename($addonUrl);
 
-        // Set the date of the creation and the last update, that doesn't depend
-        // on ini, and don't update if empty.
+        // Set the date of the creation and the last update, that doesn’t depend
+        // on ini, and don’t update if empty.
         $date = $this->findData($addonUrl, 'creation date');
         if ($date) {
             $addon[$headers['Creation date']] = $date;
@@ -607,7 +608,8 @@ class UpdateDataExtensions
                     case 'tags':
                     case 'required_plugins':
                     case 'optional_plugins':
-                        $iniValue = implode(', ', array_map('trim', explode(',', $iniValue)));
+                    case 'dependencies':
+                        $iniValue = implode(', ', array_filter(array_map('trim', explode(',', $iniValue))));
                         break;
                 }
 
@@ -615,11 +617,14 @@ class UpdateDataExtensions
             }
         }
 
-        // Set if the plugin is upgradable.
-        if ($this->type == 'plugin') {
-            if (!empty($addon[$headers['Module']]) && empty($addon[$headers['Upgradable']])) {
-                $addon[$headers['Upgradable']] = 'Yes';
-            }
+        // Manage some specificities.
+        switch ($this->type) {
+            case 'plugin':
+                // Set if the plugin is upgradable.
+                if (!empty($addon[$headers['Module']]) && empty($addon[$headers['Upgradable']])) {
+                    $addon[$headers['Upgradable']] = 'Yes';
+                }
+                break;
         }
 
         $cleanName = $this->cleanAddonName($addonName);
