@@ -4,6 +4,7 @@ https://github.com/amine1591/Omeka-S-module-PdfTocExtract
 https://github.com/anassbb/ImageViwer
 https://github.com/anassbb/Omeka-S-module-ImageClassification
 https://github.com/azzoubair/Omeka-S-Module-GetDataXml
+https://github.com/bougoffa/bougoffa
 https://github.com/bougoffa/Omeka-s-module-XmlImport
 https://github.com/Dnareffel/Omeka-S-module-PictureEditor
 https://github.com/FadilaBouabdallah/FileSideLoad
@@ -14,6 +15,7 @@ https://github.com/JiangningLIN/XmlEmbed
 https://github.com/kahinakrikeb/Module_Omeka_S_XMLImport
 https://github.com/Kamelia3/Omeka_s_Module_FeedImport
 https://github.com/mcl12345/OMEKAS_MODULE_ReaderMarkdown
+https://github.com/Mohammed-Squalli/PdfIncorpor-
 https://github.com/NLagon/Omeka-S-module-SearchingAuthor
 https://github.com/Ouazenberg/HTMLIndexation
 https://github.com/Ouazenberg/OmekaS_Module_HTML_Indexer
