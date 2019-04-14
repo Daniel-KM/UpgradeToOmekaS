@@ -6,7 +6,7 @@ order: 4
 
 {% include css_js.html %}
 
-This list brings together all the existing [Omeka S] modules.
+This list brings together all the existing [Omeka S](https://omeka.org/s) modules.
 
 {% include intro_extensions.md %}
 
