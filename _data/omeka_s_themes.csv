@@ -4,10 +4,10 @@ AIDHP,https://github.com/unolibraries/aidph-omeka,,2017-02-06T21:48:50Z,2018-11-
 "Appalachian Trail Histories",https://github.com/chnm/appalachian-trails,,2019-08-01T14:16:55Z,2019-08-01T14:33:17Z,0.1,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,,
 BUM,https://github.com/bubdxm/Omeka-S-theme-bxm,,2018-05-30T13:43:58Z,2019-01-11T14:35:14Z,1.1.2,,,"BibLibre, updated by Daniel Berthereau",https://biblibre.com/,,"Omeka S theme for Paris Sciences et Lettres [module Search required]",,https://github.com/biblibre/omeka-s-theme-psl,,,
 "BYU-Idaho SPC",https://github.com/jonfackrell/byui-spc,,2017-12-08T23:18:28Z,2019-08-09T16:14:14Z,1.0.0,,,"Jon Fackrell & Katie Cagle",http://library.byui.edu/,,,,,,,
-"Center Row",https://github.com/omeka-s-themes/centerrow,,2016-09-15T16:13:49Z,2019-10-07T15:11:37Z,1.4.2,,,"Omeka Team",http://omeka.org/,,,,,,,https://github.com/omeka-s-themes/centerrow/releases/download/v1.4.2/centerrow-v1.4.2.zip
-Cozy,https://github.com/omeka-s-themes/cozy,,2016-04-06T21:03:39Z,2019-08-08T15:11:26Z,1.3.3,,,"Omeka Team",http://omeka.org/,,,,,,,https://github.com/omeka-s-themes/cozy/releases/download/v1.3.3/cozy-v1.3.3.zip
+"Center Row",https://github.com/omeka-s-themes/centerrow,,2016-09-15T16:13:49Z,2019-12-10T19:45:07Z,1.4.2,,,"Omeka Team",http://omeka.org/,,,,,,,https://github.com/omeka-s-themes/centerrow/releases/download/v1.4.2/centerrow-v1.4.2.zip
+Cozy,https://github.com/omeka-s-themes/cozy,,2016-04-06T21:03:39Z,2019-12-10T19:33:28Z,1.3.3,,,"Omeka Team",http://omeka.org/,,,,,,,https://github.com/omeka-s-themes/cozy/releases/download/v1.3.3/cozy-v1.3.3.zip
 Default,https://github.com/hepplerj/sv-env,,2019-05-20T14:06:48Z,2019-05-20T14:19:19Z,1.3.0,,,"Roy Rosenzweig Center for History & New Media",http://chnm.gmu.edu/,,,,,,,
-dharc-omeka-s-theme,https://github.com/dharc-org/dharc-omeka-s-theme,,2019-07-19T11:09:48Z,2019-10-25T11:10:22Z,2,,,DHARC,http://dharc.unibo.it,,,,,,,
+dharc-omeka-s-theme,https://github.com/dharc-org/dharc-omeka-s-theme,,2019-07-19T11:09:48Z,2019-12-16T16:09:02Z,2,,,DHARC,http://dharc.unibo.it,,,,,,,
 "Digital Collecting",https://github.com/scholarslab/digitalcollecting,,2019-11-07T21:19:28Z,2019-11-14T14:28:01Z,1.1.0,,,"UVA Library Scholars' Lab",https://scholarslab.lib.virginia.edu/,,,,,,,
 "Digital Muret",https://github.com/INHAParis/omeka-s-theme-DigitalMuret,,2019-11-27T16:02:33Z,2019-12-02T14:23:05Z,1.0.0,,,"Federico Nurra (inspiré par Roy Rosenzweig Centerrow) pour l'INHA",https://www.inha.fr,,"Un thème inspiré par le thème Centerrow de Roy Rosenzweig",,https://github.com/INHAParis/omeka-s-theme-DigitalMuret,,,
 Foundation,https://github.com/kimisgold/foundation-s,,2019-06-10T18:17:57Z,2019-12-06T20:32:09Z,0.2,,,"Omeka Team",http://omeka.org,,,,,,,
