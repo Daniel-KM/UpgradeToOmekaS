@@ -22,7 +22,7 @@ To add bad referenced addons, simply fill its main url in the matching csv file
 in the directory `_data/` and run the php script:
 
 ```
-    php -f _scripts/update_data.php
+php -f _scripts/update_data.php
 ```
 
 You may need to add a file with a token from your github account in `_scripts/token_github.txt`
@@ -67,18 +67,10 @@ This Agreement may be freely reproduced and published, provided it is not
 altered, and that no provisions are either added or removed herefrom.
 
 
-Contact
--------
-
-Current maintainers:
-
-* Daniel Berthereau (see [Daniel-KM] on GitHub)
-
-
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2017-2018
+* Copyright Daniel Berthereau, 2017-2020 (see [Daniel-KM] on GitHub)
 
 
 [pages that list the plugins, modules and themes]: https://daniel-km.github.io/UpgradeToOmekaS/
