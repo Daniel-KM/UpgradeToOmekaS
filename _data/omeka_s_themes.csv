@@ -1,5 +1,5 @@
 Name,Url,"Fork source","Creation date","Last update","Last version",Omeka.org,"Omeka constraint",Author,"Author link",License,Description,Tags,Link,"Support link","Ini path","Last released zip"
-"1972_The Daily",https://github.com/marlara/1972_theme_omekaS,,2022-01-04T09:47:39Z,2022-01-14T11:56:49Z,1.0,,,"Lara Marziali, from The Daily by Omeka Team",,,"Theme based from The Daily. Created for the exhibition 1972. Moda, media, storia, Università di Parma",,,,,
+"1972_The Daily",https://github.com/marlara/1972_theme_omekaS,,2022-01-04T09:47:39Z,2022-01-31T11:05:45Z,1.0,,,"Lara Marziali, from The Daily by Omeka Team",,,"Theme based from The Daily. Created for the exhibition 1972. Moda, media, storia, Università di Parma",,,,,
 AHP,https://github.com/pols12/ahp-theme,,2018-07-15T15:53:37Z,2018-08-12T22:20:08Z,0.5.2,,,Pols12,http://chnm.gmu.edu/,,,,,,,
 AIDHP,https://github.com/unolibraries/aidph-omeka,,2017-02-06T21:48:50Z,2018-11-11T11:58:40Z,1.0.0-beta,,,"Jason A. Heppler",http://jasonheppler.org,,,,,,,
 "American Religious Ecologies",https://github.com/religious-ecologies/omeka-s-theme,,2020-05-11T12:14:09Z,2020-12-13T06:54:32Z,0.2,,,"Omeka Team",http://omeka.org,,,,,,,
@@ -23,6 +23,7 @@ dharc-omeka-s-theme,https://github.com/dharc-org/dharc-omeka-s-theme,,2019-07-19
 "Digital Collecting",https://github.com/scholarslab/digitalcollecting,,2019-11-07T21:19:28Z,2021-08-11T16:11:20Z,2.0.0,,,"UVA Library Scholars' Lab",https://scholarslab.lib.virginia.edu/,,,,,,,
 "Digital Muret",https://github.com/INHAParis/omeka-s-theme-DigitalMuret,,2019-11-27T16:02:33Z,2021-08-11T18:00:23Z,2.0.0,,,"Federico Nurra (inspiré par Roy Rosenzweig Centerrow) pour l'INHA",https://www.inha.fr,,"Un thème inspiré par le thème Centerrow de Roy Rosenzweig",,https://github.com/INHAParis/omeka-s-theme-DigitalMuret,,,https://github.com/INHAParis/omeka-s-theme-DigitalMuret/releases/download/2.0/DigitalMuret.zip
 "DLME Skin",https://github.com/waynegraham/dlme-omeka-s-theme,,2021-06-09T21:46:48Z,2021-09-02T13:40:02Z,0.0.1,,,"DLME Team",https://dlmenetwork.org/,,,,,,,
+EDICEM,https://github.com/samszo/Omeka-S-theme-EDISEM,,2022-01-19T08:23:44Z,2022-01-30T09:06:10Z,0.0.0,,,"Samuel Szoniecky - Laboratoire Paragraphe - Université Paris 8",http://www.samszo.univ-paris8.fr,,,,,,,
 Explore/Grid,https://github.com/hxsllc/Omeka-S-theme-ExploreGrid,,2020-10-25T14:30:17Z,2021-09-29T00:09:11Z,1.2.0,,,"Ben Bakelaar, adapted from IIP theme by Anneliese Dehner",http://hxsdesign.com,,"A responsive theme for Omeka-S v3.x with full configuration controls",,https://github.com/hxsllc/Omeka-S-theme-ExploreGrid,,,
 FeuilletNumerique,https://github.com/samszo/Omeka-S-theme-FeuilletNumerique,,2021-07-30T06:12:49Z,2021-11-19T03:39:09Z,0.0.1,,,"Gabrielle Godin & Samuel Szoniecky - Laboratoire Paragraphe",https://omeka.org/,,,,,,,
 Foundation,https://github.com/chnm/dcdm,,2020-04-07T19:49:58Z,2021-08-12T06:22:48Z,0.2,,,"Omeka Team",http://omeka.org,,,,,,,
