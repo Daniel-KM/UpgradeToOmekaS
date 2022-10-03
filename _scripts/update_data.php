@@ -271,7 +271,7 @@ class UpdateDataExtensions
             $this->log('Debug mode enabled.');
         }
 
-        $destination = str_replace('.csv', '_versions.json', $this->args['destination']);
+        $destination = str_replace('.csv', '_versions.tsv', $this->args['destination']);
         if (!$this->checkFiles($this->args['source'], $destination)) {
             return false;
         }
@@ -326,11 +326,22 @@ class UpdateDataExtensions
         if ($this->options['debug'] && !$this->options['debugOutput']) {
             $this->log('Required no output.');
         } else {
+            $resultTsv = [];
+            foreach ($addonsLastVersions as $addon => $version) {
+                $resultTsv[] = [$addon, $version];
+            }
+            $result = $this->saveToTsvFile($destination, $resultTsv);
+            if (!$result) {
+                $this->log(sprintf('An error occurred during saving the tsv into the file "%s".', $destination));
+                return false;
+            }
+            /*
             $result = $this->saveToJsonFile($destination, $addonsLastVersions);
             if (!$result) {
                 $this->log(sprintf('An error occurred during saving the json into the file "%s".', $destination));
                 return false;
             }
+            */
         }
 
         $this->log(sprintf('Process ended successfully for "%s".', $this->args['topic']));
@@ -1224,6 +1235,25 @@ class UpdateDataExtensions
         }
         foreach ($array as $row) {
             fputcsv($handle, $row);
+        }
+        return fclose($handle);
+    }
+
+    /**
+     * Save an array into a tsv file.
+     *
+     * @param string $destination
+     * @param array $array
+     * @return bool
+     */
+    protected function saveToTsvFile($destination, array $array)
+    {
+        $handle = fopen($destination, 'w');
+        if (empty($handle)) {
+            return false;
+        }
+        foreach ($array as $row) {
+            fputcsv($handle, $row, "\t", chr(0));
         }
         return fclose($handle);
     }
