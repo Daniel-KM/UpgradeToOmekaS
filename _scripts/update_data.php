@@ -9,6 +9,7 @@
  * ```
  *
  * @author Daniel Berthereau
+ * @copyright 2017-2022 Daniel Berthereau
  * @license Cecill v2.1
  */
 
@@ -96,6 +97,7 @@ foreach ($types as $type => $args) {
     }
     $update = new UpdateDataExtensions($type, $args, $options);
     $result = $update->process();
+    $update->processUpdateLastVersions();
 }
 
 return $result;
@@ -254,6 +256,85 @@ class UpdateDataExtensions
         }
 
         $this->log('Process ended successfully.');
+
+        return true;
+    }
+
+    /**
+     * Create the json for last versions from the csv file.
+     */
+    public function processUpdateLastVersions()
+    {
+        $this->log(sprintf('Start update of file of last versions for "%s".', $this->args['topic']));
+
+        if ($this->options['debug']) {
+            $this->log('Debug mode enabled.');
+        }
+
+        $destination = str_replace('.csv', '_versions.json', $this->args['destination']);
+        if (!$this->checkFiles($this->args['source'], $destination)) {
+            return false;
+        }
+
+        $addons = array_map('str_getcsv', file($this->args['source']));
+        if (empty($addons)) {
+            $this->log(sprintf('No content in the csv file "%s".', $this->args['source']));
+            return false;
+        }
+
+        // Get headers by name.
+        $headers = array_flip($addons[0]);
+        $this->headers = $headers;
+        unset($addons[0]);
+
+        $replaceForName = [
+            'plugin', 'module', 'theme', 'widget', 'omeka s', 'omeka-s', 'omeka',
+        ];
+
+        $addonsLastVersions = [];
+        foreach ($addons as $addon) {
+            // TODO Add the directory name in the csv file.
+            // Set the name or a temp addon name.
+            $addonUrl = trim($addon[$headers['Url']], '/ ');
+            $addonName = basename($addonUrl);
+            $addonName = str_ireplace($replaceForName, '', $addonName);
+            if (empty($addonName)) {
+                continue;
+            }
+
+            $cleanName = $this->cleanAddonNameWithCase($addonName);
+            $addonFullName = $addon[$headers['Name']];
+
+            // To improve correct name as long as the directory name is not stored,
+            // compare it to the name and clean name.
+            if (strtolower($addonName) === preg_replace('~[^0-9a-zA-Z]~i', '', strtolower($addonFullName))
+                || strtolower($cleanName) === preg_replace('~[^0-9a-zA-Z]~i', '', strtolower($addonFullName))
+            ) {
+                $cleanName = preg_replace('~[^0-9a-zA-Z]~i', '', $addonFullName);
+            }
+
+            $lastVersion = $addon[$headers['Last version'] ?? $headers['Last Version']];
+
+            if (empty($json[$cleanName])) {
+                $addonsLastVersions[$cleanName] = $lastVersion;
+            } elseif (version_compare($addonsLastVersions[$cleanName], $lastVersion, '<=')) {
+                $addonsLastVersions[$cleanName] = $lastVersion;
+            }
+            $this->log("$lastVersion : $cleanName ($addonFullName / $addonUrl)");
+        }
+
+        if ($this->options['debug'] && !$this->options['debugOutput']) {
+            $this->log('Required no output.');
+        } else {
+            $result = $this->saveToJsonFile($destination, $addonsLastVersions);
+            if (!$result) {
+                $this->log(sprintf('An error occurred during saving the json into the file "%s".', $destination));
+                return false;
+            }
+        }
+
+        $this->log(sprintf('Process ended successfully for "%s".', $this->args['topic']));
+        $this->log('');
 
         return true;
     }
@@ -932,8 +1013,8 @@ class UpdateDataExtensions
 
         $cleanName = str_ireplace(
             ['plugin', 'module', 'theme'],
-            '',
-            preg_replace('~[^\da-z]~i', '', strtolower($addonName))
+            ['', '', ''],
+            preg_replace('~[^0-9a-z]~i', '', strtolower($addonName))
         );
 
         // Manage exception on Omeka.org.
@@ -946,6 +1027,38 @@ class UpdateDataExtensions
             case 'vracore': return 'vracoreelementset';
             case 'pbcore': return 'pbcoreelementset';
             case 'media': return 'html5media';
+        }
+
+        return $cleanName;
+    }
+
+    /**
+     * Clean an addon name keeping case to simplify matching.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function cleanAddonNameWithCase($name)
+    {
+        // Manage exceptions with non standard characters (avoid duplicates).
+        $addonName = str_replace(['+'], ['Plus'], $name);
+
+        $cleanName = str_ireplace(
+            ['plugin', 'module', 'theme'],
+            ['', '', ''],
+            preg_replace('~[^0-9a-zA-Z]~i', '', $addonName)
+        );
+
+        // Manage exception on Omeka.org.
+        switch (strtolower($cleanName)) {
+            case 'neatlinewidgetsimiletimeline': return 'NeatlineSimileTimeline';
+            case 'neatlinewidgettext': return 'NeatlineText';
+            case 'neatlinewidgetwaypoints': return 'NeatlineWaypoints';
+            case 'replacedctitleinallpublicadminviews': return 'ReplacedcTitleInAllViews';
+            case 'sitemap2': return 'XmlSitemap';
+            case 'vracore': return 'VraCoreElementSet';
+            case 'pbcore': return 'PBCore-Element-Set';
+            case 'media': return 'Html5Media';
         }
 
         return $cleanName;
@@ -1113,6 +1226,19 @@ class UpdateDataExtensions
             fputcsv($handle, $row);
         }
         return fclose($handle);
+    }
+
+    /**
+     * Save an array into a json file.
+     *
+     * @param string $destination
+     * @param array $array
+     * @return bool
+     */
+    protected function saveToJsonFile($destination, array $array)
+    {
+        $json = json_encode($array, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        return (bool) file_put_contents($destination, $json);
     }
 
     /**

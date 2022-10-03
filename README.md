@@ -29,6 +29,12 @@ You may need to add a file with a token from your github account in `_scripts/to
 to be allowed to fetch more than 50 results.
 
 
+TODO
+----
+
+- [ ] Add a column for the Omeka directory name.
+
+
 Warning
 -------
 
