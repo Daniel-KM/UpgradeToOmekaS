@@ -56,7 +56,7 @@ CSVImport	2.1.1
 CustomAdvancedSearch	0.0.1
 CustomFloat	1.0
 CustomOntology	3.3.5.1
-CustomVocab	1.6.0
+CustomVocab	1.7.0
 DataCleaning	1.0.0
 DataRepositoryConnector	1.0.0
 DataScribeDataTypes	0.1.0
@@ -75,7 +75,7 @@ DomainManager	2.0.0
 rrchnmdonate	1.0.1
 DspaceConnector	1.1.0
 EAD	3.0.4
-EasyAdmin	3.3.6
+EasyAdmin	3.3.6.1
 EasyInstall	3.1.3
 Ebook	3.3.0.9
 EhpSearchForm	1.3.0
@@ -93,7 +93,7 @@ FacetedBrowse	1.3.0
 FacetedSearch	0.1.0
 Favorite	0.0.1
 FedoraConnector	1.1.0
-Feed	3.3.3.1.3
+Feed	3.3.3.3
 FieldAsTags	1.0.1
 FileSideload	1.6.1
 FIT	1.1.2
