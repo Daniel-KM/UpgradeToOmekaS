@@ -11,7 +11,7 @@ AmazonS3Storage	1.0.0
 AmazonS3	3.3.3.5
 AnalyticsSnippet	3.3.3.4
 AnalyticsSnippetPiwik	3.3.4
-Annotate	3.3.3.7.3
+Annotate	3.3.3.7.4
 Cartography	3.3.1.3.2-beta-2
 AnyCloud	2.0.0
 ApiInfo	3.3.9.8
@@ -31,7 +31,7 @@ BulkCheck	3.3.11
 BulkEdit	3.3.17
 BulkExport	3.3.14
 BulkImportFiles	3.3.6.2
-BulkImport	3.3.35.1
+BulkImport	3.3.37
 CartoAffect	0.1.8
 CAS	0.4.2
 ChaoticumSeminario	0.0.2
@@ -100,7 +100,7 @@ FIT	1.1.2
 Folksonomy	3.3.11.1
 Footnotes	3.3.0.2-3.4.1
 FreeSpace	1.0
-Generic	3.3.36
+Generic	3.3.37
 GoogleAnalytics	1.2.2
 GroupEdit	1.0
 Group	3.3.4.3
@@ -118,8 +118,8 @@ IIIFDownload	1.0.1
 IIIFHosting	1.0.0-beta
 IIIFPresentation	1.0.0
 IIIFPreview	3.0.2
-IiifSearch	3.3.2.1
-IIIFServer	3.6.7.3
+IiifSearch	3.3.3
+IIIFServer	3.6.8.3
 IiifViewers2	0.0.1
 IIIFViewers	1.1.0
 ImageMap	1.0
@@ -152,7 +152,7 @@ Mesostiche	0.0.2
 MetadataBrowse	1.2.0
 MetadataEditor	1.0.0
 MetaTags	3.3.0.5
-Mirador	3.3.7.15
+Mirador	3.3.7.16
 Modelviewer	3.3.0.6-132
 MPCustomInput	0.1.0
 Mroongasearch	0.9.0
