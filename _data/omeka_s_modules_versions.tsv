@@ -2,7 +2,7 @@ AccessResource	3.3.0.11
 Adminer	3.3.1.5-4.8.1
 AdminPlus	3.0.2
 AdvancedResourceTemplate	3.3.4.15.2
-SearchSolr	3.5.38.3
+SearchSolr	3.5.39.3
 AdvancedSearch	3.3.6.18
 AdvancedSearchPlus	3.3.5.6
 AgileTools	1.0.1
@@ -25,7 +25,7 @@ Basket	0.2.0
 Bibliography	3.3.1.6
 BiblionumberSupport	0.1.0
 BlockLayoutSkeleton	0.1.0
-BlockPlus	3.3.15.4
+BlockPlus	3.3.15.5
 BlocksDisposition	3.3.2.3
 BulkCheck	3.3.11
 BulkEdit	3.3.17
@@ -33,7 +33,7 @@ BulkExport	3.3.14
 BulkImportFiles	3.3.6.2
 BulkImport	3.3.37
 CartoAffect	0.1.8
-CAS	0.4.2
+CAS	0.5.0
 ChaoticumSeminario	0.0.2
 CiteShare	1.0.0
 Citing	1.0.0
@@ -51,14 +51,14 @@ Contribute	3.3.0.19
 CopIdRef	3.3.0.10
 Correction	3.0.11
 CreateMissingThumbnails	0.2.0
-CSSEditor	1.3.0
+CSSEditor	1.3.1
 CSVImport	2.1.1
 CustomAdvancedSearch	0.0.1
 CustomFloat	1.0
 CustomOntology	3.3.5.1
 CustomVocab	1.7.0
 DataCleaning	1.1.0
-DataRepositoryConnector	1.0.0
+DataRepositoryConnector	1.1.0
 DataScribeDataTypes	0.1.0
 DataScribe	1.1.0
 DataTypeClass	1.0.0
@@ -127,7 +127,7 @@ ImageServer	3.6.11.3
 ImageWithText	1.3.0
 Internationalisation	3.3.10.2
 InverseProperties	1.0.0
-CarouselBrowseBlock	1.0.1
+CarouselBrowseBlock	1.2.0
 ItemCopy	1.2.0
 ItemRelation	0.3.0
 ItemSetCalendar	0.2.0
@@ -179,7 +179,7 @@ PdfText	1.0
 PdfToc	1.0
 PdfViewer	3.3.4.2
 PerformanceLabRestApi	1.0.0
-PersistentIdentifiers	1.0.0
+PersistentIdentifiers	1.1.0
 PersonalNotebook	0.1.0
 Psl	0.1.0
 PslSearchForm	0.2.0
@@ -201,7 +201,7 @@ SACO	0.2
 Scaping	0.0.2
 Scripto	1.4.0
 ScriptoPageBlocks	0.1
-Search	0.10.0
+Search	0.11.0
 SearchbyVisibility	1.0.0
 SearchHistory	3.3.0.4
 Solr	0.9.4
