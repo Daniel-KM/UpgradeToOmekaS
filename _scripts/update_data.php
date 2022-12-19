@@ -4,7 +4,7 @@
  * Script to update the list of addons of Omeka with the last data.
  *
  * To use, simply run in the terminal, from the root of the sources:
- * ```
+ * ```sh
  * php -f _scripts/update_data.php
  * ```
  *
