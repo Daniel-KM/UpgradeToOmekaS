@@ -9,7 +9,7 @@
  * ```
  *
  * @author Daniel Berthereau
- * @copyright 2017-2022 Daniel Berthereau
+ * @copyright 2017-2023 Daniel Berthereau
  * @license Cecill v2.1
  */
 

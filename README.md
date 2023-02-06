@@ -25,7 +25,7 @@ in the directory `_data/` and run the php script:
 php -f _scripts/update_data.php
 ```
 
-You may need to add a file with a token from your github account in `_scripts/token_github.txt`
+You may need to add a file with a token from your github account in `_data/token_github.txt`
 to be allowed to fetch more than 50 results.
 
 
@@ -76,7 +76,7 @@ altered, and that no provisions are either added or removed herefrom.
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2017-2020 (see [Daniel-KM] on GitHub)
+* Copyright Daniel Berthereau, 2017-2023 (see [Daniel-KM] on GitHub)
 
 
 [pages that list the plugins, modules and themes]: https://daniel-km.github.io/UpgradeToOmekaS/
