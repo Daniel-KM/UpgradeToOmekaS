@@ -313,7 +313,7 @@ class UpdateDataExtensions
                 $cleanName = preg_replace('~[^0-9a-zA-Z]~i', '', $addonFullName);
             }
 
-            $lastVersion = $addon[$headers['Last version'] ?? $headers['Last Version']];
+            $lastVersion = $addon[$headers['Last version'] ?? $headers['Last Version']] ?? '';
 
             if (empty($json[$cleanName])) {
                 $addonsLastVersions[$cleanName] = $lastVersion;
@@ -617,7 +617,7 @@ class UpdateDataExtensions
         switch ($server) {
             case 'github.com':
                 $addonIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $addonUrl);
-                if ($addon[$headers['Ini path']]) {
+                if ($addon[$headers['Ini path']] ?? null) {
                     $replacements = [
                         '/tree/master/' => '/master/',
                         '/tree/develop/' => '/develop/',
@@ -637,7 +637,7 @@ class UpdateDataExtensions
                 break;
         }
 
-        $addonIni = $addon[$headers['Ini path']] ?: ('master/' . $this->args['ini']);
+        $addonIni = ($addon[$headers['Ini path']] ?? '') ?: ('master/' . $this->args['ini']);
 
         $addonIni = $addonIniBase . '/' . $addonIni;
 
@@ -674,7 +674,7 @@ class UpdateDataExtensions
                     case 'name':
                     case 'title':
                         if (empty($iniValue)) {
-                            $iniValue = $addon[$headers[$header]] ?: $addonName;
+                            $iniValue = ($addon[$headers[$header]] ?? null) ?: $addonName;
                         }
                         $iniValue = str_ireplace([
                             ' plugin',
@@ -870,14 +870,14 @@ class UpdateDataExtensions
             elseif ($key == 1) {
                 $previousAddon = $addon;
                 $previousName = $addon[$headers['Name']];
-                $previousLastUpdate = $addon[$headers['Last update']];
-                $previousVersion = $addon[$headers['Last version']];
+                $previousLastUpdate = $addon[$headers['Last update']] ?? '';
+                $previousVersion = $addon[$headers['Last version']] ?? '';
                 $previousKey = $key;
                 continue;
             }
             $name = $addon[$headers['Name']];
-            $lastUpdate = $addon[$headers['Last update']];
-            $version = $addon[$headers['Last version']];
+            $lastUpdate = $addon[$headers['Last update']] ?? '';
+            $version = $addon[$headers['Last version']] ?? '';
             if ($name === $previousName && ($lastUpdate === $previousLastUpdate || $version === $previousVersion)) {
                 if ($this->options['debug']) {
                     $this->log('Duplicate full: ' . $name);
