@@ -1,4 +1,4 @@
-AccessResource	3.4.0.13
+AccessResource	3.4.0.14
 Adminer	3.4.2-4.8.1
 AdminPlus	3.0.2
 AdvancedResourceTemplate	3.4.4.16
@@ -11,13 +11,13 @@ AmazonS3Storage	1.0.0
 AmazonS3	3.4.3.6
 AnalyticsSnippet	3.4.3.5
 AnalyticsSnippetPiwik	3.4.5
-Annotate	3.3.3.7.5
-Cartography	3.3.1.3.2-beta-2
+Annotate	3.4.3.8-beta
+Cartography	3.4.1.4-beta
 AnyCloud	2.0.0
 ApiInfo	3.4.9.8
 ArchiveFolder	2.4
 ArchiveRepertory	3.15.16
-Ark	3.5.13.3
+Ark	3.5.13.4
 ArkURL	0.2.0
 BannerImage	1.0
 Base	0.1.0
@@ -43,7 +43,7 @@ COinS	3.0.1
 Collecting	1.9.0
 CollectingTogether	0.1.0
 SColumnsMaker	0.0.1
-Comment	3.3.1.12.1
+Comment	3.4.1.12
 ConnectedSites	1.0
 ContactUs	3.4.8.12
 ContentReader	1.0.0
@@ -58,7 +58,7 @@ CustomFloat	1.0
 CustomOntology	3.4.5.1
 CustomVocab	1.7.1
 DataCleaning	1.1.0
-DataRepositoryConnector	1.1.0
+DataRepositoryConnector	1.2.0
 DataScribeDataTypes	0.1.0
 DataScribe	1.1.0
 DataTypeClass	1.0.0
@@ -102,7 +102,7 @@ FixCjkSearch	1.0.4
 Folksonomy	3.3.11.1
 Footnotes	3.3.0.2-3.4.1
 FreeSpace	1.0
-Generic	3.4.41
+Generic	3.4.42
 GoogleAnalytics	1.2.2
 GroupEdit	1.0
 Group	3.4.5
@@ -120,7 +120,7 @@ IIIFDownload	1.0.1
 IIIFHosting	1.0.0-beta
 IIIFPresentation	1.0.0
 IIIFPreview	3.0.2
-IiifSearch	3.3.3
+IiifSearch	3.4.3
 IIIFServer	3.6.9
 IiifViewers2	0.0.1
 IIIFViewers	1.1.0
@@ -141,6 +141,7 @@ jQueryUI	1.12.1
 Kalturastream	1.1.0
 LDAP	0.4.0
 Ldap	0.2
+LessonPlans	1.1
 LocaleSwitch	0.2.0
 LocalMediaIngester	0.2.0
 Lockout	3.3.4
@@ -179,6 +180,7 @@ twig	0.2.0
 ORCIDConnector	1.0.0
 OutputFormats	1.0.0
 PageBlocks	1.2
+PueueJobDispatcher	1.0.3
 PdfCreator	3.4.2
 PdfEmbedS	1.2.1
 PdfText	1.0
@@ -194,7 +196,7 @@ Quark	0.1.0
 Rameau	3.3.0
 RandomItemsBlock	0.2.0
 RdfDatatype	3.0.4.2
-Reciprocal	3.3.1.2
+Reciprocal	3.4.1.2
 RedactValues	1.1.0
 RedirectAfterLogin	0.2.0
 Reference	3.4.40
@@ -212,7 +214,7 @@ Search	0.11.0
 SearchbyVisibility	1.0.0
 SearchHistory	3.3.0.4
 Solr	0.9.4
-Selection	3.4.4.5
+Selection	3.4.4.6
 ServerURLOverride	1.0.0
 ShareMeBaby	1.2.1
 Sharing	1.3.0
@@ -223,6 +225,7 @@ SimpleCarousel	1.2.3
 SimpleIIIF	0.1.0-alpha
 SimplePDF	1.0.1
 SimpleReference	1.0.0
+SingleSignOn	https://gitlab.com/Daniel-KM/Omeka-S-module-SingleSignOn/-/issues
 SiteLog	0.2.0
 Sitemaps	1.0
 SiteSlugAsSubdomain	1.0.0
@@ -234,18 +237,18 @@ agilestorymap	3.4.4
 Teams	3.2.0
 Thesauri	0.1.0
 Thesaurus	3.4.8.3
-Timeline	3.4.16.3
+Timeline	3.4.18
 Transcript	4.0.2
 Translations	3.0.3
 TypesenseSearch	0.0.2
 unAPI	1.3.0
 UniqueConstraintViolationException	0.1.0
 UnityAPI	
-UniversalViewer	3.6.6
+UniversalViewer	3.6.7
 UpgradeFromClassic	3.1.3
 URIDereferencer	1.3.0
 UserNames	1.2
-UserProfile	3.4.4.5
+UserProfile	3.4.4.6
 ValueSuggestAny	3.3.0.5
 ValueSuggest	1.13.0
 Verovio	3.3.0.7
