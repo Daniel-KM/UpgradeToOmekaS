@@ -148,7 +148,7 @@ Lockout	3.3.4
 Log	3.4.13
 Maintenance	3.3.3.2
 Mare	1.0.0
-Mapping	1.8.0
+Mapping	1.9.0
 MediaViewer	0.1.0
 MediaWatermark	1.0
 Menu	3.4.7
@@ -225,7 +225,7 @@ SimpleCarousel	1.2.3
 SimpleIIIF	0.1.0-alpha
 SimplePDF	1.0.1
 SimpleReference	1.0.0
-SingleSignOn	3.4.1
+SingleSignOn	3.4.2
 SiteLog	0.2.0
 Sitemaps	1.0
 SiteSlugAsSubdomain	1.0.0
@@ -246,13 +246,14 @@ UniqueConstraintViolationException	0.1.0
 UnityAPI	
 UniversalViewer	3.6.7
 UpgradeFromClassic	3.1.3
-URIDereferencer	1.3.0
+URIDereferencer	1.3.1
 UserNames	1.2
 UserProfile	3.4.4.6
 ValueSuggestAny	3.3.0.5
 ValueSuggest	1.13.0
 Verovio	3.3.0.7
 ViewerJS	3.4.0.3-0.7.2
+ViewPrivateResources	1.0.0
 WebMonetization	1.0.0
 Wikidata	1.4.0
 XMLViewer	3.3.0.5
