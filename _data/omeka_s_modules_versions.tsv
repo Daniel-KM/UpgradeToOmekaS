@@ -11,7 +11,7 @@ AmazonS3Storage	1.0.0
 AmazonS3	3.4.3.6
 AnalyticsSnippet	3.4.3.5
 AnalyticsSnippetPiwik	3.4.5
-Annotate	3.4.3.8-beta-4
+Annotate	3.4.3.8-beta-5
 Cartography	3.4.1.4-beta-2
 AnyCloud	3.0.0
 ApiInfo	3.4.9.8
@@ -69,7 +69,7 @@ Datavis	1.1.0
 dclmisc	1.0.0
 Deduplicate	3.4.0.2
 DerivativeImages	3.3.7.0
-DerivativeMedia	3.3.2.6
+DerivativeMedia	3.4.3
 DiigoImport	0.0.6
 Diva	3.3.2.3
 DomainManager	2.0.0
@@ -121,11 +121,11 @@ IIIFHosting	1.0.0-beta
 IIIFPresentation	1.0.0
 IIIFPreview	3.0.2
 IiifSearch	3.4.3
-IIIFServer	3.6.10
+IIIFServer	3.6.12
 IiifViewers2	0.0.1
-IIIFViewers	1.2.0
+IIIFViewers	1.2.1
 ImageMap	1.0
-ImageServer	3.6.12.4
+ImageServer	3.6.13
 ImageWithText	1.3.0
 Internationalisation	3.4.10.2
 InverseProperties	1.0.0
@@ -133,7 +133,7 @@ CarouselBrowseBlock	1.2.0
 ItemCopy	1.2.0
 ItemRelation	0.3.0
 ItemSetCalendar	0.2.0
-ItemSetsGraph	1.0
+ItemSetsGraph	1.1
 ItemSetsTree	0.7.0
 JDC	0.0.2
 jQueryParallax	1.0
@@ -145,7 +145,7 @@ LessonPlans	1.1
 LocaleSwitch	0.2.0
 LocalMediaIngester	0.3.0
 Lockout	3.3.4
-Log	3.4.13
+Log	3.4.14
 Maintenance	3.3.3.2
 Mare	1.0.0
 Mapping	1.9.0
@@ -162,6 +162,7 @@ MPCustomInput	0.1.0
 Mroongasearch	0.9.0
 dictionnaire	1.0
 Ngramsearch	0.1.0
+NDETermennetwerk	1.0.0
 Neatline	0.4.0
 Necropolis	0.1.0
 NestedDataTypes	3.3.1
@@ -201,6 +202,7 @@ RedactValues	1.1.0
 RedirectAfterLogin	0.2.0
 Reference	3.4.41
 Relators	1.0
+ResourceMeta	1.0.0-alpha
 ItemNetworks	0.0.1
 RestrictedSites	2.2
 RightsStatements	1.2.1
@@ -234,6 +236,7 @@ SolrImprovements	1.0.1-bib0.4.2
 Statistics	3.4.5.3
 STest	1.0.0
 agilestorymap	3.4.4
+Taxonomy	0.1.0
 Teams	3.2.0
 Thesauri	0.1.0
 Thesaurus	3.4.8.3
@@ -246,11 +249,11 @@ UniqueConstraintViolationException	0.1.0
 UnityAPI	
 UniversalViewer	3.6.7
 UpgradeFromClassic	3.1.3
-URIDereferencer	1.3.1
+URIDereferencer	1.3.2
 UserNames	1.2
 UserProfile	3.4.4.6
 ValueSuggestAny	3.3.0.5
-ValueSuggest	1.13.1
+ValueSuggest	1.14.0
 Verovio	3.3.0.7
 ViewerJS	3.4.0.3-0.7.2
 ViewPrivateResources	1.0.0
