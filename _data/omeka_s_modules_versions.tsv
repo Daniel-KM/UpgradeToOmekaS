@@ -37,7 +37,7 @@ CAS	0.5.0
 ChaoticumSeminario	0.0.2
 CiteShare	1.0.0
 Citing	1.0.0
-CleanUrl	3.17.4.4
+CleanUrl	3.17.5
 CmapImport	0.0.2
 COinS	3.0.1
 Collecting	1.9.0
@@ -45,7 +45,7 @@ CollectingTogether	0.1.0
 SColumnsMaker	0.0.1
 Comment	3.4.1.12
 ConnectedSites	1.0
-ContactUs	3.4.8.12
+ContactUs	3.4.9
 ContentReader	1.0.0
 Contribute	3.4.0.21
 CopIdRef	3.4.0.10
@@ -167,7 +167,7 @@ Neatline	0.4.0
 Necropolis	0.1.0
 NestedDataTypes	3.3.1
 NetworkMap	1.0
-Next	3.3.45
+Next	3.4.45
 NoGoogleChromeFlockTracking	3.3.0.1
 OAIPMHHarvester	3.0.7
 OAIPMHRepository	3.4.6
@@ -256,7 +256,7 @@ ValueSuggestAny	3.3.0.5
 ValueSuggest	1.14.0
 Verovio	3.3.0.7
 ViewerJS	3.4.0.3-0.7.2
-ViewPrivateResources	1.0.0
+ViewPrivateResources	1.0.1
 WebMonetization	1.0.0
 Wikidata	1.4.0
 XMLViewer	3.3.0.5
