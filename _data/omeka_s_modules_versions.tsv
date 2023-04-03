@@ -72,6 +72,7 @@ DerivativeImages	3.3.7.0
 DerivativeMedia	3.4.3
 DiigoImport	0.0.6
 Diva	3.3.2.3
+DocArchive	2.1.0
 DomainManager	2.0.0
 rrchnmdonate	1.0.1
 DspaceConnector	1.1.0
@@ -96,7 +97,7 @@ Favorite	0.0.1
 FedoraConnector	1.1.0
 Feed	3.4.3.3
 FieldAsTags	1.0.1
-FileSideload	1.7.0
+FileSideload	1.7.1
 FIT	1.1.5
 FixCjkSearch	1.0.4
 Folksonomy	3.3.11.1
@@ -149,6 +150,7 @@ Log	3.4.14
 Maintenance	3.3.3.2
 Mare	1.0.0
 Mapping	1.9.0
+MediaArchive	2.1.0
 MediaViewer	0.1.0
 MediaWatermark	1.0
 Menu	3.4.7
@@ -202,8 +204,9 @@ RedactValues	1.1.0
 RedirectAfterLogin	0.2.0
 Reference	3.4.41
 Relators	1.0
-ResourceMeta	1.0.0-alpha
+ResourceMeta	1.0.0
 ItemNetworks	0.0.1
+ResourceTree	2.1.0
 RestrictedSites	2.2
 RightsStatements	1.2.1
 RoleBasedNavigation	1.2
@@ -221,7 +224,7 @@ ServerURLOverride	1.0.0
 ShareMeBaby	1.2.1
 Sharing	1.3.0
 Shibboleth	3.4.0.8
-Shortcode	3.4.1.10
+Shortcode	3.4.1.11
 SimpleBlock	0.1.0
 SimpleCarousel	1.2.3
 SimpleIIIF	0.1.0-alpha
@@ -233,6 +236,8 @@ Sitemaps	1.0
 SiteSlugAsSubdomain	1.0.0
 SiteSwitcher	1.0
 SolrImprovements	1.0.1-bib0.4.2
+SpecialCharacterSearch	2.1.0
+SruSrwMaker	2.1.0
 Statistics	3.4.5.3
 STest	1.0.0
 agilestorymap	3.4.4
@@ -249,14 +254,14 @@ UniqueConstraintViolationException	0.1.0
 UnityAPI	
 UniversalViewer	3.6.7
 UpgradeFromClassic	3.1.3
-URIDereferencer	1.3.2
+URIDereferencer	1.4.0
 UserNames	1.2
 UserProfile	3.4.4.6
 ValueSuggestAny	3.3.0.5
-ValueSuggest	1.14.0
+ValueSuggest	1.15.0
 Verovio	3.3.0.7
 ViewerJS	3.4.0.3-0.7.2
-ViewPrivateResources	1.0.1
+ViewPrivateResources	1.0.2
 WebMonetization	1.0.0
 Wikidata	1.4.0
 XMLViewer	3.3.0.5
