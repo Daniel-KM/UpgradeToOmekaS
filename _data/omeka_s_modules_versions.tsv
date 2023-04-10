@@ -151,7 +151,6 @@ Maintenance	3.3.3.2
 Mare	1.0.0
 Mapping	1.9.0
 MediaArchive	2.1.0
-MediaViewer	0.1.0
 MediaWatermark	1.0
 Menu	3.4.7
 Mesostiche	0.0.2
@@ -174,6 +173,7 @@ NoGoogleChromeFlockTracking	3.3.0.1
 OAIPMHHarvester	3.0.7
 OAIPMHRepository	3.4.6
 OAIPmhHarvester	0.1
+MediaViewer	0.2.0
 2Importer	1.2.0
 SItemImporter	0.0.1-alpha
 Osii	1.2.0
@@ -197,7 +197,7 @@ PslSearchForm	0.2.0
 PyramidImageBuilder	0.1.0
 Quark	0.1.0
 Rameau	3.3.0
-RandomItemsBlock	0.2.0
+RandomItemsBlock	0.3.0
 RdfDatatype	3.0.4.2
 Reciprocal	3.4.1.2
 RedactValues	1.1.0
@@ -242,7 +242,7 @@ Statistics	3.4.5.3
 STest	1.0.0
 agilestorymap	3.4.4
 Taxonomy	0.1.0
-Teams	3.2.0
+Teams	3.2.0-1
 Thesauri	0.1.0
 Thesaurus	3.4.8.3
 Timeline	3.4.18
