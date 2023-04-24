@@ -1,7 +1,7 @@
 AccessResource	3.4.0.15
 Adminer	3.4.2-4.8.1
 AdminPlus	3.0.2
-AdvancedResourceTemplate	3.4.4.17
+AdvancedResourceTemplate	3.4.4.18
 SearchSolr	3.5.40.4
 AdvancedSearch	3.4.6.20
 AdvancedSearchPlus	3.3.5.6
@@ -40,7 +40,7 @@ Citing	1.0.0
 CleanUrl	3.17.5
 CmapImport	0.0.2
 COinS	3.0.1
-Collecting	1.9.0
+Collecting	1.10.0
 CollectingTogether	0.1.0
 SColumnsMaker	0.0.1
 Comment	3.4.1.12
@@ -56,7 +56,7 @@ CSVImport	2.1.1
 CustomAdvancedSearch	0.0.1
 CustomFloat	1.0
 CustomOntology	3.4.5.1
-CustomVocab	1.7.1
+CustomVocab	2.0.0
 DataCleaning	1.1.0
 DataRepositoryConnector	1.2.0
 DataScribeDataTypes	0.1.0
@@ -64,7 +64,7 @@ DataScribe	1.1.0
 DataTypeClass	1.0.0
 DataTypeGeometry	3.4.3
 DataTypePlace	3.4.1
-DataTypeRDF	3.4.4.5.1
+DataTypeRDF	3.4.5
 Datavis	1.1.0
 dclmisc	1.0.0
 Deduplicate	3.4.0.2
