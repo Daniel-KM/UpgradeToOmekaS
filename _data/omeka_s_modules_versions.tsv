@@ -29,7 +29,7 @@ BlockPlus	3.4.15.10
 BlocksDisposition	3.4.2.3-beta
 BulkCheck	3.3.11
 BulkEdit	3.4.19
-BulkExport	3.4.15
+BulkExport	3.4.16
 BulkImportFiles	3.3.6.2
 BulkImport	3.4.40
 CartoAffect	0.1.8
@@ -69,7 +69,7 @@ Datavis	1.1.0
 dclmisc	1.0.0
 Deduplicate	3.4.0.2
 DerivativeImages	3.3.7.0
-DerivativeMedia	3.4.4
+DerivativeMedia	3.4.5
 DiigoImport	0.0.6
 Diva	3.3.2.3
 DocArchive	2.1.0
@@ -105,6 +105,7 @@ Footnotes	3.3.0.2-3.4.1
 FreeSpace	1.0
 Generic	3.4.43
 GoogleAnalytics	1.3
+GoogleTagManager	1.0.0
 GroupEdit	1.0
 Group	3.4.5
 GuestApi	3.4.3.4
@@ -121,7 +122,7 @@ IIIFDownload	1.0.1
 IIIFHosting	1.0.0-beta
 IIIFPresentation	1.0.0
 IIIFPreview	3.0.2
-IiifSearch	3.4.3
+IiifSearch	3.4.4
 IIIFServer	3.6.13
 IiifViewers2	0.0.1
 IIIFViewers	1.2.1
@@ -249,7 +250,7 @@ Thesaurus	3.4.9
 Timeline	3.4.18
 Transcript	4.0.2
 Translations	3.0.3
-TypesenseSearch	0.3.0
+TypesenseSearch	0.3.1
 unAPI	1.3.0
 UniqueConstraintViolationException	0.1.0
 UnityAPI	
