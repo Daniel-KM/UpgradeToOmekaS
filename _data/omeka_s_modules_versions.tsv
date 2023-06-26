@@ -1,9 +1,9 @@
 AccessResource	3.4.16
-Adminer	3.4.2-4.8.1
+Adminer	3.4.3-4.8.1
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.23
-SearchSolr	3.5.42
-AdvancedSearch	3.4.9
+SearchSolr	3.5.43
+AdvancedSearch	3.4.10
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.0.1
 AltText	1.3.0
@@ -11,7 +11,7 @@ AmazonS3Storage	1.0.0
 AmazonS3	3.4.4
 AnalyticsSnippet	3.4.4
 AnalyticsSnippetPiwik	3.4.6
-Annotate	3.4.8
+Annotate	3.4.9
 Cartography	3.4.2
 AnyCloud	3.0.0
 ApiInfo	3.4.9.8
@@ -31,7 +31,7 @@ BulkCheck	3.3.11
 BulkEdit	3.4.20
 BulkExport	3.4.19
 BulkImportFiles	3.3.6.2
-BulkImport	3.4.42
+BulkImport	3.4.43
 CartoAffect	0.1.8
 CAS	0.6.0
 ChaoticumSeminario	0.0.2
@@ -45,7 +45,7 @@ CollectingTogether	0.1.0
 SColumnsMaker	0.0.1
 Comment	3.4.1.12
 ConnectedSites	1.0
-ContactUs	3.4.11
+ContactUs	3.4.8.12
 ContentReader	1.0.0
 Contribute	3.4.22
 CopIdRef	3.4.0.10
@@ -56,9 +56,9 @@ CSVImport	2.1.1
 CustomAdvancedSearch	0.0.1
 CustomFloat	1.0
 CustomOntology	3.4.5.1
-CustomVocab	2.0.0
+CustomVocab	2.0.1
 DataCleaning	1.1.0
-DataRepositoryConnector	1.2.0
+DataRepositoryConnector	1.3.0
 DataScribeDataTypes	0.1.0
 DataScribe	1.1.0
 DataTypeClass	1.0.0
@@ -131,7 +131,7 @@ ImageServer	3.6.14
 ImageWithText	1.3.0
 Internationalisation	3.4.11
 InverseProperties	1.0.0
-CarouselBrowseBlock	1.2.0
+CarouselBrowseBlock	1.2.1
 ItemCopy	1.2.0
 ItemRelation	0.3.0
 ItemSetCalendar	0.3.0
@@ -218,7 +218,7 @@ SACO	0.2
 Scaping	0.0.3
 Scripto	1.4.0
 ScriptoPageBlocks	0.1
-Search	0.12.1
+Search	0.13.0
 SearchbyVisibility	1.0.0
 SearchHistory	3.3.0.4
 Solr	0.10.0
