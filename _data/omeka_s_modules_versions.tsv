@@ -3,7 +3,7 @@ Adminer	3.4.3-4.8.1
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.24
 SearchSolr	3.5.43
-AdvancedSearch	3.4.11
+AdvancedSearch	3.4.12
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.0.1
 AltText	1.3.0
@@ -218,6 +218,7 @@ S3FileStore	1.1.1
 SACO	0.2
 Scaping	0.0.3
 Scripto	1.4.0
+ScriptoIIIF	0.1.0
 ScriptoImportContributors	0.1.0
 ScriptoPageBlocks	0.1
 Search	0.13.0
