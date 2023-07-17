@@ -22,16 +22,16 @@ ArkURL	0.3.0
 BannerImage	1.0
 Base	0.1.0
 Basket	0.2.0
-Bibliography	3.4.1.7
+Bibliography	3.4.8
 BiblionumberSupport	0.1.0
 BlockLayoutSkeleton	0.1.0
 BlockPlus	3.4.18
 BlocksDisposition	3.4.2.3-beta
 BulkCheck	3.3.11
 BulkEdit	3.4.21
-BulkExport	3.4.23
+BulkExport	3.4.24
 BulkImportFiles	3.3.6.2
-BulkImport	3.4.44
+BulkImport	3.4.45
 CartoAffect	0.1.8
 CAS	0.6.0
 ChaoticumSeminario	0.0.2
@@ -98,7 +98,7 @@ FedoraConnector	1.1.0
 Feed	3.4.3.3
 FieldAsTags	1.0.1
 FileSideload	1.7.1
-FIT	1.1.5
+FIT	1.1.6
 FixCjkSearch	1.0.4
 Folksonomy	3.4.12
 Footnotes	3.3.0.2-3.4.1
@@ -110,6 +110,7 @@ GroupEdit	1.0
 Group	3.4.5
 GuestApi	3.4.3.4
 GuestUser	0.1
+GuestPrivateRole	3.4.1
 GuestRole	0.3.0
 generateur	4.0.0
 HelloWorld	0.1.6
@@ -134,11 +135,12 @@ Internationalisation	3.4.11
 InverseProperties	1.0.0
 CarouselBrowseBlock	1.2.1
 ItemCopy	1.2.0
+ItemHierarchy	1.0.0
 ItemRelation	0.3.0
 ItemSetCalendar	0.3.0
 ItemSetsGraph	1.1
 ItemSetsTree	0.7.0
-JDC	0.0.2
+JDC	0.0.4
 jQueryParallax	1.0
 jQueryUI	1.12.1
 Kalturastream	1.1.0
@@ -199,7 +201,7 @@ Psl	0.1.0
 PslSearchForm	0.2.0
 PueueJobDispatcher	1.0.5
 PyramidImageBuilder	0.1.0
-Quark	0.2.0
+Quark	0.3.0
 Rameau	3.4.0
 RandomItemsBlock	0.3.0
 RdfDatatype	3.0.4.2
@@ -276,4 +278,4 @@ XMLViewer	3.4.0.6
 Zip	3.4.0.2
 ZoteroCitations	1.0.0
 ZoteroImport	1.3.0
-ZoteroImportplus	2.0.0
+ZoteroImportplus	2.0.1
