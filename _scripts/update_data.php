@@ -315,7 +315,7 @@ class UpdateDataExtensions
 
             $lastVersion = $addon[$headers['Last version'] ?? $headers['Last Version']] ?? '';
 
-            if (empty($json[$cleanName])) {
+            if (empty($addonsLastVersions[$cleanName])) {
                 $addonsLastVersions[$cleanName] = $lastVersion;
             } elseif (version_compare($addonsLastVersions[$cleanName], $lastVersion, '<=')) {
                 $addonsLastVersions[$cleanName] = $lastVersion;
@@ -383,7 +383,14 @@ class UpdateDataExtensions
 
             $url .= '&per_page=100';
 
+            if ($this->options['debug']) {
+                $this->log(sprintf('curl %s', $url));
+                $time = time();
+            }
             $response = $this->curl($url, $curlHeaders);
+            if ($this->options['debug']) {
+                $this->log(sprintf('    %d seconds', (time() - $time)));
+            }
             if ($response) {
                 if ($this->options['debug']) {
                     $this->log(sprintf(
@@ -585,7 +592,6 @@ class UpdateDataExtensions
     {
         $headers = $this->headers;
         $omekaAddons = &$this->omekaAddons;
-        $updatedAddons = &$this->updatedAddons;
         $currentAddon = $addon;
 
         // Set the name or a temp addon name.
@@ -730,7 +736,7 @@ class UpdateDataExtensions
                 $this->log('[No update   ]' . ' ' . $addonName);
             }
         } else {
-            $updatedAddons[] = $addonName;
+            $this->updatedAddons[] = $addonName;
             echo '[Updated     ]' . ' ' . $addonName . PHP_EOL;
             if ($this->options['debug']) {
                 switch ($this->options['debugDiff']) {
@@ -868,7 +874,7 @@ class UpdateDataExtensions
             }
             // Get the name and last update of the first row.
             elseif ($key == 1) {
-                $previousAddon = $addon;
+                // $previousAddon = $addon;
                 $previousName = $addon[$headers['Name']];
                 $previousLastUpdate = $addon[$headers['Last update']] ?? '';
                 $previousVersion = $addon[$headers['Last version']] ?? '';
@@ -901,7 +907,7 @@ class UpdateDataExtensions
                     }
                 }
             }
-            $previousAddon = $addon;
+            // $previousAddon = $addon;
             $previousName = $name;
             $previousLastUpdate = $lastUpdate;
             $previousVersion = $version;
@@ -1163,7 +1169,7 @@ class UpdateDataExtensions
             return '';
         }
 
-        $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0';
+        $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0';
 
         $curl = curl_init();
 
