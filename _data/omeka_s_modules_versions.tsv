@@ -2,8 +2,8 @@ Access	3.4.22
 Adminer	3.4.3-4.8.1
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.26
-SearchSolr	3.5.44
-AdvancedSearch	3.4.14
+SearchSolr	3.5.45
+AdvancedSearch	3.4.15
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.2
 AltText	1.3.0
@@ -26,13 +26,13 @@ Basket	3.2.4
 Bibliography	3.4.8
 BiblionumberSupport	0.1.0
 BlockLayoutSkeleton	0.1.0
-BlockPlus	3.4.19
+BlockPlus	3.4.20
 BlocksDisposition	3.4.2.3-beta
 BulkCheck	3.3.11
 BulkEdit	3.4.22
 BulkExport	3.4.29
 BulkImportFiles	3.4.7
-BulkImport	3.4.47
+BulkImport	3.4.48
 CartoAffect	0.1.9
 CAS	0.6.0
 ChaoticumSeminario	0.0.2
@@ -44,7 +44,7 @@ COinS	3.1.0
 Collecting	1.11.1
 CollectingTogether	0.1.0
 SColumnsMaker	0.0.1
-Comment	3.4.1.12
+Comment	3.4.13
 ConnectedSites	1.0
 ContactUs	3.4.11
 ContentReader	1.0.0
@@ -65,7 +65,7 @@ DataScribe	1.1.0
 DataTypeClass	1.0.0
 DataTypeGeometry	3.4.3
 DataTypePlace	3.4.1
-DataTypeRDF	3.4.7
+DataTypeRDF	3.4.8
 Datavis	1.1.0
 dclmisc	1.0.1
 Deduplicate	3.4.0.2
@@ -78,6 +78,7 @@ DomainManager	2.0.0
 rrchnmdonate	1.0.1
 DspaceConnector	1.1.0
 EAD	3.0.4
+EADImport	1.1.0
 EasyAdmin	3.4.15
 EasyInstall	3.3.7
 Ebook	3.3.0.9
@@ -90,7 +91,7 @@ Export	1.6.0
 ExportIcons	1.0.0
 ExtendedSiteDescription	0.2.0
 ExtractMetadata	1.1.0
-ExtractOcr	3.4.4
+ExtractOcr	3.4.5
 ExtractText	2.0.0
 FacetedBrowse	1.3.1
 FacetedSearch	0.1.0
@@ -132,13 +133,15 @@ IIIFViewers	1.2.1
 ImageMap	1.0
 ImageServer	3.6.15
 ImageWithText	1.3.0
-Internationalisation	3.4.12
+InputMethodEditor	1.0
+Internationalisation	3.4.13
 InverseProperties	1.0.0
 CarouselBrowseBlock	1.2.1
 ItemCopy	1.2.0
 ItemHierarchy	1.0.0
 ItemRelation	0.3.0
 ItemSetCalendar	0.3.0
+ItemSetParty	0.1.0
 ItemSetsGraph	1.1
 ItemSetsTree	0.7.1
 totalpages	0.1.0
@@ -255,7 +258,7 @@ Statistics	3.4.6
 STest	1.0.0
 agilestorymap	3.4.4
 Table	3.4.1
-Taxonomy	0.5.0
+Taxonomy	0.5.1
 Teams	4.0.1
 Thesauri	0.1.0
 Thesaurus	3.4.10
@@ -273,7 +276,7 @@ URIDereferencer	1.4.0
 UserNames	1.2
 UserProfile	3.4.6
 ValueSuggestAny	3.3.0.5
-ValueSuggest	1.16.1
+ValueSuggest	1.17.0
 Verovio	3.3.0.7
 ViewerJS	3.4.0.3-0.7.2
 ViewPrivateResources	1.0.2
