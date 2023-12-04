@@ -35,7 +35,7 @@ BulkImportFiles	3.4.7
 BulkImport	3.4.48
 CartoAffect	0.1.9
 CAS	0.6.0
-ChaoticumSeminario	0.0.2
+ChaoticumSeminario	0.0.6
 CiteShare	1.0.0
 Citing	1.0.0
 CleanUrl	3.17.7
@@ -100,7 +100,7 @@ FedoraConnector	1.1.0
 Feed	3.4.3.3
 FieldAsTags	1.1.0
 FileSideload	1.7.1
-FIT	1.1.7
+FIT	1.1.8
 FixCjkSearch	1.0.4
 Folksonomy	3.4.12
 Footnotes	3.3.0.2-3.4.1
@@ -135,7 +135,7 @@ ImageServer	3.6.15
 ImageWithText	1.3.0
 InputMethodEditor	1.0
 Internationalisation	3.4.13
-InverseProperties	1.0.0
+InverseProperties	1.0.1
 CarouselBrowseBlock	1.2.1
 ItemCopy	1.2.0
 ItemHierarchy	1.0.0
@@ -262,6 +262,7 @@ Taxonomy	0.5.1
 Teams	4.0.1
 Thesauri	0.1.0
 Thesaurus	3.4.10
+ThesaurusOnroerendErfgoedVlaanderen	3.1.0
 Timeline	3.4.18
 Transcript	4.1
 Translations	3.1.0
