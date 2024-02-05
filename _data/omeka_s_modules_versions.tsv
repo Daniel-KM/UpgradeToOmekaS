@@ -29,7 +29,7 @@ BlockLayoutSkeleton	0.1.0
 BlockPlus	3.4.20
 BlocksDisposition	3.4.2.3-beta
 BulkCheck	3.3.11
-BulkEdit	3.4.23
+BulkEdit	3.4.24
 BulkExport	3.4.30
 BulkImportFiles	3.4.7
 BulkImport	3.4.49
@@ -45,7 +45,7 @@ Collecting	1.11.1
 CollectingTogether	0.1.0
 SColumnsMaker	0.0.1
 Comment	3.4.13
-Common	3.4.49
+Common	3.4.50
 ConnectedSites	1.0
 ContactUs	3.4.11
 ContentReader	1.0.0
@@ -130,7 +130,7 @@ IIIFPreview	3.0.2
 IiifSearch	3.4.5
 IIIFServer	3.6.16
 IiifViewers2	0.0.1
-IIIFViewers	1.2.1
+IIIFViewers	1.2.5
 ImageMap	1.0
 ImageServer	3.6.15
 ImageWithText	1.3.0
@@ -188,7 +188,7 @@ OAIPMHHarvester	3.0.7
 OAIPMHRepository	3.4.7
 OAIPmhHarvester	0.1
 OaiPmhRepositoryMediaPropertyMapper	0.1.0
-MediaViewer	0.4.2
+MediaViewer	0.5.0
 2Importer	1.2.0
 SItemImporter	0.0.1-alpha
 Osii	1.3.0
@@ -240,7 +240,7 @@ SearchHistory	3.4.4
 Solr	3.5.13.3
 Selection	3.4.6
 ServerURLOverride	1.0.1
-ShareMeBaby	1.2.1
+ShareMeBaby	1.2.2
 Sharing	1.4.0
 Shibboleth	3.4.10
 Shortcode	3.4.12
