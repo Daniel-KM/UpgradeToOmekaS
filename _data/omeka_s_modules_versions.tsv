@@ -189,7 +189,7 @@ OAIPMHHarvester	3.0.7
 OAIPMHRepository	3.4.7
 OAIPmhHarvester	0.1
 OaiPmhRepositoryMediaPropertyMapper	0.1.0
-MediaViewer	0.5.1
+MediaViewer	0.5.2
 2Importer	1.2.0
 SItemImporter	0.0.1-alpha
 Osii	1.3.0
@@ -202,7 +202,7 @@ PageBlocks	1.3
 PdfCreator	3.4.2
 PdfEmbedS	1.2.1
 PdfText	1.0
-PdfToc	1.0
+PdfToc	2.0
 PdfViewer	3.4.4
 PerformanceLabRestApi	1.0.0
 PersistentIdentifiers	1.1.1
