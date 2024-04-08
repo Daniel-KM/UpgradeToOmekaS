@@ -1,9 +1,9 @@
-Access	3.4.23
+Access	3.4.24
 Adminer	3.4.3-4.8.1
 AdminPlus	3.0.3
-AdvancedResourceTemplate	3.4.27
+AdvancedResourceTemplate	3.4.28
 SearchSolr	3.5.45
-AdvancedSearch	3.4.20
+AdvancedSearch	3.4.21
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.2
 AltText	1.3.0
@@ -17,7 +17,7 @@ AnyCloud	3.1.5
 ApiInfo	3.4.11
 ArchiveFolder	2.4
 ArchiveRepertory	3.15.16
-Ark	3.5.13.4
+Ark	3.5.14
 ArkURL	0.3.0
 BACE	3.4.1
 BannerImage	1.0
@@ -29,7 +29,7 @@ BlockLayoutSkeleton	0.1.0
 BlockPlus	3.4.21
 BlocksDisposition	3.4.3
 BulkCheck	3.3.11
-BulkEdit	3.4.26
+BulkEdit	3.4.27
 BulkExport	3.4.30
 BulkImportFiles	3.4.7
 BulkImport	3.4.53
@@ -45,11 +45,11 @@ Collecting	1.11.1
 CollectingTogether	0.1.0
 SColumnsMaker	0.0.1
 Comment	3.4.13
-Common	3.4.54
+Common	3.4.55
 ConnectedSites	1.0
 ContactUs	3.4.12
 ContentReader	1.0.0
-Contribute	3.4.23
+Contribute	3.4.25
 CopIdRef	3.4.11
 CopyResources	1.0.0-alpha
 Correction	3.0.11
@@ -58,7 +58,7 @@ CSSEditor	3.0.2
 CSVImport	2.1.1
 CustomAdvancedSearch	0.0.1
 CustomFloat	1.0
-CustomOntology	3.4.5.1
+CustomOntology	3.4.6
 CustomVocab	2.0.2
 DataCleaning	1.1.0
 DataRepositoryConnector	1.3.0
@@ -80,8 +80,8 @@ DomainManager	2.0.0
 rrchnmdonate	1.0.1
 DspaceConnector	1.1.0
 EAD	3.0.4
-EADImport	1.1.0
-EasyAdmin	3.4.16
+EADImport	1.2.0
+EasyAdmin	3.4.17
 EasyInstall	3.3.7
 Ebook	3.3.0.9
 EhpSearchForm	1.3.0
@@ -144,7 +144,7 @@ CarouselBrowseBlock	1.2.1
 ItemCopy	1.2.0
 ItemRelation	0.3.0
 ItemSetCalendar	0.3.0
-ItemSetParty	0.1.0
+ItemSetParty	0.2.1
 ItemSetsGraph	1.1
 ItemSetsTree	0.7.2
 totalpages	0.1.0
@@ -159,7 +159,7 @@ LinkedDataSets	0.1
 LocaleSwitch	0.2.0
 LocalMediaIngester	0.3.0
 Lockout	3.4.4
-Log	3.4.21
+Log	3.4.22
 LogSentry	3.4.2
 Maintenance	3.3.3.2
 Mare	1.0.0
@@ -173,7 +173,7 @@ Mesostiche	0.0.2
 MetadataBrowse	1.2.0
 MetadataEditor	1.0.0
 MetaTags	3.4.0.5
-Mirador	3.4.7.16
+Mirador	3.4.9
 Modelviewer	3.4.1-150
 MPCustomInput	0.1.0
 Mroongasearch	0.9.0
@@ -227,7 +227,7 @@ ItemNetworks	0.0.1
 ResourceTree	2.1.0
 RestrictedSites	2.3
 RightsStatements	1.2.1
-Robots	1.0
+Robots	1.0.1
 RoleBasedNavigation	1.2
 S3FileStore	1.1.1
 SACO	0.2
@@ -251,13 +251,13 @@ SimpleCarousel	1.3.0
 SimpleIIIF	0.1.0-alpha
 SimplePDF	1.0.2
 SimpleReference	1.0.0
-SingleSignOn	3.4.11
+SingleSignOn	3.4.12
 SiteLog	0.2.0
 Sitemaps	1.1
 SiteSlugAsSubdomain	1.0.0
 SiteSwitcher	1.0
 SolrImprovements	1.0.1-bib0.4.2
-Sparql	3.4.2
+Sparql	3.4.3
 SpecialCharacterSearch	2.1.0
 SruSrwMaker	2.1.0
 Statistics	3.4.7
@@ -267,7 +267,7 @@ Table	3.4.1
 Taxonomy	0.7.0
 Teams	4.0.1
 Thesauri	0.1.0
-Thesaurus	3.4.11
+Thesaurus	3.4.12
 ThesaurusOnroerendErfgoedVlaanderen	3.1.0
 Timeline	3.4.18
 Transcript	4.1.1
