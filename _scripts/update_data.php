@@ -480,10 +480,15 @@ class UpdateDataExtensions
                 . '/master/' . $this->args['ini'];
             $ini = @file_get_contents($addonIni);
             if (empty($ini)) {
-                if ($this->options['debug']) {
-                    $this->log(sprintf('No config : %s', $repo->html_url));
+                $addonIni = str_ireplace('github.com', 'raw.githubusercontent.com', $repo->html_url)
+                    . '/main/' . $this->args['ini'];
+                $ini = @file_get_contents($addonIni);
+                if (empty($ini)) {
+                    if ($this->options['debug']) {
+                        $this->log(sprintf('No config : %s', $repo->html_url));
+                    }
+                    continue;
                 }
-                continue;
             }
 
             if ($this->options['debug']) {
@@ -625,6 +630,7 @@ class UpdateDataExtensions
                 $addonIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $addonUrl);
                 if ($addon[$headers['Ini path']] ?? null) {
                     $replacements = [
+                        '/tree/main/' => '/main/',
                         '/tree/master/' => '/master/',
                         '/tree/develop/' => '/develop/',
                     ];
@@ -644,16 +650,19 @@ class UpdateDataExtensions
         }
 
         $addonIni = ($addon[$headers['Ini path']] ?? '') ?: ('master/' . $this->args['ini']);
-
         $addonIni = $addonIniBase . '/' . $addonIni;
-
         $ini = @file_get_contents($addonIni);
         if (empty($ini)) {
-            $this->log('[No ini      ]' . ' ' . $addonName);
-            if ($this->options['debug']) {
-                $this->log(' Addon ini: ' . $addonIni);
+            $addonIni = ($addon[$headers['Ini path']] ?? '') ?: ('main/' . $this->args['ini']);
+            $addonIni = $addonIniBase . '/' . $addonIni;
+            $ini = @file_get_contents($addonIni);
+            if (empty($ini) && empty($addon[$headers['Ini path']])) {
+                $this->log('[No ini      ]' . ' ' . $addonName);
+                if ($this->options['debug']) {
+                    $this->log(' Addon ini: ' . $addonIni);
+                }
+                return $addon;
             }
-            return $addon;
         }
 
         $ini = parse_ini_string($ini);
