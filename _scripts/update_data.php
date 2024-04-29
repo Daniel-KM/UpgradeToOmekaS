@@ -22,8 +22,22 @@ $tokenGithub = file_exists($tokenGithub) ? trim(file_get_contents($tokenGithub))
 
 $options = [
     'token' => ['api.github.com' => $tokenGithub],
-    // Order addons.
-    'order' => ['Name', 'Url'],
+    // Set options to order addons: order by alphabtic name, then the one that
+    // is not a fork first, then the oldest created one, then the alphabetic
+    // url.
+    // This order avoids the issue with CSV Import, where the upstream master is
+    // not updated since a while (tags and release are set on dev branch), and
+    // where there are some forks that are not marked as fork, but more recent
+    // than the upstream master branch.
+    'order' => [
+        'Name' => 'asc',
+        // Fork is an exception: presence or not, without checking content.
+        'Fork source' => 'desc',
+        'Creation date' => 'asc',
+        // The update may not be the last commit. The same for version.
+        // 'Last update' => 'desc',
+        'Url' => 'asc',
+    ],
     // Filter duplicate addons. A duplicate has the same name and date or version.
     'filterDuplicates' => true,
     // Filter forks only with name, so may remove extensions that are not
@@ -288,7 +302,13 @@ class UpdateDataExtensions
         unset($addons[0]);
 
         $replaceForName = [
-            'plugin', 'module', 'theme', 'widget', 'omeka s', 'omeka-s', 'omeka',
+            'plugin',
+            'module',
+            'theme',
+            'widget',
+            'omeka s',
+            'omeka-s',
+            'omeka',
         ];
 
         $addonsLastVersions = [];
@@ -742,7 +762,11 @@ class UpdateDataExtensions
 
         if ($currentAddon == $addon) {
             if ($this->options['logAllAddons']) {
-                $this->log('[No update   ]' . ' ' . $addonName);
+                $this->log('[No update   ]' . ' ' . $addonName) . PHP_EOL;
+                if ($this->options['debug']) {
+                    $this->log('No update for addon');
+                    $this->log($currentAddon);
+                }
             }
         } else {
             $this->updatedAddons[] = $addonName;
@@ -786,31 +810,51 @@ class UpdateDataExtensions
             $this->log($headers);
         }
 
-        $orders = is_array($this->options['order']) ? $this->options['order'] : [$this->options['order']];
-        foreach ($orders as $key => $order) {
+        $orders = is_array($this->options['order']) ? $this->options['order'] : [$this->options['order'] => 'asc'];
+
+        // Check orders.
+        foreach ($orders as $order => $sort) {
             if (!isset($headers[$order])) {
-                $this->log(sprintf('Order %s not found in headers.', $order));
-                return $addons;
+                $this->log(sprintf('ERROR: Order %s not found in headers.', $order));
+                unset($orders[$order]);
+            } else {
+                $orders[$order] = strtolower($sort) === 'desc' ? -1 : 1;
             }
-            $orders[$key] = $headers[$order];
         }
+
+        if (empty($this->options['order'])) {
+            return $addons;
+        }
+
+        $compareAddons = function (array $addonA, array $addonB) use ($orders, $headers): int {
+            foreach ($orders as $order => $sort) {
+                $dataA = $addonA[$headers[$order]] ?? '';
+                $dataB = $addonB[$headers[$order]] ?? '';
+                if (($dataA && !$dataB)
+                    || (!$dataA && $dataB)
+                ) {
+                    return $dataA ? -1 * $sort : 1 * $sort;
+                } elseif ($order === 'Fork source') {
+                    // Exception for fork: don't check url order, but presence
+                    // or not (done above).
+                    continue;
+                } else {
+                    $result = strnatcasecmp((string) $dataA, (string) $dataB);
+                    if ($result) {
+                        return $result * $sort;
+                    }
+                }
+            }
+            return 0;
+        };
 
         unset($addons[0]);
+        usort($addons, $compareAddons);
 
-        $addonsList = [];
-        foreach ($addons as $key => &$addon) {
-            $value = '';
-            foreach ($orders as $order) {
-                $value .= $addon[$order];
-            }
-            $addonsList[$key] = $value;
-        }
-        natcasesort($addonsList);
-        $addonsList = array_replace($addonsList, $addons);
-        array_unshift($addonsList, null);
-        $addonsList[0] = array_keys($headers);
+        array_unshift($addons, null);
+        $addons[0] = array_keys($headers);
 
-        return $addonsList;
+        return $addons;
     }
 
     /**
@@ -874,57 +918,88 @@ class UpdateDataExtensions
         // Get headers by name.
         $headers = array_flip($addons[0]);
 
+        // Because the addons are ordered as we want (see option "order"), the
+        // previous row is always kept when duplicate.
+
+        // TODO So this comparison can be removed.
+        // Keep the addon that is not a fork, else the oldest created.
+        /*
+        $compareAddons = function (array $addonA, array $addonB) use ($headers): int {
+            $forkSourceA = $addonA[$headers['Fork source']] ?? '';
+            $forkSourceB = $addonB[$headers['Fork source']] ?? '';
+            if (($forkSourceA && !$forkSourceB)
+                || (!$forkSourceA && $forkSourceB)
+            ) {
+                return $forkSourceA ? 1 : -1;
+            }
+            $creationDateA = $addonA[$headers['Creation date']] ?? '';
+            $creationDateB = $addonB[$headers['Creation date']] ?? '';
+            if (!$creationDateA || !$creationDateB) {
+                return $creationDateA ? -1 : 1;
+            }
+            return $creationDateA <=> $creationDateB;
+        };
+        */
+
         $duplicates = 0;
         $unidentifiedForks = 0;
         $updatedForks = 0;
+
+        // Store previous row for comparison.
+        $previousKey = -1;
+        $previousAddon = [];
+        $previousUrl = '';
+        $previousName = '';
+        $previousCreationDate = '';
+        $previousLastUpdate = '';
+        $previousForkSource = '';
+        $previousVersion = '';
+
         foreach ($addons as $key => $addon) {
-            if ($key == 0) {
+            if ($key === 0) {
                 continue;
             }
-            // Get the name and last update of the first row.
-            elseif ($key == 1) {
-                // $previousAddon = $addon;
-                $previousName = $addon[$headers['Name']];
-                $previousLastUpdate = $addon[$headers['Last update']] ?? '';
-                $previousVersion = $addon[$headers['Last version']] ?? '';
-                $previousKey = $key;
-                continue;
-            }
+
+            $url = $addon[$headers['Url']];
             $name = $addon[$headers['Name']];
+            $creationDate = $addon[$headers['Creation date']] ?? '';
             $lastUpdate = $addon[$headers['Last update']] ?? '';
             $version = $addon[$headers['Last version']] ?? '';
-            if ($name === $previousName && ($lastUpdate === $previousLastUpdate || $version === $previousVersion)) {
-                if ($this->options['debug']) {
-                    $this->log('Duplicate full: ' . $name);
-                }
-                ++$duplicates;
-                unset($addons[$key]);
-            } elseif ($name === $previousName && !empty($this->options['filterFalseForks'])) {
-                if ($previousVersion < $version && !empty($this->options['keepUpdatedForks'])) {
-                    $this->log('Duplicate fork kept: ' . $name);
-                    ++$updatedForks;
-                } else {
-                    if ($this->options['debug']) {
-                        $this->log('Duplicate fork removed: ' . $name);
-                    }
-                    ++$unidentifiedForks;
-                    if ($previousLastUpdate < $lastUpdate) {
-                        unset($addons[$previousKey]);
+            $forkSource = $addon[$headers['Fork source']] ?? '';
+
+            if ($name === $previousName) {
+                if ($lastUpdate === $previousLastUpdate || $version === $previousVersion) {
+                    ++$duplicates;
+                    $this->log(sprintf('Duplicate fork removed (identical): %1$s (%2$s)', $name, $url));
+                    // Already ordered, so keep first.
+                    unset($addons[$key]);
+                    continue;
+                } elseif (!empty($this->options['filterFalseForks'])) {
+                    if (version_compare($previousVersion, $version, '<') && !empty($this->options['keepUpdatedForks'])) {
+                        ++$updatedForks;
+                        $this->log(sprintf('Duplicate fork kept (different): %1$s (%2$s)', $name, $url));
                     } else {
+                        ++$unidentifiedForks;
+                        $this->log(sprintf('Duplicate fork removed (older): %1$s (%2$s)', $name, $url));
+                        // Already ordered, so keep first.
                         unset($addons[$key]);
                         continue;
                     }
                 }
             }
-            // $previousAddon = $addon;
+
+            $previousKey = $key;
+            $previousAddon = $addon;
+            $previousUrl = $url;
             $previousName = $name;
+            $previousCreationDate = $creationDate;
             $previousLastUpdate = $lastUpdate;
             $previousVersion = $version;
-            $previousKey = $key;
+            $previousForkSource = $forkSource;
         }
 
         if ($duplicates) {
-            $this->log(sprintf('%d duplicate rows were removed.', $duplicates));
+            $this->log(sprintf('%d duplicate rows were removed (identical).', $duplicates));
         }
         if ($unidentifiedForks) {
             $this->log(sprintf('%d duplicate rows were removed (unidentified forks with same name).', $unidentifiedForks));
@@ -1291,7 +1366,7 @@ class UpdateDataExtensions
      *
      * @param mixed $message
      */
-    protected function log($message)
+    protected function log($message): void
     {
         if (is_array($message)) {
             print_r($message);
