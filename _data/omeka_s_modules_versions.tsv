@@ -2,7 +2,7 @@ Access	3.4.26
 Adminer	3.4.4-4.8.4
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.31
-AdvancedSearch	3.4.22
+AdvancedSearch	3.4.23
 SearchSolr	3.5.45
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.2
@@ -17,7 +17,7 @@ Cartography	3.4.2
 AnyCloud	3.1.5
 ApiInfo	3.4.11
 ArchiveFolder	2.4
-ArchiveRepertory	3.15.16
+ArchiveRepertory	3.15.17
 Ark	3.5.15
 ArkURL	0.3.0
 BACE	3.4.1
@@ -27,13 +27,14 @@ Basket	3.2.4
 Bibliography	3.4.8
 BiblionumberSupport	0.1.0
 BlockLayoutSkeleton	0.1.0
-BlockPlus	3.4.22-alpha
+BlockPlus	3.4.22-alpha.2
 BlocksDisposition	3.4.3
 BulkCheck	3.3.11
-BulkEdit	3.4.28
-BulkExport	3.4.31
+BulkEdit	3.4.29
+BulkExport	3.4.32
 BulkImport	3.4.54
 BulkImportFiles	3.4.8
+BUMaps	0.0.1
 CartoAffect	0.1.9
 CAS	0.6.0
 ChaoticumSeminario	0.0.6
@@ -46,7 +47,7 @@ Collecting	1.11.1
 CollectingTogether	0.1.0
 SColumnsMaker	0.0.1
 Comment	3.4.13
-Common	3.4.57
+Common	3.4.58
 ConnectedSites	1.0
 ContactUs	3.4.14
 ContentReader	1.0.0
@@ -126,6 +127,7 @@ Hierarchy	1.0.0
 HistoryLog	3.4.10-beta-7
 bannerMessage	1.0.1
 IdRef	0.1.0
+IDResolver	1.0.0-alpha
 IIIFDownload	1.0.1
 IIIFHosting	1.0.0-beta
 IIIFPresentation	1.0.2
@@ -141,7 +143,7 @@ ImageWithText	1.3.0
 InputMethodEditor	1.0
 Internationalisation	3.4.13
 InverseProperties	1.1.0
-CarouselBrowseBlock	1.2.1
+CarouselBrowseBlock	1.2.2
 ItemCopy	1.2.0
 ItemRelation	0.3.0
 ItemSetCalendar	0.3.0
@@ -160,10 +162,10 @@ LinkedDataSets	0.1
 LocaleSwitch	0.2.0
 LocalMediaIngester	0.3.0
 Lockout	3.4.4
-Log	3.4.23
+Log	3.4.24
 LogSentry	3.4.2
 Maintenance	3.3.3.2
-Mapping	2.0.0-alpha1
+Mapping	2.0.0
 Mare	1.0.0
 MarcXmlExport	0.1.0
 Matomo	0.1.0
@@ -188,7 +190,7 @@ NetworkMap	1.0
 Next	3.4.48
 NoGoogleChromeFlockTracking	3.4.1
 OAIPMHHarvester	3.0.7
-OAIPMHRepository	3.4.8
+OAIPMHRepository	3.4.9
 OAIPmhHarvester	0.1
 OaiPmhRepositoryMediaPropertyMapper	0.1.0
 MediaViewer	0.5.4
@@ -231,7 +233,7 @@ RightsStatements	1.2.1
 Robots	1.0.1
 RoleBasedNavigation	1.2
 S3FileStore	1.1.1
-SACO	0.2
+SACO	0.3
 Scaping	0.0.3
 Scripto	1.4.1
 ScriptoIIIF	0.2.0
@@ -269,7 +271,7 @@ Taxonomy	0.7.0
 Teams	4.0.1
 Thesauri	0.1.0
 Thesaurus	3.4.14
-ThesaurusOnroerendErfgoedVlaanderen	3.1.0
+ThesaurusOnroerendErfgoedVlaanderen	3.2.0
 Timeline	3.4.18
 Transcript	4.1.1
 Translations	3.1.0
