@@ -7,7 +7,8 @@ AkRep	1.1.0
 Anwuvbeo	0.1.0
 apra	1.4.1
 appalachiantrails	0.1
-BCDA	0.1
+audioBNF	0.0.0
+BCDA	0.2
 BCDAChild	0.1
 Bookshelf	2.2.0
 sbootstrap	1.0.0
@@ -25,7 +26,8 @@ CollectingTheseTimesSpoke	0.1
 Cozy	1.6.2
 basicdartmouth	1.4.5
 historicalaccountabiity	3.1.2
-Default	1.8.0
+Default	1.9.0
+SMarriottLibraryDefault	1.6.0
 dharc	0.2
 DigitalCollecting	2.0.0
 DigitalMuret	2.0.0
@@ -35,13 +37,14 @@ edisem	0.1.3
 exhibits	1.1.3
 ExploreGrid	1.2.0
 FeuilletNumerique	0.0.1
-fitaod	1.0.1
+fitaod	1.0.3
+fitdf	1.0.1
 fitfc	1.4.5
-fitir	1.2.4
+fitir	1.2.5
 Foundation	1.4.1
 Freedom	1.0.6
 GenStory	0.0.0
-GentGemapt	1.0.4
+GentGemapt	1.0.5
 GPPPoC	1.0.0
 HearingTheAmericas	0.0.3
 siip	1.1.0
@@ -62,6 +65,7 @@ OnTheseGrounds	0.1
 Papers	1.4.4
 pwd	1.1
 patrimoniouja	1.1
+pdd	1.0.0
 psuarts	1.0.0
 PolemikaProto	0.0.1
 PSL	3.3.6.0
