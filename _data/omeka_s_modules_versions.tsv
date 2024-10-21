@@ -2,8 +2,8 @@ Access	3.4.27
 Adminer	3.4.4-4.8.4
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.34
-AdvancedSearch	3.4.32
-SearchSolr	3.5.48
+AdvancedSearch	3.4.33
+SearchSolr	3.5.49
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.2
 AlternativeLabelSelect	3.4.1
@@ -28,7 +28,7 @@ Basket	3.2.4
 Bibliography	3.4.8
 BiblionumberSupport	0.1.0
 BlockLayoutSkeleton	0.1.0
-BlockPlus	3.4.26
+BlockPlus	3.4.27
 BlocksDisposition	3.4.3
 BulkCheck	3.3.11
 BulkEdit	3.4.31
@@ -41,7 +41,7 @@ CAS	0.6.0
 ChaoticumSeminario	0.0.10
 CiteShare	1.0.0
 Citing	1.0.0
-CleanUrl	3.17.7
+CleanUrl	3.17.9
 CmapImport	0.0.2
 COinS	3.1.0
 Collecting	1.12.0
@@ -115,7 +115,7 @@ GoogleAnalytics	1.3.2
 GoogleTagManager	1.0.0
 Group	3.4.6
 GroupEdit	1.0
-GuestUser	3.4.27
+GuestUser	3.4.28
 GuestApi	3.4.5
 GuestPrivateRole	3.4.1
 GuestRole	0.3.1
@@ -135,11 +135,11 @@ IIIFPresentation	1.0.2
 IIIFPreview	3.0.2
 IIIFSearch	3.4.8
 IiifSearch	1.0.0
-IIIFServer	3.6.21
+IIIFServer	3.6.22
 IIIFViewers	1.2.5
 ImageAnnotate	1.0.0
 ImageMap	1.0
-ImageServer	3.6.18
+ImageServer	3.6.19
 ImageWithText	1.3.0
 InputMethodEditor	1.0
 Internationalisation	3.4.13
@@ -176,7 +176,7 @@ Menu	3.4.9
 Mesostiche	0.0.2
 MetadataBrowse	1.2.0
 MetadataEditor	1.0.0
-MetaTags	3.4.0.5
+MetaTags	3.4.6
 Mirador	3.4.9
 Modelviewer	3.4.1-150
 MPCustomInput	0.1.0
@@ -186,7 +186,7 @@ Ngramsearch	0.1.0
 NDETermennetwerk	1.1.0
 Neatline	0.4.0
 Necropolis	0.2.0
-NestedDataTypes	3.3.1
+NestedDataType	4.0.0
 NetworkMap	1.0
 Next	3.4.48
 NoGoogleChromeFlockTracking	3.4.1
@@ -244,7 +244,7 @@ Search	3.5.25.3
 SearchbyVisibility	1.0.0
 SearchHistory	3.4.4
 Solr	3.5.13.3
-Selection	3.4.8
+Selection	3.4.9
 ServerURLOverride	1.0.1
 ShareMeBaby	1.2.3
 Sharing	1.5.0
