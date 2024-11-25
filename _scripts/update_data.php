@@ -393,12 +393,15 @@ class UpdateDataExtensions
         $newUrls = [];
 
         // Search on github.
-        // Search topics are only available in preview currently.
-        $curlHeaders = ['Accept: application/vnd.github.mercy-preview+json'];
+        $curlHeaders = [
+            'Accept: application/vnd.github+json',
+            'X-GitHub-Api-Version: 2022-11-28',
+            'User-Agent: Daniel-KM/UpgradeToOmekaS',
+        ];
+        // Topic is now included in default query, so there is only one search
+        // query.
         $searches = [
-            // Search via topic.
-            'topic' => 'https://api.github.com/search/repositories?q=topic:' . $this->args['topic'] . '+fork%3Afalse',
-            'keywords' => 'https://api.github.com/search/repositories?q=' . $this->args['keywords'] . '+fork%3Afalse' . '+in:name,description,readme',
+            'keywords' => 'https://api.github.com/search/repositories?q=' . $this->args['keywords'] . '+fork%3Afalse' . '+in:topics,name,description,readme',
         ];
 
         foreach ($searches as $searchType => $url) {
@@ -451,7 +454,7 @@ class UpdateDataExtensions
                     } while ($totalProcessed < $totalCount);
                 }
             } else {
-                $this->log('No search on github.');
+                $this->log('No search results on github.');
                 break;
             }
         }
@@ -503,19 +506,9 @@ class UpdateDataExtensions
                 continue;
             }
             // Check if there is a config file to avoid false result.
-            $addonIni = str_ireplace('github.com', 'raw.githubusercontent.com', $repo->html_url)
-                . '/master/' . $this->args['ini'];
-            $ini = @file_get_contents($addonIni);
+            $ini = $this->getIniForAddon($repo->html_url);
             if (empty($ini)) {
-                $addonIni = str_ireplace('github.com', 'raw.githubusercontent.com', $repo->html_url)
-                    . '/main/' . $this->args['ini'];
-                $ini = @file_get_contents($addonIni);
-                if (empty($ini)) {
-                    if ($this->options['debug']) {
-                        $this->log(sprintf('No config : %s', $repo->html_url));
-                    }
-                    continue;
-                }
+                continue;
             }
 
             if ($this->options['debug']) {
@@ -652,45 +645,9 @@ class UpdateDataExtensions
             $addon[$headers['Last released zip']] = $value;
         }
 
-        $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
-        switch ($server) {
-            case 'github.com':
-                $addonIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $addonUrl);
-                if ($addon[$headers['Ini path']] ?? null) {
-                    $replacements = [
-                        '/tree/main/' => '/main/',
-                        '/tree/master/' => '/master/',
-                        '/tree/develop/' => '/develop/',
-                    ];
-                    $addonIniBase = str_replace(
-                        array_keys($replacements),
-                        array_values($replacements),
-                        $addonIniBase
-                    );
-                }
-                break;
-            case 'gitlab.com':
-                $addonIniBase = $addonUrl . '/raw';
-                break;
-            default:
-                $addonIniBase = $addonUrl;
-                break;
-        }
-
-        $addonIni = ($addon[$headers['Ini path']] ?? '') ?: ('master/' . $this->args['ini']);
-        $addonIni = $addonIniBase . '/' . $addonIni;
-        $ini = @file_get_contents($addonIni);
-        if (empty($ini)) {
-            $addonIni = ($addon[$headers['Ini path']] ?? '') ?: ('main/' . $this->args['ini']);
-            $addonIni = $addonIniBase . '/' . $addonIni;
-            $ini = @file_get_contents($addonIni);
-            if (empty($ini) && empty($addon[$headers['Ini path']])) {
-                $this->log('[No ini      ]' . ' ' . $addonName);
-                if ($this->options['debug']) {
-                    $this->log(' Addon ini: ' . $addonIni);
-                }
-                return $addon;
-            }
+        $ini = $this->getIniForAddon($addonUrl, $addon[$headers['Ini path']] ?? null);
+        if (empty($ini) && empty($addon[$headers['Ini path']])) {
+            return $addon;
         }
 
         if (!is_string($ini)) {
@@ -1247,7 +1204,12 @@ class UpdateDataExtensions
                             return '';
                         }
                         return $content->assets[0]->browser_download_url;
+
+                    default:
+                        return '';
                 }
+            default:
+                return '';
         }
     }
 
@@ -1281,7 +1243,10 @@ class UpdateDataExtensions
             }
         }
 
-        $headers[] = 'Accept: application/vnd.github.v3+json';
+        $headers[] = 'Accept: application/vnd.github+json';
+        $headers[] = 'X-GitHub-Api-Version: 2022-11-28';
+        $headers[] = 'User-Agent: Daniel-KM/UpgradeToOmekaS';
+        $headers = array_unique($headers);
 
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
@@ -1323,6 +1288,66 @@ class UpdateDataExtensions
         }
 
         return $response;
+    }
+
+    protected function getIniForAddon($addonUrl, $iniPath = null)
+    {
+        static $addons = [];
+
+        // The ini path is used in some non-standard repositories.
+        if ($iniPath) {
+            if (isset($addons[$addonUrl . ' iniPath'])) {
+                return $addons[$addonUrl . ' iniPath'];
+            }
+        } elseif (isset($addons[$addonUrl])) {
+            return $addons[$addonUrl];
+        }
+
+        $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
+        switch ($server) {
+            case 'github.com':
+                $addonIniBase = str_ireplace('github.com', 'raw.githubusercontent.com', $addonUrl);
+                if ($iniPath) {
+                    $replacements = [
+                        '/tree/main/' => '/main/',
+                        '/tree/master/' => '/master/',
+                        '/tree/develop/' => '/develop/',
+                    ];
+                    $addonIniBase = str_replace(
+                        array_keys($replacements),
+                        array_values($replacements),
+                        $addonIniBase
+                    );
+                }
+                break;
+            case 'gitlab.com':
+                $addonIniBase = $addonUrl . '/raw';
+                break;
+            default:
+                $addonIniBase = $addonUrl;
+                break;
+        }
+
+        $addonIni = $iniPath ?: ('master/' . $this->args['ini']);
+        $addonIni = $addonIniBase . '/' . $addonIni;
+        $ini = @file_get_contents($addonIni);
+        if (empty($ini)) {
+            $addonIni = $iniPath ?: ('main/' . $this->args['ini']);
+            $addonIni = $addonIniBase . '/' . $addonIni;
+            $ini = @file_get_contents($addonIni);
+            if (empty($ini) && empty($iniPath)) {
+                $this->log('[No config ini ]' . ' ' . $addonUrl);
+                if ($this->options['debug']) {
+                    $this->log(' Addon ini: ' . $addonIni);
+                }
+                return '';
+            }
+        }
+
+        $key = $addonUrl . ($iniPath ? ' iniPath' : '');
+        $addons[$key] = $ini;
+
+        return $ini;
     }
 
     /**
