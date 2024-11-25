@@ -28,11 +28,32 @@ php -f _scripts/update_data.php
 You may need to add a file with a token from your github account in `_data/token_github.txt`
 to be allowed to fetch more than 50 results.
 
+For more info on local testing, see [documentation on github pages].
+Github pages use currently [these versions] of Jekyll and Ruby.
+
+For Debian 12:
+
+```sh
+sudo apt install ruby-full build-essential
+# Exports should be added in .bashrc to avoid to export them eachtime.
+export GEM_HOME="$HOME/gems"
+export PATH="$HOME/gems/bin:$PATH"
+# May or may not be sudo.
+sudo gem install rubygems-update
+sudo update_rubygems
+sudo gem update
+# May be not installed by default.
+gem install eventmachine http_parser.rb sass-embedded
+cd UpgradeToOmekaClassic
+bundle install
+bundle exec jekyll serve
+```
+
 
 TODO
 ----
 
-- [ ] Add a column for the Omeka directory name.
+- [x] Add a column for the Omeka directory name.
 
 
 Warning
@@ -76,13 +97,15 @@ altered, and that no provisions are either added or removed herefrom.
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2017-2023 (see [Daniel-KM] on GitHub)
+* Copyright Daniel Berthereau, 2017-2024 (see [Daniel-KM] on GitHub)
 
 
 [pages that list the plugins, modules and themes]: https://daniel-km.github.io/UpgradeToOmekaS/
 [Omeka Classic]: https://omeka.org/classic
 [Omeka S]: https://omeka.org/s
 [this page]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS
+[documentation on github pages]: https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/testing-your-github-pages-site-locally-with-jekyll
+[these versions]: https://pages.github.com/versions/
 [issues]: https://github.com/Daniel-KM/UpgradeToOmekaS/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
