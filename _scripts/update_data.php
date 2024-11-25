@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Script to update the list of addons of Omeka with the last data.
  *
@@ -9,7 +11,7 @@
  * ```
  *
  * @author Daniel Berthereau
- * @copyright 2017-2023 Daniel Berthereau
+ * @copyright 2017-2024 Daniel Berthereau
  * @license Cecill v2.1
  */
 
@@ -49,18 +51,23 @@ $options = [
     'filterFalseAddons' => true,
     'excludedUrlsPath' => $datapath . 'excluded_urls.txt',
     // Update only one or more types of addon ("plugin", "module", "theme", "template").
-    'processOnlyType' => [],
+    'processOnlyType' => [
+    ],
     // Update only one or more addons (set the addon url).
-    // 'processOnlyAddon' => array('https://github.com/Daniel-KM/UpgradeToOmekaS'),
-    'processOnlyAddon' => [],
+    // 'processOnlyAddon' => array('https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS'),
+    'processOnlyAddon' => [
+    ],
     // Update data only for new urls (urls without name).
     'processOnlyNewUrls' => false,
     // Process search for topics on github.
     'processSearch' => true,
-    // Regenerate csv only (useful when edited in a spreadsheet, after other options).
-    'processRegenerateCsvOnly' => false,
-    // Regenerate csv directly (useful when edited in a spreadsheet).
-    'processQuickRegenerateCsv' => false,
+    // Process update of existing addons and new ones (if search is enabled).
+    'processUpdate' => true,
+    // Regenerate csv directly, so reformat the csv without useless enclosures.
+    // It will skip the search and update processes.
+    // This is useful when the csv is edited in a spreadsheet to avoid to change
+    // unedited rows.
+    'processFormatCsvOnly' => false,
     // Allow to log (in terminal) the process of all the addons, else only
     // updated one will be displayed, and errors.
     'logAllAddons' => true,
@@ -114,7 +121,7 @@ foreach ($types as $type => $args) {
     $update->processUpdateLastVersions();
 }
 
-return $result;
+exit($result ? 0 : 'An error occurred.');
 
 class UpdateDataExtensions
 {
@@ -136,7 +143,7 @@ class UpdateDataExtensions
             'version' => 'Last version',
             'tags' => 'Tags',
         ],
-        // Omeka 1 / 2.
+        // Omeka 1 / 2 / Classic.
         'plugin' => [
             'required_plugins' => 'Required plugins',
             'optional_plugins' => 'Optional plugins',
@@ -205,7 +212,7 @@ class UpdateDataExtensions
             return false;
         }
 
-        if ($this->options['processQuickRegenerateCsv']) {
+        if ($this->options['processFormatCsvOnly']) {
             $addons = $this->order($addons);
             $result = $this->saveToCsvFile($this->args['destination'], $addons);
             if (!$result) {
@@ -237,7 +244,7 @@ class UpdateDataExtensions
             $addons = $this->search($addons);
         }
 
-        if (!$this->options['processRegenerateCsvOnly']) {
+        if ($this->options['processUpdate']) {
             $addons = $this->update($addons);
         }
         if (empty($addons)) {
@@ -260,7 +267,7 @@ class UpdateDataExtensions
         $addons = $this->order($addons);
 
         if ($this->options['debug'] && !$this->options['debugOutput']) {
-            $this->log('Required no output.');
+            $this->log('Required no output with debug.');
         } else {
             $result = $this->saveToCsvFile($this->args['destination'], $addons);
             if (!$result) {
@@ -344,7 +351,7 @@ class UpdateDataExtensions
         }
 
         if ($this->options['debug'] && !$this->options['debugOutput']) {
-            $this->log('Required no output.');
+            $this->log('Required no output with debug.');
         } else {
             $resultTsv = [];
             foreach ($addonsLastVersions as $addon => $version) {
@@ -599,7 +606,7 @@ class UpdateDataExtensions
                         )) {
                         continue;
                     }
-                    $this->log('[Unreferenced]' . ' ' . $unref);
+                    $this->log('[Unreferenced  ]' . ' ' . $unref);
                 }
             }
         }
@@ -625,23 +632,24 @@ class UpdateDataExtensions
 
         // Set the date of the creation and the last update, that doesn’t depend
         // on ini, and don’t update if empty.
-        $date = $this->findData($addonUrl, 'creation date');
-        if ($date) {
-            $addon[$headers['Creation date']] = $date;
-        }
-        $date = $this->findData($addonUrl, 'last update');
-        if ($date) {
-            $addon[$headers['Last update']] = $date;
+        $value = $this->findData($addonUrl, 'creation date');
+        if ($value) {
+            $addon[$headers['Creation date']] = $value;
         }
 
-        $forkSource = $this->findData($addonUrl, 'fork source');
-        if ($forkSource) {
-            $addon[$headers['Fork source']] = $forkSource;
+        $value = $this->findData($addonUrl, 'last update');
+        if ($value) {
+            $addon[$headers['Last update']] = $value;
         }
 
-        $lastReleasedZip = $this->findData($addonUrl, 'last released zip');
-        if ($lastReleasedZip) {
-            $addon[$headers['Last released zip']] = $lastReleasedZip;
+        $value = $this->findData($addonUrl, 'fork source');
+        if ($value) {
+            $addon[$headers['Fork source']] = $value;
+        }
+
+        $value = $this->findData($addonUrl, 'last released zip');
+        if ($value) {
+            $addon[$headers['Last released zip']] = $value;
         }
 
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
@@ -685,13 +693,18 @@ class UpdateDataExtensions
             }
         }
 
-        $ini = parse_ini_string($ini);
-        if (empty($ini)) {
-            $this->log('[No ini keys ]' . ' ' . $addonName);
+        if (!is_string($ini)) {
+            $this->log('[Invalid ini   ]' . ' ' . $addonName);
             return $addon;
         }
 
-        // Update each keys of the ini file.
+        $ini = parse_ini_string($ini);
+        if (empty($ini)) {
+            $this->log('[No key in ini ]' . ' ' . $addonName);
+            return $addon;
+        }
+
+        // Update each configured keys in the ini file.
         foreach ($this->mappingToUpdate as $typeKey => $typeValues) {
             if ($typeKey != 'common' && $typeKey != $this->type) {
                 continue;
@@ -752,6 +765,8 @@ class UpdateDataExtensions
                     $addon[$headers['Upgradable']] = 'Yes';
                 }
                 break;
+            default:
+                break;
         }
 
         $cleanName = $this->cleanAddonName($addonName);
@@ -762,7 +777,7 @@ class UpdateDataExtensions
 
         if ($currentAddon == $addon) {
             if ($this->options['logAllAddons']) {
-                $this->log('[No update   ]' . ' ' . $addonName) . PHP_EOL;
+                $this->log('[No update     ]' . ' ' . $addonName) . PHP_EOL;
                 if ($this->options['debug']) {
                     $this->log('No update for addon');
                     $this->log($currentAddon);
@@ -770,7 +785,7 @@ class UpdateDataExtensions
             }
         } else {
             $this->updatedAddons[] = $addonName;
-            echo '[Updated     ]' . ' ' . $addonName . PHP_EOL;
+            echo '[Updated       ]' . ' ' . $addonName . PHP_EOL;
             if ($this->options['debug']) {
                 switch ($this->options['debugDiff']) {
                     case 'diff':
@@ -1119,18 +1134,18 @@ class UpdateDataExtensions
         );
 
         // Manage exception on Omeka.org.
-        switch ($cleanName) {
-            case 'neatlinewidgetsimiletimeline': return 'neatlinesimiletimeline';
-            case 'neatlinewidgettext': return 'neatlinetext';
-            case 'neatlinewidgetwaypoints': return 'neatlinewaypoints';
-            case 'replacedctitleinallpublicadminviews': return 'replacedctitleinallviews';
-            case 'sitemap2': return 'xmlsitemap';
-            case 'vracore': return 'vracoreelementset';
-            case 'pbcore': return 'pbcoreelementset';
-            case 'media': return 'html5media';
-        }
+        $exceptions = [
+            'neatlinewidgetsimiletimeline' => 'neatlinesimiletimeline',
+            'neatlinewidgettext' => 'neatlinetext',
+            'neatlinewidgetwaypoints' => 'neatlinewaypoints',
+            'replacedctitleinallpublicadminviews' => 'replacedctitleinallviews',
+            'sitemap2' => 'xmlsitemap',
+            'vracore' => 'vracoreelementset',
+            'pbcore' => 'pbcoreelementset',
+            'media' => 'html5media',
+        ];
 
-        return $cleanName;
+        return $exceptions[$cleanName] ?? $cleanName;
     }
 
     /**
@@ -1151,18 +1166,18 @@ class UpdateDataExtensions
         );
 
         // Manage exception on Omeka.org.
-        switch (strtolower($cleanName)) {
-            case 'neatlinewidgetsimiletimeline': return 'NeatlineSimileTimeline';
-            case 'neatlinewidgettext': return 'NeatlineText';
-            case 'neatlinewidgetwaypoints': return 'NeatlineWaypoints';
-            case 'replacedctitleinallpublicadminviews': return 'ReplacedcTitleInAllViews';
-            case 'sitemap2': return 'XmlSitemap';
-            case 'vracore': return 'VraCoreElementSet';
-            case 'pbcore': return 'PBCore-Element-Set';
-            case 'media': return 'Html5Media';
-        }
+        $exceptions = [
+            'neatlinewidgetsimiletimeline' => 'NeatlineSimileTimeline',
+            'neatlinewidgettext' => 'NeatlineText',
+            'neatlinewidgetwaypoints' => 'NeatlineWaypoints',
+            'replacedctitleinallpublicadminviews' => 'ReplacedcTitleInAllViews',
+            'sitemap2' => 'XmlSitemap',
+            'vracore' => 'VraCoreElementSet',
+            'pbcore' => 'PBCore-Element-Set',
+            'media' => 'Html5Media',
+        ];
 
-        return $cleanName;
+        return $exceptions[strtolower($cleanName)] ?? $cleanName;
     }
 
     /**
@@ -1226,10 +1241,10 @@ class UpdateDataExtensions
                         $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases/latest';
                         $content = $this->curl($apiUrl, [], false);
                         if (empty($content) || $content === 'Not Found') {
-                            return;
+                            return '';
                         }
                         if (empty($content) || empty($content->assets)) {
-                            return;
+                            return '';
                         }
                         return $content->assets[0]->browser_download_url;
                 }
@@ -1253,7 +1268,7 @@ class UpdateDataExtensions
             return '';
         }
 
-        $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0';
+        $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/135.0';
 
         $curl = curl_init();
 
