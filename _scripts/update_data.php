@@ -321,6 +321,7 @@ class UpdateDataExtensions
         $addonsLastVersions = [];
         foreach ($addons as $addon) {
             // TODO Add the directory name in the csv file.
+            // TODO Use extractNamespaceFromProjectName(). See findData().
             // Set the name or a temp addon name.
             $addonUrl = trim($addon[$headers['Url']], '/ ');
             $addonName = basename($addonUrl);
@@ -637,6 +638,11 @@ class UpdateDataExtensions
         $value = $this->findData($addonUrl, 'last released zip');
         if ($value) {
             $addon[$headers['Last released zip']] = $value;
+        }
+
+        $value = $this->findData($addonUrl, 'directory name');
+        if ($value) {
+            $addon[$headers['Directory name']] = $value;
         }
 
         $value = $this->findData($addonUrl, 'count versions');
@@ -1141,6 +1147,20 @@ class UpdateDataExtensions
         return $exceptions[strtolower($cleanName)] ?? $cleanName;
     }
 
+    protected function extractNamespaceFromProjectName($projectName)
+    {
+        if (!$projectName) {
+            return (string) $projectName;
+        }
+        $cleanName = str_ireplace(
+            ['omeka-s', 'omekas', 'omeka s', 'omeka'],
+            ['', '', '', ''],
+            $projectName
+        );
+        $name = $this->cleanAddonNameWithCase($cleanName);
+        return str_replace('-', '', $name);
+    }
+
     /**
      * Get a data from the repository.
      *
@@ -1209,6 +1229,12 @@ class UpdateDataExtensions
                             return '';
                         }
                         return $content->assets[0]->browser_download_url;
+
+                    case 'directory name':
+                        $user = strtok($project, '/');
+                        $projectName = strtok('/');
+                        // The directory name must be the namespace.
+                        return $this->extractNamespaceFromProjectName($projectName);
 
                     case 'count versions':
                         // TODO Add a check of the headers to get the right count of versions.
