@@ -29,6 +29,7 @@ This list brings together all the existing [Omeka S](https://omeka.org/s) module
                     <th><span class="sort" data-sort="addon-license">License</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
+                    <th><span class="sort" data-sort="addon-downloads" title="Warning: The number of downloads don’t mean popularity. In particular, some addons have no release and some other ones have many releases.">Downloads</span></th>
                 </tr>
             </thead>
             <tbody class="list">
@@ -65,6 +66,18 @@ This list brings together all the existing [Omeka S](https://omeka.org/s) module
                     <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
                     <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
                     <td class="addon-description">{{ addon['Description'] | xml_escape }}</td>
+                    <td class="addon-downloads">
+                        {% if addon['Total downloads'] %}
+                            {{ addon['Total downloads'] }}
+                            {% if addon['Count versions'] == '1' %}
+                                <br/>
+                                ({{ addon['Count versions'] }} version)
+                            {% elsif addon['Count versions'] %}
+                                <br/>
+                                ({{ addon['Count versions'] }} versions)
+                            {% endif %}
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endif %}
             {% endfor %}
@@ -76,7 +89,7 @@ This list brings together all the existing [Omeka S](https://omeka.org/s) module
 
 <script type="text/javascript">
     var options = {
-        valueNames: ['addon-link', 'addon-author', 'addon-updated', 'addon-omeka-org', 'addon-constraint', 'addon-license', 'addon-tags', 'addon-description'],
+        valueNames: ['addon-link', 'addon-author', 'addon-updated', 'addon-omeka-org', 'addon-constraint', 'addon-license', 'addon-tags', 'addon-description', 'addon-downloads'],
         page: 500
     };
     var entryList = new List('entry-list', options);
