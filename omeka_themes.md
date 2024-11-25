@@ -7,7 +7,7 @@ order: 3
 {% include css_js.html %}
 
 This list brings together all the existing [Omeka Classic](https://omeka.org/classic) themes.
-They can be downloaded freely on <https://github.com> or <https://gitlab.com>. Some of them are listed in <https://omeka.org/add-ons>.
+They can be downloaded freely on [github.com](https://github.com) or [gitlab.com](https://gitlab.com).
 
 Feel free to add missing themes.
 
