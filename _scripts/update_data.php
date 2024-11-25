@@ -639,6 +639,16 @@ class UpdateDataExtensions
             $addon[$headers['Last released zip']] = $value;
         }
 
+        $value = $this->findData($addonUrl, 'count versions');
+        if ($value) {
+            $addon[$headers['Count versions']] = $value;
+        }
+
+        $value = $this->findData($addonUrl, 'total downloads');
+        if ($value) {
+            $addon[$headers['Total downloads']] = $value;
+        }
+
         $ini = $this->getIniForAddon($addonUrl, $addon[$headers['Ini path']] ?? null);
         if (empty($ini) && empty($addon[$headers['Ini path']])) {
             return $addon;
@@ -1186,15 +1196,40 @@ class UpdateDataExtensions
                     case 'last released zip':
                         $user = strtok($project, '/');
                         $projectName = strtok('/');
-                        $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases/latest';
+                        // Don't use url path with "latest" to avoid a request.
+                        // $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases/latest';
+                        $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases?per_page=100';
                         $content = $this->curl($apiUrl, [], false);
                         if (empty($content) || $content === 'Not Found') {
                             return '';
                         }
+                        // The latest from the list is always the first result.
+                        $content = reset($content);
                         if (empty($content) || empty($content->assets)) {
                             return '';
                         }
                         return $content->assets[0]->browser_download_url;
+
+                    case 'count versions':
+                        // TODO Add a check of the headers to get the right count of versions.
+                        $user = strtok($project, '/');
+                        $projectName = strtok('/');
+                        $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases?per_page=100';
+                        $content = $this->curl($apiUrl, [], false);
+                        return count($content);
+
+                    case 'total downloads':
+                        // TODO Add a loop to get the right count of downloads.
+                        $user = strtok($project, '/');
+                        $projectName = strtok('/');
+                        $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases?per_page=100';
+                        $content = $this->curl($apiUrl, [], false);
+                        $counts = [];
+                        foreach ($content as $release) {
+                            // The function array_column() supports objects.
+                            $counts[$release->name] = array_sum(array_column($release->assets, 'download_count'));
+                        }
+                        return array_sum($counts);
 
                     default:
                         return '';
