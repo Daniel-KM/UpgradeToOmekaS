@@ -1,0 +1,3 @@
+Name,Author,Description,Creation date,Last update,Modules and themes
+Database for researcher,,"Main modules to build a database for search with various data,",2024-11-25T00:00:00Z,2024-11-25T00:00:00Z,"Common, CustomOntology, CustomVocab, DataTypeRdf, EasyAdmin, Log, NumericDataTypes"
+Base digital library for librarians,,Most used modules in digital libraries.,2024-11-25T00:00:00Z,2024-11-25T00:00:00Z," AdvancedResourceTemplate, AdvancedSearch, BlockPlus, BulkEdit, BulkExport, BulkImport, Coins, Common, ContactUs, CustomOntology, CustomVocab, DataTypeRdf, EasyAdmin, IiifServer, ImageServer, Log, Mirador, NumericDataTypes, OaiPmhRepository, Reference, ValueSuggest"
