@@ -392,12 +392,6 @@ class UpdateDataExtensions
 
         $newUrls = [];
 
-        // Search on github.
-        $curlHeaders = [
-            'Accept: application/vnd.github+json',
-            'X-GitHub-Api-Version: 2022-11-28',
-            'User-Agent: Daniel-KM/UpgradeToOmekaS',
-        ];
         // Topic is now included in default query, so there is only one search
         // query.
         $searches = [
@@ -417,7 +411,7 @@ class UpdateDataExtensions
                 $this->log(sprintf('curl %s', $url));
                 $time = time();
             }
-            $response = $this->curl($url, $curlHeaders);
+            $response = $this->curl($url);
             if ($this->options['debug']) {
                 $this->log(sprintf('    %d seconds', (time() - $time)));
             }
@@ -439,7 +433,7 @@ class UpdateDataExtensions
                         $this->log('.');
                         if ($page > 1) {
                             $urlPage = $url . '&page=' . $page;
-                            $response = $this->curl($urlPage, $curlHeaders);
+                            $response = $this->curl($urlPage);
                             // A special check to avoid an infinite loop.
                             if (!$response || $response->total_count == 0 || count($response->items) == 0) {
                                 break;
@@ -1147,29 +1141,26 @@ class UpdateDataExtensions
      */
     protected function findData($addonUrl, $dataToFind, $isRecursive = false)
     {
-        static $data = [];
+        // The cache is in curl().
 
         $project = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
-        if (!isset($data[$addonUrl])) {
-            switch ($server) {
-                case 'github.com':
-                    $user = strtok($project, '/');
-                    $projectName = strtok('/');
-                    $url = 'https://api.github.com/repos/' . $user . '/' . $projectName;
-                    $data[$addonUrl] = $this->curl($url);
-                    break;
-                default:
-                    $data[$addonUrl] = '';
-                    return '';
-            }
+        switch ($server) {
+            case 'github.com':
+                $user = strtok($project, '/');
+                $projectName = strtok('/');
+                $url = 'https://api.github.com/repos/' . $user . '/' . $projectName;
+                $response = $this->curl($url);
+                break;
+            default:
+                $response = '';
+                break;
         }
 
-        if (empty($data[$addonUrl])) {
+        if (empty($response)) {
             return '';
         }
 
-        $response = $data[$addonUrl];
         switch ($server) {
             case 'github.com':
                 switch ($dataToFind) {
@@ -1219,15 +1210,20 @@ class UpdateDataExtensions
      * @param string $url
      * @param array $headers
      * @param bool $messageResponse
-     * @return string
+     * @return array|string The array may contain standard objects at any level.
      */
     protected function curl($url, $headers = [], $messageResponse = true)
     {
-        static $flag;
+        static $flag = false;
+        static $data = [];
 
         // Allows only one main error.
         if ($flag) {
             return '';
+        }
+
+        if (isset($data[$url])) {
+            return $data[$url];
         }
 
         $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/135.0';
@@ -1243,9 +1239,13 @@ class UpdateDataExtensions
             }
         }
 
-        $headers[] = 'Accept: application/vnd.github+json';
-        $headers[] = 'X-GitHub-Api-Version: 2022-11-28';
-        $headers[] = 'User-Agent: Daniel-KM/UpgradeToOmekaS';
+        // TODO Two user agents?
+        $domain = parse_url($url, PHP_URL_HOST);
+        if (strpos($domain, 'github') !== false) {
+            $headers[] = 'Accept: application/vnd.github+json';
+            $headers[] = 'X-GitHub-Api-Version: 2022-11-28';
+            $headers[] = 'User-Agent: Daniel-KM/UpgradeToOmekaS';
+        }
         $headers = array_unique($headers);
 
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -1286,6 +1286,8 @@ class UpdateDataExtensions
             }
             return '';
         }
+
+        $data[$url] = $response;
 
         return $response;
     }
