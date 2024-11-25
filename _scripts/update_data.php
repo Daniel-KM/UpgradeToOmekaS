@@ -1152,6 +1152,21 @@ class UpdateDataExtensions
         if (!$projectName) {
             return (string) $projectName;
         }
+
+        // Exceptions.
+        $exceptions = [
+            'UpgradeToOmekaS' => 'UpgradeToOmekaS',
+            'Omeka-plugin-UpgradeToOmekaS' => 'UpgradeToOmekaS',
+            'UpgradeFromOmekaClassic' => 'UpgradeFromOmekaClassic',
+            'Omeka-S-module-UpgradeFromOmekaClassic' => 'UpgradeFromOmekaClassic',
+            'OmekaSModuleBootstrap' => 'OmekaSModuleBootstrap',
+            'omeka-s-theme-omekalia' => 'omekalia',
+            'omekalia' => 'omekalia',
+        ];
+        if (isset($exceptions[$projectName])) {
+            return $exceptions[$projectName];
+        }
+
         $cleanName = str_ireplace(
             ['omeka-s', 'omekas', 'omeka s', 'omeka'],
             ['', '', '', ''],
