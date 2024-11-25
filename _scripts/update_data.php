@@ -1251,9 +1251,21 @@ class UpdateDataExtensions
                         $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases?per_page=100';
                         $content = $this->curl($apiUrl, [], false);
                         $counts = [];
+                        // Take the fact that some addons, like Mirador,
+                        // include some dependencies zipped in some releases.
+                        // Furthermore, some addons, like Log, have multiple
+                        // files for different versions of php.
+                        // So filter files in each release with the name of the
+                        // addon + optional version number + optional extension
+                        // + zip only.
                         foreach ($content as $release) {
                             // The function array_column() supports objects.
-                            $counts[$release->name] = array_sum(array_column($release->assets, 'download_count'));
+                            // $counts[$release->name] = array_sum(array_column($release->assets, 'download_count'));
+                            $namespace = $this->extractNamespaceFromProjectName($projectName);
+                            $version = $release->tag_name;
+                            $counts[$release->name] = array_sum(array_column(array_filter($release->assets, function ($as) use ($namespace, $version) {
+                                return preg_match('~' . preg_quote($namespace, '~') . '[ ._-]?(?:(?:' . preg_quote($version, '~') . ')?|(?:' . preg_quote($version, '~') . ')?[ ._-]?php[\d ._-]?)\.zip$~', $as->name);
+                            }), 'download_count'));
                         }
                         return array_sum($counts);
 
