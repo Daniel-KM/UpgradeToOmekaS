@@ -1283,21 +1283,18 @@ class UpdateDataExtensions
      * @param string $url
      * @param array $headers
      * @param bool $messageResponse
-     * @return array|string The array may contain standard objects at any level.
+     * @return array The array may contain standard objects at any level.
      */
     protected function curl($url, $headers = [], $messageResponse = true)
     {
-        static $flag = false;
         static $data = [];
-
-        // Allows only one main error.
-        if ($flag) {
-            return '';
-        }
 
         if (isset($data[$url])) {
             return $data[$url];
         }
+
+        // Avoid processing multiple times the same url with the same issue.
+        $data[$url] = [];
 
         $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/135.0';
 
@@ -1335,47 +1332,53 @@ class UpdateDataExtensions
         curl_close($curl);
 
         if ($response === false) {
-            if (empty($flag)) {
-                $flag = true;
-                $this->log(sprintf('No response from curl for url %s.', $url));
-            }
-            return '';
+            $this->log(sprintf('No response from curl for url %s.', $url));
+            return [];
         }
 
-        $response = json_decode($response);
-        if (empty($response)) {
-            if (empty($flag)) {
-                $flag = true;
-                $this->log(sprintf('Empty response from curl for url %s.', $url));
-            }
-            return '';
-        }
-        if (!empty($response->message)) {
-            if (empty($flag)) {
-                // Don't update flag.
-                if ($messageResponse) {
-                    $this->log(sprintf('Error on url %s: %s.', $url, $response->message));
-                }
-            }
-            return '';
+        // All api are json.
+        $output = json_decode($response);
+        if (empty($output)) {
+            $this->log(sprintf('Empty response from curl for url %s.', $url));
+            return [];
         }
 
-        $data[$url] = $response;
+        if (!(is_array($output) || is_object($output))) {
+            $this->log(sprintf('Response from curl is not an array or an object for url %s.', $url));
+            return [];
+        }
 
-        return $response;
+        // TODO Here only github? Skip?
+        if (is_object($output) && !empty($output->message)) {
+            if ($messageResponse) {
+                $this->log(sprintf('Error on url %1$s: %2$s.', $url, $output->message));
+            }
+            return [];
+        } elseif (is_array($output) && !empty($output['message'])) {
+            if ($messageResponse) {
+                $this->log(sprintf('Error on url %1$s: %2$s.', $url, $output['message']));
+            }
+            return [];
+        }
+
+        $data[$url] = $output;
+
+        return $output;
     }
 
     protected function getIniForAddon($addonUrl, $iniPath = null)
     {
         static $addons = [];
+        static $addonTypes = [];
 
         // The ini path is used in some non-standard repositories.
-        if ($iniPath) {
-            if (isset($addons[$addonUrl . ' iniPath'])) {
-                return $addons[$addonUrl . ' iniPath'];
-            }
-        } elseif (isset($addons[$addonUrl])) {
-            return $addons[$addonUrl];
+        $keyAddon = $addonUrl . ($iniPath ? ' iniPath' : '');
+
+        // The check on the addon type avoids to return a wrong ini.
+        if (isset($addons[$keyAddon])
+            && $addonTypes[$keyAddon] === $this->type
+        ) {
+            return $addons[$keyAddon];
         }
 
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
@@ -1419,8 +1422,8 @@ class UpdateDataExtensions
             }
         }
 
-        $key = $addonUrl . ($iniPath ? ' iniPath' : '');
-        $addons[$key] = $ini;
+        $addons[$keyAddon] = $ini;
+        $addonTypes[$keyAddon] = $this->type;
 
         return $ini;
     }
