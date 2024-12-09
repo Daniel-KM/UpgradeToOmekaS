@@ -8,7 +8,6 @@ order: 3
 
 This list brings together all the existing [Omeka Classic](https://omeka.org/classic) themes.
 They can be downloaded freely on [github.com](https://github.com) or [gitlab.com](https://gitlab.com).
-
 Feel free to add missing themes.
 
 <div class="container-fluid">

@@ -35,15 +35,19 @@ For Debian 12:
 
 ```sh
 sudo apt install ruby-full build-essential
-# Exports should be added in .bashrc to avoid to export them eachtime.
+# Exports should be added in .bashrc to avoid to export them each time.
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
-# May or may not be sudo.
+
+# May or may not be sudo according to your installation.
 sudo gem install rubygems-update
 sudo update_rubygems
 sudo gem update
+
 # May be not installed by default.
 gem install eventmachine http_parser.rb sass-embedded
+
+# The main process to run the site locally.
 cd UpgradeToOmekaClassic
 bundle install
 bundle exec jekyll serve
