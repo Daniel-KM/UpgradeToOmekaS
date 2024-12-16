@@ -48,7 +48,7 @@ sudo gem update
 gem install eventmachine http_parser.rb sass-embedded
 
 # The main process to run the site locally.
-cd UpgradeToOmekaClassic
+cd UpgradeToOmekaS
 bundle install
 bundle exec jekyll serve
 ```
