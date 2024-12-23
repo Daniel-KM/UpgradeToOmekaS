@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Omeka S Modules
+lang: en
 order: 4
 ---
 
@@ -8,7 +9,7 @@ order: 4
 
 This list brings together all the existing [Omeka S](https://omeka.org/s) modules.
 
-{% include intro_extensions.md %}
+{% include en/intro_extensions.md %}
 
 <div class="container-fluid">
 <div id="entry-list">
@@ -25,73 +26,17 @@ This list brings together all the existing [Omeka S](https://omeka.org/s) module
                     <th><span class="sort" data-sort="addon-link">Module</span></th>
                     <th><span class="sort" data-sort="addon-author">Author</span></th>
                     <th><span class="sort" data-sort="addon-updated">Updated</span></th>
-                    <th><span class="sort" data-sort="addon-constraint">Constraint</span></th>
+                    <th><span class="sort" data-sort="addon-constraint">Version cible</span></th>
                     <th><span class="sort" data-sort="addon-license">License</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
                     <th><span class="sort" data-sort="addon-downloads" title="Warning: The number of downloads don’t mean popularity. In particular, some addons have no release and some other ones have many releases.">Downloads</span></th>
                 </tr>
             </thead>
-            <tbody class="list">
-            {% for addon in site.data.omeka_s_modules %}
-                {% if addon['Name'] %}
-                <tr>
-                    <td>
-                    {% unless addon['Name'] == nil %}
-                        <a href="{{ addon['Url'] }}" class="link addon-link">{{ addon['Name'] }}</a>
-                    {% endunless %}
-                    </td>
-                    <td>
-                    {% unless addon['Name'] == nil %}
-                        {% unless addon['Author'] == nil %}
-                            {% if addon['Author link'] != nil %}
-                                <a href="{{ addon['Author link'] }}" class="link addon-author">{{ addon['Author'] | xml_escape }}</a>
-                            {% else %}
-                                {{ addon['Author'] | xml_escape }}
-                            {% endif %}
-                        {% endunless %}
-                    {% endunless %}
-                    </td>
-                    <td class="addon-updated">
-                        {% if addon['Last update'] %}
-                            {{ addon['Last update'] | slice: 0, 10 }}
-                        {% endif %}
-                        {% if addon['Last version'] and addon['Last version'] != '' %}
-                             <br/>
-                            {% assign version = addon['Last version'] %}
-                            (v. {%- include addon_version.md version=version -%})
-                        {% endif %}
-                    </td>
-                    <td class="addon-constraint">{{ addon['Omeka constraint'] }}</td>
-                    <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
-                    <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
-                    <td class="addon-description">{{ addon['Description'] | xml_escape }}</td>
-                    <td class="addon-downloads">
-                        {% if addon['Total downloads'] %}
-                            {{ addon['Total downloads'] }}
-                            {% if addon['Count versions'] == '1' %}
-                                <br/>
-                                ({{ addon['Count versions'] }} version)
-                            {% elsif addon['Count versions'] %}
-                                <br/>
-                                ({{ addon['Count versions'] }} versions)
-                            {% endif %}
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endif %}
-            {% endfor %}
-            </tbody>
+            {% include omeka_s_modules_table_body.md %}
         </table>
     </div>
 </div>
 </div>
 
-<script type="text/javascript">
-    var options = {
-        valueNames: ['addon-link', 'addon-author', 'addon-updated', 'addon-omeka-org', 'addon-constraint', 'addon-license', 'addon-tags', 'addon-description', 'addon-downloads'],
-        page: 500
-    };
-    var entryList = new List('entry-list', options);
-    entryList.sort('addon-updated', { order: "desc" });
-</script>
+{% include omeka_s_modules_script.html %}

@@ -1,23 +1,23 @@
 ---
 layout: page
-title: Omeka Plugins
-lang: en
-order: 2
+title: Thèmes Omeka
+lang: fr
+order: 3
 ---
 
 {% include css_js.html %}
 
-This list brings together all the existing [Omeka Classic](https://omeka.org/classic) plugins.
-
-{% include en/intro_extensions.md %}
+Cette liste rassemble tous les thèmes existants pour [Omeka Classic](https://omeka.org/classic).
+Ils peuvent être téléchargés librement sur [omeka.org](https://omeka.org/classic/themes), [github.com](https://github.com) ou [gitlab.com](https://gitlab.com).
+N’hésitez pas à signaler des thèmes manquants.
 
 <div class="container-fluid">
 <div id="entry-list">
     <div class="row" style="margin-bottom:10px;">
-        <input type="text" class="search form-control" placeholder="Filter" />
+        <input type="text" class="search form-control" placeholder="Filtre" />
     </div>
     <p><em>
-    Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_plugins.csv">csv source file</a>, updated once a week. Forks are not displayed, except when they add new features.
+    Tapez quelques lettres pour filtrer la liste. Cliquez sur les en-têtes pour trier. Obtenez le <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_themes.csv">fichier source en csv</a>, mis à jour une fois par semaine. Les dépôts dérivés ne sont pas affichés.
     </em></p>
     <div class="row">
         <table class="table table-striped">
@@ -27,22 +27,16 @@ This list brings together all the existing [Omeka Classic](https://omeka.org/cla
                     <th><span class="sort" data-sort="addon-author">Author</span></th>
                     <th><span class="sort" data-sort="addon-updated">Updated</span></th>
                     <th><span class="sort" data-sort="addon-omeka-org">Omeka.org</span></th>
-                    <th><span class="sort" data-sort="addon-upgradable">Upgradable</span></th>
-                    <th><span class="sort" data-sort="addon-target">Target version</span></th>
-                    <th><span class="sort" data-sort="addon-license">License</span></th>
+                    <th><span class="sort" data-sort="addon-license">Licence</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
-                    <!--
-                    <th><span class="sort" data-sort="addon-required">Required plugins</span></th>
-                    <th><span class="sort" data-sort="addon-optional">Optional plugins</span></th>
-                    -->
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
                     <th><span class="sort" data-sort="addon-downloads" title="Warning: The number of downloads don’t mean popularity. In particular, some addons have no release and some other ones have many releases.">Downloads</span></th>
                 </tr>
             </thead>
-            {% include omeka_plugins_table_body.md %}
+            {% include omeka_themes_table_body.md %}
         </table>
     </div>
 </div>
 </div>
 
-{% include omeka_plugins_script.html %}
+{% include omeka_themes_script.html %}

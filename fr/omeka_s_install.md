@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Installer facilement Omeka S
+lang: fr
 order: 1
 ---
 
@@ -8,9 +9,8 @@ order: 1
 
 ## Étape 1 : copier le script sur le serveur
 
-Le fichier peut être copié soit via le ftp ou l’interface web de l’hébergeur,
-soit via la ligne de commande du serveur. Dans les deux cas, le dossier doit
-être accessible en écriture par le serveur web.
+Le fichier peut être copié soit via le ftp ou l’interface web de l’hébergeur, soit via la ligne de commande du serveur.
+Dans les deux cas, le dossier doit être accessible en écriture par le serveur web.
 
 ### Via ftp ou l’interface web de l’hébergeur
 

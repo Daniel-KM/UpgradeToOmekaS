@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Omeka S Selections
+lang: en
 order: 6
 ---
 
@@ -27,39 +28,10 @@ These curated selections of modules and themes can be installed via the module [
                     <th><span class="sort" data-sort="addon-addons">Modules and themes</span></th>
                 </tr>
             </thead>
-            <tbody class="list">
-            {% for selection in site.data.omeka_s_selections %}
-                {% if selection['Name'] %}
-                <tr>
-                    <td class="addon-name">
-                        {{ selection['Name'] }}
-                    </td>
-                    <td class="addon-author">
-                        {{ selection['Author'] }}
-                    </td>
-                    <td class="addon-description">
-                        {{ selection['Description'] | xml_escape }}
-                    </td>
-                    <td class="addon-updated">
-                        {{ selection['Last update'] | slice: 0, 10 }}
-                    </td>
-                    <td class="addon-addons">
-                        {{ selection['Modules and themes'] }}
-                    </td>
-                </tr>
-                {% endif %}
-            {% endfor %}
-            </tbody>
+            {% include omeka_s_selections_table_body.md %}
         </table>
     </div>
 </div>
 </div>
 
-<script type="text/javascript">
-    var options = {
-        valueNames: ['addon-name', 'addon-author', 'addon-description', 'addon-updated', 'addon-addons'],
-        page: 500
-    };
-    var entryList = new List('entry-list', options);
-    // entryList.sort('addon-updated', { order: "desc" });
-</script>
+{% include omeka_s_selections_script.html %}
