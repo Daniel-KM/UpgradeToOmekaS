@@ -3,7 +3,6 @@ layout: page
 title: Omeka Classic Themes
 order: 2
 redirect: true
-redirect_url: /omeka_themes.html
 ---
 
 {% include css_js.html %}

@@ -3,7 +3,6 @@ layout: page
 title: Mapping extensions
 order: 3
 redirect: true
-redirect_url: /omeka_mapping.html
 ---
 
 {% include css_js.html %}

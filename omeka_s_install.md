@@ -3,7 +3,6 @@ layout: page
 title: Omeka S Easy Install
 order: 7
 redirect: true
-redirect_url: /omeka_s_install.html
 ---
 
 {% include css_js.html %}

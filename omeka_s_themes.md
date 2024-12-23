@@ -3,7 +3,6 @@ layout: page
 title: Omeka S Themes
 order: 5
 redirect: true
-redirect_url: /omeka_s_themes.html
 ---
 
 {% include css_js.html %}

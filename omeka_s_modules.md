@@ -3,7 +3,6 @@ layout: page
 title: Omeka S Modules
 order: 4
 redirect: true
-redirect_url: /omeka_s_modules.html
 ---
 
 {% include css_js.html %}

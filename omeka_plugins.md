@@ -3,7 +3,6 @@ layout: page
 title: Omeka Classic Plugins
 order: 1
 redirect: true
-redirect_url: /omeka_plugins.html
 ---
 
 {% include css_js.html %}

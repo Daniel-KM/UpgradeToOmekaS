@@ -3,7 +3,6 @@ layout: page
 title: Omeka S Selections
 order: 6
 redirect: true
-redirect_url: /omeka_s_selections.html
 ---
 
 {% include css_js.html %}
