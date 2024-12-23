@@ -62,6 +62,7 @@ class Utils
     ];
 
     const OMEKA_LOCALE = 'fr';
+    const OMEKA_LOG_LEVEL = 'NOTICE';
 
     public function __invoke(): self
     {
@@ -377,6 +378,27 @@ $isDatabaseValid = true;
 $failed = false;
 
 $isPost = filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST';
+if ($isPost) {
+    // TODO Mysqli permet aussi d’utiliser directement les paramètres définis par défaut, mais c’est rare, et de toute façon Omeka utilise pdo.
+    $host = trim((string) filter_input(INPUT_POST, 'host'));
+    $port = intval(trim((string) filter_input(INPUT_POST, 'port'))) ?: null;
+    $socket = trim((string) filter_input(INPUT_POST, 'socket')) ?: null;
+    $dbname = trim((string) filter_input(INPUT_POST, 'dbname'));
+    $user = trim((string) filter_input(INPUT_POST, 'user'));
+    $password = trim((string) filter_input(INPUT_POST, 'password'));
+    $locale = trim((string) filter_input(INPUT_POST, 'locale'));
+    $logLevel = filter_input(INPUT_POST, 'log_level');
+} else {
+    $host = 'localhost';
+    $port = '';
+    $socket = '';
+    $dbname = '';
+    $user = '';
+    $password = '';
+    // Omeka.
+    $locale = $utils::OMEKA_LOCALE;
+    $logLevel = $utils::OMEKA_LOG_LEVEL;
+}
 
 // Test du système de fichiers.
 
@@ -485,26 +507,6 @@ if (count($result)) {
 $isValid = $isValid && $isSystemValid && $isPhpValid;
 
 // Vérification de la base de données (requiert php et les informations sur la base).
-
-if ($isPost) {
-    // TODO Mysqli permet aussi d’utiliser directement les paramètres définis par défaut, mais c’est rare, et de toute façon Omeka utilise pdo.
-    $host = trim((string) filter_input(INPUT_POST, 'host'));
-    $port = intval(trim((string) filter_input(INPUT_POST, 'port'))) ?: null;
-    $socket = trim((string) filter_input(INPUT_POST, 'socket')) ?: null;
-    $dbname = trim((string) filter_input(INPUT_POST, 'dbname'));
-    $user = trim((string) filter_input(INPUT_POST, 'user'));
-    $password = trim((string) filter_input(INPUT_POST, 'password'));
-    $locale = trim((string) filter_input(INPUT_POST, 'locale'));
-} else {
-    $host = 'localhost';
-    $port = '';
-    $socket = '';
-    $dbname = '';
-    $user = '';
-    $password = '';
-    // Omeka.
-    $locale = $utils::OMEKA_LOCALE;
-}
 
 // On peut tester la base même s'il y a des problèmes dans le système de fichiers.
 if ($isPhpValid && $isPost) {
@@ -718,13 +720,23 @@ if ($isValid && $isPost) {
     }
 
     // Modifier config.
-    if (!$failed && $locale) {
+    if (!$failed) {
         // var_export() ne peut pas être utilisé car il y a des constantes de
         // classes non disponibles et qu'en tout état de cause il est préférable
         // de conserver telles quelles.
         $configPath = __DIR__ . '/config/local.config.php';
         $config = file_get_contents($configPath);
-        $config = str_replace("'locale' => 'en_US',", sprintf("'locale' => '%s',", $locale), $config);
+        if ($locale) {
+            $config = str_replace("'locale' => 'en_US',", sprintf("'locale' => '%s',", $locale), $config);
+        }
+        if ($logLevel !== 'none') {
+            $config = str_replace("'log' => false,", "'log' => true,", $config);
+            $config = str_replace(
+                "'priority' => \Laminas\Log\Logger::NOTICE,",
+                sprintf("'priority' => \Laminas\Log\Logger::%s,", $logLevel),
+                $config
+            );
+        }
         file_put_contents($configPath, $config);
     }
 }
@@ -819,6 +831,25 @@ $locales = [
                 display: inline-block;
                 width: 33%;
             }
+
+            .radios > label {
+                vertical-align: top;
+            }
+            .radio-group {
+                display: inline-block;
+                width: initial;
+                width: 50%;
+            }
+            .radio-group label {
+                display: inline;
+                width: initial;
+                text-align: initial;
+            }
+            .radio-group input {
+                display: inline;
+                width: initial;
+            }
+
             details {
                 display: block;
                 margin-bottom: 1em;
@@ -908,6 +939,28 @@ $locales = [
                     <option value="<?= $code ?>"<?= $code === $locale ? ' selected="selected"' : '' ?>><?= htmlspecialchars($label) ?></option>
                     <?php endforeach; ?>
                 </select>
+
+                <details>
+                    <summary>Configuration spécifique</summary>
+                    <div class="radios">
+                        <label for="logLevel">Gravité minimale des journaux</label>
+                        <div id="logLevel" class="radio-group">
+                            <input type="radio" id="log_none" name="log_level" value="none"<?= $logLevel === 'none' ? ' checked="checked"' : '' ?>/>
+                            <label for="log_none">Aucun</label>
+                            <input type="radio" id="log_err" name="log_level" value="ERR"<?= $logLevel === 'ERR' ? ' checked="checked"' : '' ?>/>
+                            <label for="log_err">Erreur</label>
+                            <input type="radio" id="log_warn" name="log_level" value="WARN"<?= $logLevel === 'WARN' ? ' checked="checked"' : '' ?>/>
+                            <label for="log_warn">Avertissement</label>
+                            <br/>
+                            <input type="radio" id="log_notice" name="log_level" value="NOTICE"<?= $logLevel === 'NOTICE' ? ' checked="checked"' : '' ?>/>
+                            <label for="log_notice">Note</label>
+                            <input type="radio" id="log_info" name="log_level" value="INFO"<?= $logLevel === 'INFO' ? ' checked="checked"' : '' ?>/>
+                            <label for="log_info">Info</label>
+                            <input type="radio" id="log_debug" name="log_level" value="DEBUG"<?= $logLevel === 'DEBUG' ? ' checked="checked"' : '' ?>/>
+                            <label for="log_debug">Débogage</label>
+                        </div>
+                    </div>
+                </details>
 
                 <button type="submit">
                     <h2>Installer Omeka S</h2>
