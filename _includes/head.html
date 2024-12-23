@@ -1,19 +1,34 @@
-{%- assign active_lang = page.lang | site.default_lang -%}
+{%- if page.lang -%}
+{%- assign active_lang = page.lang -%}
+{%- else -%}
+{%- assign active_lang = site.default_lang -%}
+{%- endif -%}
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  {% if page.redirect %}
+  <meta http-equiv="Refresh" content="0;url={{ site.url }}/{{ site.default_lang }}{{ page.redirect_url | page.url }}" />
+  {% endif %}
+
   {% comment %}
   {% I18n_Headers %}
   {% endcomment %}
-  <link rel="alternate" hreflang="{{ site.default_lang }}" href="{{ site.url }}{{ page.url }}" />
-  {% for lang in site.languages %}
-    {% if lang == site.default_lang %}
-      {% continue %}
-    {% endif %}
-  <link rel="alternate" hreflang="{{ lang }}" href="{{ site.url }}{{ page.url | replace_first: active_lang, lang }}" />
-  {% endfor %}
+
+  {% comment %}
+  All pages have an alternate by lang.
+  {% endcomment %}
+  {%- if page.lang -%}
+    {% for lang in site.languages %}
+    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.url }}{{ page.url | replace_first: active_lang, lang }}" />
+    {% endfor %}
+  {%- else -%}
+    {% for lang in site.languages %}
+    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.url }}/{{ lang }}{{ page.url }}" />
+    {% endfor %}
+  {%- endif -%}
 
   {%- seo title=false -%}
 

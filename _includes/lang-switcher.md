@@ -1,4 +1,9 @@
-{%- assign active_lang = page.lang | site.default_lang -%}
+{%- if page.lang -%}
+{%- assign active_lang = page.lang -%}
+{%- else -%}
+{%- assign active_lang = site.default_lang -%}
+{%- endif -%}
+
 <ul>
 {% for lang in site.languages %}
   <li>

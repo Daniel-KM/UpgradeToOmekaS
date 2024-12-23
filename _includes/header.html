@@ -1,10 +1,15 @@
+{%- if page.lang -%}
+{%- assign active_lang = page.lang -%}
+{%- else -%}
+{%- assign active_lang = site.default_lang -%}
+{%- endif -%}
+
 <header class="site-header" role="banner">
   <div class="wrapper">
 
-    {%- assign active_lang = page.lang | site.default_lang -%}
     {%- assign default_paths = site.pages | sort: "order" | map: "path" -%}
     {%- assign page_paths = site.header_pages | default: default_paths -%}
-    <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.data[active_lang].l10n.title | escape }}</a>
+    <a class="site-title" rel="author" href="{{ site.url }}/{{ active_lang }}">{{ site.data[active_lang].l10n.title | escape }}</a>
 
     <div class="lang-switcher">
       {% include lang-switcher.md %}
