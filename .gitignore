@@ -17,6 +17,7 @@
 .php-cs-fixer.cache
 .phpunit.result.cache
 .project
+.settings
 composer.phar
 debug.log
 
