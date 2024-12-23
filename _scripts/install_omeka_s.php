@@ -35,6 +35,8 @@
  * knowledge of the CeCILL license and that you accept its terms.
  */
 
+const OMEKA_PATH = __DIR__;
+
 /**
  * Adapted:
  * @see \Omeka\Stdlib\Cli
@@ -76,6 +78,16 @@ class Utils
             $messages[] = $message;
         }
         return $messages;
+    }
+
+    public function psrLog(string $message, array $context)
+    {
+        $log = preg_replace_callback(
+            '~\{([A-Za-z0-9_.]+)\}~',
+            fn ($matches) => $context[$matches[1]] ?? $matches[0],
+            $message
+        );
+        return $this->log($log);
     }
 
     /**
@@ -363,11 +375,507 @@ class Utils
     }
 }
 
+/**
+ * Version simplifiée de Easy Admin Addons.
+ *
+ * @see \EasyAdmin\Mvc\Controller\Plugin\Addons
+ */
+class Addons
+{
+    /**
+     * @var Utils
+     */
+    protected $utils;
+
+    /**
+     * Source of data and destination of addons.
+     *
+     * @var array
+     */
+    protected $data = [
+        'omekamodule' => [
+            'source' => 'https://omeka.org/add-ons/json/s_module.json',
+            'destination' => '/modules',
+        ],
+        'omekatheme' => [
+            'source' => 'https://omeka.org/add-ons/json/s_theme.json',
+            'destination' => '/themes',
+        ],
+        'module' => [
+            'source' => 'https://raw.githubusercontent.com/Daniel-KM/UpgradeToOmekaS/master/_data/omeka_s_modules.csv',
+            'destination' => '/modules',
+        ],
+        'theme' => [
+            'source' => 'https://raw.githubusercontent.com/Daniel-KM/UpgradeToOmekaS/master/_data/omeka_s_themes.csv',
+            'destination' => '/themes',
+        ],
+    ];
+
+    /**
+     * Cache for the list of addons.
+     *
+     * @var array
+     */
+    protected $addons = [];
+
+    /**
+     * Cache for the list of selections.
+     *
+     * @var array
+     */
+    protected $selections = [];
+
+    public function __construct(?Utils $utils = null)
+    {
+        $this->utils = $utils ?? new Utils();
+    }
+
+    public function  __invoke(): self
+    {
+        return $this;
+    }
+
+    public function getLists(): array
+    {
+        static $lists;
+
+        if ($lists) {
+            $this->addons = $lists;
+            return $lists;
+        }
+
+        $this->addons = [];
+        foreach ($this->types() as $addonType) {
+            $this->addons[$addonType] = $this->listAddonsForType($addonType);
+        }
+
+        return $lists = $this->addons;
+    }
+
+    /**
+     * Get curated selections of modules from the web.
+     */
+    public function getSelections(): array
+    {
+        static $list = [];
+
+        if ($list) {
+            $this->selections = $list;
+            return$list;
+        }
+
+        $this->selections = [];
+        $csv = @file_get_contents('https://raw.githubusercontent.com/Daniel-KM/UpgradeToOmekaS/refs/heads/master/_data/omeka_s_selections.csv');
+        if ($csv) {
+            // Get the column for name and modules.
+            $headers = [];
+            $isFirst = true;
+            foreach (explode("\n", $csv) as $row) {
+                $row = str_getcsv($row) ?: [];
+                if ($isFirst) {
+                    $headers = array_flip($row);
+                    $isFirst = false;
+                } elseif ($row) {
+                    $name = $row[$headers['Name']] ?? '';
+                    if ($name) {
+                        $this->selections[$name] = array_map('trim', explode(',', $row[$headers['Modules and themes']] ?? ''));
+                    }
+                }
+            }
+        }
+
+        return $list = $this->selections;
+    }
+
+    /**
+     * Get the list of default types.
+     */
+    public function types(): array
+    {
+        return array_keys($this->data);
+    }
+
+    /**
+     * Get addon data from the namespace of the module.
+     */
+    public function dataFromNamespace(string $namespace, ?string $type = null): array
+    {
+        $list = $type
+            ? (isset($this->addons[$type]) ? [$type => $this->addons[$type]] : [])
+            : $this->addons;
+        foreach ($list as $type => $addonsForType) {
+            $addonsUrl = array_column($addonsForType, 'url', 'dir');
+            if (isset($addonsUrl[$namespace]) && isset($addonsForType[$addonsUrl[$namespace]])) {
+                return $addonsForType[$addonsUrl[$namespace]];
+            }
+        }
+        return [];
+    }
+
+    /**
+     * Get addon data from the url of the repository.
+     */
+    public function dataFromUrl(string $url, string $type): array
+    {
+        return $this->addons && isset($this->addons[$type][$url])
+        ? $this->addons[$type][$url]
+        : [];
+    }
+
+    /**
+     * Check if an addon is installed.
+     *
+     * @param array $addon
+     */
+    public function dirExists($addon): bool
+    {
+        $destination = OMEKA_PATH . $this->data[$addon['type']]['destination'];
+        $existings = $this->listDirsInDir($destination);
+        $existings = array_map('strtolower', $existings);
+        return in_array(strtolower($addon['dir']), $existings)
+            || in_array(strtolower($addon['basename']), $existings);
+    }
+
+    /**
+     * Helper to list the addons from a web page.
+     *
+     * @param string $type
+     */
+    protected function listAddonsForType($type): array
+    {
+        if (!isset($this->data[$type]['source'])) {
+            return [];
+        }
+        $source = $this->data[$type]['source'];
+
+        $content = $this->fileGetContents($source);
+        if (empty($content)) {
+            return [];
+        }
+
+        switch ($type) {
+            case 'module':
+            case 'theme':
+                return $this->extractAddonList($content, $type);
+            case 'omekamodule':
+            case 'omekatheme':
+                return $this->extractAddonListFromOmeka($content, $type);
+        }
+    }
+
+    /**
+     * Helper to get content from an external url.
+     *
+     * @param string $url
+     */
+    protected function fileGetContents($url): ?string
+    {
+        return file_get_contents($url) ?: null;
+    }
+
+    /**
+     * Helper to parse a csv file to get urls and names of addons.
+     *
+     * @param string $csv
+     * @param string $type
+     */
+    protected function extractAddonList($csv, $type): array
+    {
+        $list = [];
+
+        $addons = array_map('str_getcsv', explode(PHP_EOL, $csv));
+        $headers = array_flip($addons[0]);
+
+        foreach ($addons as $key => $row) {
+            if ($key == 0 || empty($row) || !isset($row[$headers['Url']])) {
+                continue;
+            }
+
+            $url = $row[$headers['Url']];
+            $name = $row[$headers['Name']];
+            $version = $row[$headers['Last version']];
+            $addonName = preg_replace('~[^A-Za-z0-9]~', '', $name);
+            $dirname = $row[$headers['Directory name']] ?: $addonName;
+            $server = strtolower(parse_url($url, PHP_URL_HOST));
+            $dependencies = empty($headers['Dependencies']) || empty($row[$headers['Dependencies']])
+                ? []
+                : array_filter(array_map('trim', explode(',', $row[$headers['Dependencies']])));
+
+            $zip = $row[$headers['Last released zip']];
+            // Warning: the url with master may not have dependencies.
+            if (!$zip) {
+                switch ($server) {
+                    case 'github.com':
+                        $zip = $url . '/archive/master.zip';
+                        break;
+                    case 'gitlab.com':
+                        $zip = $url . '/repository/archive.zip';
+                        break;
+                    default:
+                        $zip = $url . '/master.zip';
+                        break;
+                }
+            }
+
+            $addon = [];
+            $addon['type'] = $type;
+            $addon['server'] = $server;
+            $addon['name'] = $name;
+            $addon['basename'] = basename($url);
+            $addon['dir'] = $dirname;
+            $addon['version'] = $version;
+            $addon['url'] = $url;
+            $addon['zip'] = $zip;
+            $addon['dependencies'] = $dependencies;
+
+            $list[$url] = $addon;
+        }
+
+        return $list;
+    }
+
+    /**
+     * Helper to parse html to get urls and names of addons.
+     *
+     * @todo Manage dependencies for addon from omeka.org.
+     *
+     * @param string $json
+     * @param string $type
+     */
+    protected function extractAddonListFromOmeka($json, $type): array
+    {
+        $list = [];
+
+        $addonsList = json_decode($json, true);
+        if (!$addonsList) {
+            return [];
+        }
+
+        foreach ($addonsList as $name => $data) {
+            if (!$data) {
+                continue;
+            }
+
+            $version = $data['latest_version'];
+            $url = 'https://github.com/' . $data['owner'] . '/' . $data['repo'];
+            // Warning: the url with master may not have dependencies.
+            $zip = $data['versions'][$version]['download_url'] ?? $url . '/archive/master.zip';
+
+            $addon = [];
+            $addon['type'] = str_replace('omeka', '', $type);
+            $addon['server'] = 'omeka.org';
+            $addon['name'] = $name;
+            $addon['basename'] = $data['dirname'];
+            $addon['dir'] = $data['dirname'];
+            $addon['version'] = $data['latest_version'];
+            $addon['url'] = $url;
+            $addon['zip'] = $zip;
+            $addon['dependencies'] = [];
+
+            $list[$url] = $addon;
+        }
+
+        return $list;
+    }
+
+    /**
+     * Helper to install an addon.
+     */
+    public function installAddon(array $addon): bool
+    {
+        switch ($addon['type']) {
+            case 'module':
+                $destination = OMEKA_PATH . '/modules';
+                $type = 'module';
+                break;
+            case 'theme':
+                $destination = OMEKA_PATH . '/themes';
+                $type = 'theme';
+                break;
+            default:
+                return false;
+        }
+
+        if (file_exists($destination . DIRECTORY_SEPARATOR . $addon['dir'])) {
+            return true;
+        }
+
+        $zipFile = $destination . DIRECTORY_SEPARATOR . basename($addon['zip']);
+
+        // Get the zip file from server.
+        $result = $this->utils->downloadFile($addon['zip'], $zipFile);
+        if (!$result) {
+            $this->utils->psrLog(
+                'Impossible de télécharger le {type} "{name}".', // @translate
+                ['type' => $type, 'name' => $addon['name']]
+            );
+            return false;
+        }
+
+        // Unzip downloaded file.
+        $result = $this->utils->unzipFile($zipFile, $destination);
+
+        unlink($zipFile);
+
+        if (!$result) {
+            $this->utils->psrLog(
+                'Une erreur s’est produite durant la décompression du {type} "{name}".', // @translate
+                ['type' => $type, 'name' => $addon['name']]
+            );
+            return false;
+        }
+
+        // Move the addon to its destination.
+        $this->moveAddon($addon);
+
+        return true;
+    }
+
+    /**
+     * Helper to rename the directory of an addon.
+     *
+     * The name of the directory is unknown, because it is a subfolder inside
+     * the zip file, and the name of the module may be different from the name
+     * of the directory.
+     * @todo Get the directory name from the zip.
+     *
+     * @param string $addon
+     * @return bool
+     */
+    protected function moveAddon($addon): bool
+    {
+        switch ($addon['type']) {
+            case 'module':
+                $destination = OMEKA_PATH . '/modules';
+                break;
+            case 'theme':
+                $destination = OMEKA_PATH . '/themes';
+                break;
+            default:
+                return false;
+        }
+
+        // Allows to manage case like AddItemLink, where the project name on
+        // github is only "AddItem".
+        $loop = [$addon['dir']];
+        if ($addon['basename'] != $addon['dir']) {
+            $loop[] = $addon['basename'];
+        }
+
+        // Manage only the most common cases.
+        // @todo Use a scan dir + a regex.
+        $checks = [
+            ['', ''],
+            ['', '-master'],
+            ['', '-module-master'],
+            ['', '-theme-master'],
+            ['omeka-', '-master'],
+            ['omeka-s-', '-master'],
+            ['omeka-S-', '-master'],
+            ['module-', '-master'],
+            ['module_', '-master'],
+            ['omeka-module-', '-master'],
+            ['omeka-s-module-', '-master'],
+            ['omeka-S-module-', '-master'],
+            ['theme-', '-master'],
+            ['theme_', '-master'],
+            ['omeka-theme-', '-master'],
+            ['omeka-s-theme-', '-master'],
+            ['omeka-S-theme-', '-master'],
+            ['omeka_', '-master'],
+            ['omeka_s_', '-master'],
+            ['omeka_S_', '-master'],
+            ['omeka_module_', '-master'],
+            ['omeka_s_module_', '-master'],
+            ['omeka_S_module_', '-master'],
+            ['omeka_theme_', '-master'],
+            ['omeka_s_theme_', '-master'],
+            ['omeka_S_theme_', '-master'],
+            ['omeka_Module_', '-master'],
+            ['omeka_s_Module_', '-master'],
+            ['omeka_S_Module_', '-master'],
+            ['omeka_Theme_', '-master'],
+            ['omeka_s_Theme_', '-master'],
+            ['omeka_S_Theme_', '-master'],
+        ];
+
+        $source = '';
+        foreach ($loop as $addonName) {
+            foreach ($checks as $check) {
+                $sourceCheck = $destination . DIRECTORY_SEPARATOR
+                    . $check[0] . $addonName . $check[1];
+                if (file_exists($sourceCheck)) {
+                    $source = $sourceCheck;
+                    break 2;
+                }
+                // Allows to manage case like name is "Ead", not "EAD".
+                $sourceCheck = $destination . DIRECTORY_SEPARATOR
+                    . $check[0] . ucfirst(strtolower($addonName)) . $check[1];
+                if (file_exists($sourceCheck)) {
+                    $source = $sourceCheck;
+                    $addonName = ucfirst(strtolower($addonName));
+                    break 2;
+                }
+                if ($check[0]) {
+                    $sourceCheck = $destination . DIRECTORY_SEPARATOR
+                        . ucfirst($check[0]) . $addonName . $check[1];
+                    if (file_exists($sourceCheck)) {
+                        $source = $sourceCheck;
+                        break 2;
+                    }
+                    $sourceCheck = $destination . DIRECTORY_SEPARATOR
+                        . ucfirst($check[0]) . ucfirst(strtolower($addonName)) . $check[1];
+                    if (file_exists($sourceCheck)) {
+                        $source = $sourceCheck;
+                        $addonName = ucfirst(strtolower($addonName));
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        if ($source === '') {
+            return false;
+        }
+
+        $path = $destination . DIRECTORY_SEPARATOR . $addon['dir'];
+        if ($source === $path) {
+            return true;
+        }
+
+        return rename($source, $path);
+    }
+
+    /**
+     * List directories in a directory, not recursively.
+     *
+     * @param string $dir
+     */
+    protected function listDirsInDir($dir): array
+    {
+        static $dirs;
+
+        if (isset($dirs[$dir])) {
+            return $dirs[$dir];
+        }
+
+        if (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_readable($dir)) {
+            return [];
+        }
+
+        $list = array_filter(array_diff(scandir($dir), ['.', '..']), fn ($file) => is_dir($dir . DIRECTORY_SEPARATOR . $file));
+
+        $dirs[$dir] = $list;
+        return $dirs[$dir];
+    }
+}
+
 // La plupart des tests sont indépendants, sauf pour la base de données qui
 // nécessite un test sur php.
 // On peut donc afficher la plupart des problèmes en une seule fois.
 
 $utils = new Utils();
+$addons = new Addons($utils);
 
 $isValid = true;
 $isSystemValid = true;
@@ -388,6 +896,7 @@ if ($isPost) {
     $password = trim((string) filter_input(INPUT_POST, 'password'));
     $locale = trim((string) filter_input(INPUT_POST, 'locale'));
     $logLevel = filter_input(INPUT_POST, 'log_level');
+    $selection = trim((string) filter_input(INPUT_POST, 'selection'));
 } else {
     $host = 'localhost';
     $port = '';
@@ -398,6 +907,7 @@ if ($isPost) {
     // Omeka.
     $locale = $utils::OMEKA_LOCALE;
     $logLevel = $utils::OMEKA_LOG_LEVEL;
+    $selection = '';
 }
 
 // Test du système de fichiers.
@@ -645,6 +1155,9 @@ if ($isPhpValid && $isPost) {
 
 $isValid = $isValid && $isSystemValid && $isPhpValid && $isDatabaseValid;
 
+// Préparation des sélections si l’environnement est valide.
+$selections = $isSystemValid && $isPhpValid ? $addons->getSelections() : [];
+
 // Preparation de l’installation.
 if ($isValid && $isPost) {
     // Télécharger le zip.
@@ -744,6 +1257,69 @@ if ($isValid && $isPost) {
 $isFinalized = $isValid && $isPost && !$failed;
 
 if ($isFinalized) {
+    $selectionAddons = $selection ? $selections[$selection] ?? [] : [];
+    /** @see \EasyAdmin\Job\ManageAddons */
+    if ($selectionAddons) {
+        // Initialisation des listes.
+        $addons->getLists();
+        $unknowns = [];
+        $existings = [];
+        $errors = [];
+        $installeds = [];
+        // Eviter les problèmes.
+        $selectionAddons = array_unique(array_merge(['Common', 'Generic'], array_values($selectionAddons)));
+        foreach ($selectionAddons as $addonName) {
+            $addon = $addons->dataFromNamespace($addonName);
+            if (!$addon) {
+                $unknowns[] = $addonName;
+            } elseif ($addons->dirExists($addon)) {
+                $existings[] = $addonName;
+            } else {
+                $result = $addons->installAddon($addon);
+                if ($result) {
+                    $installeds[] = $addonName;
+                } else {
+                    $errors[] = $addonName;
+                }
+            }
+        }
+
+        if (count($unknowns)) {
+            $failed = true;
+            $isFinalized = false;
+            $utils->psrLog(
+                'Les modules suivants de la sélection sont inconnus : {addons}.', // @translate
+                ['addons' => implode(', ', $unknowns)]
+            );
+        }
+        if (count($existings)) {
+            $utils->psrLog(
+                'Les modules suivants sont déjà installés : {addons}.', // @translate
+                ['addons' => implode(', ', $existings)]
+            );
+        }
+        if (count($errors)) {
+            $failed = true;
+            $isFinalized = false;
+            $utils->psrLog(
+                'Les modules suivants ne peuvent pas être installés : {addons}.', // @translate
+                ['addons' => implode(', ', $errors)]
+            );
+        }
+        if (count($installeds)) {
+            $utils->psrLog(
+                'Les modules suivants ont été installés : {addons}.', // @translate
+                ['addons' => implode(', ', $installeds)]
+            );
+        }
+    }
+
+    if ($failed) {
+        $utils->removeFilesAndDirsInDir(__DIR__, [__FILE__]);
+    }
+}
+
+if ($isFinalized) {
     // Supprimer le présent fichier.
     unlink(__FILE__);
 
@@ -808,7 +1384,7 @@ $locales = [
         <meta name="description" content="<?= htmlspecialchars($meta['description']) ?>"/>
         <meta property="og:title" content="<?= htmlspecialchars($meta['title']) ?>"/>
         <meta property="og:description" content="<?= htmlspecialchars($meta['description']) ?>"/>
-        <?php if ($isFinalized): ?>
+        <?php if ($isFinalized && !$failed): ?>
         <meta http-equiv="refresh" content="10;url=<?= htmlspecialchars($urlOmeka) ?>"/>
         <?php endif; ?>
         <title><?= htmlspecialchars($meta['title']) ?></title>
@@ -931,7 +1507,7 @@ $locales = [
                     <input type="text" id="socket" name="socket" value="<?= htmlspecialchars((string) $socket) ?>"/><br/>
                 </details>
 
-                <h2>Options principales du fichier de configuration</h2>
+                <h2>Fichier de configuration</h2>
 
                 <label for="locale">Langue par défaut</label>
                 <select id="locale" name="locale">
@@ -960,7 +1536,25 @@ $locales = [
                             <label for="log_debug">Débogage</label>
                         </div>
                     </div>
+                    <?php // TODO Ajouter test et choix de la vignetteuse. ?>
                 </details>
+
+                <?php if ($selections): ?>
+
+                <h2>Préinstallation de modules et thèmes</h2>
+                <p>
+                    Les <a href="https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_selections.html" target="_blank" rel="noopener">sélections</a> sont des listes de modules et de thèmes permettant de disposer rapidement d'une installation adaptée à ses besoins.
+                </p>
+
+                <label for="selection">Sélection</label>
+                <select id="selection" name="selection">
+                    <option value=""></option>
+                    <?php foreach (array_keys($selections) as $name): ?>
+                    <option value="<?= $name ?>"<?= $name === $selection ? ' selected="selected"' : '' ?>><?= htmlspecialchars($name) ?></option>
+                    <?php endforeach; ?>
+                </select>
+
+                <?php endif; ?>
 
                 <button type="submit">
                     <h2>Installer Omeka S</h2>
