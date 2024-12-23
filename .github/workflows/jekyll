@@ -1,10 +1,10 @@
-name: Jekyll site CI
+name: Jekyll Site CI
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: [ jekyll ]
   pull_request:
-    branches: [ $default-branch ]
+    branches: [ jekyll ]
 
 jobs:
   build:
@@ -17,4 +17,16 @@ jobs:
       run: |
         docker run \
         -v ${{ github.workspace }}:/srv/jekyll -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
-        jekyll/builder:latest /bin/bash -c "chmod 777 /srv/jekyll && jekyll build --future"
+        jekyll/builder:latest /bin/bash -c "chown jekyll:jekyll /srv/jekyll && jekyll build --future"
+    - name: Push the site to the master branch
+      if: ${{ github.event_name == 'push' }}
+      run: |
+        sudo chown $( whoami ):$( whoami ) ${{ github.workspace }}/_site
+        cd ${{ github.workspace }}/_site
+        git init
+        git config user.name ${{ github.actor }}
+        git config user.email ${{ github.actor }}@users.noreply.github.com
+        git remote add origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        git add .
+        git commit -m "Deployed site built from commit ${{ github.sha }}."
+        git push -f -u origin master
