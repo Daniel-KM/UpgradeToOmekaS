@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Installer Omeka S facilement
-order: 7
+title: Installer facilement Omeka S
+order: 1
 ---
 
 {% include css_js.html %}

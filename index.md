@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Mapping extensions
-order: 1
+order: 7
 ---
 
 {% include css_js.html %}
