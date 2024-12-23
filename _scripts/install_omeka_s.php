@@ -61,6 +61,8 @@ class Utils
         'xml',
     ];
 
+    const OMEKA_LOCALE = 'fr';
+
     public function __invoke(): self
     {
         return $this;
@@ -492,6 +494,7 @@ if ($isPost) {
     $dbname = trim((string) filter_input(INPUT_POST, 'dbname'));
     $user = trim((string) filter_input(INPUT_POST, 'user'));
     $password = trim((string) filter_input(INPUT_POST, 'password'));
+    $locale = trim((string) filter_input(INPUT_POST, 'locale'));
 } else {
     $host = 'localhost';
     $port = '';
@@ -499,6 +502,8 @@ if ($isPost) {
     $dbname = '';
     $user = '';
     $password = '';
+    // Omeka.
+    $locale = $utils::OMEKA_LOCALE;
 }
 
 // On peut tester la base même s'il y a des problèmes dans le système de fichiers.
@@ -711,6 +716,17 @@ if ($isValid && $isPost) {
         chmod(__DIR__ . '/logs/application.log', 0775);
         chmod(__DIR__ . '/logs/sql.log', 0775);
     }
+
+    // Modifier config.
+    if (!$failed && $locale) {
+        // var_export() ne peut pas être utilisé car il y a des constantes de
+        // classes non disponibles et qu'en tout état de cause il est préférable
+        // de conserver telles quelles.
+        $configPath = __DIR__ . '/config/local.config.php';
+        $config = file_get_contents($configPath);
+        $config = str_replace("'locale' => 'en_US',", sprintf("'locale' => '%s',", $locale), $config);
+        file_put_contents($configPath, $config);
+    }
 }
 
 $isFinalized = $isValid && $isPost && !$failed;
@@ -732,6 +748,42 @@ $meta = [
     'title' => 'Installer Omeka S facilement',
     'author' => 'Daniel Berthereau',
     'description' => 'Installer Omeka S simplement avec un fichier unique à déposer sur le serveur.',
+];
+
+$locales = [
+    '' => 'Défaut',
+    'ca_ES' => 'Català (Espanya) [ca_ES]',
+    'cs' => 'Čeština [cs]',
+    'de_DE' => 'Deutsch (Deutschland) [de_DE]',
+    'et' => 'Eesti [et]',
+    'en_US' => 'English (United States) [en_US]',
+    'es_419' => 'Español (Latinoamérica) [es_419]',
+    'es' => 'Español [es]',
+    'eu' => 'Euskara [eu]',
+    'fr' => 'Français [fr]',
+    'hr' => 'Hrvatski [hr]',
+    'it' => 'Italiano [it]',
+    'lt' => 'Lietuvių [lt]',
+    'hu_HU' => 'Magyar (Magyarország) [hu_HU]',
+    'nl_NL' => 'Nederlands (Nederland) [nl_NL]',
+    'pl' => 'Polski [pl]',
+    'pt_BR' => 'Português (Brasil) [pt_BR]',
+    'pt_PT' => 'Português (Portugal) [pt_PT]',
+    'ro' => 'Română [ro]',
+    'fi_FI' => 'Suomi (Suomi) [fi_FI]',
+    'sv_SE' => 'Svenska (Sverige) [sv_SE]',
+    'tr_TR' => 'Türkçe (Türkiye) [tr_TR]',
+    'el_GR' => 'Ελληνικά (Ελλάδα) [el_GR]',
+    'bg_BG' => 'Български (България) [bg_BG]',
+    'mn' => 'Монгол [mn]',
+    'ru' => 'Русский [ru]',
+    'sr_RS' => 'Српски (Србија) [sr_RS]',
+    'uk' => 'Українська [uk]',
+    'ar' => 'العربية [ar]',
+    'ko_KR' => '한국어(대한민국) [ko_KR]',
+    'zh_CN' => '中文（中国） [zh_CN]',
+    'zh_TW' => '中文（台灣） [zh_TW]',
+    'ja' => '日本語 [ja]',
 ];
 
 ?>
@@ -817,13 +869,15 @@ $meta = [
 
             <?php if ($isSystemValid && $isPhpValid && !$isFinalized): ?>
 
-            <p>
-                Omeka a besoin d’un accès à une base de données pour fonctionner.
-                Merci d’en indiquer les paramètres ci-dessous.
-                Si la base n’existe pas, l’utilisateur doit avoir les droits de création.
-            </p>
-
             <form method="post">
+
+                <h2>Base de données</h2>
+
+                <p>
+                    Omeka a besoin d’un accès à une base de données pour fonctionner.
+                    Merci d’en indiquer les paramètres ci-dessous.
+                    Si la base n’existe pas, l’utilisateur doit avoir les droits de création.
+                </p>
 
                 <label for="host">Serveur</label>
                 <input type="text" id="host" name="host" value="<?= htmlspecialchars($host) ?>"/><br/>
@@ -846,9 +900,19 @@ $meta = [
                     <input type="text" id="socket" name="socket" value="<?= htmlspecialchars((string) $socket) ?>"/><br/>
                 </details>
 
+                <h2>Options principales du fichier de configuration</h2>
+
+                <label for="locale">Langue par défaut</label>
+                <select id="locale" name="locale">
+                    <?php foreach ($locales as $code => $label): ?>
+                    <option value="<?= $code ?>"<?= $code === $locale ? ' selected="selected"' : '' ?>><?= htmlspecialchars($label) ?></option>
+                    <?php endforeach; ?>
+                </select>
+
                 <button type="submit">
                     <h2>Installer Omeka S</h2>
                 </button>
+
             </form>
 
         <?php elseif ($isFinalized): ?>
