@@ -21,11 +21,10 @@
 title: From Omeka Classic to Omeka Semantic
 email: daniel.github@berthereau.net
 description: > # this means to ignore newlines until "baseurl:"
-  "Upgrade from Omeka Classic to Omeka Semantic" is a simple plugin for Omeka 2
-  that allows to upgrade automatically an installation to Omeka S (records,
-  files,  config, themes and some plugins). For missing or new plugins or
-  glitches in themes, or any other need on Omeka and digital libraries, contact
-  me!
+  These pages simplify migration from Omeka 2 (Omeka Classic) to Omeka S and
+  bring together all available tools on the web about Omeka Classic et Omeka S.
+  For missing or new plugins or any other need on Omeka and digital libraries,
+  don’t hesitate to contact us!
 # baseurl: "/UpgradeToOmekaS"
 # url: "https://daniel-km.github.com"
 twitter_username:
@@ -58,11 +57,12 @@ plugins:
 #   - vendor/gems/
 #   - vendor/ruby/
 
+# I18n
 # Polyglot
 # @see https://leo3418.github.io/collections/multilingual-jekyll-site
 languages: ["en", "fr"]
-default_lang: "en"
-exclude_from_localization: ["assets/css", "assets/img"]
+#default_lang: "en"
+exclude_from_localization: ["javascript", "images", "css", "public", "assets"]
 parallel_localization: true
 
 sass:
