@@ -15,7 +15,7 @@ This list is a mapping between all [Omeka Classic](https://omeka.org/classic) pl
 
 Feel free to add missing plugins or modules, or to create an upgrader for the plugin [Upgrade to Omeka S](https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS), or an importer for the module [Omeka 2 Importer](https://github.com/omeka-s-modules/Omeka2Importer).
 
-See more details on [plugins]({{ site.url | append: '/UpgradeToOmekaS/en/omeka_plugins.html' }}) and [modules]({{ site.url | append: '/UpgradeToOmekaS/en/omeka_s_modules.html' }}).
+See more details on [plugins]({{ site.baseurl | append: '/en/omeka_plugins.html' }}) and [modules]({{ site.baseurl | append: '/en/omeka_s_modules.html' }}).
 
 <div class="container-fluid">
 <div id="entry-list">

@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   {% if page.redirect %}
-  <meta http-equiv="Refresh" content="0;url={{ site.url }}/{{ site.default_lang }}{{ page.redirect_url | page.url }}" />
+  <meta http-equiv="Refresh" content="0;url={{ site.baseurl }}/{{ site.default_lang }}{{ page.redirect_url | page.url }}" />
   {% endif %}
 
   {% comment %}
@@ -22,11 +22,11 @@
   {% endcomment %}
   {%- if page.lang -%}
     {% for lang in site.languages %}
-    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.url }}{{ page.url | replace_first: active_lang, lang }}" />
+    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.baseurl }}{{ page.url | replace_first: active_lang, lang }}" />
     {% endfor %}
   {%- else -%}
     {% for lang in site.languages %}
-    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.url }}/{{ lang }}{{ page.url }}" />
+    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.baseurl }}/{{ lang }}{{ page.url }}" />
     {% endfor %}
   {%- endif -%}
 

@@ -9,7 +9,7 @@
 
     {%- assign default_paths = site.pages | sort: "order" | map: "path" -%}
     {%- assign page_paths = site.header_pages | default: default_paths -%}
-    <a class="site-title" rel="author" href="{{ site.url }}/{{ active_lang }}">{{ site.data[active_lang].l10n.title | escape }}</a>
+    <a class="site-title" rel="author" href="{{ site.baseurl }}/{{ active_lang }}">{{ site.data[active_lang].l10n.title | escape }}</a>
 
     <div class="lang-switcher">
       {% include lang-switcher.md %}

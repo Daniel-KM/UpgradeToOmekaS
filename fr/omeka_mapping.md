@@ -15,7 +15,7 @@ Cette liste indique les correspondances entre les plugins [Omeka Classic](https:
 
 N’hésitez pas à signaler des plugins et modules manquants ou à créer un script de mise à jour pour le plugin [Upgrade to Omeka S](https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS) ou un importeur pour le module [Omeka 2 Importer](https://github.com/omeka-s-modules/Omeka2Importer).
 
-Voir davantage de détals sur les [plugins]({{ site.url | append: '/UpgradeToOmekaS/fr/omeka_plugins.html' }}) et sur les [modules]({{ site.url | append: '/UpgradeToOmekaS/fr/omeka_s_modules.html' }}).
+Voir davantage de détals sur les [plugins]({{ site.baseurl | append: '/fr/omeka_plugins.html' }}) et sur les [modules]({{ site.baseurl | append: '/fr/omeka_s_modules.html' }}).
 
 <div class="container-fluid">
 <div id="entry-list">

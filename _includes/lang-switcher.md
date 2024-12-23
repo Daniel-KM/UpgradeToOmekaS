@@ -14,7 +14,7 @@
       {% comment %}
       No default language.
       {% endcomment %}
-      <a href="{{ page.url | replace_first: active_lang, lang }}">{{ lang_name }}</a>
+      <a href="{{ site.baseurl }}{{ page.url | replace_first: active_lang, lang }}">{{ lang_name }}</a>
     {% endif %}
   </li>
 {% endfor %}
