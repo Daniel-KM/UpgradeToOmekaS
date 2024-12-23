@@ -28,6 +28,10 @@ php -f _scripts/update_data.php
 You may need to add a file with a token from your github account in `_data/token_github.txt`
 to be allowed to fetch more than 50 results.
 
+
+Installation and development for Jekyll with theme Minima
+---------------------------------------------------------
+
 For more info on local testing, see [documentation on github pages].
 Github pages use currently [these versions] of Jekyll and Ruby.
 
@@ -48,16 +52,25 @@ sudo gem update
 gem install eventmachine http_parser.rb sass-embedded
 
 # The main process to run the site locally.
+# Important: It should be done every time the file _config.yml is updated.
 cd UpgradeToOmekaS
 bundle install
 bundle exec jekyll serve
 ```
 
+The site uses the theme minima. It is installed in the home directory (set
+above: ~/gems). To override a default file of the theme under ~/gems/gems/minima-2.5.2/,
+for example _includes/header.html, just copy it under the same hierarchy in the
+current directory.
+
 
 TODO
 ----
 
-- [x] Add a column for the Omeka directory name.
+- [ ] Check and choice of thumbnailer.
+- [ ] Preload and preinstall during form filling.
+- [ ] Fully install selections, not only download and unzip files.
+- [ ] Selections with vocabularies, resource templates and custom vocabs.
 
 
 Warning
