@@ -7,7 +7,8 @@
     body { font: 400 14px/1.5 Helvetica Neue, Helvetica, "Segoe UI", Roboto, Arial, sans-serif; }
     a { color: #337ab7; text-decoration: none; }
     a:visited { color: #1756a9; }
-    header .wrapper { max-width: 1024px; }
+    header .wrapper,
+    footer .wrapper { max-width: 1024px; }
     .site-title { display: block; float: initial; text-align: center; margin-bottom: 18px; }
     .site-nav { display: block; float: initial; text-align: center; }
     .site-nav label { display: inline; }
@@ -15,7 +16,13 @@
     .sort { cursor: pointer; }
     .page-content .wrapper { max-width: inherit; }
     .page-content .wrapper .post-header,
-    .page-content .wrapper .post-content p { max-width: calc(800px - 30px * 2); margin-left: auto; margin-right: auto; padding-left: 30px; padding-right: 30px; }
+    .page-content .wrapper .post-content > * { max-width: calc(800px - 30px * 2); margin-left: auto; margin-right: auto; padding-left: 30px; padding-right: 30px; }
+    @media (min-width:1440px) {
+        header .wrapper,
+        footer .wrapper { max-width: 1024px; }
+        .page-content .wrapper .post-header,
+        .page-content .wrapper .post-content > * { max-width: calc(1024px - 30px * 2); }
+    }
     .page-content .wrapper .post-content .container-fluid { max-width: inherit; }
     .page-content .table-striped > tbody > tr:nth-of-type(2n+1) { background-color: #fefefe; }
     .version-alpha { color: #ff0000; }
@@ -23,5 +30,6 @@
     .version-rc { color: #339933; }
     .form-control::placeholder { color: #999; opacity: 1; }
     .svg-icon { width: 24px; height: 24px; }
-    .footer-col-2 { width: calc(25% - (30px / 2)); }
+    .footer-heading { text-align: center; }
+    .footer-col-2 { width: calc(20% - (30px / 2)); }
 </style>
