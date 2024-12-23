@@ -1,0 +1,103 @@
+@media all {
+    body {
+        font: 400 14px/1.5 Helvetica Neue, Helvetica, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    a {
+        color: #337ab7;
+        text-decoration: none;
+    }
+    a:visited {
+        color: #1756a9;
+    }
+    header .wrapper,
+    footer .wrapper {
+        max-width: 1024px;
+    }
+    .site-title {
+        display: inline-block;
+        float: initial;
+        text-align: center;
+        margin-bottom: 18px;
+        width: calc(100% - 80px);
+    }
+    .lang-switcher {
+        float: right;
+        margin-top: 1em;
+    }
+    .lang-switcher ul {
+        list-style-type: none;
+        margin-left: 0;
+        padding-left: 0;
+    }
+    .lang-switcher ul li {
+        margin-bottom: 0.5em;
+    }
+    .site-nav {
+        display: block;
+        float: initial;
+        text-align: center;
+    }
+    .site-nav label {
+        display: inline;
+    }
+    .page-link {
+        display: inline-block;
+    }
+    .sort {
+        cursor: pointer;
+    }
+    .page-content .wrapper {
+        max-width: inherit;
+    }
+    .page-content .wrapper .post-header,
+    .page-content .wrapper .post-content > * {
+        max-width: calc(800px - 30px * 2);
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    .page-content .wrapper .post-content .container-fluid {
+        max-width: inherit;
+    }
+    .page-content .table-striped > tbody > tr:nth-of-type(2n+1) {
+        background-color: #fefefe;
+    }
+    .version-alpha {
+        color: #ff0000;
+    }
+    .version-beta {
+        color: #ff6600;
+    }
+    .version-rc {
+        color: #339933;
+    }
+    .form-control::placeholder {
+        color: #999;
+        opacity: 1;
+    }
+    .svg-icon {
+        width: 24px;
+        height: 24px;
+    }
+    .footer-heading {
+        text-align: center;
+    }
+    .footer-col-2 {
+        width: calc(25% - (30px / 2));
+    }
+    .footer-col-3 {
+        width: calc(40% - (30px / 2));
+    }
+}
+
+@media all and (min-width:1440px) {
+    header .wrapper,
+    footer .wrapper {
+        max-width: 1024px;
+    }
+    .page-content .wrapper .post-header,
+    .page-content .wrapper .post-content > * {
+        max-width: calc(1024px - 30px * 2);
+    }
+}
