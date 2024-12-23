@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Thèmes Omeka
+title: Thèmes Omeka Classic
 lang: fr
-order: 3
+order: 2
 ---
 
 {% include css_js.html %}

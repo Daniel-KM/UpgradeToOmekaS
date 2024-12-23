@@ -2,7 +2,7 @@
 layout: page
 title: Omeka S Easy Install
 lang: en
-order: 1
+order: 7
 ---
 
 {% include css_js.html %}

@@ -2,7 +2,7 @@
 layout: page
 title: Installer facilement Omeka S
 lang: fr
-order: 1
+order: 7
 ---
 
 {% include css_js.html %}

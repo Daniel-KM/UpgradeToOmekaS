@@ -2,7 +2,7 @@
 layout: page
 title: Mapping extensions
 lang: en
-order: 7
+order: 3
 ---
 
 {% include css_js.html %}

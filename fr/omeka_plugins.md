@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Plugins Omeka
+title: Plugins Omeka Classic
 lang: fr
-order: 2
+order: 1
 ---
 
 {% include css_js.html %}

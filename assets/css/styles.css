@@ -40,6 +40,9 @@
     .site-nav label {
         display: inline;
     }
+    .site-nav .page-link:nth-of-type(3) {
+        margin-right: 0;
+    }
     .page-link {
         display: inline-block;
     }
