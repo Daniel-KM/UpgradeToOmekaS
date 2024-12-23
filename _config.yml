@@ -61,7 +61,7 @@ plugins:
 # Polyglot
 # @see https://leo3418.github.io/collections/multilingual-jekyll-site
 languages: ["en", "fr"]
-#default_lang: "en"
+default_lang: "fr"
 exclude_from_localization: ["javascript", "images", "css", "public", "assets"]
 parallel_localization: true
 
