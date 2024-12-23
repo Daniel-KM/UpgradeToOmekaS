@@ -728,69 +728,138 @@ if ($isFinalized) {
         . dirname(filter_input(INPUT_SERVER, 'REQUEST_URI'));
 }
 
+$meta = [
+    'title' => 'Installer Omeka S facilement',
+    'author' => 'Daniel Berthereau',
+    'description' => 'Installer Omeka S simplement avec un fichier unique à déposer sur le serveur.',
+];
+
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="fr" prefix="og: https://ogp.me/ns#">
     <head>
-        <title>Installer Omeka S facilement</title>
+        <meta charSet="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <meta name="author" content="<?= htmlspecialchars($meta['author']) ?>"/>
+        <meta name="description" content="<?= htmlspecialchars($meta['description']) ?>"/>
+        <meta property="og:title" content="<?= htmlspecialchars($meta['title']) ?>"/>
+        <meta property="og:description" content="<?= htmlspecialchars($meta['description']) ?>"/>
+        <?php if ($isFinalized): ?>
+        <meta http-equiv="refresh" content="10;url=<?= htmlspecialchars($urlOmeka) ?>"/>
+        <?php endif; ?>
+        <title><?= htmlspecialchars($meta['title']) ?></title>
+        <style>
+            header {
+                padding: 5% 10% 0;
+            }
+            main {
+                padding: 0 10%;
+            }
+
+            label {
+                display: inline-block;
+                width: 33%;
+                text-align: right;
+                margin-bottom: 1em;
+                margin-right: 0.5em;
+            }
+            input {
+                display: inline-block;
+                width: 33%;
+            }
+            details {
+                display: block;
+                margin-bottom: 1em;
+            }
+            summary {
+                width: 33%;
+                text-align: right;
+                margin-bottom: 1em;
+                font-style: italic;
+            }
+            summary:hover {
+                cursor: pointer;
+            }
+
+            button {
+                width: 50%;
+                margin-left: 25%;
+                margin-top: 4em;
+            }
+            button:hover {
+                cursor: pointer;
+            }
+        </style>
     </head>
     <body>
 
-        <h1>Installer Omeka S facilement</h1>
+        <header>
+            <h1><?= htmlspecialchars($meta['title']) ?></h1>
+        </header>
 
-        <?php if ($utils->log()): ?>
-        <p>Omeka ne peut pas être installé en raison des erreurs suivantes :</p>
-        <ul>
-            <?php foreach ($utils->log() as $message): ?>
-            <li><?= htmlspecialchars($message) ?></li>
-            <?php endforeach; ?>
-        </ul>
-        <p>
-            Vérifiez la configuration chez votre hébergeur.
-        </p>
-        <?php else: ?>
-        <p>
-            Aucun problème n’a été détecté sur le serveur.
-        </p>
-        <?php endif; ?>
+        <main>
 
-        <?php if ($isSystemValid && $isPhpValid && !$isFinalized): ?>
+            <?php if ($utils->log()): ?>
+            <p>Omeka ne peut pas être installé en raison des erreurs suivantes :</p>
+            <ul>
+                <?php foreach ($utils->log() as $message): ?>
+                <li><?= htmlspecialchars($message) ?></li>
+                <?php endforeach; ?>
+            </ul>
+            <p>
+                Vérifiez la configuration chez votre hébergeur.
+            </p>
+            <?php else: ?>
+            <p>
+                Aucun problème n’a été détecté sur le serveur.
+            </p>
+            <?php endif; ?>
 
-        <p>
-            Omeka a besoin d’un accès à une base de données pour fonctionner.
-            Merci d’en indiquer les paramètres ci-dessous.
-            Si la base n’existe pas, l’utilisateur doit avoir les droits de création.
-        </p>
+            <?php if ($isSystemValid && $isPhpValid && !$isFinalized): ?>
 
-        <form method="post">
-            <label for="host">Serveur (<em>host</em>)</label>
-            <input type="text" id="host" name="host" required="required" value="<?= htmlspecialchars($host) ?>"/><br/>
+            <p>
+                Omeka a besoin d’un accès à une base de données pour fonctionner.
+                Merci d’en indiquer les paramètres ci-dessous.
+                Si la base n’existe pas, l’utilisateur doit avoir les droits de création.
+            </p>
 
-            <label for="port">Port</label>
-            <input type="number" id="port" name="port" min="0" max="65535" value="<?= htmlspecialchars((string) $port) ?>"/><br/>
+            <form method="post">
 
-            <label for="socket">Chemin du socket</label>
-            <input type="text" id="socket" name="socket" value="<?= htmlspecialchars((string) $socket) ?>"/><br/>
+                <label for="host">Serveur</label>
+                <input type="text" id="host" name="host" value="<?= htmlspecialchars($host) ?>"/><br/>
 
-            <label for="dbname">Nom de la base</label>
-            <input type="text" id="dbname" name="dbname" required="required" value="<?= htmlspecialchars($dbname) ?>"/><br/>
+                <label for="dbname">Nom de la base</label>
+                <input type="text" id="dbname" name="dbname" required="required" value="<?= htmlspecialchars($dbname) ?>"/><br/>
 
-            <label for="user">Utilisateur de la base</label>
-            <input type="text" id="user" name="user" required="required" value="<?= htmlspecialchars($user) ?>"/><br/>
+                <label for="user">Utilisateur de la base</label>
+                <input type="text" id="user" name="user" required="required" value="<?= htmlspecialchars($user) ?>"/><br/>
 
-            <label for="password">Mot de passe</label>
-            <input type="password" id="password" name="password" required="required" value="<?= htmlspecialchars($password) ?>"/><br/>
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="password" required="required" value="<?= htmlspecialchars($password) ?>"/><br/>
 
-            <button type="submit">Envoyer</button>
-        </form>
+                <details>
+                    <summary>Configuration spécifique</summary>
+                    <label for="port">Port</label>
+                    <input type="number" id="port" name="port" min="0" max="65535" value="<?= htmlspecialchars((string) $port) ?>"/><br/>
+
+                    <label for="socket">Socket</label>
+                    <input type="text" id="socket" name="socket" value="<?= htmlspecialchars((string) $socket) ?>"/><br/>
+                </details>
+
+                <button type="submit">
+                    <h2>Installer Omeka S</h2>
+                </button>
+            </form>
 
         <?php elseif ($isFinalized): ?>
 
         <p>
-            Bravo, Omeka est préinstallé ! Vous pouvez désormais <a href="<?= htmlspecialchars($urlOmeka) ?>">finaliser l’installation</a>.
+            Bravo, Omeka est préinstallé ! Vous pouvez désormais <a href="<?= htmlspecialchars($urlOmeka) ?>">finaliser l’installation</a> ou patientez dix secondes pour y aller automatiquement.
         </p>
 
         <?php endif; ?>
+
+        </main>
 
     </body>
 </html>
