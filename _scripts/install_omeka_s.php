@@ -1543,7 +1543,7 @@ $locales = [
 
                 <h2>Préinstallation de modules et thèmes</h2>
                 <p>
-                    Les <a href="https://daniel-km.github.io/UpgradeToOmekaS/omeka_s_selections.html" target="_blank" rel="noopener">sélections</a> sont des listes de modules et de thèmes permettant de disposer rapidement d'une installation adaptée à ses besoins.
+                    Les <a href="https://daniel-km.github.io/UpgradeToOmekaS/fr/omeka_s_selections.html" target="_blank" rel="noopener">sélections</a> sont des listes de modules et de thèmes permettant de disposer rapidement d'une installation adaptée à ses besoins.
                 </p>
 
                 <label for="selection">Sélection</label>
