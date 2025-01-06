@@ -114,7 +114,7 @@ altered, and that no provisions are either added or removed herefrom.
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2017-2024 (see [Daniel-KM] on GitHub)
+* Copyright Daniel Berthereau, 2017-2025 (see [Daniel-KM] on GitHub)
 
 
 [pages that list the plugins, modules and themes]: https://daniel-km.github.io/UpgradeToOmekaS/
