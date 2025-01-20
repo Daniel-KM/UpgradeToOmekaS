@@ -1,9 +1,9 @@
 Access	3.4.29
-Adminer	3.4.4-4.8.4
+Adminer	3.4.5-4.8.4
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.36
-AdvancedSearch	3.4.37
-SearchSolr	3.5.51
+AdvancedSearch	3.4.38
+SearchSolr	3.5.52
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.2
 AlternativeLabelSelect	3.4.1
@@ -26,10 +26,10 @@ BACE	3.4.1
 BannerImage	1.0
 Base	0.1.0
 Basket	3.2.4
-Bibliography	3.4.9
+Bibliography	3.4.10
 BiblionumberSupport	0.1.0
 BlockLayoutSkeleton	0.1.0
-BlockPlus	3.4.31
+BlockPlus	3.4.32
 BlocksDisposition	3.4.3
 BulkCheck	3.3.11
 BulkEdit	3.4.32
@@ -40,6 +40,7 @@ BUMaps	0.0.1
 CacheNavigation	3.4.0
 CartoAffect	0.1.9
 CAS	0.6.1
+CatalogSearch	0.1.0
 ChaoticumSeminario	0.0.10
 CiteShare	1.0.0
 Citing	1.0.0
@@ -84,6 +85,7 @@ DocArchive	2.1.0
 DomainManager	2.0.0
 rrchnmdonate	1.0.1
 DspaceConnector	1.1.0
+DynamicItemSets	3.4.1
 EAD	3.0.4
 EADImport	1.2.0
 EasyAdmin	3.4.23
@@ -107,7 +109,7 @@ FedoraConnector	1.1.0
 Feed	3.4.4
 FieldAsTags	1.1.0
 FileSideload	1.7.1
-FIT	1.2
+FIT	1.3.1
 FixCjkSearch	4.1.0
 Folksonomy	3.4.12
 Footnotes	3.3.0.2-3.4.1
@@ -118,10 +120,11 @@ GoogleAnalytics	1.3.2
 GoogleTagManager	1.0.0
 Group	3.4.7
 GroupEdit	1.0
-GuestUser	3.4.30
+Guest	3.4.31
 GuestApi	3.4.5
 GuestPrivateRole	3.4.1
 GuestRole	0.3.1
+GuestUser	0.1
 generateur	4.0.0
 HelloWorld	0.1.6
 HideProperties	1.3.1
@@ -195,6 +198,7 @@ NestedDataType	4.0.0
 NetworkMap	1.0
 Next	3.4.49
 NoGoogleChromeFlockTracking	3.4.1
+NumericDataTypes	1.11.4
 OAIPMHHarvester	3.4.15
 OAIPMHRepository	3.4.10
 OAIPmhHarvester	0.1
@@ -239,7 +243,7 @@ RestrictedSites	2.3
 RightsStatements	1.2.1
 Robots	1.0.1
 RoleBasedNavigation	1.2
-S3FileStore	1.1.2
+S3FileStore	1.1.3
 SACO	0.3
 Scaping	0.0.3
 Scripto	1.5.0
@@ -261,7 +265,7 @@ SimpleCarousel	1.3.0
 SimpleIIIF	0.1.0-alpha
 SimplePDF	1.0.2
 SimpleReference	1.0.0
-SingleSignOn	3.4.15
+SingleSignOn	3.4.16
 SiteLog	0.2.0
 Sitemaps	1.1
 SiteSlugAsSubdomain	1.0.0
