@@ -2,17 +2,17 @@ Access	3.4.29
 Adminer	3.4.5-4.8.4
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.36
-AdvancedSearch	3.4.38
+AdvancedSearch	3.4.39
 SearchSolr	3.5.52
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.2
 AlternativeLabelSelect	3.4.1
-Alto	0.1.0
+Alto	0.1.1
 AltText	1.3.0
 AmazonS3	3.4.4
 AmazonS3Storage	1.0.0
-AnalyticsSnippet	3.4.4
-AnalyticsSnippetPiwik	3.4.6
+AnalyticsSnippet	3.4.5
+AnalyticsSnippetPiwik	3.4.7
 Annotate	3.4.10
 Cartography	3.4.3
 AnyCloud	3.2.1
@@ -30,7 +30,7 @@ Bibliography	3.4.10
 BiblionumberSupport	0.1.0
 BlockLayoutSkeleton	0.1.0
 BlockPlus	3.4.32
-BlocksDisposition	3.4.3
+BlocksDisposition	3.4.4
 BulkCheck	3.3.11
 BulkEdit	3.4.32
 BulkExport	3.4.34
@@ -55,7 +55,7 @@ Common	3.4.65
 ConnectedSites	1.0
 ContactUs	3.4.18
 ContentReader	1.0.0
-Contribute	3.4.27
+Contribute	3.4.28
 CopIdRef	3.4.11
 CopyResources	1.0.1
 Correction	3.0.11
@@ -73,7 +73,7 @@ DataScribeDataTypes	0.1.0
 DataTypeClass	1.0.0
 DataTypeGeometry	3.4.5
 DataTypePlace	3.4.2
-DataTypeRDF	3.4.12
+DataTypeRDF	3.4.13
 Datavis	1.3.0
 dclmisc	1.0.1
 Deduplicate	3.4.3
@@ -88,7 +88,7 @@ DspaceConnector	1.1.0
 DynamicItemSets	3.4.1
 EAD	3.0.4
 EADImport	1.2.0
-EasyAdmin	3.4.23
+EasyAdmin	3.4.24
 EasyInstall	3.3.7
 Ebook	3.4.10
 EhpSearchForm	1.3.0
@@ -120,7 +120,7 @@ GoogleAnalytics	1.3.2
 GoogleTagManager	1.0.0
 Group	3.4.7
 GroupEdit	1.0
-Guest	3.4.31
+Guest	3.4.32
 GuestApi	3.4.5
 GuestPrivateRole	3.4.1
 GuestRole	0.3.1
@@ -200,7 +200,7 @@ Next	3.4.49
 NoGoogleChromeFlockTracking	3.4.1
 NumericDataTypes	1.11.4
 OAIPMHHarvester	3.4.15
-OAIPMHRepository	3.4.10
+OAIPMHRepository	3.4.11
 OAIPmhHarvester	0.1
 OaiPmhRepositoryMediaPropertyMapper	0.1.0
 MediaViewer	0.8.2
@@ -213,6 +213,7 @@ twig	0.2.0
 ORCIDConnector	1.0.0
 OutputFormats	1.0.0
 PageBlocks	1.3
+PageHitsByItemSet	0.1.1
 PdfCreator	3.4.2
 PdfEmbedS	1.3.0
 PdfText	1.0
@@ -307,7 +308,7 @@ ViewPrivateResources	1.0.2
 WebMonetization	1.0.0
 Wikidata	1.4.2
 XMLViewer	3.4.9
-Zip	3.4.2
+Zip	3.4.3
 FiskRosenwaldZiptoBulkImport	0.0.1
 ZoteroCitations	1.0.0
 ZoteroImport	1.3.0
