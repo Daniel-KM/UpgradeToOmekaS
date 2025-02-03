@@ -6,7 +6,7 @@
  * Ce script a été réalisé pour l’Université des Antilles et l’Université de la Guyane.
  * @see https://manioc.org
  *
- * @copyright Daniel Berthereau, 2024
+ * @copyright Daniel Berthereau, 2024-2025
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
  *
  * Portions of code come from Omeka.
@@ -435,21 +435,10 @@ class Addons
         return $this;
     }
 
-    public function getLists(): array
+    public function getAddons(bool $refresh = false): array
     {
-        static $lists;
-
-        if ($lists) {
-            $this->addons = $lists;
-            return $lists;
-        }
-
-        $this->addons = [];
-        foreach ($this->types() as $addonType) {
-            $this->addons[$addonType] = $this->listAddonsForType($addonType);
-        }
-
-        return $lists = $this->addons;
+        $this->initAddons($refresh);
+        return $this->addons;
     }
 
     /**
@@ -500,9 +489,10 @@ class Addons
      */
     public function dataFromNamespace(string $namespace, ?string $type = null): array
     {
+        $listAddons = $this->getAddons();
         $list = $type
-            ? (isset($this->addons[$type]) ? [$type => $this->addons[$type]] : [])
-            : $this->addons;
+            ? (isset($listAddons[$type]) ? [$type => $listAddons[$type]] : [])
+            : $listAddons;
         foreach ($list as $type => $addonsForType) {
             $addonsUrl = array_column($addonsForType, 'url', 'dir');
             if (isset($addonsUrl[$namespace]) && isset($addonsForType[$addonsUrl[$namespace]])) {
@@ -517,9 +507,10 @@ class Addons
      */
     public function dataFromUrl(string $url, string $type): array
     {
-        return $this->addons && isset($this->addons[$type][$url])
-        ? $this->addons[$type][$url]
-        : [];
+        $listAddons = $this->getAddons();
+        return $listAddons && isset($listAddons[$type][$url])
+            ? $listAddons[$type][$url]
+            : [];
     }
 
     /**
@@ -534,6 +525,25 @@ class Addons
         $existings = array_map('strtolower', $existings);
         return in_array(strtolower($addon['dir']), $existings)
             || in_array(strtolower($addon['basename']), $existings);
+    }
+
+    protected function initAddons(bool $refresh = false): self
+    {
+        static $lists;
+
+        if ($lists) {
+            $this->addons = $lists;
+            return $this;
+        }
+
+        $this->addons = [];
+        foreach ($this->types() as $addonType) {
+            $this->addons[$addonType] = $this->listAddonsForType($addonType);
+        }
+
+        $lists = $this->addons;
+
+        return $this;
     }
 
     /**
@@ -1261,7 +1271,7 @@ if ($isFinalized) {
     /** @see \EasyAdmin\Job\ManageAddons */
     if ($selectionAddons) {
         // Initialisation des listes.
-        $addons->getLists();
+        $addons->getAddons();
         $unknowns = [];
         $existings = [];
         $errors = [];
