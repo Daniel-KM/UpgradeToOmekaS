@@ -1566,7 +1566,7 @@ $locales = [
 
                 <?php endif; ?>
 
-                <button type="submit">
+                <button type="submit" class="button">
                     <h2>Installer Omeka S</h2>
                 </button>
 
