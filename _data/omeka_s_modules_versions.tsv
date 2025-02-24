@@ -29,10 +29,10 @@ Basket	3.2.4
 Bibliography	3.4.12
 BiblionumberSupport	0.1.0
 BlockLayoutSkeleton	0.1.0
-BlockPlus	3.4.33
+BlockPlus	3.4.34
 BlocksDisposition	3.4.4
 BulkCheck	3.3.11
-BulkEdit	3.4.32
+BulkEdit	3.4.33
 BulkExport	3.4.34
 BulkImport	3.4.58
 BulkImportFiles	3.4.8
@@ -74,7 +74,7 @@ DataTypeClass	1.0.0
 DataTypeGeometry	3.4.5
 DataTypePlace	3.4.2
 DataTypeRDF	3.4.14
-Datavis	1.3.0
+Datavis	1.4.0
 dclmisc	1.0.1
 Deduplicate	3.4.3
 DerivativeImages	3.3.8
@@ -88,7 +88,7 @@ DspaceConnector	1.1.0
 DynamicItemSets	3.4.2
 EAD	3.0.4
 EADImport	1.2.0
-EasyAdmin	3.4.26
+EasyAdmin	3.4.27
 EasyInstall	3.3.7
 Ebook	3.4.10
 EhpSearchForm	1.3.0
@@ -121,9 +121,9 @@ GoogleAnalytics	1.3.2
 GoogleTagManager	1.0.0
 Group	3.4.7
 GroupEdit	1.0
-Guest	3.4.32
+Guest	3.4.33
 GuestApi	3.4.5
-GuestPrivate	3.4.1
+GuestPrivate	3.4.6
 GuestRole	0.3.1
 GuestUser	0.1
 generateur	4.0.0
@@ -307,6 +307,7 @@ ValueSuggestAny	3.4.5
 Verovio	3.3.0.7
 ViewerJS	3.4.4-0.7.2
 ViewPrivateResources	1.0.2
+Vips	3.4.1
 WebMonetization	1.0.0
 Wikidata	1.4.2
 XMLViewer	3.4.9
