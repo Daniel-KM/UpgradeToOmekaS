@@ -2,7 +2,7 @@ Access	3.4.30
 Adminer	3.4.5-4.8.4
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.38
-AdvancedSearch	3.4.43
+AdvancedSearch	3.4.44
 SearchSolr	3.5.55
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.3.1
@@ -29,11 +29,11 @@ Basket	3.2.4
 Bibliography	3.4.12
 BiblionumberSupport	0.1.0
 BlockLayoutSkeleton	0.1.0
-BlockPlus	3.4.34
+BlockPlus	3.4.35
 BlocksDisposition	3.4.4
 BulkCheck	3.3.11
 BulkEdit	3.4.33
-BulkExport	3.4.34
+BulkExport	3.4.35
 BulkImport	3.4.58
 BulkImportFiles	3.4.8
 BUMaps	0.0.1
@@ -88,7 +88,7 @@ DspaceConnector	1.1.0
 DynamicItemSets	3.4.2
 EAD	3.0.4
 EADImport	1.2.0
-EasyAdmin	3.4.28
+EasyAdmin	3.4.29
 EasyInstall	3.3.7
 Ebook	3.4.10
 EhpSearchForm	1.3.0
@@ -157,6 +157,7 @@ ItemCopy	1.2.0
 ItemRelation	0.3.0
 ItemSetCalendar	0.3.0
 ItemSetParty	0.2.2
+ItemSetSearch	1.1.0
 ItemSetsGraph	1.1
 ItemSetsTree	0.7.3
 totalpages	0.1.0
@@ -171,7 +172,7 @@ LinkedDataSets	0.1
 LocaleSwitch	0.3.0
 LocalMediaIngester	0.3.0
 Lockout	3.4.4
-Log	3.4.26
+Log	3.4.27
 LogSentry	3.4.2
 Maintenance	3.3.3.2
 Mapping	2.1.0
@@ -181,13 +182,13 @@ Matomo	0.2.0
 MatomoGroup	0.1.0
 MediaArchive	2.1.0
 MediaWatermark	1.0
-Menu	3.4.9
+Menu	3.4.10
 Mesostiche	0.0.2
 MetadataBrowse	1.2.0
 MetadataEditor	1.0.0
 MetaTags	3.4.6
 Mirador	3.4.9
-Modelviewer	3.4.1-150
+Modelviewer	3.4.3-174
 MPCustomInput	0.1.0
 Mroongasearch	0.9.0
 dictionnaire	1.0
@@ -195,7 +196,7 @@ Ngramsearch	0.1.0
 NakalaImporter	0.2.0
 NDETermennetwerk	1.1.0
 Neatline	0.4.0
-Necropolis	0.2.0
+Necropolis	0.3.1
 NestedDataType	4.0.0
 NetworkMap	1.0
 Next	3.4.49
@@ -214,6 +215,7 @@ starterkit	1.0
 twig	0.2.0
 ORCIDConnector	1.0.0
 OutputFormats	1.0.0
+PageBlockIframe	1.0.0
 PageBlocks	1.3
 PageHitsByItemSet	0.1.2
 PdfCreator	3.4.2
@@ -224,6 +226,7 @@ PdfViewer	3.4.4
 PerformanceLabRestApi	1.0.0
 PersistentIdentifiers	1.1.1
 PersonalNotebook	0.1.0
+PropertySearch	1.0.7
 Psl	0.1.0
 PslSearchForm	0.2.0
 PueueJobDispatcher	1.0.6
@@ -255,7 +258,7 @@ ScriptoImportContributors	0.2.1
 ScriptoPageBlocks	0.1
 Search	3.5.25.3
 SearchbyVisibility	1.0.0
-SearchHistory	3.4.5
+SearchHistory	3.4.6
 Solr	3.5.13.3
 Selection	3.4.11
 ServerURLOverride	1.0.1
@@ -274,7 +277,7 @@ Sitemaps	1.1
 SiteSlugAsSubdomain	1.0.0
 SiteSwitcher	1.0
 SolrImprovements	1.0.1-bib0.4.2
-Sparql	3.4.5
+Sparql	3.4.6
 SpecialCharacterSearch	2.1.0
 SruSrwMaker	2.1.0
 StaticSiteExport	1.0.0-alpha
@@ -296,6 +299,7 @@ TypesenseSearch	0.4.1
 unAPI	1.3.0
 UniqueConstraintViolationException	0.1.0
 UniqueProperties	0.0.1
+UnitedSearch	1.0.0
 UnityAPI	
 UniversalViewer	3.6.9
 UpgradeFromClassic	3.1.3
@@ -305,12 +309,13 @@ UserProfile	3.4.9
 ValueSuggest	1.17.1
 ValueSuggestAny	3.4.5
 Verovio	3.3.0.7
-ViewerJS	3.4.4-0.7.2
+ViewerJS	3.4.5-0.7.2
 ViewPrivateResources	1.0.2
-Vips	3.4.1
+Vips	3.4.2
+Watermarker	0.1
 WebMonetization	1.0.0
 Wikidata	1.4.2
-XMLViewer	3.4.9
+XMLViewer	3.4.10
 Zip	3.4.3
 FiskRosenwaldZiptoBulkImport	0.0.1
 ZoteroCitations	1.0.0
