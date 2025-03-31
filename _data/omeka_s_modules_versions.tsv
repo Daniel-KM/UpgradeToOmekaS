@@ -1,7 +1,7 @@
 Access	3.4.30
-Adminer	3.4.5-4.8.4
+Adminer	3.4.6-5.1.0
 AdminPlus	3.0.3
-AdvancedResourceTemplate	3.4.38
+AdvancedResourceTemplate	3.4.39
 AdvancedSearch	3.4.44
 SearchSolr	3.5.55
 AdvancedSearchPlus	3.3.5.7
@@ -41,7 +41,7 @@ CacheNavigation	3.4.0
 CartoAffect	0.1.9
 CAS	0.6.1
 CatalogSearch	0.1.0
-ChaoticumSeminario	0.0.10
+ChaoticumSeminario	0.0.11
 CiteShare	1.0.0
 Citing	1.0.0
 CleanUrl	3.17.10
@@ -53,7 +53,7 @@ SColumnsMaker	0.0.1
 Comment	3.4.13
 Common	3.4.66
 ConnectedSites	1.0
-ContactUs	3.4.19
+ContactUs	3.4.20
 ContentReader	1.0.0
 Contribute	3.4.29
 CopIdRef	3.4.11
@@ -75,8 +75,8 @@ DataTypeGeometry	3.4.5
 DataTypePlace	3.4.2
 DataTypeRDF	3.4.14
 Datavis	1.4.0
-dclmisc	1.0.1
-Deduplicate	3.4.3
+dclmisc	1.0.3
+Deduplicate	3.4.5
 DerivativeImages	3.3.8
 DerivativeMedia	3.4.12
 DiigoImport	0.0.7
@@ -85,7 +85,7 @@ DocArchive	2.1.0
 DomainManager	2.0.0
 rrchnmdonate	1.0.1
 DspaceConnector	1.1.0
-DynamicItemSets	3.4.2
+DynamicItemSets	3.4.4
 EAD	3.0.4
 EADImport	1.2.0
 EasyAdmin	3.4.29
@@ -110,7 +110,7 @@ Feed	3.4.4
 FieldAsTags	1.1.0
 FileGate	0.1.0
 FileSideload	1.7.1
-FIT	1.3.1
+FIT	1.3.2
 FixCjkSearch	4.1.0
 Folksonomy	3.4.12
 Footnotes	3.3.0.2-3.4.1
@@ -139,7 +139,7 @@ IDResolver	1.0.0
 IIIFDownload	1.0.1
 IIIFHosting	1.0.0-beta
 IIIFPresentation	1.0.2
-IIIFPreview	3.0.2
+IIIFPreview	3.0.3
 IIIFSearch	3.4.8
 IiifSearch	1.0.0
 IIIFServer	3.6.24
@@ -168,6 +168,8 @@ Kalturastream	1.1.0
 Ldap	0.2
 LDAP	0.5.0
 LessonPlans	1.1
+LHDBlang	1.0.0
+LHDBlangS	1.0.0
 LinkedDataSets	0.1
 LocaleSwitch	0.3.0
 LocalMediaIngester	0.3.0
@@ -261,6 +263,7 @@ SearchbyVisibility	1.0.0
 SearchHistory	3.4.6
 Solr	3.5.13.3
 Selection	3.4.11
+SemanticModelBuilder	0.1
 ServerURLOverride	1.0.1
 ShareMeBaby	1.2.3
 Sharing	1.5.0
@@ -276,6 +279,7 @@ SiteLog	0.2.0
 Sitemaps	1.1
 SiteSlugAsSubdomain	1.0.0
 SiteSwitcher	1.0
+SkipExtracttext	0.0.1
 SolrImprovements	1.0.1-bib0.4.2
 Sparql	3.4.6
 SpecialCharacterSearch	2.1.0
@@ -291,7 +295,7 @@ Thesauri	0.1.0
 Thesaurus	3.4.21
 ThesaurusOnroerendErfgoedVlaanderen	3.2.0
 Tify	1.0
-Timeline	3.4.24
+Timeline	3.4.25
 Transcript	4.1.1
 Translations	3.1.0
 TwoFactorAuth	3.4.3
@@ -317,6 +321,7 @@ WebMonetization	1.0.0
 Wikidata	1.4.2
 XMLViewer	3.4.10
 Zip	3.4.3
+ZipImport	1.0.0
 FiskRosenwaldZiptoBulkImport	0.0.1
 ZoteroCitations	1.0.0
 ZoteroImport	1.3.0
