@@ -1,4 +1,5 @@
 Access	3.4.30
+ActivityLog	1.0.0-alpha
 Adminer	3.4.6-5.1.0
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.39
@@ -12,7 +13,7 @@ AltText	1.3.0
 AmazonS3	3.4.4
 AmazonS3Storage	1.0.0
 AnalyticsSnippet	3.4.5
-AnalyticsSnippetPiwik	3.4.7
+AnalyticsSnippetPiwik	3.4.8
 Annotate	3.4.10
 Cartography	3.4.3
 AnyCloud	3.2.1
@@ -27,9 +28,9 @@ BannerImage	1.0
 Base	0.1.0
 Basket	3.2.4
 Bibliography	3.4.12
-BiblionumberSupport	0.1.0
+BiblionumberSupport	0.1.1
 BlockLayoutSkeleton	0.1.0
-BlockPlus	3.4.35
+BlockPlus	3.4.36
 BlocksDisposition	3.4.4
 BulkCheck	3.3.11
 BulkEdit	3.4.33
@@ -88,7 +89,7 @@ DspaceConnector	1.1.0
 DynamicItemSets	3.4.4
 EAD	3.0.4
 EADImport	1.2.0
-EasyAdmin	3.4.29
+EasyAdmin	3.4.30
 EasyInstall	3.3.7
 Ebook	3.4.10
 EhpSearchForm	1.3.0
@@ -102,7 +103,7 @@ ExtendedSiteDescription	0.2.0
 ExtractMetadata	1.2.0
 ExtractOcr	3.4.7
 ExtractText	2.1.0
-FacetedBrowse	1.6.0
+FacetedBrowse	1.7.0
 FacetedSearch	0.1.0
 Favorite	0.0.1
 FedoraConnector	1.1.0
@@ -110,7 +111,7 @@ Feed	3.4.4
 FieldAsTags	1.1.0
 FileGate	0.1.0
 FileSideload	1.7.1
-FIT	1.3.2
+FIT	1.3.4
 FixCjkSearch	4.1.0
 Folksonomy	3.4.12
 Footnotes	3.3.0.2-3.4.1
@@ -138,7 +139,7 @@ IdRef	0.1.0
 IDResolver	1.0.0
 IIIFDownload	1.0.1
 IIIFHosting	1.0.0-beta
-IIIFPresentation	1.0.2
+IIIFPresentation	1.1.0
 IIIFPreview	3.0.3
 IIIFSearch	3.4.8
 IiifSearch	1.0.0
@@ -191,6 +192,7 @@ MetadataEditor	1.0.0
 MetaTags	3.4.6
 Mirador	3.4.9
 Modelviewer	3.4.3-174
+Template	0.0.0
 MPCustomInput	0.1.0
 Mroongasearch	0.9.0
 dictionnaire	1.0
@@ -203,7 +205,7 @@ NestedDataType	4.0.0
 NetworkMap	1.0
 Next	3.4.49
 NoGoogleChromeFlockTracking	3.4.1
-NumericDataTypes	1.11.4
+NumericDataTypes	1.12.0
 OAIPMHHarvester	3.4.18
 OAIPMHRepository	3.4.11
 OAIPmhHarvester	0.1
@@ -241,7 +243,7 @@ Reciprocal	3.4.2
 RedactValues	1.1.0
 RedirectAfterLogin	0.4.0
 Redirector	3.4.1
-Reference	3.4.52
+Reference	3.4.53
 RefFormation	0.1.0
 Relators	1.0
 ResourceMeta	1.1.0
@@ -267,7 +269,7 @@ SemanticModelBuilder	0.1
 ServerURLOverride	1.0.1
 ShareMeBaby	1.2.3
 Sharing	1.5.0
-Shibboleth	3.4.11
+Shibboleth	3.4.12
 Shortcode	3.4.15
 SimpleBlock	0.1.0
 SimpleCarousel	1.3.0
@@ -294,6 +296,7 @@ Teams	4.0.1
 Thesauri	0.1.0
 Thesaurus	3.4.21
 ThesaurusOnroerendErfgoedVlaanderen	3.2.0
+ThreeDViewer	0.0.0
 Tify	1.0
 Timeline	3.4.25
 Transcript	4.1.1
@@ -310,7 +313,7 @@ UpgradeFromClassic	3.1.3
 URIDereferencer	1.4.2
 UserNames	1.2
 UserProfile	3.4.9
-ValueSuggest	1.17.1
+ValueSuggest	1.17.2
 ValueSuggestAny	3.4.5
 Verovio	3.3.0.7
 ViewerJS	3.4.5-0.7.2
