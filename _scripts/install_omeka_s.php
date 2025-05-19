@@ -230,7 +230,7 @@ class Utils
     public function unzipFile($source, $destination): bool
     {
         // Unzip via php-zip.
-        if (class_exists('ZipArchive')) {
+        if (class_exists('ZipArchive', false)) {
             $zip = new ZipArchive;
             $result = $zip->open($source);
             if ($result === true) {
