@@ -942,7 +942,7 @@ if (!$isReadableAndWriteable) {
 
 // Test de l’écriture réelle du fichier, normalement inutile.
 if ($isReadableAndWriteable) {
-    $randomFile = substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(48))), 0, 8);
+    $randomFile = substr(strtr(base64_encode(random_bytes(128)), ['+' => '', '/' => '', '=' => '']), 0, 8);
     $randomPath = __DIR__ . '/' . $randomFile;
     try {
         $result = file_put_contents($randomPath, 'test');
