@@ -81,7 +81,7 @@ Datavis	1.4.0
 dclmisc	1.0.3
 Deduplicate	3.4.5
 DerivativeImages	3.3.8
-DerivativeMedia	3.4.12
+DerivativeMedia	3.5.1
 DiigoImport	0.0.7
 DiskQuota	0.0.0
 Diva	3.3.2.3
@@ -92,7 +92,7 @@ DspaceConnector	1.1.0
 DynamicItemSets	3.4.5
 EAD	3.0.4
 EADImport	1.2.1
-EasyAdmin	3.4.32
+EasyAdmin	3.4.33
 EasyInstall	3.3.7
 Ebook	3.4.10
 EhpSearchForm	1.3.0
@@ -126,13 +126,13 @@ GoogleAnalytics	1.3.2
 GoogleTagManager	1.0.0
 Group	3.4.7
 GroupEdit	1.0
-Guest	3.4.36
+Guest	3.4.37
 GuestApi	3.4.5
 GuestPrivate	3.4.7
 GuestRole	0.3.1
 GuestUser	0.1
 generateur	4.0.2
-HelloWorld	0.1.6
+HelloWorld	0.1.7
 HideProperties	1.3.1
 HideSiteProperties	1.0.0
 HBrowser	1.0.0
@@ -240,6 +240,7 @@ PdfViewer	3.4.4
 PerformanceLabRestApi	1.0.0
 PersistentIdentifiers	1.1.1
 PersonalNotebook	0.2.0
+PlaceFunctions	0.0.0
 PropertySearch	1.0.7
 Psl	0.1.0
 PslSearchForm	0.2.0
@@ -275,7 +276,7 @@ SearchbyVisibility	1.0.0
 SearchFilterPlus	1.0.0
 SearchHistory	3.4.6
 Solr	3.5.13.3
-Selection	3.4.13
+Selection	3.4.14
 SemanticModelBuilder	0.1
 ServerURLOverride	1.0.1
 Services	1.0.0-alpha
