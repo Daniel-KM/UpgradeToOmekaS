@@ -7,7 +7,7 @@ AdvancedSearch	3.4.50
 SearchSolr	3.5.58
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.3.1
-AiGenerator	3.4.1
+AiGenerator	3.4.2
 AllinOneAccessibility	1.0
 AlternativeLabelSelect	3.4.1
 Alto	0.2.0
@@ -19,7 +19,7 @@ AnalyticsSnippetPiwik	3.4.8
 Annotate	3.4.10
 Cartography	3.4.3
 AnyCloud	3.2.1
-ApiInfo	3.4.11
+ApiInfo	3.4.12
 ArchiveFolder	2.4
 ArchiveRepertory	3.15.17
 Ark	3.5.15
@@ -56,7 +56,7 @@ CollectingTogether	0.1.0
 ColumbO	0.1.4
 SColumnsMaker	0.0.1
 Comment	3.4.13
-Common	3.4.71
+Common	3.4.72
 ConnectedSites	1.0
 ContactUs	3.4.25
 ContentReader	1.0.0
@@ -69,6 +69,7 @@ CSSEditor	3.0.2
 CSVImport	2.2.1
 CustomAdvancedSearch	0.0.1
 CustomFloat	1.0
+SCustomMaps	0.0.1
 CustomOntology	3.4.6
 CustomVocab	2.0.2
 DataCleaning	1.1.0
@@ -94,7 +95,7 @@ DspaceConnector	1.1.0
 DynamicItemSets	3.4.5
 EAD	3.0.4
 EADImport	1.2.1
-EasyAdmin	3.4.33
+EasyAdmin	3.4.34
 EasyInstall	3.3.7
 Ebook	3.4.10
 EhpSearchForm	1.3.0
@@ -157,7 +158,7 @@ ImageServer	3.6.20
 ImageWithText	1.3.0
 ImportIt	0.1.0
 InputMethodEditor	1.0
-Internationalisation	3.4.16
+Internationalisation	3.4.17
 Interviews	0.0.0
 InverseProperties	1.1.1
 IsolatedSites	1.0.0
@@ -186,10 +187,10 @@ LocaleSwitch	0.3.0
 LocalMediaIngester	0.3.0
 LockEdit	3.4.1
 Lockout	3.4.5
-Log	3.4.30
+Log	3.4.31
 LogSentry	3.4.2
 Maintenance	3.3.3.2
-Mapping	2.1.0
+Mapping	2.2.0
 Mare	1.0.0
 MarcXmlExport	1.0.1
 Mason	0.1.1
@@ -218,7 +219,7 @@ NestedDataType	4.0.0
 NetworkMap	1.0
 Next	3.4.49
 NoGoogleChromeFlockTracking	3.4.1
-NumericDataTypes	1.12.0
+NumericDataTypes	1.13.0
 OAIPMHHarvester	3.4.23
 OAIPMHRepository	3.4.11
 OAIPmhHarvester	0.1
@@ -305,7 +306,7 @@ SolrImprovements	1.0.1-bib0.4.2
 Sparql	3.4.6
 SpecialCharacterSearch	2.1.0
 SruSrwMaker	2.1.0
-StaticSiteExport	1.0.0-alpha
+StaticSiteExport	1.0.0
 Statistics	3.4.11
 STest	1.0.0
 agilestorymap	3.4.4
@@ -320,6 +321,7 @@ Tify	1.0
 Timeline	3.4.26
 Transcript	4.1.1
 Translations	3.1.0
+Translator	3.4.1
 TwoFactorAuth	3.4.3
 TypesenseSearch	0.4.1
 unAPI	1.3.0
