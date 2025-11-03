@@ -1,8 +1,8 @@
-Access	3.4.34
+Access	3.4.35
 ActivityLog	1.0.1
 Adminer	3.4.9-5.4.1
 AdminPlus	3.0.3
-AdvancedResourceTemplate	3.4.46
+AdvancedResourceTemplate	3.4.47
 AdvancedSearch	3.4.53
 SearchSolr	3.5.60
 AdvancedSearchPlus	3.3.5.7
@@ -118,7 +118,7 @@ Feed	3.4.6
 FieldAsTags	1.1.0
 FileGate	0.1.0
 FileSideload	1.7.1
-FIT	1.4.2
+FIT	1.4.3
 FixCjkSearch	4.1.0
 FixCliAndJob	0.1.4
 FluentAPI	0.3
@@ -182,6 +182,7 @@ JobAddon	1.0.2
 jQueryParallax	1.0
 jQueryUI	1.12.1
 Kalturastream	1.1.0
+KintMe	0.1.3
 KohaImport	1.2
 Ldap	0.2
 LDAP	0.5.0
@@ -201,7 +202,7 @@ LogSentry	3.4.2
 Maintenance	3.3.3.2
 Mapping	2.2.0
 Mare	1.0.0
-MarcXmlExport	1.1.1
+MarcXmlExport	1.1.2
 Mason	0.1.1
 Matomo	0.2.0
 MatomoGroup	0.1.0
@@ -234,7 +235,7 @@ OAIPMHHarvester	3.4.24
 OAIPMHRepository	3.4.11
 OAIPmhHarvester	0.1
 OaiPmhRepositoryMediaPropertyMapper	0.1.0
-MediaViewer	0.8.3
+MediaViewer	0.9.0
 OHMSEmbed	1.0.0
 OIDC	1.0.1
 2Importer	1.2.0
@@ -295,7 +296,7 @@ SearchbyVisibility	1.0.0
 SearchFilterPlus	1.0.0
 SearchHistory	3.4.7
 Solr	3.5.13.3
-Selection	3.4.14
+Selection	3.4.15
 SemanticModelBuilder	0.1
 ServerURLOverride	1.0.1
 Services	1.0.0-alpha
@@ -304,8 +305,9 @@ ShareMeBaby	1.2.3
 Sharing	1.5.0
 Shibboleth	3.4.13
 Shortcode	3.4.15
-ShowMore	1.4
+ShowMore	1.5
 Sigil	0.1.0
+SimilarItems	0.3.2
 SimpleBlock	0.1.0
 SimpleCarousel	1.3.0
 SimpleIIIF	0.1.0-alpha
@@ -361,6 +363,7 @@ Vips	3.4.2
 VocabularyAddon	1.0.3
 Watermarker	1.1.0
 WebMonetization	1.0.0
+WhaaatBlock	0.0.1
 Wikidata	1.5.0.alpha1
 XMLViewer	3.4.10
 Zip	3.4.4
