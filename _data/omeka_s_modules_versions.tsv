@@ -46,9 +46,10 @@ CacheNavigation	3.4.0
 CartoAffect	0.1.9
 CAS	0.6.3
 CatalogSearch	0.1.0
-ChaoticumSeminario	0.0.12
+ChaoticumSeminario	0.0.13
 CiteShare	1.0.0
 Citing	1.0.0
+CKEConfig	0.1.3
 CleanUrl	3.17.10
 CmapImport	0.0.2
 COinS	3.1.0
@@ -150,6 +151,7 @@ IdRef	0.1.0
 IDResolver	1.0.0
 iiifannotationssearch	0.1.0
 IIIFBulkImport	0.1.0
+IiifCanonicalRedirect	0.1.0
 IIIFDownload	1.0.1
 IIIFHosting	1.0.0-beta
 IIIFPresentation	1.1.1
@@ -185,7 +187,7 @@ JobAddon	1.0.2
 jQueryParallax	1.0
 jQueryUI	1.12.1
 Kalturastream	1.1.0
-KintMe	0.1.5
+KintMe	0.1.7
 KohaImport	1.2.1
 Ldap	0.2
 LDAP	0.5.0
@@ -239,7 +241,7 @@ OAIPMHRepository	3.4.11
 OAIPmhHarvester	0.1
 OaiPmhRepositoryMediaPropertyMapper	0.1.0
 MediaViewer	0.9.1
-OHMSEmbed	1.0.0
+OHMSEmbed	1.0.1
 OIDC	1.0.1
 2Importer	1.2.0
 Osii	1.4.0
@@ -366,7 +368,7 @@ Vips	3.4.2
 VocabularyAddon	1.0.3
 Watermarker	1.1.0
 WebMonetization	1.0.0
-WhaaatBlock	0.0.1
+WhaaatBlock	0.0.2
 Wikidata	1.5.0.alpha1
 XMLViewer	3.4.10
 Zip	3.4.4
