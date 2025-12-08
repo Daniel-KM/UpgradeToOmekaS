@@ -33,6 +33,7 @@ Base	0.1.0
 Basket	3.2.4
 Bibliography	3.4.12
 BiblionumberSupport	1.0.0
+BienEtreBot	1.0.0
 BlockLayoutSkeleton	0.1.0
 BlockPlus	3.4.42
 BlocksDisposition	3.4.5
@@ -96,7 +97,7 @@ rrchnmdonate	1.0.1
 DspaceConnector	1.1.0
 DynamicItemSets	3.4.5
 EAD	3.0.4
-EADImport	1.2.1
+EADImport	2.0.0
 EasyAdmin	3.4.36
 EasyInstall	3.3.7
 Ebook	3.4.10
@@ -112,7 +113,7 @@ ExtendedSiteDescription	0.2.0
 ExtractMetadata	1.2.0
 ExtractOcr	3.4.7
 ExtractText	2.1.0
-FacetedBrowse	1.8.0
+FacetedBrowse	1.9.0
 FacetedSearch	0.1.0
 Favorite	0.0.1
 FedoraConnector	1.1.0
@@ -230,6 +231,7 @@ Mroongasearch	0.9.0
 MroongaSearch	4.2.3
 mroongasearch	1.0.0
 dictionnaire	1.0
+MedecinAI	1.0
 Ngramsearch	0.1.0
 NakalaImporter	0.2.0
 NDETermennetwerk	1.4.0
@@ -253,6 +255,7 @@ Osii	1.4.0
 SBootstrap	1.0.0
 starterkit	1.0
 twig	0.2.0
+Oral2Text	1.0.0
 ORCIDConnector	1.0.0
 OutputFormats	1.0.0
 PageBlockIframe	1.0.0
@@ -317,7 +320,7 @@ Shibboleth	3.4.13
 Shortcode	3.4.15
 ShowMore	1.5
 Sigil	0.1.0
-SimilarItems	0.3.2
+SimilarItems	0.4.0
 SimpleBlock	0.1.0
 SimpleCarousel	1.3.0
 SimpleIIIF	0.1.0-alpha
