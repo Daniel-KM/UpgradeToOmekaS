@@ -757,8 +757,12 @@ class Addons
 
     /**
      * Helper to install an addon.
+     *
+     * @param array $addon The addon data.
+     * @param bool $installDependencies Whether to automatically install missing dependencies.
+     * @return bool
      */
-    public function installAddon(array $addon): bool
+    public function installAddon(array $addon, bool $installDependencies = true): bool
     {
         switch ($addon['type']) {
             case 'module':
@@ -775,6 +779,42 @@ class Addons
 
         if (file_exists($destination . DIRECTORY_SEPARATOR . $addon['dir'])) {
             return true;
+        }
+
+        // Check and optionally install dependencies.
+        if (!empty($addon['dependencies'])) {
+            $missing = $this->getMissingDependencies($addon['dependencies']);
+            if ($missing) {
+                if ($installDependencies) {
+                    foreach ($missing as $depName) {
+                        $depAddon = $this->findAddonByName($depName);
+                        if ($depAddon) {
+                            $this->utils->psrLog(
+                                'Installation de la dependance "{dep}" pour {type} "{name}".',
+                                ['dep' => $depName, 'type' => $type, 'name' => $addon['name']]
+                            );
+                            // Recursive install with dependencies.
+                            if (!$this->installAddon($depAddon, true)) {
+                                $this->utils->psrLog(
+                                    'Impossible d\'installer la dependance "{dep}".',
+                                    ['dep' => $depName]
+                                );
+                                return false;
+                            }
+                        } else {
+                            $this->utils->psrLog(
+                                'Dependance "{dep}" introuvable pour {type} "{name}".',
+                                ['dep' => $depName, 'type' => $type, 'name' => $addon['name']]
+                            );
+                        }
+                    }
+                } else {
+                    $this->utils->psrLog(
+                        'Le {type} "{name}" a des dependances manquantes: {deps}.',
+                        ['type' => $type, 'name' => $addon['name'], 'deps' => implode(', ', $missing)]
+                    );
+                }
+            }
         }
 
         $zipFile = $destination . DIRECTORY_SEPARATOR . basename($addon['zip']);
@@ -902,6 +942,61 @@ class Addons
 
         $dirs[$dir] = $list;
         return $dirs[$dir];
+    }
+
+    /**
+     * Get list of missing dependencies that are not installed.
+     *
+     * @param array $dependencies List of dependency names (module directory names).
+     * @return array List of missing dependency names.
+     */
+    protected function getMissingDependencies(array $dependencies): array
+    {
+        $missing = [];
+        $modulesDir = OMEKA_PATH . '/modules';
+
+        foreach ($dependencies as $dep) {
+            $dep = trim($dep);
+            if ($dep === '') {
+                continue;
+            }
+            // Check if the module directory exists.
+            if (!file_exists($modulesDir . DIRECTORY_SEPARATOR . $dep)) {
+                $missing[] = $dep;
+            }
+        }
+
+        return $missing;
+    }
+
+    /**
+     * Find an addon by its name or directory name.
+     *
+     * @param string $name The addon name or directory name.
+     * @return array|null The addon data or null if not found.
+     */
+    protected function findAddonByName(string $name): ?array
+    {
+        $this->initAddons();
+
+        $nameLower = strtolower(trim($name));
+
+        foreach ($this->addons as $addon) {
+            // Check by directory name (most reliable).
+            if (strtolower($addon['dir'] ?? '') === $nameLower) {
+                return $addon;
+            }
+            // Check by display name.
+            if (strtolower($addon['name'] ?? '') === $nameLower) {
+                return $addon;
+            }
+            // Check by basename.
+            if (strtolower($addon['basename'] ?? '') === $nameLower) {
+                return $addon;
+            }
+        }
+
+        return null;
     }
 }
 
@@ -1167,16 +1262,21 @@ if ($isPhpValid && $isPost) {
             $dsnb = $socket
                 ? "mysql:unix_socket=$socket;dbname=$dbname;charset=utf8mb4"
                 : "mysql:host=$host" . ($port ? ";port=$port" : '') . ";dbname=$dbname;charset=utf8mb4";
-            $pdo = new PDO($dsnb, $user, $password, $dbOptions);
-            $stmt = $pdo->query('SHOW TABLES;');
-            $hasTables = (bool) $stmt->fetchColumn();
-            $stmt = null;
-            $pdo = null;
-            if ($hasTables) {
+            try {
+                $pdo = new PDO($dsnb, $user, $password, $dbOptions);
+                $stmt = $pdo->query('SHOW TABLES;');
+                $hasTables = (bool) $stmt->fetchColumn();
+                $stmt = null;
+                $pdo = null;
+                if ($hasTables) {
+                    $isDatabaseValid = false;
+                    $utils->log('La base de données doit être vide.');
+                } else {
+                    $isDatabaseValid = true;
+                }
+            } catch (Exception $e) {
                 $isDatabaseValid = false;
-                $utils->log('La base de données doit être vide.');
-            } else {
-                $isDatabaseValid = true;
+                $utils->log('Impossible de vérifier si la base de données est vide.');
             }
         } else {
             // Sinon créer la base.
@@ -1193,7 +1293,9 @@ if ($isPhpValid && $isPost) {
                     $isDatabaseValid = true;
                 }
             } catch (Exception $e) {
+                $pdo = null;
                 $isDatabaseValid = false;
+                $utils->log('Impossible de créer la base de données : ' . $e->getMessage());
             }
         }
     }
