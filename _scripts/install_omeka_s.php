@@ -49,9 +49,9 @@ const OMEKA_PATH = __DIR__;
  */
 class Utils
 {
-    const OMEKA_VERSION = '4.1.1';
-    const PHP_MINIMUM_VERSION = '7.4.0';
-    const PHP_MINIMUM_VERSION_ID = 70400;
+    const OMEKA_VERSION = '4.2.0';
+    const PHP_MINIMUM_VERSION = '8.1.0';
+    const PHP_MINIMUM_VERSION_ID = 80100;
     const MYSQL_MINIMUM_VERSION = '5.7.9';
     const MARIADB_MINIMUM_VERSION = '10.2.6';
     const PHP_REQUIRED_EXTENSIONS = [
