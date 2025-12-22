@@ -1128,6 +1128,37 @@ class UpdateDataExtensions
         return $exceptions[strtolower($cleanName)] ?? $cleanName;
     }
 
+    /**
+     * Convert a hyphenated string to PascalCase, preserving existing mixed case.
+     *
+     * For example:
+     * - "agile-theme-tools" becomes "AgileThemeTools"
+     * - "Omeka-S-module-AdvancedSearch" becomes "OmekaSModuleAdvancedSearch"
+     * - "AgileThemeTools" (no hyphens) stays "AgileThemeTools"
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function hyphenatedToPascalCase($name)
+    {
+        // Handle underscores too for consistency.
+        $words = preg_split('/[-_]+/', $name);
+        $result = '';
+        foreach ($words as $word) {
+            if ($word === '') {
+                continue;
+            }
+            // If word is all lowercase, capitalize first letter.
+            // If word already has mixed case (like "AdvancedSearch"), preserve it.
+            if ($word === strtolower($word)) {
+                $result .= ucfirst($word);
+            } else {
+                $result .= $word;
+            }
+        }
+        return $result;
+    }
+
     protected function extractNamespaceFromProjectName($projectName)
     {
         if (!$projectName) {
@@ -1148,11 +1179,17 @@ class UpdateDataExtensions
             return $exceptions[$projectName];
         }
 
+        // Convert hyphenated project name to PascalCase first to preserve proper casing.
+        // GitHub project names are typically lowercase with hyphens.
+        $pascalName = $this->hyphenatedToPascalCase($projectName);
+
+        // Remove common Omeka prefixes/suffixes (case-insensitive).
         $cleanName = str_ireplace(
-            ['omeka-s', 'omekas', 'omeka s', 'omeka'],
-            ['', '', '', ''],
-            $projectName
+            ['OmekaS', 'Omeka'],
+            ['', ''],
+            $pascalName
         );
+
         $name = $this->cleanAddonNameWithCase($cleanName);
         return str_replace('-', '', $name);
     }
