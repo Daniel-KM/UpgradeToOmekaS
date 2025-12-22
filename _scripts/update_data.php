@@ -180,6 +180,16 @@ class UpdateDataExtensions
     protected $omekaAddons;
     protected $updatedAddons;
 
+    /**
+     * Progress tracking properties.
+     */
+    protected $startTime;
+    protected $stepStartTime;
+    protected $currentStep = '';
+    protected $progressCurrent = 0;
+    protected $progressTotal = 0;
+    protected $lastProgressOutput = 0;
+
     public function __construct($type, $args = [], $options = [])
     {
         $this->type = $type;
@@ -202,7 +212,10 @@ class UpdateDataExtensions
             ini_set('auto_detect_line_endings', true);
         }
 
-        $this->log(sprintf('Start update of "%s".', $this->args['source']));
+        $this->log('');
+        $this->log(str_repeat('=', 70));
+        $this->log(sprintf('Processing: %s', basename($this->args['source'])));
+        $this->log(str_repeat('=', 70));
 
         if ($this->options['debug']) {
             $this->log('Debug mode enabled.');
@@ -257,10 +270,11 @@ class UpdateDataExtensions
             return false;
         }
 
+        $this->log('');
         if ($this->updatedAddons) {
-            $this->log(sprintf('%d lines updated.', count($this->updatedAddons)));
+            $this->log(sprintf('[Result] %d addons updated with new data.', count($this->updatedAddons)));
         } else {
-            $this->log('No line updated.');
+            $this->log('[Result] No addons were updated.');
         }
 
         $addons = $this->filterFalseAddons($addons);
@@ -282,21 +296,18 @@ class UpdateDataExtensions
             }
         }
 
-        $this->log('Process ended successfully.');
+        $this->log('[Done] CSV file saved successfully.');
+        $this->log(str_repeat('-', 70));
 
         return true;
     }
 
     /**
-     * Create the json for last versions from the csv file.
+     * Create the TSV file with last versions from the CSV file.
      */
     public function processUpdateLastVersions()
     {
-        $this->log(sprintf('Start update of file of last versions for "%s".', $this->args['topic']));
-
-        if ($this->options['debug']) {
-            $this->log('Debug mode enabled.');
-        }
+        $this->log(sprintf('[Versions] Generating %s...', basename(str_replace('.csv', '_versions.tsv', $this->args['destination']))));
 
         $destination = str_replace('.csv', '_versions.tsv', $this->args['destination']);
         if (!$this->checkFiles($this->args['source'], $destination)) {
@@ -305,7 +316,7 @@ class UpdateDataExtensions
 
         $addons = array_map('str_getcsv', file($this->args['source']));
         if (empty($addons)) {
-            $this->log(sprintf('No content in the csv file "%s".', $this->args['source']));
+            $this->log(sprintf('[Versions] Error: No content in "%s".', $this->args['source']));
             return false;
         }
 
@@ -314,17 +325,10 @@ class UpdateDataExtensions
         $this->headers = $headers;
         unset($addons[0]);
 
-        $replaceForName = [
-            'plugin',
-            'module',
-            'theme',
-            'widget',
-            'omeka s',
-            'omeka-s',
-            'omeka',
-        ];
-
         $addonsLastVersions = [];
+        $processedCount = 0;
+        $totalAddons = count($addons);
+
         foreach ($addons as $addon) {
             $addonUrl = trim($addon[$headers['Url']], '/ ');
             if (empty($addonUrl)) {
@@ -347,7 +351,6 @@ class UpdateDataExtensions
                 continue;
             }
 
-            $addonFullName = $addon[$headers['Name']];
             $lastVersion = $addon[$headers['Last version'] ?? $headers['Last Version']] ?? '';
 
             if (empty($addonsLastVersions[$cleanName])) {
@@ -355,11 +358,11 @@ class UpdateDataExtensions
             } elseif (version_compare($addonsLastVersions[$cleanName], $lastVersion, '<=')) {
                 $addonsLastVersions[$cleanName] = $lastVersion;
             }
-            $this->log("$lastVersion : $cleanName ($addonFullName / $addonUrl)");
+            $processedCount++;
         }
 
         if ($this->options['debug'] && !$this->options['debugOutput']) {
-            $this->log('Required no output with debug.');
+            $this->log('[Versions] Debug mode: no output.');
         } else {
             $resultTsv = [];
             foreach ($addonsLastVersions as $addon => $version) {
@@ -367,7 +370,7 @@ class UpdateDataExtensions
             }
             $result = $this->saveToTsvFile($destination, $resultTsv);
             if (!$result) {
-                $this->log(sprintf('An error occurred during saving the tsv into the file "%s".', $destination));
+                $this->log(sprintf('[Versions] Error saving "%s".', $destination));
                 return false;
             }
             /*
@@ -379,8 +382,7 @@ class UpdateDataExtensions
             */
         }
 
-        $this->log(sprintf('Process ended successfully for "%s".', $this->args['topic']));
-        $this->log('');
+        $this->log(sprintf('[Versions] Saved %d unique addons to TSV.', count($addonsLastVersions)));
 
         return true;
     }
@@ -424,21 +426,18 @@ class UpdateDataExtensions
                 $this->log(sprintf('    %d seconds', (time() - $time)));
             }
             if ($response) {
-                if ($this->options['debug']) {
-                    $this->log(sprintf(
-                        'The search for %s with %s gives %d results.',
-                        $this->type,
-                        $searchType,
-                        $response->total_count
-                    ));
-                }
                 $totalCount = $response->total_count;
+                $this->log(sprintf(
+                    '[Search] Found %d repositories matching "%s"',
+                    $totalCount,
+                    $this->type
+                ));
+
                 if ($totalCount > 0) {
                     $totalProcessed = 0;
                     $page = 1;
+                    $totalPages = (int) ceil($totalCount / 100);
                     do {
-                        // $this->log(sprintf('The search for %s on %s gives %d results. Wait for processing.' . $searchType, $this->type, $totalCount));
-                        $this->log('.');
                         if ($page > 1) {
                             $urlPage = $url . '&page=' . $page;
                             $response = $this->curl($urlPage);
@@ -452,20 +451,33 @@ class UpdateDataExtensions
                         $urls = array_merge($urls, $resultNewUrls['new_urls']);
                         $newUrls = array_merge($newUrls, $resultNewUrls['new_urls']);
                         $totalProcessed += count($response->items);
+
+                        $this->log(sprintf(
+                            '[Search] Page %d/%d: processed %d/%d repos, found %d new URLs',
+                            $page,
+                            $totalPages,
+                            $totalProcessed,
+                            $totalCount,
+                            count($resultNewUrls['new_urls'])
+                        ));
+
                         ++$page;
                     } while ($totalProcessed < $totalCount);
                 }
             } else {
-                $this->log('No search results on github.');
+                $this->log('[Search] No results from GitHub API.');
                 break;
             }
         }
 
+        $this->log('');
         if ($newUrls) {
-            $this->log(sprintf('%d new urls for %s.', count($newUrls), $this->type));
-            $this->log($newUrls);
+            $this->log(sprintf('[Search] Found %d new URLs for %s:', count($newUrls), $this->type));
+            foreach ($newUrls as $url) {
+                $this->log(sprintf('  + %s', $url));
+            }
         } else {
-            $this->log(sprintf('No new urls for %s.', $this->type));
+            $this->log(sprintf('[Search] No new URLs found for %s.', $this->type));
         }
 
         return $addons;
@@ -540,10 +552,21 @@ class UpdateDataExtensions
     {
         $headers = $this->headers;
 
+        $this->log('[Update] Fetching addon list from omeka.org...');
         $omekaAddons = $this->fetchOmekaAddons();
         $this->omekaAddons = $omekaAddons;
+        $this->log(sprintf('[Update] Found %d addons on omeka.org', count($omekaAddons)));
 
         $this->updatedAddons = [];
+
+        // Count total addons to process (excluding header)
+        $totalAddons = count($addons) - 1;
+        $processedCount = 0;
+        $skippedCount = 0;
+        $this->startTime = microtime(true);
+
+        $this->log(sprintf('[Update] Processing %d addons...', $totalAddons));
+        $this->log('');
 
         foreach ($addons as $key => $addon) {
             if ($key === 0) {
@@ -551,15 +574,18 @@ class UpdateDataExtensions
             }
             $addonUrl = trim($addon[$headers['Url']], '/ ');
             if (empty($addonUrl)) {
+                $skippedCount++;
                 continue;
             }
 
             if ($this->options['processOnlyAddon'] && !in_array($addonUrl, $this->options['processOnlyAddon'])) {
+                $skippedCount++;
                 continue;
             }
 
             $addonName = $addon[$headers['Name']];
             if ($addonName && $this->options['processOnlyNewUrls']) {
+                $skippedCount++;
                 continue;
             }
 
@@ -572,11 +598,38 @@ class UpdateDataExtensions
                 if ($this->options['debugMax'] && $key > $this->options['debugMax']) {
                     break;
                 }
-                // $this->log($addonName . ' (' . $addonUrl . ')');
+            }
+
+            $processedCount++;
+            $elapsed = microtime(true) - $this->startTime;
+            $eta = $processedCount > 0 ? ($elapsed / $processedCount) * ($totalAddons - $processedCount) : 0;
+            $percent = round(($processedCount / $totalAddons) * 100);
+
+            // Show progress every 5% or every 10 items (whichever is more frequent)
+            $progressInterval = max(1, min(10, (int)($totalAddons / 20)));
+            if ($processedCount % $progressInterval === 0 || $processedCount === $totalAddons) {
+                $this->log(sprintf(
+                    '[Update] %d/%d (%d%%) - %s [%s elapsed, ~%s remaining]',
+                    $processedCount,
+                    $totalAddons,
+                    $percent,
+                    $addonName,
+                    $this->formatTime($elapsed),
+                    $this->formatTime($eta)
+                ));
             }
 
             $addons[$key] = $this->updateAddon($addon);
         }
+
+        $totalElapsed = microtime(true) - $this->startTime;
+        $this->log('');
+        $this->log(sprintf(
+            '[Update] Completed: %d processed, %d skipped [%s total]',
+            $processedCount,
+            $skippedCount,
+            $this->formatTime($totalElapsed)
+        ));
 
         if (!$this->options['processOnlyNewUrls']) {
             foreach ($this->omekaAddons as $omekaAddon) {
@@ -1649,6 +1702,116 @@ class UpdateDataExtensions
             print_r($message);
         } else {
             echo $message . PHP_EOL;
+        }
+    }
+
+    /**
+     * Start a new processing step with progress tracking.
+     *
+     * @param string $stepName Name of the step
+     * @param int $total Total items to process (0 if unknown)
+     */
+    protected function startStep(string $stepName, int $total = 0): void
+    {
+        $this->currentStep = $stepName;
+        $this->stepStartTime = microtime(true);
+        $this->progressCurrent = 0;
+        $this->progressTotal = $total;
+        $this->lastProgressOutput = 0;
+
+        if ($total > 0) {
+            $this->log(sprintf('[%s] Starting: %d items to process...', $stepName, $total));
+        } else {
+            $this->log(sprintf('[%s] Starting...', $stepName));
+        }
+    }
+
+    /**
+     * Update progress for current step.
+     *
+     * @param int $current Current item number
+     * @param string $itemName Optional name of current item
+     * @param bool $force Force output even if not at interval
+     */
+    protected function updateProgress(int $current, string $itemName = '', bool $force = false): void
+    {
+        $this->progressCurrent = $current;
+
+        // Only output every 10 items or when forced, to avoid too much output
+        $outputInterval = max(1, (int)($this->progressTotal / 20)); // ~5% intervals
+        if (!$force && $current !== $this->progressTotal && ($current - $this->lastProgressOutput) < $outputInterval) {
+            return;
+        }
+        $this->lastProgressOutput = $current;
+
+        $elapsed = microtime(true) - $this->stepStartTime;
+
+        if ($this->progressTotal > 0) {
+            $percent = round(($current / $this->progressTotal) * 100);
+            $eta = $current > 0 ? ($elapsed / $current) * ($this->progressTotal - $current) : 0;
+
+            if ($itemName) {
+                $this->log(sprintf(
+                    '[%s] %d/%d (%d%%) - %s [%.1fs elapsed, ~%.1fs remaining]',
+                    $this->currentStep,
+                    $current,
+                    $this->progressTotal,
+                    $percent,
+                    $itemName,
+                    $elapsed,
+                    $eta
+                ));
+            } else {
+                $this->log(sprintf(
+                    '[%s] %d/%d (%d%%) [%.1fs elapsed, ~%.1fs remaining]',
+                    $this->currentStep,
+                    $current,
+                    $this->progressTotal,
+                    $percent,
+                    $elapsed,
+                    $eta
+                ));
+            }
+        } else {
+            if ($itemName) {
+                $this->log(sprintf('[%s] %d processed - %s [%.1fs]', $this->currentStep, $current, $itemName, $elapsed));
+            } else {
+                $this->log(sprintf('[%s] %d processed [%.1fs]', $this->currentStep, $current, $elapsed));
+            }
+        }
+    }
+
+    /**
+     * Complete current step.
+     *
+     * @param string $summary Optional summary message
+     */
+    protected function endStep(string $summary = ''): void
+    {
+        $elapsed = microtime(true) - $this->stepStartTime;
+
+        if ($summary) {
+            $this->log(sprintf('[%s] Completed: %s [%.1fs]', $this->currentStep, $summary, $elapsed));
+        } else {
+            $this->log(sprintf('[%s] Completed [%.1fs]', $this->currentStep, $elapsed));
+        }
+        $this->log(''); // Empty line for readability
+    }
+
+    /**
+     * Format elapsed time as human readable string.
+     *
+     * @param float $seconds
+     * @return string
+     */
+    protected function formatTime(float $seconds): string
+    {
+        if ($seconds < 60) {
+            return sprintf('%.1fs', $seconds);
+        } elseif ($seconds < 3600) {
+            return sprintf('%dm %ds', (int)($seconds / 60), (int)($seconds % 60));
+        } else {
+            return sprintf('%dh %dm', (int)($seconds / 3600), (int)(($seconds % 3600) / 60));
         }
     }
 }
