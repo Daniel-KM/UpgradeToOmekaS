@@ -197,8 +197,10 @@ class UpdateDataExtensions
      */
     public function process()
     {
-        // May avoid an issue with Apple Mac.
-        ini_set('auto_detect_line_endings', true);
+        // May avoid an issue with Apple Mac (deprecated in PHP 8.1).
+        if (PHP_VERSION_ID < 80100) {
+            ini_set('auto_detect_line_endings', true);
+        }
 
         $this->log(sprintf('Start update of "%s".', $this->args['source']));
 
