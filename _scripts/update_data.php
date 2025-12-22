@@ -320,27 +320,22 @@ class UpdateDataExtensions
 
         $addonsLastVersions = [];
         foreach ($addons as $addon) {
-            // TODO Add the directory name in the csv file.
-            // TODO Use extractNamespaceFromProjectName(). See findData().
-            // Set the name or a temp addon name.
             $addonUrl = trim($addon[$headers['Url']], '/ ');
-            $addonName = basename($addonUrl);
-            $addonName = str_ireplace($replaceForName, '', $addonName);
-            if (empty($addonName)) {
+            if (empty($addonUrl)) {
                 continue;
             }
 
-            $cleanName = $this->cleanAddonNameWithCase($addonName);
-            $addonFullName = $addon[$headers['Name']];
+            // Use directory name from CSV if available, otherwise compute from URL.
+            $dirNameKey = $headers['Directory name'] ?? null;
+            $cleanName = $dirNameKey !== null && !empty($addon[$dirNameKey])
+                ? $addon[$dirNameKey]
+                : $this->extractNamespaceFromProjectName(basename($addonUrl));
 
-            // To improve correct name as long as the directory name is not stored,
-            // compare it to the name and clean name.
-            if (strtolower($addonName) === preg_replace('~[^0-9a-zA-Z]~i', '', strtolower($addonFullName))
-                || strtolower($cleanName) === preg_replace('~[^0-9a-zA-Z]~i', '', strtolower($addonFullName))
-            ) {
-                $cleanName = preg_replace('~[^0-9a-zA-Z]~i', '', $addonFullName);
+            if (empty($cleanName)) {
+                continue;
             }
 
+            $addonFullName = $addon[$headers['Name']];
             $lastVersion = $addon[$headers['Last version'] ?? $headers['Last Version']] ?? '';
 
             if (empty($addonsLastVersions[$cleanName])) {
@@ -436,7 +431,7 @@ class UpdateDataExtensions
                             $urlPage = $url . '&page=' . $page;
                             $response = $this->curl($urlPage);
                             // A special check to avoid an infinite loop.
-                            if (!$response || $response->total_count == 0 || count($response->items) == 0) {
+                            if (!$response || $response->total_count === 0 || count($response->items) === 0) {
                                 break;
                             }
                         }
@@ -539,7 +534,7 @@ class UpdateDataExtensions
         $this->updatedAddons = [];
 
         foreach ($addons as $key => $addon) {
-            if ($key == 0) {
+            if ($key === 0) {
                 continue;
             }
             $addonUrl = trim($addon[$headers['Url']], '/ ');
@@ -903,26 +898,6 @@ class UpdateDataExtensions
         // Because the addons are ordered as we want (see option "order"), the
         // previous row is always kept when duplicate.
 
-        // TODO So this comparison can be removed.
-        // Keep the addon that is not a fork, else the oldest created.
-        /*
-        $compareAddons = function (array $addonA, array $addonB) use ($headers): int {
-            $forkSourceA = $addonA[$headers['Fork source']] ?? '';
-            $forkSourceB = $addonB[$headers['Fork source']] ?? '';
-            if (($forkSourceA && !$forkSourceB)
-                || (!$forkSourceA && $forkSourceB)
-            ) {
-                return $forkSourceA ? 1 : -1;
-            }
-            $creationDateA = $addonA[$headers['Creation date']] ?? '';
-            $creationDateB = $addonB[$headers['Creation date']] ?? '';
-            if (!$creationDateA || !$creationDateB) {
-                return $creationDateA ? -1 : 1;
-            }
-            return $creationDateA <=> $creationDateB;
-        };
-        */
-
         $duplicates = 0;
         $unidentifiedForks = 0;
         $updatedForks = 0;
@@ -1192,8 +1167,9 @@ class UpdateDataExtensions
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
         switch ($server) {
             case 'github.com':
-                $user = strtok($project, '/');
-                $projectName = strtok('/');
+                $projectParts = explode('/', $project, 2);
+                $user = $projectParts[0];
+                $projectName = $projectParts[1] ?? '';
                 $url = 'https://api.github.com/repos/' . $user . '/' . $projectName;
                 $response = $this->curl($url);
                 break;
@@ -1229,8 +1205,6 @@ class UpdateDataExtensions
                         return $this->findData($response->parent->html_url, $dataToFind, true);
 
                     case 'last released zip':
-                        $user = strtok($project, '/');
-                        $projectName = strtok('/');
                         // Don't use url path with "latest" to avoid a request.
                         // $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases/latest';
                         $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases?per_page=100';
@@ -1246,25 +1220,19 @@ class UpdateDataExtensions
                         return $content->assets[0]->browser_download_url;
 
                     case 'directory name':
-                        $user = strtok($project, '/');
-                        $projectName = strtok('/');
                         // The directory name must be the namespace.
                         return $this->extractNamespaceFromProjectName($projectName);
 
                     case 'count versions':
-                        // TODO Add a check of the headers to get the right count of versions.
-                        $user = strtok($project, '/');
-                        $projectName = strtok('/');
-                        $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases?per_page=100';
-                        $content = $this->curl($apiUrl, [], false);
-                        return count($content);
+                        // Paginate through all releases.
+                        $baseUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases?per_page=100';
+                        $allReleases = $this->fetchAllGitHubPages($baseUrl);
+                        return count($allReleases);
 
                     case 'total downloads':
-                        // TODO Add a loop to get the right count of downloads.
-                        $user = strtok($project, '/');
-                        $projectName = strtok('/');
-                        $apiUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases?per_page=100';
-                        $content = $this->curl($apiUrl, [], false);
+                        // Paginate through all releases.
+                        $baseUrl = 'https://api.github.com/repos/' . $user . '/' . $projectName . '/releases?per_page=100';
+                        $allReleases = $this->fetchAllGitHubPages($baseUrl);
                         $counts = [];
                         // Take the fact that some addons, like Mirador,
                         // include some dependencies zipped in some releases.
@@ -1273,10 +1241,10 @@ class UpdateDataExtensions
                         // So filter files in each release with the name of the
                         // addon + optional version number + optional extension
                         // + zip only.
-                        foreach ($content as $release) {
+                        $namespace = $this->extractNamespaceFromProjectName($projectName);
+                        foreach ($allReleases as $release) {
                             // The function array_column() supports objects.
                             // $counts[$release->name] = array_sum(array_column($release->assets, 'download_count'));
-                            $namespace = $this->extractNamespaceFromProjectName($projectName);
                             $version = $release->tag_name;
                             $counts[$release->name] = array_sum(array_column(array_filter($release->assets, function ($as) use ($namespace, $version) {
                                 return preg_match('~' . preg_quote($namespace, '~') . '[ ._-]?(?:(?:' . preg_quote($version, '~') . ')?|(?:' . preg_quote($version, '~') . ')?[ ._-]?php[\d ._-]?)\.zip$~', $as->name);
@@ -1311,25 +1279,20 @@ class UpdateDataExtensions
         // Avoid processing multiple times the same url with the same issue.
         $data[$url] = [];
 
-        $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/135.0';
-
         $curl = curl_init();
 
         $server = strtolower(parse_url($url, PHP_URL_HOST));
-        if (!empty($this->options['token'][$server])) {
-            switch ($server) {
-                case 'api.github.com':
-                    $headers[] = 'Authorization: token ' . $this->options['token'][$server];
-                    break;
-            }
-        }
 
-        // TODO Two user agents?
-        $domain = parse_url($url, PHP_URL_HOST);
-        if (strpos($domain, 'github') !== false) {
+        // Use GitHub-specific user agent for GitHub API, browser-like for others.
+        if (strpos($server, 'github') !== false) {
+            $userAgent = 'Daniel-KM/UpgradeToOmekaS';
             $headers[] = 'Accept: application/vnd.github+json';
             $headers[] = 'X-GitHub-Api-Version: 2022-11-28';
-            $headers[] = 'User-Agent: Daniel-KM/UpgradeToOmekaS';
+            if (!empty($this->options['token'][$server])) {
+                $headers[] = 'Authorization: token ' . $this->options['token'][$server];
+            }
+        } else {
+            $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/135.0';
         }
         $headers = array_unique($headers);
 
@@ -1363,7 +1326,7 @@ class UpdateDataExtensions
             return [];
         }
 
-        // TODO Here only github? Skip?
+        // Check for api error messages (GitHub and other use 'message' field).
         if (is_object($output) && !empty($output->message)) {
             if ($messageResponse) {
                 $this->log(sprintf('Error on url %1$s: %2$s.', $url, $output->message));
@@ -1379,6 +1342,39 @@ class UpdateDataExtensions
         $data[$url] = $output;
 
         return $output;
+    }
+
+    /**
+     * Fetch all pages from a paginated GitHub API endpoint.
+     *
+     * @param string $baseUrl The base URL with per_page parameter.
+     * @param int $maxPages Maximum pages to fetch (safety limit).
+     * @return array All items from all pages.
+     */
+    protected function fetchAllGitHubPages(string $baseUrl, int $maxPages = 10): array
+    {
+        $allItems = [];
+        $page = 1;
+
+        while ($page <= $maxPages) {
+            $url = $baseUrl . '&page=' . $page;
+            $content = $this->curl($url, [], false);
+
+            if (empty($content) || !is_array($content)) {
+                break;
+            }
+
+            $allItems = array_merge($allItems, $content);
+
+            // If we got less than 100 items, we've reached the last page.
+            if (count($content) < 100) {
+                break;
+            }
+
+            $page++;
+        }
+
+        return $allItems;
     }
 
     protected function getIniForAddon($addonUrl, $iniPath = null)
