@@ -331,11 +331,17 @@ class UpdateDataExtensions
                 continue;
             }
 
-            // Use directory name from CSV if available, otherwise compute from URL.
+            // Use directory name from CSV if available and properly cased,
+            // otherwise compute from URL (which has hyphenated words we can parse).
             $dirNameKey = $headers['Directory name'] ?? null;
-            $cleanName = $dirNameKey !== null && !empty($addon[$dirNameKey])
-                ? $addon[$dirNameKey]
-                : $this->extractNamespaceFromProjectName(basename($addonUrl));
+            $csvDirName = $dirNameKey !== null ? trim($addon[$dirNameKey] ?? '') : '';
+            // If CSV has a value with mixed case (like "AgileTools"), use it.
+            // If CSV value is all lowercase (like "agiletools"), derive from URL instead.
+            if (!empty($csvDirName) && $csvDirName !== strtolower($csvDirName)) {
+                $cleanName = $csvDirName;
+            } else {
+                $cleanName = $this->extractNamespaceFromProjectName(basename($addonUrl));
+            }
 
             if (empty($cleanName)) {
                 continue;

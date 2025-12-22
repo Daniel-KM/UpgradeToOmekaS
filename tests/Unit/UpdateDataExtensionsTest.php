@@ -130,6 +130,70 @@ class UpdateDataExtensionsTest extends TestCase
     }
 
     // ==========================================================================
+    // HyphenatedToPascalCase Tests (via reflection)
+    // ==========================================================================
+
+    public function testHyphenatedToPascalCaseConvertsLowercase(): void
+    {
+        $args = $this->getModuleArgs();
+        $options = $this->getDefaultOptions();
+        $updater = new UpdateDataExtensions('module', $args, $options);
+
+        $reflection = new \ReflectionClass($updater);
+        $method = $reflection->getMethod('hyphenatedToPascalCase');
+        $method->setAccessible(true);
+
+        // Lowercase hyphenated should be converted to PascalCase
+        $result = $method->invoke($updater, 'agile-theme-tools');
+        $this->assertEquals('AgileThemeTools', $result);
+    }
+
+    public function testHyphenatedToPascalCasePreservesMixedCase(): void
+    {
+        $args = $this->getModuleArgs();
+        $options = $this->getDefaultOptions();
+        $updater = new UpdateDataExtensions('module', $args, $options);
+
+        $reflection = new \ReflectionClass($updater);
+        $method = $reflection->getMethod('hyphenatedToPascalCase');
+        $method->setAccessible(true);
+
+        // Mixed case should be preserved
+        $result = $method->invoke($updater, 'Omeka-S-module-AdvancedSearch');
+        $this->assertEquals('OmekaSModuleAdvancedSearch', $result);
+    }
+
+    public function testHyphenatedToPascalCaseHandlesUnderscores(): void
+    {
+        $args = $this->getModuleArgs();
+        $options = $this->getDefaultOptions();
+        $updater = new UpdateDataExtensions('module', $args, $options);
+
+        $reflection = new \ReflectionClass($updater);
+        $method = $reflection->getMethod('hyphenatedToPascalCase');
+        $method->setAccessible(true);
+
+        // Underscores should also be treated as separators
+        $result = $method->invoke($updater, 'some_module_name');
+        $this->assertEquals('SomeModuleName', $result);
+    }
+
+    public function testHyphenatedToPascalCaseHandlesNonHyphenated(): void
+    {
+        $args = $this->getModuleArgs();
+        $options = $this->getDefaultOptions();
+        $updater = new UpdateDataExtensions('module', $args, $options);
+
+        $reflection = new \ReflectionClass($updater);
+        $method = $reflection->getMethod('hyphenatedToPascalCase');
+        $method->setAccessible(true);
+
+        // Non-hyphenated PascalCase should be preserved
+        $result = $method->invoke($updater, 'AgileThemeTools');
+        $this->assertEquals('AgileThemeTools', $result);
+    }
+
+    // ==========================================================================
     // ExtractNamespaceFromProjectName Tests (via reflection)
     // ==========================================================================
 
@@ -178,6 +242,45 @@ class UpdateDataExtensionsTest extends TestCase
         $result = $method->invoke($updater, '');
 
         $this->assertEquals('', $result);
+    }
+
+    public function testExtractNamespaceFromProjectNameConvertsToPascalCase(): void
+    {
+        $args = $this->getModuleArgs();
+        $options = $this->getDefaultOptions();
+        $updater = new UpdateDataExtensions('module', $args, $options);
+
+        $reflection = new \ReflectionClass($updater);
+        $method = $reflection->getMethod('extractNamespaceFromProjectName');
+        $method->setAccessible(true);
+
+        // GitHub-style lowercase hyphenated names should be converted to PascalCase
+        $result = $method->invoke($updater, 'agile-theme-tools-omeka');
+        $this->assertEquals('AgileTools', $result);
+
+        $result = $method->invoke($updater, 'omeka-s-all-in-one-accessibility');
+        $this->assertEquals('AllInOneAccessibility', $result);
+
+        $result = $method->invoke($updater, 'omeka-s-any-cloud');
+        $this->assertEquals('AnyCloud', $result);
+    }
+
+    public function testExtractNamespaceFromProjectNamePreservesExistingCase(): void
+    {
+        $args = $this->getModuleArgs();
+        $options = $this->getDefaultOptions();
+        $updater = new UpdateDataExtensions('module', $args, $options);
+
+        $reflection = new \ReflectionClass($updater);
+        $method = $reflection->getMethod('extractNamespaceFromProjectName');
+        $method->setAccessible(true);
+
+        // Already PascalCase names should preserve their case
+        $result = $method->invoke($updater, 'Omeka-S-module-AdvancedSearch');
+        $this->assertEquals('AdvancedSearch', $result);
+
+        $result = $method->invoke($updater, 'AgileThemeTools');
+        $this->assertEquals('AgileTools', $result);
     }
 
     // ==========================================================================
