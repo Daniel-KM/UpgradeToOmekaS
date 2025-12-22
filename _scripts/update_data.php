@@ -18,9 +18,13 @@ declare(strict_types=1);
 $datapath = realpath(dirname(__DIR__) . DIRECTORY_SEPARATOR . '_data') . DIRECTORY_SEPARATOR;
 
 // The token is required only to update dates. If empty, the limit will be 60
-// requests an hour.
-$tokenGithub = $datapath . 'token_github.txt';
-$tokenGithub = file_exists($tokenGithub) ? trim(file_get_contents($tokenGithub)) : '';
+// requests an hour. With a token, the limit is 5000 requests per hour.
+$tokenGithubPath = $datapath . 'token_github.txt';
+$tokenGithub = file_exists($tokenGithubPath) ? trim(file_get_contents($tokenGithubPath)) : '';
+if (empty($tokenGithub)) {
+    echo "Warning: No GitHub token found at {$tokenGithubPath}\n";
+    echo "API rate limit will be 60 requests/hour. Create the file with a GitHub personal access token for 5000 requests/hour.\n\n";
+}
 
 $options = [
     'token' => ['api.github.com' => $tokenGithub],
@@ -1173,6 +1177,13 @@ class UpdateDataExtensions
                 $url = 'https://api.github.com/repos/' . $user . '/' . $projectName;
                 $response = $this->curl($url);
                 break;
+            case 'gitlab.com':
+                // GitLab API requires URL-encoded project path.
+                $encodedProject = urlencode($project);
+                $url = 'https://gitlab.com/api/v4/projects/' . $encodedProject;
+                $response = $this->curl($url);
+                $projectName = basename($project);
+                break;
             default:
                 $response = '';
                 break;
@@ -1255,6 +1266,58 @@ class UpdateDataExtensions
                     default:
                         return '';
                 }
+            case 'gitlab.com':
+                $encodedProject = urlencode($project);
+                switch ($dataToFind) {
+                    case 'creation date':
+                        return $response->created_at ?? '';
+
+                    case 'last update':
+                        // GitLab uses last_activity_at for the last update.
+                        return $response->last_activity_at ?? '';
+
+                    case 'fork source':
+                        if (empty($response->forked_from_project)) {
+                            return $isRecursive ? $addonUrl : '';
+                        }
+                        return $this->findData($response->forked_from_project->web_url, $dataToFind, true);
+
+                    case 'last released zip':
+                        $apiUrl = 'https://gitlab.com/api/v4/projects/' . $encodedProject . '/releases?per_page=100';
+                        $content = $this->curl($apiUrl, [], false);
+                        if (empty($content) || !is_array($content)) {
+                            return '';
+                        }
+                        // The latest release is the first in the list.
+                        $release = reset($content);
+                        if (empty($release) || empty($release->assets) || empty($release->assets->sources)) {
+                            return '';
+                        }
+                        // Find the zip source.
+                        foreach ($release->assets->sources as $source) {
+                            if ($source->format === 'zip') {
+                                return $source->url;
+                            }
+                        }
+                        return '';
+
+                    case 'directory name':
+                        return $this->extractNamespaceFromProjectName($projectName);
+
+                    case 'count versions':
+                        $apiUrl = 'https://gitlab.com/api/v4/projects/' . $encodedProject . '/releases?per_page=100';
+                        $allReleases = $this->fetchAllGitLabPages($apiUrl);
+                        return count($allReleases);
+
+                    case 'total downloads':
+                        // GitLab does not provide download counts via API.
+                        // Return 0 or could try to get from project statistics.
+                        return 0;
+
+                    default:
+                        return '';
+                }
+
             default:
                 return '';
         }
@@ -1328,12 +1391,17 @@ class UpdateDataExtensions
 
         // Check for api error messages (GitHub and other use 'message' field).
         if (is_object($output) && !empty($output->message)) {
-            if ($messageResponse) {
+            // Check for GitHub rate limit error.
+            if (strpos($output->message, 'API rate limit exceeded') !== false) {
+                $this->log('GitHub API rate limit exceeded. Add a token to _data/token_github.txt for higher limits.');
+            } elseif ($messageResponse) {
                 $this->log(sprintf('Error on url %1$s: %2$s.', $url, $output->message));
             }
             return [];
         } elseif (is_array($output) && !empty($output['message'])) {
-            if ($messageResponse) {
+            if (strpos($output['message'], 'API rate limit exceeded') !== false) {
+                $this->log('GitHub API rate limit exceeded. Add a token to _data/token_github.txt for higher limits.');
+            } elseif ($messageResponse) {
                 $this->log(sprintf('Error on url %1$s: %2$s.', $url, $output['message']));
             }
             return [];
@@ -1366,6 +1434,40 @@ class UpdateDataExtensions
 
             $allItems = array_merge($allItems, $content);
 
+            // If we got less than 100 items, we've reached the last page.
+            if (count($content) < 100) {
+                break;
+            }
+
+            $page++;
+        }
+
+        return $allItems;
+    }
+
+    /**
+     * Fetch all pages from a paginated GitLab API endpoint.
+     *
+     * @param string $baseUrl The base URL with per_page parameter.
+     * @param int $maxPages Maximum pages to fetch (safety limit).
+     * @return array All items from all pages.
+     */
+    protected function fetchAllGitLabPages(string $baseUrl, int $maxPages = 10): array
+    {
+        $allItems = [];
+        $page = 1;
+
+        while ($page <= $maxPages) {
+            $url = $baseUrl . '&page=' . $page;
+            $content = $this->curl($url, [], false);
+
+            if (empty($content) || !is_array($content)) {
+                break;
+            }
+
+            $allItems = array_merge($allItems, $content);
+
+            // GitLab default per_page is 20, max is 100.
             // If we got less than 100 items, we've reached the last page.
             if (count($content) < 100) {
                 break;
@@ -1410,7 +1512,8 @@ class UpdateDataExtensions
                 }
                 break;
             case 'gitlab.com':
-                $addonIniBase = $addonUrl . '/raw';
+                // GitLab raw file URL format: /project/-/raw/branch/path
+                $addonIniBase = $addonUrl . '/-/raw';
                 break;
             default:
                 $addonIniBase = $addonUrl;
