@@ -255,27 +255,66 @@ class Utils
 
         // Unzip via command line
         else {
-            // Check if the zip command exists.
-            try {
-                $status = $output = $errors = null;
-                $this->execute('unzip', $status, $output, $errors);
-            } catch (Exception $e) {
-                $status = 1;
+            // Check if the unzip command exists.
+            $unzipPath = $this->getCommandPath('unzip');
+            if ($unzipPath === false) {
+                $this->log('La commande unzip n’est pas disponible.');
+                return false;
             }
-            // A return value of 0 indicates the convert binary is working correctly.
-            $result = $status == 0;
-            if ($result) {
-                $command = 'unzip ' . escapeshellarg($source) . ' -d ' . escapeshellarg($destination);
-                try {
-                    $this->execute($command, $status, $output, $errors);
-                } catch (Exception $e) {
-                    $status = 1;
-                }
-                $result = $status == 0;
+            $command = 'unzip ' . escapeshellarg($source) . ' -d ' . escapeshellarg($destination);
+            $result = $this->execute($command);
+            if ($result === false) {
+                return false;
             }
         }
 
         return $result;
+    }
+
+    /**
+     * Get the root directory name from a zip file.
+     *
+     * @param string $zipPath Path to the zip file.
+     * @return string|null The root directory name, or null if not found.
+     */
+    public function getZipRootDir(string $zipPath): ?string
+    {
+        if (!class_exists('ZipArchive', false)) {
+            // Fallback: use unzip -l command
+            $unzipPath = $this->getCommandPath('unzip');
+            if ($unzipPath === false) {
+                return null;
+            }
+            $command = 'unzip -l ' . escapeshellarg($zipPath) . ' 2>/dev/null | head -n 5';
+            $output = $this->execute($command);
+            if ($output === false) {
+                return null;
+            }
+            // Parse the output to find the first directory
+            foreach (explode("\n", $output) as $line) {
+                if (preg_match('/\s+(\S+)\/$/', $line, $matches)) {
+                    return rtrim($matches[1], '/');
+                }
+            }
+            return null;
+        }
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipPath) !== true) {
+            return null;
+        }
+
+        // Get the first entry which is typically the root directory
+        $firstEntry = $zip->getNameIndex(0);
+        $zip->close();
+
+        if ($firstEntry === false) {
+            return null;
+        }
+
+        // Extract the root directory name (before the first /)
+        $parts = explode('/', $firstEntry);
+        return $parts[0] ?: null;
     }
 
     /**
@@ -383,33 +422,55 @@ class Utils
 class Addons
 {
     /**
+     * Repository owner and name for addon lists.
+     * Can be overridden to use a fork.
+     */
+    public const ADDON_LIST_REPO = 'Daniel-KM/UpgradeToOmekaS';
+
+    /**
+     * Branch to use for addon lists.
+     * Can be 'master', 'main', 'develop', etc.
+     */
+    public const ADDON_LIST_BRANCH = 'master';
+
+    /**
      * @var Utils
      */
     protected $utils;
 
     /**
      * Source of data and destination of addons.
+     * URLs are built dynamically using ADDON_LIST_REPO and ADDON_LIST_BRANCH.
      *
      * @var array
      */
-    protected $data = [
-        'omekamodule' => [
-            'source' => 'https://omeka.org/add-ons/json/s_module.json',
-            'destination' => '/modules',
-        ],
-        'omekatheme' => [
-            'source' => 'https://omeka.org/add-ons/json/s_theme.json',
-            'destination' => '/themes',
-        ],
-        'module' => [
-            'source' => 'https://raw.githubusercontent.com/Daniel-KM/UpgradeToOmekaS/master/_data/omeka_s_modules.csv',
-            'destination' => '/modules',
-        ],
-        'theme' => [
-            'source' => 'https://raw.githubusercontent.com/Daniel-KM/UpgradeToOmekaS/master/_data/omeka_s_themes.csv',
-            'destination' => '/themes',
-        ],
-    ];
+    protected $data = [];
+
+    /**
+     * Default data sources.
+     */
+    protected function getDefaultData(): array
+    {
+        $baseUrl = 'https://raw.githubusercontent.com/' . self::ADDON_LIST_REPO . '/' . self::ADDON_LIST_BRANCH . '/_data/';
+        return [
+            'omekamodule' => [
+                'source' => 'https://omeka.org/add-ons/json/s_module.json',
+                'destination' => '/modules',
+            ],
+            'omekatheme' => [
+                'source' => 'https://omeka.org/add-ons/json/s_theme.json',
+                'destination' => '/themes',
+            ],
+            'module' => [
+                'source' => $baseUrl . 'omeka_s_modules.csv',
+                'destination' => '/modules',
+            ],
+            'theme' => [
+                'source' => $baseUrl . 'omeka_s_themes.csv',
+                'destination' => '/themes',
+            ],
+        ];
+    }
 
     /**
      * Cache for the list of addons.
@@ -428,6 +489,7 @@ class Addons
     public function __construct(?Utils $utils = null)
     {
         $this->utils = $utils ?? new Utils();
+        $this->data = $this->getDefaultData();
     }
 
     public function  __invoke(): self
@@ -450,11 +512,12 @@ class Addons
 
         if ($list) {
             $this->selections = $list;
-            return$list;
+            return $list;
         }
 
         $this->selections = [];
-        $csv = @file_get_contents('https://raw.githubusercontent.com/Daniel-KM/UpgradeToOmekaS/refs/heads/master/_data/omeka_s_selections.csv');
+        $selectionsUrl = 'https://raw.githubusercontent.com/' . self::ADDON_LIST_REPO . '/' . self::ADDON_LIST_BRANCH . '/_data/omeka_s_selections.csv';
+        $csv = @file_get_contents($selectionsUrl);
         if ($csv) {
             // Get the column for name and modules.
             $headers = [];
@@ -597,7 +660,7 @@ class Addons
         $headers = array_flip($addons[0]);
 
         foreach ($addons as $key => $row) {
-            if ($key == 0 || empty($row) || !isset($row[$headers['Url']])) {
+            if ($key === 0 || empty($row) || !isset($row[$headers['Url']])) {
                 continue;
             }
 
@@ -645,9 +708,11 @@ class Addons
     }
 
     /**
-     * Helper to parse html to get urls and names of addons.
+     * Helper to parse json to get urls and names of addons from omeka.org.
      *
-     * @todo Manage dependencies for addon from omeka.org.
+     * Note: The omeka.org api doesn't include dependency information.
+     * Dependencies are available in the full csv addon lists which parse
+     * the module.ini files from each repository.
      *
      * @param string $json
      * @param string $type
@@ -680,6 +745,8 @@ class Addons
             $addon['version'] = $data['latest_version'];
             $addon['url'] = $url;
             $addon['zip'] = $zip;
+            // Dependencies not available in omeka.org api; use csv lists for
+            // full dependency info.
             $addon['dependencies'] = [];
 
             $list[$url] = $addon;
@@ -722,6 +789,9 @@ class Addons
             return false;
         }
 
+        // Get the root directory name from the zip before extracting.
+        $extractedDir = $this->utils->getZipRootDir($zipFile);
+
         // Unzip downloaded file.
         $result = $this->utils->unzipFile($zipFile, $destination);
 
@@ -736,7 +806,7 @@ class Addons
         }
 
         // Move the addon to its destination.
-        $this->moveAddon($addon);
+        $this->moveAddon($addon, $extractedDir);
 
         return true;
     }
@@ -744,15 +814,11 @@ class Addons
     /**
      * Helper to rename the directory of an addon.
      *
-     * The name of the directory is unknown, because it is a subfolder inside
-     * the zip file, and the name of the module may be different from the name
-     * of the directory.
-     * @todo Get the directory name from the zip.
-     *
-     * @param string $addon
+     * @param array $addon The addon data.
+     * @param string|null $extractedDir The directory name extracted from zip, if available.
      * @return bool
      */
-    protected function moveAddon($addon): bool
+    protected function moveAddon(array $addon, ?string $extractedDir = null): bool
     {
         switch ($addon['type']) {
             case 'module':
@@ -765,79 +831,38 @@ class Addons
                 return false;
         }
 
-        // Allows to manage case like AddItemLink, where the project name on
-        // github is only "AddItem".
-        $loop = [$addon['dir']];
-        if ($addon['basename'] != $addon['dir']) {
-            $loop[] = $addon['basename'];
+        $path = $destination . DIRECTORY_SEPARATOR . $addon['dir'];
+
+        // If we have the extracted directory name from the zip, use it directly.
+        if ($extractedDir !== null) {
+            $source = $destination . DIRECTORY_SEPARATOR . $extractedDir;
+            if (file_exists($source)) {
+                if ($source === $path) {
+                    return true;
+                }
+                return rename($source, $path);
+            }
         }
 
-        // Manage only the most common cases.
-        // @todo Use a scan dir + a regex.
-        $checks = [
-            ['', ''],
-            ['', '-master'],
-            ['', '-module-master'],
-            ['', '-theme-master'],
-            ['omeka-', '-master'],
-            ['omeka-s-', '-master'],
-            ['omeka-S-', '-master'],
-            ['module-', '-master'],
-            ['module_', '-master'],
-            ['omeka-module-', '-master'],
-            ['omeka-s-module-', '-master'],
-            ['omeka-S-module-', '-master'],
-            ['theme-', '-master'],
-            ['theme_', '-master'],
-            ['omeka-theme-', '-master'],
-            ['omeka-s-theme-', '-master'],
-            ['omeka-S-theme-', '-master'],
-            ['omeka_', '-master'],
-            ['omeka_s_', '-master'],
-            ['omeka_S_', '-master'],
-            ['omeka_module_', '-master'],
-            ['omeka_s_module_', '-master'],
-            ['omeka_S_module_', '-master'],
-            ['omeka_theme_', '-master'],
-            ['omeka_s_theme_', '-master'],
-            ['omeka_S_theme_', '-master'],
-            ['omeka_Module_', '-master'],
-            ['omeka_s_Module_', '-master'],
-            ['omeka_S_Module_', '-master'],
-            ['omeka_Theme_', '-master'],
-            ['omeka_s_Theme_', '-master'],
-            ['omeka_S_Theme_', '-master'],
-        ];
+        // Fallback: scan directory and find newly created folder matching addon name.
+        // Use refresh=true to see newly extracted directories.
+        $existingDirs = $this->listDirsInDir($destination, true);
+        $addonNames = [$addon['dir']];
+        if ($addon['basename'] !== $addon['dir']) {
+            $addonNames[] = $addon['basename'];
+        }
 
+        // Try to find a directory that contains the addon name (case-insensitive).
         $source = '';
-        foreach ($loop as $addonName) {
-            foreach ($checks as $check) {
-                $sourceCheck = $destination . DIRECTORY_SEPARATOR
-                    . $check[0] . $addonName . $check[1];
-                if (file_exists($sourceCheck)) {
-                    $source = $sourceCheck;
-                    break 2;
-                }
-                // Allows to manage case like name is "Ead", not "EAD".
-                $sourceCheck = $destination . DIRECTORY_SEPARATOR
-                    . $check[0] . ucfirst(strtolower($addonName)) . $check[1];
-                if (file_exists($sourceCheck)) {
-                    $source = $sourceCheck;
-                    $addonName = ucfirst(strtolower($addonName));
-                    break 2;
-                }
-                if ($check[0]) {
-                    $sourceCheck = $destination . DIRECTORY_SEPARATOR
-                        . ucfirst($check[0]) . $addonName . $check[1];
-                    if (file_exists($sourceCheck)) {
+        foreach ($existingDirs as $dir) {
+            $dirLower = strtolower($dir);
+            foreach ($addonNames as $addonName) {
+                $nameLower = strtolower($addonName);
+                // Check if directory contains the addon name.
+                if (strpos($dirLower, $nameLower) !== false) {
+                    $sourceCheck = $destination . DIRECTORY_SEPARATOR . $dir;
+                    if (file_exists($sourceCheck) && is_dir($sourceCheck)) {
                         $source = $sourceCheck;
-                        break 2;
-                    }
-                    $sourceCheck = $destination . DIRECTORY_SEPARATOR
-                        . ucfirst($check[0]) . ucfirst(strtolower($addonName)) . $check[1];
-                    if (file_exists($sourceCheck)) {
-                        $source = $sourceCheck;
-                        $addonName = ucfirst(strtolower($addonName));
                         break 2;
                     }
                 }
@@ -848,7 +873,6 @@ class Addons
             return false;
         }
 
-        $path = $destination . DIRECTORY_SEPARATOR . $addon['dir'];
         if ($source === $path) {
             return true;
         }
@@ -860,12 +884,13 @@ class Addons
      * List directories in a directory, not recursively.
      *
      * @param string $dir
+     * @param bool $refresh Force a fresh scan, ignoring cache.
      */
-    protected function listDirsInDir($dir): array
+    protected function listDirsInDir($dir, bool $refresh = false): array
     {
         static $dirs;
 
-        if (isset($dirs[$dir])) {
+        if (!$refresh && isset($dirs[$dir])) {
             return $dirs[$dir];
         }
 
@@ -956,16 +981,19 @@ if ($isReadableAndWriteable) {
     }
 }
 
-// Test si le dossier est vide (sauf le présent fichier).
-// TODO Le dossier pourrait ne pas être vide et convenir : test si le dossier ne contient pas les fichiers et dossiers Omeka.
+// Test si le dossier ne contient pas déjà une installation Omeka.
 $result = scandir(__DIR__);
 if ($result === false) {
     $isSystemValid = false;
     $utils->log('Le serveur web ne peut pas compter les fichiers existants dans le dossier en cours.');
-} elseif (count($result) > 3) {
-    // Scandir compte « . », « .. » et le présent fichier.
-    $isSystemValid = false;
-    $utils->log('Le dossier en cours n’est pas vide.');
+} else {
+    // Check for existing Omeka files/directories instead of requiring empty dir.
+    $omekaFiles = ['application', 'config', 'modules', 'themes', 'files', '.htaccess', 'index.php'];
+    $existingOmekaFiles = array_intersect($result, $omekaFiles);
+    if (!empty($existingOmekaFiles)) {
+        $isSystemValid = false;
+        $utils->log('Le dossier contient des fichiers Omeka : ' . implode(', ', $existingOmekaFiles) . '.');
+    }
 }
 
 // Vérification complémentaire : unzip ou l’extension zip doivent être
@@ -983,7 +1011,8 @@ if (!extension_loaded('zip')) {
 }
 
 // Test si le serveur a accès à internet.
-$fileToDownload = 'https://raw.githubusercontent.com/omeka/omeka-s/refs/heads/develop/README.md';
+// Use omeka-s repository to verify GitHub connectivity.
+$fileToDownload = 'https://raw.githubusercontent.com/omeka/omeka-s/develop/README.md';
 try {
     $result = $utils->downloadFile($fileToDownload, __DIR__ . '/README.md');
     if (!$result) {
@@ -1086,6 +1115,8 @@ if ($isPhpValid && $isPost) {
             $sql = 'SELECT VERSION();';
             $stmt = $pdo->query($sql);
             $dbVersion = $stmt->fetchColumn();
+            $stmt = null;
+            $pdo = null;
             if (strpos($dbVersion, 'MariaDB') === false) {
                 if (!version_compare($dbVersion, Utils::MYSQL_MINIMUM_VERSION, '>=')) {
                     $isDatabaseValid = false;
@@ -1125,6 +1156,8 @@ if ($isPhpValid && $isPost) {
             );
             $stmt = $pdo->query($sql);
             $hasDatabase = (bool) $stmt->fetchColumn();
+            $stmt = null;
+            $pdo = null;
         } catch (Exception $e) {
             // La base de données n’est pas disponible pour l’utilisateur ou n’existe pas.
             $hasDatabase = false;
@@ -1137,6 +1170,8 @@ if ($isPhpValid && $isPost) {
             $pdo = new PDO($dsnb, $user, $password, $dbOptions);
             $stmt = $pdo->query('SHOW TABLES;');
             $hasTables = (bool) $stmt->fetchColumn();
+            $stmt = null;
+            $pdo = null;
             if ($hasTables) {
                 $isDatabaseValid = false;
                 $utils->log('La base de données doit être vide.');
@@ -1150,6 +1185,7 @@ if ($isPhpValid && $isPost) {
                 // Avec "create database", le nom de la base ne doit pas être quote(), mais « ` » si besoin.
                 $sql = sprintf('CREATE DATABASE `%s`;', $dbname);
                 $result = $pdo->exec($sql);
+                $pdo = null;
                 if ($result === false) {
                     $isDatabaseValid = false;
                     $utils->log('Impossible de créer la base de données.');
@@ -1237,9 +1273,16 @@ if ($isValid && $isPost) {
     // Modifier les droits des dossiers et fichiers.
     // Normalement inutile.
     if (!$failed) {
-        chmod(__DIR__ . '/files', 0775);
-        chmod(__DIR__ . '/logs/application.log', 0775);
-        chmod(__DIR__ . '/logs/sql.log', 0775);
+        $chmodPaths = [
+            __DIR__ . '/files',
+            __DIR__ . '/logs/application.log',
+            __DIR__ . '/logs/sql.log',
+        ];
+        foreach ($chmodPaths as $chmodPath) {
+            if (file_exists($chmodPath) && !@chmod($chmodPath, 0775)) {
+                $utils->log(sprintf('Impossible de modifier les droits de %s.', basename($chmodPath)));
+            }
+        }
     }
 
     // Modifier config.
