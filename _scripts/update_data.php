@@ -1577,6 +1577,27 @@ class UpdateDataExtensions
         return $allItems;
     }
 
+    /**
+     * Fetch a raw file from a URL with caching.
+     *
+     * @param string $url The URL to fetch
+     * @return string|false The file content or false on failure
+     */
+    protected function fetchRawFile($url)
+    {
+        static $cache = [];
+
+        if (isset($cache[$url])) {
+            return $cache[$url];
+        }
+
+        $content = @file_get_contents($url);
+        // Cache both successful and failed fetches (false) to avoid retrying
+        $cache[$url] = $content;
+
+        return $content;
+    }
+
     protected function getIniForAddon($addonUrl, $iniPath = null)
     {
         static $addons = [];
@@ -1620,11 +1641,11 @@ class UpdateDataExtensions
 
         $addonIni = $iniPath ?: ('master/' . $this->args['ini']);
         $addonIni = $addonIniBase . '/' . $addonIni;
-        $ini = @file_get_contents($addonIni);
+        $ini = $this->fetchRawFile($addonIni);
         if (empty($ini)) {
             $addonIni = $iniPath ?: ('main/' . $this->args['ini']);
             $addonIni = $addonIniBase . '/' . $addonIni;
-            $ini = @file_get_contents($addonIni);
+            $ini = $this->fetchRawFile($addonIni);
             if (empty($ini) && empty($iniPath)) {
                 $this->log('[No config ini ]' . ' ' . $addonUrl);
                 if ($this->options['debug']) {
