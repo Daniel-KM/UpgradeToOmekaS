@@ -10,7 +10,7 @@ AgileTools	1.3.1
 AiGenerator	3.4.4
 AllInOneAccessibility	1.0
 AlternativeLabelSelect	3.4.1
-Alto	0.2.0
+Alto	0.2.1
 AltText	1.3.0
 AmazonS3	3.4.4
 AmazonS3Storage	1.0.0
@@ -18,6 +18,7 @@ AnalyticsSnippet	3.4.5
 AnalyticsSnippetPiwik	3.4.8
 Annotate	3.4.10
 Cartography	3.4.3
+AnnotationProfiles	0.1.0
 AnyCloud	3.2.1
 ApiInfo	3.4.12
 ArchiveFolder	2.4
@@ -37,7 +38,7 @@ BienEtreBot	1.0.0
 BlockLayoutSkeleton	0.1.0
 BlockPlus	3.4.42
 BlocksDisposition	3.4.5
-BokehBall	0.0.1
+BokehBall	0.0.2
 BulkCheck	3.3.11
 BulkEdit	3.4.37
 BulkExport	3.4.37
@@ -48,7 +49,7 @@ CacheNavigation	3.4.0
 CartoAffect	0.1.9
 CAS	0.6.3
 CatalogSearch	0.1.0
-ChaoticumSeminario	0.0.13
+ChaoticumSeminario	0.0.6
 CiteShare	1.0.0
 Citing	1.0.0
 Ckeconfig	0.1.3
@@ -60,7 +61,7 @@ CollectingTogether	0.1.0
 Columbo	0.1.4
 ColumnsMaker	0.0.1
 Comment	3.4.14
-Common	3.4.75
+Common	3.4.76
 ConnectedSites	1.0
 ContactUs	3.4.27
 ContentReader	1.0.0
@@ -106,6 +107,7 @@ EasyInstall	3.3.7
 Ebook	3.4.10
 EhpSearchForm	1.3.0
 EUCookieBar	3.4.5
+Exelearning	0.0.0
 ExhibitList	1.0
 ExploratoryMap	1.0
 ExploratoryText	1.2
@@ -133,7 +135,7 @@ Footnotes	3.3.0.2-3.4.1
 FreeSpace	1.0.1
 Generic	3.4.47
 GestionFormation	0.0.1
-GlobalLandingPage	1.0.1
+GlobalLandingPage	1.0.2
 GlycerineViewer	1.0.0
 GoogleAnalytics	1.3.2
 GoogleTagManager	1.0.0
@@ -243,7 +245,7 @@ NetworkMap	1.0
 Next	3.4.49
 NodeGraph	1.0.0
 NoGoogleChromeFlockTracking	3.4.1
-NumericDataTypes	1.14.0
+NumericDataTypes	1.14.1
 OaiPmhHarvester	3.4.24
 OaiPmhRepository	3.4.11
 OaiPmhRepositoryMediaPropertyMapper	0.1.0
@@ -322,7 +324,7 @@ Shibboleth	3.4.13
 Shortcode	3.4.15
 ShowMore	1.5
 Sigil	0.1.0
-SimilarItems	0.4.1
+SimilarItems	0.4.3
 SimpleBlock	0.1.0
 SimpleCarousel	1.3.0
 SimpleIiif	0.1.0-alpha
