@@ -1462,13 +1462,22 @@ class UpdateDataExtensions
         // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        // Timeout to avoid blocking on slow/unresponsive servers.
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
 
         if ($headers) {
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         }
 
         $response = curl_exec($curl);
+        $curlError = curl_error($curl);
         curl_close($curl);
+
+        if ($curlError) {
+            $this->log(sprintf('Curl error for url %s: %s', $url, $curlError));
+            return [];
+        }
 
         if ($response === false) {
             $this->log(sprintf('No response from curl for url %s.', $url));
@@ -1827,12 +1836,13 @@ class UpdateDataExtensions
      */
     protected function formatTime(float $seconds): string
     {
-        if ($seconds < 60) {
+        $secs = (int) $seconds;
+        if ($secs < 60) {
             return sprintf('%.1fs', $seconds);
-        } elseif ($seconds < 3600) {
-            return sprintf('%dm %ds', (int)($seconds / 60), (int)($seconds % 60));
+        } elseif ($secs < 3600) {
+            return sprintf('%dm %ds', (int)($secs / 60), $secs % 60);
         } else {
-            return sprintf('%dh %dm', (int)($seconds / 3600), (int)(($seconds % 3600) / 60));
+            return sprintf('%dh %dm', (int)($secs / 3600), (int)(($secs % 3600) / 60));
         }
     }
 }
