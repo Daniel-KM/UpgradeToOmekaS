@@ -568,11 +568,40 @@ class UpdateDataExtensions
         $this->log(sprintf('[Update] Processing %d addons...', $totalAddons));
         $this->log('');
 
+        // Collect all addon URLs to process for batch prefetching
+        $addonUrlsToProcess = [];
         foreach ($addons as $key => $addon) {
             if ($key === 0) {
                 continue;
             }
-            $addonUrl = trim($addon[$headers['Url']], '/ ');
+            $addonUrl = trim($addon[$headers['Url']] ?? '', '/ ');
+            if (empty($addonUrl)) {
+                continue;
+            }
+            if ($this->options['processOnlyAddon'] && !in_array($addonUrl, $this->options['processOnlyAddon'])) {
+                continue;
+            }
+            $addonName = $addon[$headers['Name']] ?? '';
+            if ($addonName && $this->options['processOnlyNewUrls']) {
+                continue;
+            }
+            if ($this->options['debug'] && $this->options['debugMax'] && $key > $this->options['debugMax']) {
+                continue;
+            }
+            $addonUrlsToProcess[$key] = $addonUrl;
+        }
+
+        // Prefetch API data in batches of 10 for faster processing
+        $batchSize = 10;
+        $urlBatches = array_chunk($addonUrlsToProcess, $batchSize, true);
+        $totalBatches = count($urlBatches);
+        $this->log(sprintf('[Update] Prefetching data in %d batches of %d...', $totalBatches, $batchSize));
+
+        foreach ($addons as $key => $addon) {
+            if ($key === 0) {
+                continue;
+            }
+            $addonUrl = trim($addon[$headers['Url']] ?? '', '/ ');
             if (empty($addonUrl)) {
                 $skippedCount++;
                 continue;
@@ -583,7 +612,7 @@ class UpdateDataExtensions
                 continue;
             }
 
-            $addonName = $addon[$headers['Name']];
+            $addonName = $addon[$headers['Name']] ?? '';
             if ($addonName && $this->options['processOnlyNewUrls']) {
                 $skippedCount++;
                 continue;
@@ -598,6 +627,12 @@ class UpdateDataExtensions
                 if ($this->options['debugMax'] && $key > $this->options['debugMax']) {
                     break;
                 }
+            }
+
+            // Prefetch next batch when starting a new batch
+            $batchIndex = (int) floor($processedCount / $batchSize);
+            if ($processedCount % $batchSize === 0 && isset($urlBatches[$batchIndex])) {
+                $this->prefetchAddonData(array_values($urlBatches[$batchIndex]));
             }
 
             $processedCount++;
@@ -1517,6 +1552,133 @@ class UpdateDataExtensions
         $data[$url] = $output;
 
         return $output;
+    }
+
+    /**
+     * Fetch multiple URLs in parallel using curl_multi.
+     *
+     * @param array $urls List of URLs to fetch.
+     * @param int $batchSize Number of concurrent requests (default 10).
+     * @return array Associative array of URL => response.
+     */
+    protected function curlMultiBatch(array $urls, int $batchSize = 10): array
+    {
+        static $cache = [];
+        $results = [];
+        $toFetch = [];
+
+        // Check cache first
+        foreach ($urls as $url) {
+            if (isset($cache[$url])) {
+                $results[$url] = $cache[$url];
+            } else {
+                $toFetch[] = $url;
+            }
+        }
+
+        if (empty($toFetch)) {
+            return $results;
+        }
+
+        // Process in batches
+        $batches = array_chunk($toFetch, $batchSize);
+
+        foreach ($batches as $batch) {
+            $multiHandle = curl_multi_init();
+            $handles = [];
+
+            foreach ($batch as $url) {
+                $ch = curl_init();
+                $server = strtolower(parse_url($url, PHP_URL_HOST));
+
+                $headers = [];
+                if (strpos($server, 'github') !== false) {
+                    $userAgent = 'Daniel-KM/UpgradeToOmekaS';
+                    $headers[] = 'Accept: application/vnd.github+json';
+                    $headers[] = 'X-GitHub-Api-Version: 2022-11-28';
+                    if (!empty($this->options['token'][$server])) {
+                        $headers[] = 'Authorization: token ' . $this->options['token'][$server];
+                    }
+                } else {
+                    $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/135.0';
+                }
+
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+                if ($headers) {
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                }
+
+                curl_multi_add_handle($multiHandle, $ch);
+                $handles[$url] = $ch;
+            }
+
+            // Execute all requests
+            $running = null;
+            do {
+                curl_multi_exec($multiHandle, $running);
+                curl_multi_select($multiHandle);
+            } while ($running > 0);
+
+            // Collect results
+            foreach ($handles as $url => $ch) {
+                $response = curl_multi_getcontent($ch);
+                $output = json_decode($response);
+
+                if (!empty($output) && (is_array($output) || is_object($output))) {
+                    // Check for error messages
+                    if (is_object($output) && !empty($output->message)) {
+                        $cache[$url] = [];
+                    } elseif (is_array($output) && !empty($output['message'])) {
+                        $cache[$url] = [];
+                    } else {
+                        $cache[$url] = $output;
+                    }
+                } else {
+                    $cache[$url] = [];
+                }
+
+                $results[$url] = $cache[$url];
+                curl_multi_remove_handle($multiHandle, $ch);
+                curl_close($ch);
+            }
+
+            curl_multi_close($multiHandle);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Prefetch API data for multiple addons in parallel.
+     *
+     * @param array $addonUrls List of addon URLs.
+     */
+    protected function prefetchAddonData(array $addonUrls): void
+    {
+        $apiUrls = [];
+
+        foreach ($addonUrls as $addonUrl) {
+            $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
+            $project = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
+
+            switch ($server) {
+                case 'github.com':
+                    $apiUrls[] = 'https://api.github.com/repos/' . $project;
+                    break;
+                case 'gitlab.com':
+                    $encodedProject = urlencode($project);
+                    $apiUrls[] = 'https://gitlab.com/api/v4/projects/' . $encodedProject;
+                    break;
+            }
+        }
+
+        if ($apiUrls) {
+            $this->curlMultiBatch($apiUrls, 10);
+        }
     }
 
     /**
