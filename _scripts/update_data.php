@@ -102,7 +102,41 @@ $types = [
         'destination' => $datapath . 'omeka_s_modules.csv',
         'topic' => 'omeka-s-module',
         'keywords' => '"Omeka%20S"+module',
+        // Additional search patterns to find more modules.
+        'keywords_extra' => [
+            'omeka-s-module',
+            'omeka-s+module',
+            'omekas+module',
+        ],
         'ini' => 'config' . DIRECTORY_SEPARATOR . 'module.ini',
+        // Known organizations that publish Omeka S modules.
+        'organizations' => [
+            'github.com' => [
+                'Daniel-KM',
+                'biblibre',
+                'omeka-s-modules',
+                'GhentCDH',
+                'digihum',
+                'chnm',
+                'zerocrates',
+                'samszo',
+                'omeka-j',
+                'ateeducacion',
+                'ManOnDaMoon',
+                'indic-archive',
+                'Libnamic',
+                'caprowsky',
+                'pols12',
+                'utarchives',
+                'neshmi',
+                'Fisk-University',
+                'agile-humanities',
+            ],
+            'gitlab.com' => [
+                'Daniel-KM',
+                '6piTech',
+            ],
+        ],
     ],
     'theme' => [
         'source' => $datapath . 'omeka_themes.csv',
@@ -116,7 +150,26 @@ $types = [
         'destination' => $datapath . 'omeka_s_themes.csv',
         'topic' => 'omeka-s-theme',
         'keywords' => '"Omeka%20S"+theme',
+        'keywords_extra' => [
+            'omeka-s-theme',
+            'omeka-s+theme',
+            'omekas+theme',
+        ],
         'ini' => 'config' . DIRECTORY_SEPARATOR . 'theme.ini',
+        'organizations' => [
+            'github.com' => [
+                'Daniel-KM',
+                'omeka-s-themes',
+                'omeka',
+                'GhentCDH',
+                'biblibre',
+                'agile-humanities',
+                'ManOnDaMoon',
+            ],
+            'gitlab.com' => [
+                'Daniel-KM',
+            ],
+        ],
     ],
 ];
 
@@ -424,11 +477,23 @@ class UpdateDataExtensions
 
         $newUrls = [];
 
-        // Topic is now included in default query, so there is only one search
-        // query.
+        // Build multiple search queries to catch more modules.
+        // The main query uses the standard keywords.
         $searches = [
             'keywords' => 'https://api.github.com/search/repositories?q=' . $this->args['keywords'] . '+fork%3Afalse' . '+in:topics,name,description,readme',
         ];
+
+        // Add extra keyword searches if configured.
+        if (!empty($this->args['keywords_extra'])) {
+            foreach ($this->args['keywords_extra'] as $i => $extraKeywords) {
+                $searches['extra_' . $i] = 'https://api.github.com/search/repositories?q=' . $extraKeywords . '+fork%3Afalse' . '+in:topics,name,description,readme';
+            }
+        }
+
+        // Add topic-based search.
+        if (!empty($this->args['topic'])) {
+            $searches['topic'] = 'https://api.github.com/search/repositories?q=topic%3A' . $this->args['topic'] . '+fork%3Afalse';
+        }
 
         foreach ($searches as $searchType => $url) {
             // // Limit the search to the last month.
@@ -450,7 +515,8 @@ class UpdateDataExtensions
             if ($response) {
                 $totalCount = $response->total_count;
                 $this->log(sprintf(
-                    '[Search] Found %d repositories matching "%s"',
+                    '[Search:%s] Found %d repositories matching "%s"',
+                    $searchType,
                     $totalCount,
                     $this->type
                 ));
@@ -475,7 +541,8 @@ class UpdateDataExtensions
                         $totalProcessed += count($response->items);
 
                         $this->log(sprintf(
-                            '[Search] Page %d/%d: processed %d/%d repos, found %d new URLs',
+                            '[Search:%s] Page %d/%d: processed %d/%d repos, found %d new URLs',
+                            $searchType,
                             $page,
                             $totalPages,
                             $totalProcessed,
@@ -487,10 +554,21 @@ class UpdateDataExtensions
                     } while ($totalProcessed < $totalCount);
                 }
             } else {
-                $this->log('[Search] No results from GitHub API.');
-                break;
+                $this->log(sprintf('[Search:%s] No results from GitHub API.', $searchType));
             }
         }
+
+        // Search known organizations on GitHub.
+        $resultOrgs = $this->searchOrganizations($urls);
+        $addons = array_merge($addons, $resultOrgs['new_addons']);
+        $urls = array_merge($urls, $resultOrgs['new_urls']);
+        $newUrls = array_merge($newUrls, $resultOrgs['new_urls']);
+
+        // Search GitLab.
+        $resultGitLab = $this->searchGitLab($urls);
+        $addons = array_merge($addons, $resultGitLab['new_addons']);
+        $urls = array_merge($urls, $resultGitLab['new_urls']);
+        $newUrls = array_merge($newUrls, $resultGitLab['new_urls']);
 
         $this->log('');
         if ($newUrls) {
@@ -503,6 +581,225 @@ class UpdateDataExtensions
         }
 
         return $addons;
+    }
+
+    /**
+     * Search repositories in known organizations.
+     *
+     * @param array $urls Existing URLs to filter out.
+     * @return array New addons and URLs found.
+     */
+    protected function searchOrganizations(array $urls)
+    {
+        $newAddons = [];
+        $newUrls = [];
+
+        if (empty($this->args['organizations'])) {
+            return ['new_addons' => $newAddons, 'new_urls' => $newUrls];
+        }
+
+        $headers = $this->headers;
+        $addonBase = array_fill(0, count($headers), null);
+        $toExclude = !empty($this->options['filterFalseAddons']) && file_exists($this->options['excludedUrlsPath'])
+            ? array_filter(array_map('trim', explode("\n", file_get_contents($this->options['excludedUrlsPath']))))
+            : [];
+
+        // Search GitHub organizations.
+        if (!empty($this->args['organizations']['github.com'])) {
+            $this->log('[Search:orgs] Searching known GitHub organizations...');
+            foreach ($this->args['organizations']['github.com'] as $org) {
+                $apiUrl = 'https://api.github.com/users/' . $org . '/repos?per_page=100&type=all';
+                $page = 1;
+                $foundInOrg = 0;
+
+                do {
+                    $url = $apiUrl . '&page=' . $page;
+                    $response = $this->curl($url, [], false);
+
+                    if (empty($response) || !is_array($response)) {
+                        break;
+                    }
+
+                    foreach ($response as $repo) {
+                        $repoUrl = $repo->html_url;
+
+                        // Skip if already known or excluded.
+                        if (in_array($repoUrl, $urls) || in_array($repoUrl, $newUrls)) {
+                            continue;
+                        }
+                        if (in_array($repoUrl, $toExclude)) {
+                            continue;
+                        }
+                        if ($repo->fork) {
+                            continue;
+                        }
+
+                        // Check if this looks like an Omeka S addon by checking for ini file.
+                        $ini = $this->getIniForAddon($repoUrl);
+                        if (empty($ini)) {
+                            continue;
+                        }
+
+                        $addon = $addonBase;
+                        $addon[$headers['Url']] = $repoUrl;
+                        $newAddons[] = $addon;
+                        $newUrls[] = $repoUrl;
+                        $foundInOrg++;
+
+                        if ($this->options['debug']) {
+                            $this->log(sprintf('[Search:orgs] NEW from %s: %s', $org, $repoUrl));
+                        }
+                    }
+
+                    // If less than 100 repos, we've reached the end.
+                    if (count($response) < 100) {
+                        break;
+                    }
+                    $page++;
+                } while ($page <= 10); // Safety limit.
+
+                if ($foundInOrg > 0) {
+                    $this->log(sprintf('[Search:orgs] Found %d new repos in %s', $foundInOrg, $org));
+                }
+            }
+        }
+
+        // Search GitLab organizations/groups.
+        if (!empty($this->args['organizations']['gitlab.com'])) {
+            $this->log('[Search:orgs] Searching known GitLab groups...');
+            foreach ($this->args['organizations']['gitlab.com'] as $group) {
+                $encodedGroup = urlencode($group);
+                $apiUrl = 'https://gitlab.com/api/v4/groups/' . $encodedGroup . '/projects?per_page=100&include_subgroups=true';
+                $page = 1;
+                $foundInOrg = 0;
+
+                do {
+                    $url = $apiUrl . '&page=' . $page;
+                    $response = $this->curl($url, [], false);
+
+                    if (empty($response) || !is_array($response)) {
+                        break;
+                    }
+
+                    foreach ($response as $project) {
+                        $repoUrl = $project->web_url;
+
+                        // Skip if already known or excluded.
+                        if (in_array($repoUrl, $urls) || in_array($repoUrl, $newUrls)) {
+                            continue;
+                        }
+                        if (in_array($repoUrl, $toExclude)) {
+                            continue;
+                        }
+
+                        // Check if this looks like an Omeka S addon.
+                        $ini = $this->getIniForAddon($repoUrl);
+                        if (empty($ini)) {
+                            continue;
+                        }
+
+                        $addon = $addonBase;
+                        $addon[$headers['Url']] = $repoUrl;
+                        $newAddons[] = $addon;
+                        $newUrls[] = $repoUrl;
+                        $foundInOrg++;
+
+                        if ($this->options['debug']) {
+                            $this->log(sprintf('[Search:orgs] NEW from %s: %s', $group, $repoUrl));
+                        }
+                    }
+
+                    if (count($response) < 100) {
+                        break;
+                    }
+                    $page++;
+                } while ($page <= 10);
+
+                if ($foundInOrg > 0) {
+                    $this->log(sprintf('[Search:orgs] Found %d new repos in %s', $foundInOrg, $group));
+                }
+            }
+        }
+
+        $this->log(sprintf('[Search:orgs] Total: %d new URLs from organizations', count($newUrls)));
+
+        return ['new_addons' => $newAddons, 'new_urls' => $newUrls];
+    }
+
+    /**
+     * Search GitLab for Omeka S modules.
+     *
+     * @param array $urls Existing URLs to filter out.
+     * @return array New addons and URLs found.
+     */
+    protected function searchGitLab(array $urls)
+    {
+        $newAddons = [];
+        $newUrls = [];
+
+        $headers = $this->headers;
+        $addonBase = array_fill(0, count($headers), null);
+        $toExclude = !empty($this->options['filterFalseAddons']) && file_exists($this->options['excludedUrlsPath'])
+            ? array_filter(array_map('trim', explode("\n", file_get_contents($this->options['excludedUrlsPath']))))
+            : [];
+
+        // GitLab search queries.
+        $searchTerms = ['omeka-s-module', 'omeka module', 'omeka-s'];
+        if (!empty($this->args['topic'])) {
+            $searchTerms[] = $this->args['topic'];
+        }
+
+        $this->log('[Search:gitlab] Searching GitLab...');
+
+        foreach ($searchTerms as $term) {
+            $apiUrl = 'https://gitlab.com/api/v4/projects?search=' . urlencode($term) . '&per_page=100';
+            $page = 1;
+
+            do {
+                $url = $apiUrl . '&page=' . $page;
+                $response = $this->curl($url, [], false);
+
+                if (empty($response) || !is_array($response)) {
+                    break;
+                }
+
+                foreach ($response as $project) {
+                    $repoUrl = $project->web_url;
+
+                    // Skip if already known or excluded.
+                    if (in_array($repoUrl, $urls) || in_array($repoUrl, $newUrls)) {
+                        continue;
+                    }
+                    if (in_array($repoUrl, $toExclude)) {
+                        continue;
+                    }
+
+                    // Check if this looks like an Omeka S addon.
+                    $ini = $this->getIniForAddon($repoUrl);
+                    if (empty($ini)) {
+                        continue;
+                    }
+
+                    $addon = $addonBase;
+                    $addon[$headers['Url']] = $repoUrl;
+                    $newAddons[] = $addon;
+                    $newUrls[] = $repoUrl;
+
+                    if ($this->options['debug']) {
+                        $this->log(sprintf('[Search:gitlab] NEW: %s', $repoUrl));
+                    }
+                }
+
+                if (count($response) < 100) {
+                    break;
+                }
+                $page++;
+            } while ($page <= 5); // Safety limit for GitLab.
+        }
+
+        $this->log(sprintf('[Search:gitlab] Total: %d new URLs from GitLab', count($newUrls)));
+
+        return ['new_addons' => $newAddons, 'new_urls' => $newUrls];
     }
 
     /**
