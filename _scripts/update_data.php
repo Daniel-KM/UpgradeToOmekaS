@@ -1457,14 +1457,15 @@ class UpdateDataExtensions
     }
 
     /**
-     * Helper to get the response of a web service.
+     * Helper to get the response of a web service with retry logic.
      *
      * @param string $url
      * @param array $headers
      * @param bool $messageResponse
+     * @param int $maxRetries Maximum number of retry attempts for network errors.
      * @return array The array may contain standard objects at any level.
      */
-    protected function curl($url, $headers = [], $messageResponse = true)
+    protected function curl($url, $headers = [], $messageResponse = true, $maxRetries = 3)
     {
         static $data = [];
 
@@ -1474,8 +1475,6 @@ class UpdateDataExtensions
 
         // Avoid processing multiple times the same url with the same issue.
         $data[$url] = [];
-
-        $curl = curl_init();
 
         $server = strtolower(parse_url($url, PHP_URL_HOST));
 
@@ -1492,37 +1491,74 @@ class UpdateDataExtensions
         }
         $headers = array_unique($headers);
 
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
-        // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-        // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        // Timeout to avoid blocking on slow/unresponsive servers.
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+        // Retry loop with exponential backoff.
+        $attempt = 0;
+        $response = false;
+        $curlError = '';
+        $httpCode = 0;
 
-        if ($headers) {
-            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        while ($attempt < $maxRetries) {
+            $attempt++;
+
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
+            // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+            // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            // Timeout to avoid blocking on slow/unresponsive servers.
+            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+
+            if ($headers) {
+                curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+            }
+
+            $response = curl_exec($curl);
+            $curlError = curl_error($curl);
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+
+            // Success - break out of retry loop.
+            if ($response !== false && empty($curlError) && $httpCode >= 200 && $httpCode < 500) {
+                break;
+            }
+
+            // Network error or server error (5xx) - retry with backoff.
+            if ($attempt < $maxRetries) {
+                $sleepTime = pow(2, $attempt); // Exponential backoff: 2, 4, 8 seconds.
+                if ($this->options['debug'] || $attempt > 1) {
+                    $this->log(sprintf(
+                        '[Retry] Attempt %d/%d failed for %s (HTTP %d, error: %s). Retrying in %ds...',
+                        $attempt,
+                        $maxRetries,
+                        $url,
+                        $httpCode,
+                        $curlError ?: 'none',
+                        $sleepTime
+                    ));
+                }
+                sleep($sleepTime);
+            }
         }
 
-        $response = curl_exec($curl);
-        $curlError = curl_error($curl);
-        curl_close($curl);
-
         if ($curlError) {
-            $this->log(sprintf('Curl error for url %s: %s', $url, $curlError));
+            $this->log(sprintf('Curl error for url %s after %d attempts: %s', $url, $attempt, $curlError));
             return [];
         }
 
         if ($response === false) {
-            $this->log(sprintf('No response from curl for url %s.', $url));
+            $this->log(sprintf('No response from curl for url %s after %d attempts.', $url, $attempt));
             return [];
         }
 
         // All api are json.
         $output = json_decode($response);
         if (empty($output)) {
-            $this->log(sprintf('Empty response from curl for url %s.', $url));
+            // Don't log for 404 errors (common for non-existent files).
+            if ($httpCode !== 404) {
+                $this->log(sprintf('Empty response from curl for url %s (HTTP %d).', $url, $httpCode));
+            }
             return [];
         }
 
@@ -1536,6 +1572,19 @@ class UpdateDataExtensions
             // Check for GitHub rate limit error.
             if (strpos($output->message, 'API rate limit exceeded') !== false) {
                 $this->log('GitHub API rate limit exceeded. Add a token to _data/token_github.txt for higher limits.');
+                // Wait and retry for rate limit.
+                if ($attempt < $maxRetries) {
+                    $this->log('[Rate limit] Waiting 60 seconds before retry...');
+                    sleep(60);
+                    unset($data[$url]);
+                    return $this->curl($url, $headers, $messageResponse, $maxRetries - $attempt);
+                }
+            } elseif (strpos($output->message, 'secondary rate limit') !== false) {
+                // GitHub secondary rate limit - wait longer.
+                $this->log('[Secondary rate limit] Waiting 120 seconds...');
+                sleep(120);
+                unset($data[$url]);
+                return $this->curl($url, $headers, $messageResponse, $maxRetries - $attempt);
             } elseif ($messageResponse) {
                 $this->log(sprintf('Error on url %1$s: %2$s.', $url, $output->message));
             }
@@ -1749,12 +1798,13 @@ class UpdateDataExtensions
     }
 
     /**
-     * Fetch a raw file from a URL with caching.
+     * Fetch a raw file from a URL with caching and retry logic.
      *
      * @param string $url The URL to fetch
+     * @param int $maxRetries Maximum retry attempts for network errors.
      * @return string|false The file content or false on failure
      */
-    protected function fetchRawFile($url)
+    protected function fetchRawFile($url, $maxRetries = 3)
     {
         static $cache = [];
 
@@ -1762,8 +1812,61 @@ class UpdateDataExtensions
             return $cache[$url];
         }
 
-        $content = @file_get_contents($url);
-        // Cache both successful and failed fetches (false) to avoid retrying
+        $content = false;
+        $attempt = 0;
+
+        while ($attempt < $maxRetries) {
+            $attempt++;
+
+            // Use stream context for better control.
+            $context = stream_context_create([
+                'http' => [
+                    'timeout' => 30,
+                    'ignore_errors' => true,
+                    'user_agent' => 'Daniel-KM/UpgradeToOmekaS',
+                ],
+                'ssl' => [
+                    'verify_peer' => true,
+                    'verify_peer_name' => true,
+                ],
+            ]);
+
+            $content = @file_get_contents($url, false, $context);
+
+            // Check HTTP response code from headers.
+            $httpCode = 0;
+            if (isset($http_response_header) && is_array($http_response_header)) {
+                foreach ($http_response_header as $header) {
+                    if (preg_match('/^HTTP\/\d+\.\d+\s+(\d+)/', $header, $matches)) {
+                        $httpCode = (int) $matches[1];
+                        break;
+                    }
+                }
+            }
+
+            // Success or 404 (file doesn't exist) - don't retry.
+            if ($content !== false || $httpCode === 404) {
+                break;
+            }
+
+            // Network error or server error - retry with backoff.
+            if ($attempt < $maxRetries) {
+                $sleepTime = pow(2, $attempt);
+                if ($this->options['debug']) {
+                    $this->log(sprintf(
+                        '[fetchRawFile] Attempt %d/%d failed for %s (HTTP %d). Retrying in %ds...',
+                        $attempt,
+                        $maxRetries,
+                        $url,
+                        $httpCode,
+                        $sleepTime
+                    ));
+                }
+                sleep($sleepTime);
+            }
+        }
+
+        // Cache both successful and failed fetches to avoid retrying.
         $cache[$url] = $content;
 
         return $content;
