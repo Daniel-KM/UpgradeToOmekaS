@@ -54,6 +54,10 @@ $options = [
     // Filter false addons (students testing, etc.). See file excluded_urls.txt.
     'filterFalseAddons' => true,
     'excludedUrlsPath' => $datapath . 'excluded_urls.txt',
+    // Cache invalid URLs per type to avoid re-checking them.
+    // Each type has its own cache file (e.g., invalid_urls_module.txt).
+    'cacheInvalidUrls' => true,
+    'cacheInvalidUrlsPath' => $datapath . 'cache/',
     // Update only one or more types of addon ("plugin", "module", "theme", "template").
     'processOnlyType' => [
     ],
@@ -190,6 +194,18 @@ class UpdateDataExtensions
     protected $progressTotal = 0;
     protected $lastProgressOutput = 0;
 
+    /**
+     * Cache of invalid URLs (URLs without valid ini file for this type).
+     * @var array
+     */
+    protected $invalidUrlsCache = [];
+
+    /**
+     * New invalid URLs found during this run (to be saved at the end).
+     * @var array
+     */
+    protected $newInvalidUrls = [];
+
     public function __construct($type, $args = [], $options = [])
     {
         $this->type = $type;
@@ -198,6 +214,9 @@ class UpdateDataExtensions
         }
         $this->args = $args;
         $this->options = $options;
+
+        // Load cached invalid URLs for this type.
+        $this->loadInvalidUrlsCache();
     }
 
     /**
@@ -295,6 +314,9 @@ class UpdateDataExtensions
                 return false;
             }
         }
+
+        // Save the cache of invalid URLs discovered during this run.
+        $this->saveInvalidUrlsCache();
 
         $this->log('[Done] CSV file saved successfully.');
         $this->log(str_repeat('-', 70));
@@ -1887,6 +1909,15 @@ class UpdateDataExtensions
             return $addons[$keyAddon];
         }
 
+        // Check if URL is in the invalid cache for this type (skip fetching).
+        // Only check cache when no custom iniPath is provided.
+        if (empty($iniPath) && $this->isUrlInvalidCached($addonUrl)) {
+            if ($this->options['debug']) {
+                $this->log('[Cached invalid]' . ' ' . $addonUrl);
+            }
+            return '';
+        }
+
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
         switch ($server) {
             case 'github.com':
@@ -1925,6 +1956,8 @@ class UpdateDataExtensions
                 if ($this->options['debug']) {
                     $this->log(' Addon ini: ' . $addonIni);
                 }
+                // Add to invalid URLs cache for this type.
+                $this->addInvalidUrl($addonUrl);
                 return '';
             }
         }
@@ -2109,5 +2142,115 @@ class UpdateDataExtensions
         } else {
             return sprintf('%dh %dm', (int)($secs / 3600), (int)(($secs % 3600) / 60));
         }
+    }
+
+    /**
+     * Load the cache of invalid URLs for this addon type.
+     *
+     * Invalid URLs are URLs that don't have a valid ini file for this type.
+     * A URL may be invalid for "module" but valid for "theme", so each type
+     * has its own cache file.
+     */
+    protected function loadInvalidUrlsCache(): void
+    {
+        if (empty($this->options['cacheInvalidUrls'])) {
+            return;
+        }
+
+        $cacheFile = $this->getInvalidUrlsCacheFile();
+        if (!file_exists($cacheFile)) {
+            $this->invalidUrlsCache = [];
+            return;
+        }
+
+        $content = file_get_contents($cacheFile);
+        if (empty($content)) {
+            $this->invalidUrlsCache = [];
+            return;
+        }
+
+        // Each line is a URL.
+        $urls = array_filter(array_map('trim', explode("\n", $content)));
+        $this->invalidUrlsCache = array_flip($urls);
+
+        if ($this->options['debug']) {
+            $this->log(sprintf('[Cache] Loaded %d invalid URLs for type "%s"', count($this->invalidUrlsCache), $this->type));
+        }
+    }
+
+    /**
+     * Save new invalid URLs to the cache file.
+     *
+     * Called at the end of processing to persist newly discovered invalid URLs.
+     */
+    protected function saveInvalidUrlsCache(): void
+    {
+        if (empty($this->options['cacheInvalidUrls'])) {
+            return;
+        }
+
+        if (empty($this->newInvalidUrls)) {
+            return;
+        }
+
+        $cacheFile = $this->getInvalidUrlsCacheFile();
+        $cacheDir = dirname($cacheFile);
+
+        // Create cache directory if it doesn't exist.
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0755, true);
+        }
+
+        // Append new invalid URLs to the cache file.
+        $newUrls = implode("\n", $this->newInvalidUrls) . "\n";
+        file_put_contents($cacheFile, $newUrls, FILE_APPEND | LOCK_EX);
+
+        $this->log(sprintf('[Cache] Saved %d new invalid URLs for type "%s"', count($this->newInvalidUrls), $this->type));
+    }
+
+    /**
+     * Get the cache file path for invalid URLs of this type.
+     *
+     * @return string
+     */
+    protected function getInvalidUrlsCacheFile(): string
+    {
+        $cachePath = rtrim($this->options['cacheInvalidUrlsPath'] ?? '', '/\\');
+        return $cachePath . DIRECTORY_SEPARATOR . 'invalid_urls_' . $this->type . '.txt';
+    }
+
+    /**
+     * Check if a URL is in the invalid URLs cache for this type.
+     *
+     * @param string $url
+     * @return bool
+     */
+    protected function isUrlInvalidCached(string $url): bool
+    {
+        if (empty($this->options['cacheInvalidUrls'])) {
+            return false;
+        }
+
+        return isset($this->invalidUrlsCache[$url]);
+    }
+
+    /**
+     * Add a URL to the invalid URLs cache for this type.
+     *
+     * @param string $url
+     */
+    protected function addInvalidUrl(string $url): void
+    {
+        if (empty($this->options['cacheInvalidUrls'])) {
+            return;
+        }
+
+        // Don't add if already in cache.
+        if (isset($this->invalidUrlsCache[$url])) {
+            return;
+        }
+
+        $this->invalidUrlsCache[$url] = true;
+        $this->newInvalidUrls[] = $url;
     }
 }
