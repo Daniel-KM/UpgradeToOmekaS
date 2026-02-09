@@ -1079,6 +1079,12 @@ class UpdateDataExtensions
             return $addon;
         }
 
+        // Skip HTML error pages received instead of INI content.
+        if (preg_match('/^\s*</', $ini)) {
+            $this->log('[No key in ini ]' . ' ' . $addonName);
+            return $addon;
+        }
+
         $ini = parse_ini_string($ini);
         if (empty($ini)) {
             $this->log('[No key in ini ]' . ' ' . $addonName);
@@ -2163,8 +2169,13 @@ class UpdateDataExtensions
                 }
             }
 
-            // Success or 404 (file doesn't exist) - don't retry.
-            if ($content !== false || $httpCode === 404) {
+            // 404 (file doesn't exist) - discard error page body, don't retry.
+            if ($httpCode === 404) {
+                $content = false;
+                break;
+            }
+            // Success - don't retry.
+            if ($content !== false) {
                 break;
             }
 
