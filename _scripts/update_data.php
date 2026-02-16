@@ -280,9 +280,16 @@ class UpdateDataExtensions
 
     /**
      * Cache of invalid URLs (URLs without valid ini file for this type).
+     * Each entry is url => ['first' => 'YYYY-MM-DD', 'last' => 'YYYY-MM-DD'].
      * @var array
      */
     protected $invalidUrlsCache = [];
+
+    /**
+     * First dates of expired entries, so re-adding preserves the original date.
+     * @var array
+     */
+    protected $expiredFirstDates = [];
 
     /**
      * New invalid URLs found during this run (to be saved at the end).
@@ -2519,9 +2526,12 @@ class UpdateDataExtensions
      * A URL may be invalid for "module" but valid for "theme", so each type
      * has its own cache file.
      *
-     * Each line is stored as "URL\tYYYY-MM-DD". Entries older than one month
-     * are expired so the URL can be re-checked. Lines without a date (old
-     * format) are treated as expired.
+     * Each line is stored as "URL\tfirst_date\tlast_check_date". Expiration
+     * depends on how long the URL has been known as invalid:
+     * - Less than 3 months: re-check every month.
+     * - 3 months or more: re-check once a year.
+     * Lines without dates (old format) or with a single date are treated as
+     * expired so the URL is re-checked.
      */
     protected function loadInvalidUrlsCache(): void
     {
@@ -2542,20 +2552,47 @@ class UpdateDataExtensions
         }
 
         $lines = array_filter(array_map('trim', explode("\n", $content)));
-        $expiry = strtotime('-1 month');
+        $oneMonthAgo = strtotime('-1 month');
+        $threeMonthsAgo = strtotime('-3 months');
+        $oneYearAgo = strtotime('-1 year');
         $this->invalidUrlsCache = [];
+        $this->expiredFirstDates = [];
         $expired = 0;
 
         foreach ($lines as $line) {
-            $parts = explode("\t", $line, 2);
+            $parts = explode("\t", $line, 3);
             $url = $parts[0];
-            $date = $parts[1] ?? null;
-            // Skip entries without date (old format) or older than one month.
-            if (empty($date) || strtotime($date) < $expiry) {
+            $firstDate = $parts[1] ?? null;
+            $lastCheck = $parts[2] ?? null;
+
+            // Skip entries with missing dates (old format): force re-check.
+            if (empty($firstDate) || empty($lastCheck)) {
                 ++$expired;
+                if (!empty($firstDate)) {
+                    $this->expiredFirstDates[$url] = $firstDate;
+                }
                 continue;
             }
-            $this->invalidUrlsCache[$url] = $date;
+
+            $firstTs = strtotime($firstDate);
+            $lastTs = strtotime($lastCheck);
+
+            // Determine re-check interval based on age.
+            if ($firstTs >= $threeMonthsAgo) {
+                // Known invalid for less than 3 months: re-check monthly.
+                $isExpired = $lastTs < $oneMonthAgo;
+            } else {
+                // Known invalid for 3 months or more: re-check yearly.
+                $isExpired = $lastTs < $oneYearAgo;
+            }
+
+            if ($isExpired) {
+                ++$expired;
+                $this->expiredFirstDates[$url] = $firstDate;
+                continue;
+            }
+
+            $this->invalidUrlsCache[$url] = ['first' => $firstDate, 'last' => $lastCheck];
         }
 
         // Rewrite the cache file if expired entries were removed.
@@ -2592,11 +2629,12 @@ class UpdateDataExtensions
             mkdir($cacheDir, 0755, true);
         }
 
-        // Append new invalid URLs with date to the cache file.
-        $date = date('Y-m-d');
+        // Append new invalid URLs with first date and last check date.
+        $today = date('Y-m-d');
         $lines = '';
         foreach ($this->newInvalidUrls as $url) {
-            $lines .= $url . "\t" . $date . "\n";
+            $firstDate = $this->expiredFirstDates[$url] ?? $today;
+            $lines .= $url . "\t" . $firstDate . "\t" . $today . "\n";
         }
         file_put_contents($cacheFile, $lines, FILE_APPEND | LOCK_EX);
 
@@ -2658,7 +2696,9 @@ class UpdateDataExtensions
             return;
         }
 
-        $this->invalidUrlsCache[$url] = date('Y-m-d');
+        $today = date('Y-m-d');
+        $firstDate = $this->expiredFirstDates[$url] ?? $today;
+        $this->invalidUrlsCache[$url] = ['first' => $firstDate, 'last' => $today];
         $this->newInvalidUrls[] = $url;
     }
 
@@ -2675,8 +2715,8 @@ class UpdateDataExtensions
         }
 
         $lines = '';
-        foreach ($this->invalidUrlsCache as $url => $date) {
-            $lines .= $url . "\t" . $date . "\n";
+        foreach ($this->invalidUrlsCache as $url => $dates) {
+            $lines .= $url . "\t" . $dates['first'] . "\t" . $dates['last'] . "\n";
         }
         file_put_contents($cacheFile, $lines, LOCK_EX);
     }
