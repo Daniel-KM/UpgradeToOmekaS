@@ -173,10 +173,41 @@ $types = [
     ],
 ];
 
+// Pre-load all URLs from all CSV files to avoid cross-type checks during search.
+$allUrlsByType = [];
+foreach ($types as $type => $args) {
+    $allUrlsByType[$type] = [];
+    if (file_exists($args['source'])) {
+        $rows = array_map('str_getcsv', file($args['source']));
+        if (!empty($rows)) {
+            $csvHeaders = array_flip($rows[0]);
+            if (isset($csvHeaders['Url'])) {
+                foreach ($rows as $key => $row) {
+                    if ($key === 0) {
+                        continue;
+                    }
+                    $url = trim($row[$csvHeaders['Url']] ?? '', '/ ');
+                    if ($url) {
+                        $allUrlsByType[$type][] = $url;
+                    }
+                }
+            }
+        }
+    }
+}
+
 foreach ($types as $type => $args) {
     if ($options['processOnlyType'] && !in_array($type, $options['processOnlyType'])) {
         continue;
     }
+    // Build the list of URLs from other types to skip during search.
+    $otherTypesUrls = [];
+    foreach ($allUrlsByType as $otherType => $urls) {
+        if ($otherType !== $type) {
+            $otherTypesUrls = array_merge($otherTypesUrls, $urls);
+        }
+    }
+    $options['otherTypesUrls'] = array_flip($otherTypesUrls);
     $update = new UpdateDataExtensions($type, $args, $options);
     $result = $update->process();
     $update->processUpdateLastVersions();
@@ -633,6 +664,10 @@ class UpdateDataExtensions
                         if ($repo->fork) {
                             continue;
                         }
+                        // Skip URLs already known to belong to another type.
+                        if ($this->isUrlInOtherType($repoUrl)) {
+                            continue;
+                        }
 
                         // Check if this looks like an Omeka S addon by checking for ini file.
                         $ini = $this->getIniForAddon($repoUrl);
@@ -689,6 +724,10 @@ class UpdateDataExtensions
                             continue;
                         }
                         if (in_array($repoUrl, $toExclude)) {
+                            continue;
+                        }
+                        // Skip URLs already known to belong to another type.
+                        if ($this->isUrlInOtherType($repoUrl)) {
                             continue;
                         }
 
@@ -773,6 +812,10 @@ class UpdateDataExtensions
                     if (in_array($repoUrl, $toExclude)) {
                         continue;
                     }
+                    // Skip URLs already known to belong to another type.
+                    if ($this->isUrlInOtherType($repoUrl)) {
+                        continue;
+                    }
 
                     // Check if this looks like an Omeka S addon.
                     $ini = $this->getIniForAddon($repoUrl);
@@ -835,6 +878,13 @@ class UpdateDataExtensions
             if ($repo->fork) {
                 if ($this->options['debug']) {
                     $this->log(sprintf('Is fork   : %s', $repo->html_url));
+                }
+                continue;
+            }
+            // Skip URLs already known to belong to another type.
+            if ($this->isUrlInOtherType($repo->html_url)) {
+                if ($this->options['debug']) {
+                    $this->log(sprintf('Other type: %s', $repo->html_url));
                 }
                 continue;
             }
@@ -2217,6 +2267,12 @@ class UpdateDataExtensions
             return $addons[$keyAddon];
         }
 
+        // If the URL was already identified as a different addon type, skip:
+        // a module won't have a theme.ini and vice versa.
+        if (isset($addonTypes[$keyAddon]) && $addonTypes[$keyAddon] !== $this->type) {
+            return '';
+        }
+
         // Check if URL is in the invalid cache for this type (skip fetching).
         // Only check cache when no custom iniPath is provided.
         if (empty($iniPath) && $this->isUrlInvalidCached($addonUrl)) {
@@ -2540,6 +2596,19 @@ class UpdateDataExtensions
         }
 
         return isset($this->invalidUrlsCache[$url]);
+    }
+
+    /**
+     * Check if a URL belongs to another addon type (plugin, module, theme, template).
+     *
+     * This avoids fetching ini files for URLs already known to be of a different type.
+     *
+     * @param string $url
+     * @return bool
+     */
+    protected function isUrlInOtherType(string $url): bool
+    {
+        return isset($this->options['otherTypesUrls'][$url]);
     }
 
     /**
