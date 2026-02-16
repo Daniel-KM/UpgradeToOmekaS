@@ -2118,7 +2118,9 @@ class UpdateDataExtensions
         $page = 1;
 
         while ($page <= $maxPages) {
-            $url = $baseUrl . '&page=' . $page;
+            // Use base URL as-is for page 1 to benefit from curl cache
+            // when the same URL was already fetched (e.g. last released zip).
+            $url = $page === 1 ? $baseUrl : $baseUrl . '&page=' . $page;
             $content = $this->curl($url, [], false);
 
             if (empty($content) || !is_array($content)) {
@@ -2151,7 +2153,9 @@ class UpdateDataExtensions
         $page = 1;
 
         while ($page <= $maxPages) {
-            $url = $baseUrl . '&page=' . $page;
+            // Use base URL as-is for page 1 to benefit from curl cache
+            // when the same URL was already fetched (e.g. last released zip).
+            $url = $page === 1 ? $baseUrl : $baseUrl . '&page=' . $page;
             $content = $this->curl($url, [], false);
 
             if (empty($content) || !is_array($content)) {
