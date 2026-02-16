@@ -2518,6 +2518,10 @@ class UpdateDataExtensions
      * Invalid URLs are URLs that don't have a valid ini file for this type.
      * A URL may be invalid for "module" but valid for "theme", so each type
      * has its own cache file.
+     *
+     * Each line is stored as "URL\tYYYY-MM-DD". Entries older than one month
+     * are expired so the URL can be re-checked. Lines without a date (old
+     * format) are treated as expired.
      */
     protected function loadInvalidUrlsCache(): void
     {
@@ -2537,9 +2541,28 @@ class UpdateDataExtensions
             return;
         }
 
-        // Each line is a URL.
-        $urls = array_filter(array_map('trim', explode("\n", $content)));
-        $this->invalidUrlsCache = array_flip($urls);
+        $lines = array_filter(array_map('trim', explode("\n", $content)));
+        $expiry = strtotime('-1 month');
+        $this->invalidUrlsCache = [];
+        $expired = 0;
+
+        foreach ($lines as $line) {
+            $parts = explode("\t", $line, 2);
+            $url = $parts[0];
+            $date = $parts[1] ?? null;
+            // Skip entries without date (old format) or older than one month.
+            if (empty($date) || strtotime($date) < $expiry) {
+                ++$expired;
+                continue;
+            }
+            $this->invalidUrlsCache[$url] = $date;
+        }
+
+        // Rewrite the cache file if expired entries were removed.
+        if ($expired) {
+            $this->rewriteInvalidUrlsCache();
+            $this->log(sprintf('[Cache] Expired %d invalid URLs for type "%s"', $expired, $this->type));
+        }
 
         if ($this->options['debug']) {
             $this->log(sprintf('[Cache] Loaded %d invalid URLs for type "%s"', count($this->invalidUrlsCache), $this->type));
@@ -2569,9 +2592,13 @@ class UpdateDataExtensions
             mkdir($cacheDir, 0755, true);
         }
 
-        // Append new invalid URLs to the cache file.
-        $newUrls = implode("\n", $this->newInvalidUrls) . "\n";
-        file_put_contents($cacheFile, $newUrls, FILE_APPEND | LOCK_EX);
+        // Append new invalid URLs with date to the cache file.
+        $date = date('Y-m-d');
+        $lines = '';
+        foreach ($this->newInvalidUrls as $url) {
+            $lines .= $url . "\t" . $date . "\n";
+        }
+        file_put_contents($cacheFile, $lines, FILE_APPEND | LOCK_EX);
 
         $this->log(sprintf('[Cache] Saved %d new invalid URLs for type "%s"', count($this->newInvalidUrls), $this->type));
     }
@@ -2631,7 +2658,26 @@ class UpdateDataExtensions
             return;
         }
 
-        $this->invalidUrlsCache[$url] = true;
+        $this->invalidUrlsCache[$url] = date('Y-m-d');
         $this->newInvalidUrls[] = $url;
+    }
+
+    /**
+     * Rewrite the cache file with current in-memory entries (after expiry).
+     */
+    protected function rewriteInvalidUrlsCache(): void
+    {
+        $cacheFile = $this->getInvalidUrlsCacheFile();
+        $cacheDir = dirname($cacheFile);
+
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0755, true);
+        }
+
+        $lines = '';
+        foreach ($this->invalidUrlsCache as $url => $date) {
+            $lines .= $url . "\t" . $date . "\n";
+        }
+        file_put_contents($cacheFile, $lines, LOCK_EX);
     }
 }
