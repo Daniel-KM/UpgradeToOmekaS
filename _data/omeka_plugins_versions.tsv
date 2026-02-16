@@ -8,7 +8,7 @@ AddThis	0.1
 AdminAnalytics	1.0
 AdminImages	1.6
 adminMessage	0.0.0
-AdminTools	2.0
+AdminTools	2.1
 AdminUserManagement	1.0
 AdvSearchElementOrder	1.0
 AjaxCreate	0.1
@@ -127,6 +127,8 @@ CsvImportPenn	2.0.4
 CTCGuides	1.0
 CulCustomize	1
 CuratescapeAdminHelper	1.6.5
+CuratescapeGalleries	1.0
+CuratescapeSeo	1.0
 CuratorMonitor	2.4.7
 CustomCitation	1.0
 CustomHeadBodyContent	1.0
