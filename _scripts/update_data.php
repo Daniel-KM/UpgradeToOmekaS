@@ -1133,6 +1133,11 @@ class UpdateDataExtensions
             $addon[$headers['Count versions']] = $value;
         }
 
+        $value = $this->findData($addonUrl, 'count tags');
+        if ($value !== '') {
+            $addon[$headers['Count tags']] = $value;
+        }
+
         $value = $this->findData($addonUrl, 'total downloads');
         if ($value) {
             $addon[$headers['Total downloads']] = $value;
@@ -1835,6 +1840,9 @@ class UpdateDataExtensions
                     case 'watchers':
                         return $response->subscribers_count ?? '';
 
+                    case 'count tags':
+                        return $this->curlCount('https://api.github.com/repos/' . $user . '/' . $projectName . '/tags?per_page=1');
+
                     case 'open prs':
                         return $this->curlCount('https://api.github.com/repos/' . $user . '/' . $projectName . '/pulls?state=open&per_page=1');
 
@@ -1920,6 +1928,9 @@ class UpdateDataExtensions
                     case 'watchers':
                         // GitLab does not provide a watchers/subscribers count.
                         return '';
+
+                    case 'count tags':
+                        return $this->curlCount('https://gitlab.com/api/v4/projects/' . $encodedProject . '/repository/tags?per_page=1');
 
                     case 'open issues':
                         return $response->open_issues_count ?? '';
@@ -2553,6 +2564,10 @@ class UpdateDataExtensions
             return false;
         }
         foreach ($array as $row) {
+            // Ensure numeric keys are in order: PHP arrays maintain
+            // insertion order, and new keys created out of sequence
+            // (e.g. key 28 before 26) would produce swapped CSV columns.
+            ksort($row);
             fputcsv($handle, $row);
         }
         return fclose($handle);
