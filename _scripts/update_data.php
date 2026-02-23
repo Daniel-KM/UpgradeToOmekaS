@@ -452,9 +452,10 @@ class UpdateDataExtensions
             // otherwise compute from URL (which has hyphenated words we can parse).
             $dirNameKey = $headers['Directory name'] ?? null;
             $csvDirName = $dirNameKey !== null ? trim($addon[$dirNameKey] ?? '') : '';
-            // If CSV has a value with mixed case (like "AgileTools"), use it.
+            // If CSV has a value with mixed case (like "AgileTools") or
+            // non-ASCII characters (like emoji "🖒"), use it.
             // If CSV value is all lowercase (like "agiletools"), derive from URL instead.
-            if (!empty($csvDirName) && $csvDirName !== strtolower($csvDirName)) {
+            if (!empty($csvDirName) && ($csvDirName !== strtolower($csvDirName) || preg_match('/[^\x00-\x7F]/', $csvDirName))) {
                 $cleanName = $csvDirName;
             } else {
                 $cleanName = $this->extractNamespaceFromProjectName(basename($addonUrl));
@@ -470,6 +471,17 @@ class UpdateDataExtensions
                 $addonsLastVersions[$cleanName] = $lastVersion;
             } elseif (version_compare($addonsLastVersions[$cleanName], $lastVersion, '<=')) {
                 $addonsLastVersions[$cleanName] = $lastVersion;
+            }
+
+            // When the directory name differs from the URL-derived name,
+            // also store the URL-derived name as an alias (e.g. "🖒" and "Like").
+            $urlDerivedName = $this->extractNamespaceFromProjectName(basename($addonUrl));
+            if (!empty($urlDerivedName) && $urlDerivedName !== $cleanName) {
+                if (empty($addonsLastVersions[$urlDerivedName])) {
+                    $addonsLastVersions[$urlDerivedName] = $lastVersion;
+                } elseif (version_compare($addonsLastVersions[$urlDerivedName], $lastVersion, '<=')) {
+                    $addonsLastVersions[$urlDerivedName] = $lastVersion;
+                }
             }
             $processedCount++;
         }
@@ -1549,7 +1561,7 @@ class UpdateDataExtensions
     protected function cleanAddonName($name)
     {
         // Manage exceptions with non standard characters (avoid duplicates).
-        $addonName = str_replace(['+'], ['Plus'], $name);
+        $addonName = str_replace(['+', '👍', '🖒'], ['Plus', 'Like', 'Like'], $name);
 
         $cleanName = str_ireplace(
             ['plugin', 'module', 'theme'],
@@ -1581,7 +1593,7 @@ class UpdateDataExtensions
     protected function cleanAddonNameWithCase($name)
     {
         // Manage exceptions with non standard characters (avoid duplicates).
-        $addonName = str_replace(['+'], ['Plus'], $name);
+        $addonName = str_replace(['+', '👍', '🖒'], ['Plus', 'Like', 'Like'], $name);
 
         $cleanName = str_ireplace(
             ['plugin', 'module', 'theme'],
