@@ -14,7 +14,7 @@ Dans les deux cas, le dossier doit être accessible en écriture par le serveur 
 
 ### Via ftp ou l’interface web de l’hébergeur
 
-Copier ce <a href="https://raw.githubusercontent.com/Daniel-KM/UpgradeToOmekaS/refs/heads/master/_scripts/install_omeka_s.php" download="install_omeka_s.php" target="_self">fichier</a> à la racine du dossier dans lequel on souhaite installer Omeka S.
+Copier <a href="https://raw.githubusercontent.com/Daniel-KM/UpgradeToOmekaS/refs/heads/master/_scripts/install_omeka_s.php" download="install_omeka_s.php" target="_self">ce fichier</a> à la racine du dossier dans lequel on souhaite installer Omeka S.
 En cas d’alerte de sécurité, télécharger le fichier avec un clic droit.
 Vous pouvez aussi consulter le contenu du <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_scripts/install_omeka_s.php" target="_blank" rel="noopener">fichier sur Github</a> et le télécharger manuellement avec le bouton « Télécharger le fichier brut ».
 
