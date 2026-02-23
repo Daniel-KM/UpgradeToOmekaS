@@ -49,6 +49,21 @@
     .sort {
         cursor: pointer;
     }
+    .sort:hover::after {
+        content: " \21C5";
+        font-size: 0.8em;
+        opacity: 0.5;
+    }
+    .sort.asc::after {
+        content: " \25B2";
+        font-size: 0.7em;
+        opacity: 0.8;
+    }
+    .sort.desc::after {
+        content: " \25BC";
+        font-size: 0.7em;
+        opacity: 0.8;
+    }
     .page-content .wrapper {
         max-width: inherit;
     }

@@ -29,7 +29,7 @@ N’hésitez pas à signaler des thèmes manquants.
                     <th><span class="sort" data-sort="addon-license">Licence</span></th>
                     <th><span class="sort" data-sort="addon-tags">Mots-clés</span></th>
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
-                    <th><span class="sort" data-sort="addon-stats" title="Attention : le nombre de téléchargements ne correspond pas à la popularité. En particulier, certaines extensions n’ont pas de version et d’autres ont de nombreuses versions.">Stats</span></th>
+                    <th><span class="sort" data-sort="addon-stats-sort" title="Attention : le nombre de téléchargements ne correspond pas à la popularité. En particulier, certaines extensions n’ont pas de version et d’autres ont de nombreuses versions.">Stats</span></th>
                 </tr>
             </thead>
             {% include omeka_s_themes_table_body.md %}
