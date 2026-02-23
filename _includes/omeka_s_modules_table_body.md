@@ -16,6 +16,9 @@
                     {{ addon['Author'] | xml_escape }}
                 {% endif %}
             {% endunless %}
+            {% if addon['License'] and addon['License'] != '' %}
+                <br/><span class="addon-license">{{ addon['License'] | xml_escape }}</span>
+            {% endif %}
         {% endunless %}
         </td>
         <td class="addon-updated">
@@ -28,8 +31,11 @@
                 (v. {%- include addon_version.md version=version -%})
             {% endif %}
         </td>
-        <td class="addon-constraint">{{ addon['Omeka constraint'] }}</td>
-        <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
+        <td class="addon-target">
+            {% if addon['Omeka constraint'] and addon['Omeka constraint'] != '' %}
+                {{ addon['Omeka constraint'] }}
+            {% endif %}
+        </td>
         <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
         <td class="addon-description">{{ addon['Description'] | xml_escape }}</td>
         <td class="addon-stats">

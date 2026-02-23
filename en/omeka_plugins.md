@@ -26,10 +26,7 @@ This list brings together all the existing [Omeka Classic](https://omeka.org/cla
                     <th><span class="sort" data-sort="addon-link">Plugin</span></th>
                     <th><span class="sort" data-sort="addon-author">Author</span></th>
                     <th><span class="sort" data-sort="addon-updated">Updated</span></th>
-                    <th><span class="sort" data-sort="addon-omeka-org">Omeka.org</span></th>
-                    <th><span class="sort" data-sort="addon-upgradable">Upgradable</span></th>
                     <th><span class="sort" data-sort="addon-target">Target version</span></th>
-                    <th><span class="sort" data-sort="addon-license">License</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
                     <!--
                     <th><span class="sort" data-sort="addon-required">Required plugins</span></th>

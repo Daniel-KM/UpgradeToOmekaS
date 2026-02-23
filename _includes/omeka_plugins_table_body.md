@@ -14,6 +14,9 @@
                 {% assign account_url = addon['Url'] | split: account_name | first | append: account_name %}
                 <a href="{{ account_url }}" class="link addon-author">{{ addon['Author'] | xml_escape }}</a>
             {% endunless %}
+            {% if addon['License'] and addon['License'] != '' %}
+                <br/><span class="addon-license">{{ addon['License'] | xml_escape }}</span>
+            {% endif %}
         {% endunless %}
         </td>
         <td class="addon-updated">
@@ -26,16 +29,24 @@
                 (v. {%- include addon_version.md version=version -%})
             {% endif %}
         </td>
-        <td class="addon-omeka-org">{{ addon['Omeka.org'] }}</td>
-        <td class="addon-upgradable">{{ addon['Upgradable'] }}</td>
         <td class="addon-target">
-        {% if addon['Omeka target'] %}
-            {{ addon['Omeka target'] }}
-        {% else %}
-            {{ addon['Omeka min'] }}
-        {% endif %}
+            {%- if addon['Omeka.org'] and addon['Omeka.org'] != '' -%}
+                <span class="addon-omeka-org">{{ addon['Omeka.org'] }}</span>
+            {%- endif -%}
+            {%- if addon['Upgradable'] and addon['Upgradable'] != '' -%}
+                {%- if addon['Omeka.org'] and addon['Omeka.org'] != '' %}<br/>{% endif -%}
+                <span class="addon-upgradable">{{ addon['Upgradable'] }}</span>
+            {%- endif -%}
+            {%- if addon['Omeka target'] and addon['Omeka target'] != '' -%}
+                {%- if addon['Omeka.org'] and addon['Omeka.org'] != ''
+                    or addon['Upgradable'] and addon['Upgradable'] != '' %}<br/>{% endif -%}
+                {{ addon['Omeka target'] }}
+            {%- elsif addon['Omeka min'] and addon['Omeka min'] != '' -%}
+                {%- if addon['Omeka.org'] and addon['Omeka.org'] != ''
+                    or addon['Upgradable'] and addon['Upgradable'] != '' %}<br/>{% endif -%}
+                {{ addon['Omeka min'] }}
+            {%- endif -%}
         </td>
-        <td class="addon-license">{{ addon['License'] | xml_escape }}</td>
         <td class="addon-tags">{{ addon['Tags'] | replace: ',', ',<br />' }}</td>
         <!--
         <td class="addon-required">{{ addon['Required plugins'] | replace: ',', ',<br />' }}</td>

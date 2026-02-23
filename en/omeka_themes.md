@@ -26,8 +26,7 @@ Feel free to add missing themes.
                     <th><span class="sort" data-sort="addon-link">Plugin</span></th>
                     <th><span class="sort" data-sort="addon-author">Author</span></th>
                     <th><span class="sort" data-sort="addon-updated">Updated</span></th>
-                    <th><span class="sort" data-sort="addon-omeka-org">Omeka.org</span></th>
-                    <th><span class="sort" data-sort="addon-license">License</span></th>
+                    <th><span class="sort" data-sort="addon-target">Target version</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
                     <th><span class="sort" data-sort="addon-stats-sort" title="Warning: The number of downloads doesn’t mean popularity. In particular, some addons have no release and some other ones have many releases.">Stats</span></th>

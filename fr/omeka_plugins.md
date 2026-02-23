@@ -26,10 +26,8 @@ Cette liste rassemble tous les plugins existants pour [Omeka Classic](https://om
                     <th><span class="sort" data-sort="addon-link">Plugin</span></th>
                     <th><span class="sort" data-sort="addon-author">Auteur</span></th>
                     <th><span class="sort" data-sort="addon-updated">Mis à jour</span></th>
-                    <th><span class="sort" data-sort="addon-omeka-org">Omeka.org</span></th>
                     <th><span class="sort" data-sort="addon-upgradable">Omeka S</span></th>
                     <th><span class="sort" data-sort="addon-target">Version cible</span></th>
-                    <th><span class="sort" data-sort="addon-license">Licence</span></th>
                     <th><span class="sort" data-sort="addon-tags">Mots-clés</span></th>
                     <!--
                     <th><span class="sort" data-sort="addon-required">Dépendances</span></th>
