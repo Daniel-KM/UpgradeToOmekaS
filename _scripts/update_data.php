@@ -23,11 +23,27 @@ $tokenGithubPath = $datapath . 'token_github.txt';
 $tokenGithub = file_exists($tokenGithubPath) ? trim(file_get_contents($tokenGithubPath)) : '';
 if (empty($tokenGithub)) {
     echo "Warning: No GitHub token found at {$tokenGithubPath}\n";
-    echo "API rate limit will be 60 requests/hour. Create the file with a GitHub personal access token for 5000 requests/hour.\n\n";
+    echo "REST API with 60 requests/hour limit. With a token, GraphQL API is used (1 request per addon instead of ~8).\n\n";
+} else {
+    echo "GitHub token found. Using GraphQL API for optimal performance.\n";
 }
 
+$tokenGitlabPath = $datapath . 'token_gitlab.txt';
+$tokenGitlab = file_exists($tokenGitlabPath) ? trim(file_get_contents($tokenGitlabPath)) : '';
+if (empty($tokenGitlab)) {
+    echo "Warning: No GitLab token found at {$tokenGitlabPath}\n";
+    echo "GitLab API rate limit will be restricted. Create the file with a personal access token for higher limits.\n\n";
+} else {
+    echo "GitLab token found. Using GraphQL API for optimal performance.\n";
+}
+
+echo "\n";
+
 $options = [
-    'token' => ['api.github.com' => $tokenGithub],
+    'token' => [
+        'api.github.com' => $tokenGithub,
+        'gitlab.com' => $tokenGitlab,
+    ],
     // Set options to order addons: order by alphabtic name, then the one that
     // is not a fork first, then the oldest created one, then the alphabetic
     // url.
@@ -1116,85 +1132,110 @@ class UpdateDataExtensions
         $addonUrl = trim($addon[$headers['Url']], '/ ');
         $addonName = $addon[$headers['Name']] ?: basename($addonUrl);
 
-        // Set the date of the creation and the last update, that doesn’t depend
-        // on ini, and don’t update if empty.
-        $value = $this->findData($addonUrl, 'creation date');
-        if ($value) {
-            $addon[$headers['Creation date']] = $value;
+        // Try GraphQL first (single request for all data), fall back to REST.
+        $graphqlData = $this->fetchAddonGraphQL($addonUrl);
+
+        if ($graphqlData !== null) {
+            // GraphQL returned all data in a single request.
+            $graphqlFields = array(
+                'Creation date', 'Last update', 'Fork source',
+                'Last released zip', 'Directory name',
+                'Count versions', 'Count tags', 'Total downloads',
+                'Stars', 'Forks', 'Watchers',
+                'Open issues', 'Total issues', 'Open PRs', 'Total PRs',
+            );
+            foreach ($graphqlFields as $field) {
+                if (isset($headers[$field]) && isset($graphqlData[$field]) && $graphqlData[$field] !== '') {
+                    $addon[$headers[$field]] = $graphqlData[$field];
+                }
+            }
+
+            // Use ini from GraphQL response, or fall back to REST for ini.
+            $ini = $graphqlData['_ini_content'] ?? null;
+            if (empty($ini)) {
+                $ini = $this->getIniForAddon($addonUrl, $addon[$headers['Ini path']] ?? null);
+            }
+        } else {
+            // Fall back to REST API (multiple requests).
+            $value = $this->findData($addonUrl, 'creation date');
+            if ($value) {
+                $addon[$headers['Creation date']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'last update');
+            if ($value) {
+                $addon[$headers['Last update']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'fork source');
+            if ($value) {
+                $addon[$headers['Fork source']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'last released zip');
+            if ($value) {
+                $addon[$headers['Last released zip']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'directory name');
+            if ($value) {
+                $addon[$headers['Directory name']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'count versions');
+            if ($value) {
+                $addon[$headers['Count versions']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'count tags');
+            if ($value !== '') {
+                $addon[$headers['Count tags']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'total downloads');
+            if ($value) {
+                $addon[$headers['Total downloads']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'stars');
+            if ($value !== '') {
+                $addon[$headers['Stars']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'forks');
+            if ($value !== '') {
+                $addon[$headers['Forks']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'watchers');
+            if ($value !== '') {
+                $addon[$headers['Watchers']] = $value;
+            }
+
+            // Fetch before issues because issues count depends on prs count.
+            $value = $this->findData($addonUrl, 'open prs');
+            if ($value !== '') {
+                $addon[$headers['Open PRs']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'total prs');
+            if ($value !== '') {
+                $addon[$headers['Total PRs']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'open issues');
+            if ($value !== '') {
+                $addon[$headers['Open issues']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'total issues');
+            if ($value !== '') {
+                $addon[$headers['Total issues']] = $value;
+            }
+
+            $ini = $this->getIniForAddon($addonUrl, $addon[$headers['Ini path']] ?? null);
         }
 
-        $value = $this->findData($addonUrl, 'last update');
-        if ($value) {
-            $addon[$headers['Last update']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'fork source');
-        if ($value) {
-            $addon[$headers['Fork source']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'last released zip');
-        if ($value) {
-            $addon[$headers['Last released zip']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'directory name');
-        if ($value) {
-            $addon[$headers['Directory name']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'count versions');
-        if ($value) {
-            $addon[$headers['Count versions']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'count tags');
-        if ($value !== '') {
-            $addon[$headers['Count tags']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'total downloads');
-        if ($value) {
-            $addon[$headers['Total downloads']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'stars');
-        if ($value !== '') {
-            $addon[$headers['Stars']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'forks');
-        if ($value !== '') {
-            $addon[$headers['Forks']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'watchers');
-        if ($value !== '') {
-            $addon[$headers['Watchers']] = $value;
-        }
-
-        // Fetch before issues because issues count depends on prs count.
-        $value = $this->findData($addonUrl, 'open prs');
-        if ($value !== '') {
-            $addon[$headers['Open PRs']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'total prs');
-        if ($value !== '') {
-            $addon[$headers['Total PRs']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'open issues');
-        if ($value !== '') {
-            $addon[$headers['Open issues']] = $value;
-        }
-
-        $value = $this->findData($addonUrl, 'total issues');
-        if ($value !== '') {
-            $addon[$headers['Total issues']] = $value;
-        }
-
-        $ini = $this->getIniForAddon($addonUrl, $addon[$headers['Ini path']] ?? null);
         if (empty($ini) && empty($addon[$headers['Ini path']])) {
             return $addon;
         }
@@ -2003,6 +2044,11 @@ class UpdateDataExtensions
             if (!empty($this->options['token'][$server])) {
                 $headers[] = 'Authorization: token ' . $this->options['token'][$server];
             }
+        } elseif (strpos($server, 'gitlab') !== false) {
+            $userAgent = 'Daniel-KM/UpgradeToOmekaS';
+            if (!empty($this->options['token']['gitlab.com'])) {
+                $headers[] = 'PRIVATE-TOKEN: ' . $this->options['token']['gitlab.com'];
+            }
         } else {
             $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/135.0';
         }
@@ -2150,6 +2196,12 @@ class UpdateDataExtensions
             if (!empty($this->options['token'][$server])) {
                 $headers[] = 'Authorization: token ' . $this->options['token'][$server];
             }
+        } elseif (strpos($server, 'gitlab') !== false) {
+            $userAgent = 'Daniel-KM/UpgradeToOmekaS';
+            $headers = [];
+            if (!empty($this->options['token']['gitlab.com'])) {
+                $headers[] = 'PRIVATE-TOKEN: ' . $this->options['token']['gitlab.com'];
+            }
         } else {
             $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/135.0';
             $headers = [];
@@ -2205,6 +2257,224 @@ class UpdateDataExtensions
         }
 
         return '';
+    }
+
+    /**
+     * Send a GraphQL query to the GitHub API.
+     *
+     * Requires a GitHub token (GraphQL API does not support unauthenticated
+     * requests).
+     *
+     * @param string $query The GraphQL query string.
+     * @return object|null The decoded response, or null on error.
+     */
+    protected function curlGraphQL(string $query): ?object
+    {
+        $token = $this->options['token']['api.github.com'] ?? '';
+        if (empty($token)) {
+            return null;
+        }
+
+        $url = 'https://api.github.com/graphql';
+        $payload = json_encode(['query' => $query]);
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+        curl_setopt($curl, CURLOPT_USERAGENT, 'Daniel-KM/UpgradeToOmekaS');
+        curl_setopt($curl, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: bearer ' . $token,
+            'Accept: application/vnd.github+json',
+            'X-GitHub-Api-Version: 2022-11-28',
+        ]);
+
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($curl);
+        curl_close($curl);
+
+        if ($curlError || $response === false || $httpCode !== 200) {
+            if ($this->options['debug']) {
+                $this->log(sprintf('[GraphQL] Error: HTTP %d, %s', $httpCode, $curlError ?: 'unknown'));
+            }
+            return null;
+        }
+
+        $output = json_decode($response);
+        if (empty($output)) {
+            return null;
+        }
+
+        // Handle GraphQL-level errors.
+        if (!empty($output->errors)) {
+            $msg = $output->errors[0]->message ?? 'unknown error';
+            if (stripos($msg, 'rate limit') !== false) {
+                $this->log('[GraphQL] Rate limit exceeded. Waiting 60 seconds...');
+                sleep(60);
+                return $this->curlGraphQL($query);
+            }
+            if ($this->options['debug']) {
+                $this->log(sprintf('[GraphQL] Error: %s', $msg));
+            }
+            return null;
+        }
+
+        return $output;
+    }
+
+    /**
+     * Fetch all addon data from a GitHub repository using a single GraphQL query.
+     *
+     * Returns an associative array keyed by CSV header names, or null if GraphQL
+     * is not available (no token) or the repository is not on GitHub.
+     *
+     * @param string $addonUrl The addon URL (e.g. https://github.com/owner/repo).
+     * @return array|null All addon data, or null to fall back to REST.
+     */
+    protected function fetchAddonGraphQL(string $addonUrl): ?array
+    {
+        static $cache = [];
+        if (array_key_exists($addonUrl, $cache)) {
+            return $cache[$addonUrl];
+        }
+
+        $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
+        if ($server !== 'github.com') {
+            $cache[$addonUrl] = null;
+            return null;
+        }
+
+        $token = $this->options['token']['api.github.com'] ?? '';
+        if (empty($token)) {
+            $cache[$addonUrl] = null;
+            return null;
+        }
+
+        $project = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
+        $parts = explode('/', $project, 2);
+        $owner = $parts[0] ?? '';
+        $name = $parts[1] ?? '';
+        if (empty($owner) || empty($name)) {
+            $cache[$addonUrl] = null;
+            return null;
+        }
+
+        $iniPath = str_replace(DIRECTORY_SEPARATOR, '/', $this->args['ini']);
+
+        $query = <<<GRAPHQL
+            {
+              repository(owner: "{$owner}", name: "{$name}") {
+                createdAt
+                updatedAt
+                pushedAt
+                isFork
+                isArchived
+                parent { url }
+                stargazerCount
+                forkCount
+                watchers { totalCount }
+                openIssues: issues(states: OPEN) { totalCount }
+                closedIssues: issues(states: CLOSED) { totalCount }
+                openPRs: pullRequests(states: OPEN) { totalCount }
+                closedPRs: pullRequests(states: CLOSED) { totalCount }
+                mergedPRs: pullRequests(states: MERGED) { totalCount }
+                releases(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
+                  totalCount
+                  nodes {
+                    tagName
+                    releaseAssets(first: 50) {
+                      nodes { name downloadCount downloadUrl }
+                    }
+                  }
+                }
+                tags: refs(refPrefix: "refs/tags/") { totalCount }
+                iniFile: object(expression: "HEAD:{$iniPath}") {
+                  ... on Blob { text }
+                }
+              }
+            }
+            GRAPHQL;
+
+        $response = $this->curlGraphQL($query);
+        if (empty($response) || empty($response->data) || empty($response->data->repository)) {
+            $cache[$addonUrl] = null;
+            return null;
+        }
+
+        $repo = $response->data->repository;
+
+        $result = [];
+
+        // Dates.
+        $result['Creation date'] = $repo->createdAt ?? '';
+        $result['Last update'] = ($repo->isFork ?? false)
+            ? ($repo->updatedAt ?? '')
+            : max($repo->updatedAt ?? '', $repo->pushedAt ?? '');
+
+        // Fork source: direct parent URL (empty if not a fork).
+        $result['Fork source'] = ($repo->isFork ?? false) && !empty($repo->parent)
+            ? $repo->parent->url
+            : '';
+
+        // Stats from repository.
+        $result['Stars'] = $repo->stargazerCount ?? 0;
+        $result['Forks'] = $repo->forkCount ?? 0;
+        $result['Watchers'] = $repo->watchers->totalCount ?? 0;
+
+        // Issues and PRs: GraphQL gives real counts, no overlap.
+        $result['Open issues'] = $repo->openIssues->totalCount ?? 0;
+        $result['Total issues'] = ($repo->openIssues->totalCount ?? 0)
+            + ($repo->closedIssues->totalCount ?? 0);
+        $result['Open PRs'] = $repo->openPRs->totalCount ?? 0;
+        $result['Total PRs'] = ($repo->openPRs->totalCount ?? 0)
+            + ($repo->closedPRs->totalCount ?? 0)
+            + ($repo->mergedPRs->totalCount ?? 0);
+
+        // Releases and tags counts.
+        $result['Count versions'] = $repo->releases->totalCount ?? 0;
+        $result['Count tags'] = $repo->tags->totalCount ?? 0;
+
+        // Downloads and last released zip from release assets.
+        $releases = $repo->releases->nodes ?? [];
+        $namespace = $this->extractNamespaceFromProjectName($name);
+        $totalDownloads = 0;
+        $lastReleasedZip = '';
+        foreach ($releases as $i => $release) {
+            $version = $release->tagName;
+            foreach ($release->releaseAssets->nodes ?? [] as $asset) {
+                if (preg_match(
+                    '~' . preg_quote($namespace, '~')
+                    . '[ ._-]?(?:(?:' . preg_quote($version, '~') . ')?|(?:'
+                    . preg_quote($version, '~') . ')?[ ._-]?php[\d ._-]?)\.zip$~',
+                    $asset->name
+                )) {
+                    $totalDownloads += $asset->downloadCount;
+                    if ($i === 0 && empty($lastReleasedZip)) {
+                        $lastReleasedZip = $asset->downloadUrl;
+                    }
+                }
+            }
+            // Fallback: use first asset of latest release if no name match.
+            if ($i === 0 && empty($lastReleasedZip) && !empty($release->releaseAssets->nodes)) {
+                $lastReleasedZip = $release->releaseAssets->nodes[0]->downloadUrl;
+            }
+        }
+        $result['Total downloads'] = $totalDownloads;
+        $result['Last released zip'] = $lastReleasedZip;
+
+        // Directory name (namespace derived from project name).
+        $result['Directory name'] = $namespace;
+
+        // Ini file content (internal, not a CSV column).
+        $result['_ini_content'] = $repo->iniFile->text ?? null;
+
+        $cache[$addonUrl] = $result;
+        return $result;
     }
 
     /**
