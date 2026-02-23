@@ -48,10 +48,14 @@
     }
     .sort {
         cursor: pointer;
+        white-space: nowrap;
     }
-    .sort:hover::after {
+    .sort::after {
         content: " \21C5";
         font-size: 0.8em;
+        opacity: 0;
+    }
+    .sort:hover::after {
         opacity: 0.5;
     }
     .sort.asc::after {
@@ -91,7 +95,14 @@
         color: #339933;
     }
     .addon-license { font-size: 0.85em; color: #888; }
-.addon-stats { white-space: nowrap; font-size: 0.9em; }
+    .addon-status { display: block; font-size: 0.85em; color: #888; }
+    .addon-fork { opacity: 0.8; }
+    .addon-inactive { opacity: 0.6; }
+    .addon-target span { display: block; }
+    .addon-omeka-org, .addon-upgradable { font-size: 0.85em; color: #888; }
+    .addon-tags { min-width: 6em; }
+    .addon-stats { font-size: 0.9em; min-width: 10em; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, auto); gap: 0 0.5em; white-space: nowrap; justify-items: end; }
     .form-control::placeholder {
         color: #999;
         opacity: 1;
