@@ -18,15 +18,28 @@ topic). To be sure it will be included, add the topic `omeka`, `omeka-s`,
 main page of the addon, or use "Omeka" in the main readme of the addon
 repository.
 
-To add bad referenced addons, simply fill its main url in the matching csv file
-in the directory `_data/` and run the php script:
+To add badly referenced addons, simply fill its main url in the matching csv
+file in the directory `_data/` and run the php script:
 
-```
-php -f _scripts/update_data.php
+```sh
+php _scripts/update_data.php
 ```
 
-You may need to add a file with a token from your github account in `_data/token_github.txt`
-to be allowed to fetch more than 50 results.
+It is recommended to create API tokens for faster and more reliable data fetching:
+
+- GitHub token (recommended): Save it in `_data/token_github.txt`. With a token,
+  the script uses the GraphQL API (1 request per addon instead of ~8 REST calls).
+  Without a token, the REST API is used with a limit of 60 requests/hour.
+  Create a token at: https://github.com/settings/tokens (select "public_repo" scope).
+
+- GitLab token (recommended): Save it in `_data/token_gitlab.txt`. A token
+  increases GitLab API rate limits for addons hosted on GitLab.
+  Create a token at: https://gitlab.com/-/user_settings/personal_access_tokens
+  (select "read_api" scope).
+
+Note that the first run of the script may take a while depending on your
+connection, since there are multiple requests per addon. With a GitHub token,
+the process is significantly faster (about 2 hours instead of 8+ hours).
 
 
 Installation and development for Jekyll with theme Minima
@@ -35,7 +48,7 @@ Installation and development for Jekyll with theme Minima
 For more info on local testing, see [documentation on github pages].
 Github pages use currently [these versions] of Jekyll and Ruby.
 
-For Debian 12:
+For Debian 13:
 
 ```sh
 sudo apt install ruby-full build-essential
@@ -49,14 +62,16 @@ sudo update_rubygems
 sudo gem update
 
 # May be not installed by default.
-gem install eventmachine http_parser.rb sass-embedded
+gem install bundler eventmachine http_parser.rb sass-embedded
 
 # The main process to run the site locally.
 # Important: It should be done every time the file _config.yml is updated.
 cd UpgradeToOmekaS
 bundle install
-bundle exec jekyll serve
+bundle exec jekyll serve --incremental
 ```
+
+By default, the site is served on http://localhost:4000/.
 
 The site uses the theme minima. It is installed in the home directory (set
 above: ~/gems). To override a default file of the theme under ~/gems/gems/minima-2.5.2/,
@@ -71,7 +86,16 @@ TODO
 - [ ] Preload and preinstall during form filling.
 - [ ] Fully install selections, not only download and unzip files.
 - [ ] Selections with vocabularies, resource templates and custom vocabs.
-
+- [ ] Reorder row in csv for forks: main first, forks next, gone last.
+- [ ] Deeper plugin-to-module mapping: compare by description/functionality.
+- [ ] Improve management of homonymous: some addons have a same name and
+      features, but designed totally separately (e.g. ZipDownload).
+- [ ] GitHub/GitLab synced repos: some addons have a repository on both
+      platforms: sum stats.
+- [ ] Unregistered forks: some repos are forks (same git history) but not
+      declared in metadata (manual copy without fork button). Identify these
+      cases by comparing initial commits or SHA history. Get the divergence
+      commit, date and version.
 
 Warning
 -------
@@ -114,7 +138,7 @@ altered, and that no provisions are either added or removed herefrom.
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2017-2025 (see [Daniel-KM] on GitHub)
+* Copyright Daniel Berthereau, 2017-2026 (see [Daniel-KM] on GitLab)
 
 
 [pages that list the plugins, modules and themes]: https://daniel-km.github.io/UpgradeToOmekaS/
@@ -128,4 +152,4 @@ Copyright
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
 [FSF]: https://www.fsf.org
 [OSI]: http://opensource.org
-[Daniel-KM]: https://github.com/Daniel-KM "Daniel Berthereau"
+[Daniel-KM]: https://gitlab.com/Daniel-KM "Daniel Berthereau"
