@@ -42,19 +42,54 @@
         <td class="addon-required">{{ addon['Optional plugins'] | replace: ',', ',<br />' }}</td>
         -->
         <td class="addon-description">{{ addon['Description']  | xml_escape }}</td>
-        <td class="addon-downloads">
-            {% if addon['Total downloads'] %}
-                {{ addon['Total downloads'] }}
-                {% if addon['Count versions'] == '1' %}
-                    <br/>
-                    ({{ addon['Count versions'] }} version)
-                {% elsif addon['Count versions'] %}
-                    <br/>
-                    ({{ addon['Count versions'] }} versions)
-                {% endif %}
-            {% endif %}
+        <td class="addon-stats">
+            <span class="addon-stats-sort" style="display:none">
+                {{- addon['Total downloads'] | default: '0' -}}
+            </span>
+            {%- comment %} Line 1: Downloads | Releases | Tags {% endcomment -%}
+            {%- if addon['Total downloads'] and addon['Total downloads'] != '0' -%}
+                ⬇ {{ addon['Total downloads'] }}
+            {%- endif -%}
+            {%- if addon['Count versions'] and addon['Count versions'] != '0' -%}
+                {%- if addon['Total downloads'] and addon['Total downloads'] != '0' %} | {% endif -%}
+                📦 {{ addon['Count versions'] }}
+            {%- endif -%}
+            {%- if addon['Count tags'] and addon['Count tags'] != '0' -%}
+                {%- if addon['Total downloads'] and addon['Total downloads'] != '0'
+                    or addon['Count versions'] and addon['Count versions'] != '0' %} | {% endif -%}
+                🏷 {{ addon['Count tags'] }}
+            {%- endif -%}
+            {%- comment %} Line 2: Stars | Forks | Watchers {% endcomment -%}
+            {%- if addon['Stars'] and addon['Stars'] != '0'
+                or addon['Forks'] and addon['Forks'] != '0'
+                or addon['Watchers'] and addon['Watchers'] != '0' -%}
+                <br/>
+            {%- endif -%}
+            {%- if addon['Stars'] and addon['Stars'] != '0' -%}
+                ★ {{ addon['Stars'] }}
+            {%- endif -%}
+            {%- if addon['Forks'] and addon['Forks'] != '0' -%}
+                {%- if addon['Stars'] and addon['Stars'] != '0' %} | {% endif -%}
+                ⑂ {{ addon['Forks'] }}
+            {%- endif -%}
+            {%- if addon['Watchers'] and addon['Watchers'] != '0' -%}
+                {%- if addon['Stars'] and addon['Stars'] != '0'
+                    or addon['Forks'] and addon['Forks'] != '0' %} | {% endif -%}
+                👁 {{ addon['Watchers'] }}
+            {%- endif -%}
+            {%- comment %} Line 3: Issues | PRs {% endcomment -%}
+            {%- if addon['Total issues'] and addon['Total issues'] != '0'
+                or addon['Total PRs'] and addon['Total PRs'] != '0' -%}
+                <br/>
+            {%- endif -%}
+            {%- if addon['Total issues'] and addon['Total issues'] != '0' -%}
+                ⚠ {{ addon['Open issues'] | default: '0' }}/{{ addon['Total issues'] }}
+            {%- endif -%}
+            {%- if addon['Total PRs'] and addon['Total PRs'] != '0' -%}
+                {%- if addon['Total issues'] and addon['Total issues'] != '0' %} | {% endif -%}
+                PR {{ addon['Open PRs'] | default: '0' }}/{{ addon['Total PRs'] }}
+            {%- endif -%}
         </td>
-        <td class="addon-stats">{% if addon['Stars'] and addon['Stars'] != '0' %}★ {{ addon['Stars'] }}{% endif %}{% if addon['Forks'] and addon['Forks'] != '0' %}{% if addon['Stars'] and addon['Stars'] != '0' %} | {% endif %}⑂ {{ addon['Forks'] }}{% endif %}{% if addon['Watchers'] and addon['Watchers'] != '0' %}{% if addon['Stars'] and addon['Stars'] != '0' or addon['Forks'] and addon['Forks'] != '0' %} | {% endif %}👁 {{ addon['Watchers'] }}{% endif %}{% if addon['Open issues'] and addon['Open issues'] != '0' or addon['Total issues'] and addon['Total issues'] != '0' or addon['Open PRs'] and addon['Open PRs'] != '0' or addon['Total PRs'] and addon['Total PRs'] != '0' %}<br/>{% endif %}{% if addon['Total issues'] and addon['Total issues'] != '0' %}⚠ {{ addon['Open issues'] | default: '0' }}/{{ addon['Total issues'] }}{% endif %}{% if addon['Total PRs'] and addon['Total PRs'] != '0' %}{% if addon['Total issues'] and addon['Total issues'] != '0' %} | {% endif %}PR {{ addon['Open PRs'] | default: '0' }}/{{ addon['Total PRs'] }}{% endif %}</td>
     </tr>
     {% endif %}
 {% endfor %}

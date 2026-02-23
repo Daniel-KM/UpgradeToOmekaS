@@ -36,8 +36,7 @@ This list brings together all the existing [Omeka Classic](https://omeka.org/cla
                     <th><span class="sort" data-sort="addon-optional">Optional plugins</span></th>
                     -->
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
-                    <th><span class="sort" data-sort="addon-downloads" title="Warning: The number of downloads don’t mean popularity. In particular, some addons have no release and some other ones have many releases.">Downloads</span></th>
-                    <th><span class="sort" data-sort="addon-stats">Stats</span></th>
+                    <th><span class="sort" data-sort="addon-stats" title="Warning: The number of downloads don’t mean popularity. In particular, some addons have no release and some other ones have many releases.">Stats</span></th>
                 </tr>
             </thead>
             {% include omeka_plugins_table_body.md %}

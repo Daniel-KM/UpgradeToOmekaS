@@ -30,8 +30,7 @@ N’hésitez pas à signaler des thèmes manquants.
                     <th><span class="sort" data-sort="addon-license">Licence</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
-                    <th><span class="sort" data-sort="addon-downloads" title="Warning: The number of downloads don’t mean popularity. In particular, some addons have no release and some other ones have many releases.">Downloads</span></th>
-                    <th><span class="sort" data-sort="addon-stats">Stats</span></th>
+                    <th><span class="sort" data-sort="addon-stats" title="Attention : le nombre de téléchargements ne correspond pas à la popularité. En particulier, certaines extensions n’ont pas de version et d’autres ont de nombreuses versions.">Stats</span></th>
                 </tr>
             </thead>
             {% include omeka_themes_table_body.md %}
