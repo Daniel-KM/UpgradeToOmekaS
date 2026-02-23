@@ -10,7 +10,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   {% if page.redirect %}
-  <meta http-equiv="Refresh" content="0;url={{ site.baseurl }}/{{ site.default_lang }}{{ page.redirect_url | page.url }}" />
+  <meta http-equiv="Refresh" content="0;url={{ site.baseurl }}/{{ site.default_lang }}{{ page.redirect_url | default: page.url }}" />
   {% endif %}
 
   {% comment %}
