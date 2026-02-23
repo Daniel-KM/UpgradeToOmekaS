@@ -57,7 +57,7 @@ Bibnumbxm	2.0
 Bibtex	0.1
 BIOElementSet	0.9
 BlockParty	1.0.1
-Blocks	2.3
+Blocks	0.3
 Blogger	1.1
 BlogShortcode	1.0
 BookCore	0.1
@@ -97,7 +97,7 @@ CollectionBrowseResults	0.0.0
 Colsort	2.0.2
 CollectionSpaceImport	-
 CollectionsPlus	1.4
-CollectionTree	2.2.0
+CollectionTree	2.1
 ColorCodeSyntaxHighlighter	0.1
 Commenting	2.5
 Commons	1.0
@@ -118,7 +118,7 @@ CourseTools	1.2
 CreativeCommonsChooser	2.3.1
 CrowdEd	0.8.1
 CSSEditor	1.2
-CSVExport	1.3
+CSVExport	1.1
 CsvExport	1.1.2
 GoogleCsvImport	1.3
 CsvImport	2.0.7
@@ -240,7 +240,7 @@ GoogleTagmanager	0.1.0
 GoogleTranslate	1.0
 Graph	0.2
 Groups	1.1
-GuestUser	1.2.1
+GuestUser	1.2
 HarvardKey	1.0.1
 Headless	0.1.0
 Headsup	0.3
@@ -322,10 +322,10 @@ LinnaeusAdminHelper	1.0
 Bibnum	2.8
 LocalContexts	1.1
 Locale	1.0
-LocaleSwitcher	0.3.0
+LocaleSwitcher	0.2.1
 LoggedInLinks	1.0
 LoginHome	0.1
-Maintenance	0.2.0
+Maintenance	0.1.0
 MallExtensions	0.1
 MallMap	1.0-dev
 MapFig	2.0.1
@@ -348,7 +348,7 @@ MiscellaneousElementSet	1.0
 MlaCitations	1.1
 MlaTei	1.0
 MOASDerivatives	1.1.0
-MOASDocs	0.0.1
+MOASDocs	1.0.0
 MOASElements	1.4.1
 MOASItemTypes	1.2.8
 Mods	1.0
@@ -360,7 +360,7 @@ Mosaic	1.0
 Mud	-
 Multilanguage	1.5.0
 MultimediaDisplay	1.3
-MultiCollections	2.1
+MultiCollections	1.0
 MuslimJourneysAdmin	0.1
 My	1.0
 NALLayouts	1.2
@@ -373,7 +373,7 @@ NeatlineEditions	0.1
 NeatlineFeatures	2.0.5
 NeatlineMaps	1.0.1
 NeatlineMerge	0.0.1
-NeatlineTime	2.3.1
+NeatlineTime	2.1.2
 NeatlineWebService	0.1
 NeatlineSimile	2.0.4
 NeatlineText	1.1.0
@@ -384,8 +384,8 @@ Ngram	1.2
 NKAAWikiLookup	0.0.0
 NuxeoLink	1.1.12
 OaiPmhGateway	2.3.1
-OaipmhHarvester	2.2.2.1
-OaiPmhRepository	2.3.4
+OaipmhHarvester	2.0.4
+OaiPmhRepository	2.2
 OaiPmhStaticRepository	2.6
 OaiDcGallica	0.1.0
 OaiQdc	1.0
@@ -476,7 +476,7 @@ eo	0.1
 hadowpage	0.1
 ForumLink	1.0
 Shibboleth	2.0.2
-ShortcodeCarousel	1.0.3
+ShortcodeCarousel	1.0.2
 ShortcodeVideo	1.0
 ideAuth	1.0
 SimpleCart	1.0
@@ -493,7 +493,7 @@ Sitemap	2.3
 SiteMessage	1.0
 SiteNotes	1.0.1
 Sites	1.2
-SocialBookmarking	2.3
+SocialBookmarking	2.1.1
 SocialMediaElementSet	1.0
 SolrSearch	2.3.0
 Specific	2.0
@@ -565,3 +565,5 @@ XMLSitemap	0.11
 YouTubeImport	1.3
 Zoomit	2.0
 ZoteroImport	2.3
+Pwa	
+Downloadmanager	
