@@ -70,10 +70,13 @@ $options = [
     // Filter false addons (students testing, etc.). See file excluded_urls.txt.
     'filterFalseAddons' => true,
     'excludedUrlsPath' => $datapath . 'excluded_urls.txt',
-    // Cache invalid URLs per type to avoid re-checking them.
+    // Cache invalid urls per type to avoid re-checking them.
     // Each type has its own cache file (e.g., invalid_urls_module.txt).
     'cacheInvalidUrls' => true,
     'cacheInvalidUrlsPath' => $datapath . 'cache/',
+    // Cache mirror urls per type to avoid re-checking them.
+    // Format: url\tmirror_url_or_none\tdate.
+    'cacheMirrorUrls' => true,
     // Update only one or more types of addon ("plugin", "module", "theme", "template").
     'processOnlyType' => [
     ],
@@ -231,10 +234,10 @@ foreach ($types as $type => $args) {
     $update->processUpdateLastVersions();
 }
 
-$totalSeconds = microtime(true) - $scriptStart;
+$totalSeconds = (int) (microtime(true) - $scriptStart);
 $hours = (int) ($totalSeconds / 3600);
 $minutes = (int) (($totalSeconds % 3600) / 60);
-$seconds = (int) ($totalSeconds % 60);
+$seconds = $totalSeconds % 60;
 $formatted = $hours > 0
     ? sprintf('%dh %02dm %02ds', $hours, $minutes, $seconds)
     : ($minutes > 0
@@ -328,6 +331,19 @@ class UpdateDataExtensions
      */
     protected $newInvalidUrls = [];
 
+    /**
+     * Cache of mirror url lookups.
+     * Each entry is url => mirror_url (or '' if no mirror found).
+     * @var array
+     */
+    protected $mirrorUrlsCache = [];
+
+    /**
+     * New mirror url lookups found during this run (to be saved at the end).
+     * @var array
+     */
+    protected $newMirrorUrls = [];
+
     public function __construct($type, $args = [], $options = [])
     {
         $this->type = $type;
@@ -337,8 +353,11 @@ class UpdateDataExtensions
         $this->args = $args;
         $this->options = $options;
 
-        // Load cached invalid URLs for this type.
+        // Load cached invalid urls for this type.
         $this->loadInvalidUrlsCache();
+
+        // Load cached mirror urls for this type.
+        $this->loadMirrorUrlsCache();
     }
 
     /**
@@ -424,6 +443,8 @@ class UpdateDataExtensions
 
         $addons = $this->filterDuplicates($addons);
 
+        $addons = $this->mergeSyncedRepos($addons);
+
         // Re-order after deduplicating may fixes order issues.
         $addons = $this->order($addons);
 
@@ -437,8 +458,11 @@ class UpdateDataExtensions
             }
         }
 
-        // Save the cache of invalid URLs discovered during this run.
+        // Save the cache of invalid urls discovered during this run.
         $this->saveInvalidUrlsCache();
+
+        // Save the cache of mirror url lookups discovered during this run.
+        $this->saveMirrorUrlsCache();
 
         $this->log('[Done] CSV file saved successfully.');
         $this->log(str_repeat('-', 70));
@@ -1236,6 +1260,18 @@ class UpdateDataExtensions
             $ini = $this->getIniForAddon($addonUrl, $addon[$headers['Ini path']] ?? null);
         }
 
+        // Detect and sum stats from mirror urls on other platform.
+        $alternateUrls = trim($addon[$headers['Alternate urls']] ?? '');
+        if (empty($alternateUrls)) {
+            $alternateUrls = $this->detectMirrorUrls($addonUrl);
+            if ($alternateUrls) {
+                $addon[$headers['Alternate urls']] = $alternateUrls;
+            }
+        }
+        if (!empty($alternateUrls)) {
+            $this->sumMirrorStats($addon, $alternateUrls);
+        }
+
         if (empty($ini) && empty($addon[$headers['Ini path']])) {
             return $addon;
         }
@@ -1485,6 +1521,7 @@ class UpdateDataExtensions
 
         // Get headers by name.
         $headers = array_flip($addons[0]);
+        $hasAlternateUrl = isset($headers['Alternate urls']);
 
         // Because the addons are ordered as we want (see option "order"), the
         // previous row is always kept when duplicate.
@@ -1515,11 +1552,14 @@ class UpdateDataExtensions
             $version = $addon[$headers['Last version']] ?? '';
             $forkSource = $addon[$headers['Fork source']] ?? '';
 
-            if ($name === $previousName) {
+            if ($name !== '' && $name === $previousName) {
                 if ($lastUpdate === $previousLastUpdate || $version === $previousVersion) {
                     ++$duplicates;
                     $this->log(sprintf('Duplicate fork removed (identical): %1$s (%2$s)', $name, $url));
-                    // Already ordered, so keep first.
+                    // Store removed fork url as alternate of the kept addon.
+                    if ($hasAlternateUrl && $previousKey >= 0) {
+                        $this->appendAlternateUrl($addons[$previousKey], $headers, $url);
+                    }
                     unset($addons[$key]);
                     continue;
                 } elseif (!empty($this->options['filterFalseForks'])) {
@@ -1529,7 +1569,10 @@ class UpdateDataExtensions
                     } else {
                         ++$unidentifiedForks;
                         $this->log(sprintf('Duplicate fork removed (older): %1$s (%2$s)', $name, $url));
-                        // Already ordered, so keep first.
+                        // Store removed fork url as alternate of the kept addon.
+                        if ($hasAlternateUrl && $previousKey >= 0) {
+                            $this->appendAlternateUrl($addons[$previousKey], $headers, $url);
+                        }
                         unset($addons[$key]);
                         continue;
                     }
@@ -1547,16 +1590,267 @@ class UpdateDataExtensions
         }
 
         if ($duplicates) {
-            $this->log(sprintf('%d duplicate rows were removed (identical).', $duplicates));
+            $this->log(sprintf('%d duplicate rows were removed (identical) and stored as alternates.', $duplicates));
         }
         if ($unidentifiedForks) {
-            $this->log(sprintf('%d duplicate rows were removed (unidentified forks with same name).', $unidentifiedForks));
+            $this->log(sprintf('%d duplicate rows were removed (older forks) and stored as alternates.', $unidentifiedForks));
         }
         if ($updatedForks) {
             $this->log(sprintf('%d duplicate rows were kept (updated forks).', $updatedForks));
         }
 
         return array_values($addons);
+    }
+
+    /**
+     * Merge cross-platform duplicates (same name on GitHub and GitLab).
+     *
+     * When two rows have the same name but different platforms, keep the
+     * primary (most active), store the secondary url in "Alternate urls",
+     * and sum numeric stats.
+     *
+     * @param array $addons
+     * @return array
+     */
+    protected function mergeSyncedRepos(array $addons)
+    {
+        $headers = $this->headers;
+        if (!isset($headers['Alternate urls'])) {
+            return $addons;
+        }
+
+        $statFields = ['Stars', 'Forks', 'Watchers', 'Open issues', 'Total issues',
+            'Open PRs', 'Total PRs', 'Count versions', 'Count tags', 'Total downloads'];
+
+        // Group by name.
+        $byName = [];
+        foreach ($addons as $key => $addon) {
+            if ($key === 0) continue;
+            $name = $addon[$headers['Name']] ?? '';
+            if ($name) {
+                $byName[$name][] = $key;
+            }
+        }
+
+        $merged = 0;
+        foreach ($byName as $name => $keys) {
+            if (count($keys) < 2) continue;
+
+            // Check if entries are on different platforms.
+            $byPlatform = [];
+            foreach ($keys as $key) {
+                $url = $addons[$key][$headers['Url']] ?? '';
+                if (strpos($url, 'github.com') !== false) {
+                    $byPlatform['github'][] = $key;
+                } elseif (strpos($url, 'gitlab.com') !== false) {
+                    $byPlatform['gitlab'][] = $key;
+                }
+            }
+
+            if (count($byPlatform) < 2) continue;
+
+            // Cross-platform duplicate found. Pick primary (most stars, then most downloads).
+            $allKeys = array_merge(...array_values($byPlatform));
+            usort($allKeys, function ($a, $b) use ($addons, $headers) {
+                $starsA = (int) ($addons[$a][$headers['Stars']] ?? 0);
+                $starsB = (int) ($addons[$b][$headers['Stars']] ?? 0);
+                if ($starsA !== $starsB) return $starsB - $starsA;
+                $dlA = (int) ($addons[$a][$headers['Total downloads']] ?? 0);
+                $dlB = (int) ($addons[$b][$headers['Total downloads']] ?? 0);
+                return $dlB - $dlA;
+            });
+
+            $primaryKey = $allKeys[0];
+            $secondaryKeys = array_slice($allKeys, 1);
+
+            // Collect alternate urls and sum stats.
+            $alternateUrls = array_filter(explode(',', trim($addons[$primaryKey][$headers['Alternate urls']] ?? '')));
+            foreach ($secondaryKeys as $secKey) {
+                $secUrl = trim($addons[$secKey][$headers['Url']] ?? '');
+                if ($secUrl && !in_array($secUrl, $alternateUrls)) {
+                    $alternateUrls[] = $secUrl;
+                }
+                // Also collect any alternate urls from the secondary.
+                foreach (explode(',', trim($addons[$secKey][$headers['Alternate urls']] ?? '')) as $u) {
+                    $u = trim($u);
+                    if ($u && !in_array($u, $alternateUrls) && $u !== $addons[$primaryKey][$headers['Url']]) {
+                        $alternateUrls[] = $u;
+                    }
+                }
+
+                // Sum numeric stats.
+                foreach ($statFields as $field) {
+                    if (!isset($headers[$field])) continue;
+                    $primaryVal = (int) ($addons[$primaryKey][$headers[$field]] ?? 0);
+                    $secondaryVal = (int) ($addons[$secKey][$headers[$field]] ?? 0);
+                    $addons[$primaryKey][$headers[$field]] = $primaryVal + $secondaryVal;
+                }
+
+                // Remove secondary row.
+                $this->log(sprintf('Synced repo merged: %s (%s -> %s)',
+                    $name, $addons[$secKey][$headers['Url']], $addons[$primaryKey][$headers['Url']]));
+                unset($addons[$secKey]);
+                $merged++;
+            }
+
+            $addons[$primaryKey][$headers['Alternate urls']] = implode(',', $alternateUrls);
+        }
+
+        if ($merged) {
+            $this->log(sprintf('%d synced repos merged across platforms.', $merged));
+        }
+
+        return array_values($addons);
+    }
+
+    /**
+     * Append a url to an addon's "Alternate urls" column, avoiding duplicates.
+     *
+     * @param array &$addon The addon row (modified in place).
+     * @param array $headers The headers map.
+     * @param string $url The url to append.
+     */
+    protected function appendAlternateUrl(array &$addon, array $headers, string $url): void
+    {
+        if (!isset($headers['Alternate urls'])) {
+            return;
+        }
+        $existing = array_filter(array_map('trim', explode(',', trim($addon[$headers['Alternate urls']] ?? ''))));
+        $url = trim($url);
+        if ($url && !in_array($url, $existing) && $url !== trim($addon[$headers['Url']] ?? '')) {
+            $existing[] = $url;
+            $addon[$headers['Alternate urls']] = implode(',', $existing);
+        }
+    }
+
+    /**
+     * Detect mirror urls on the alternate platform.
+     *
+     * For a GitHub url, checks if a GitLab mirror exists (and vice versa).
+     * Returns a comma-separated list of mirror urls, or empty string.
+     *
+     * @param string $addonUrl
+     * @return string Comma-separated alternate urls, or ''.
+     */
+    protected function detectMirrorUrls(string $addonUrl): string
+    {
+        static $runtimeCache = [];
+        if (array_key_exists($addonUrl, $runtimeCache)) {
+            return $runtimeCache[$addonUrl];
+        }
+
+        // Check persistent cache first.
+        if ($this->isMirrorUrlCached($addonUrl)) {
+            $result = $this->mirrorUrlsCache[$addonUrl];
+            $runtimeCache[$addonUrl] = $result;
+            return $result;
+        }
+
+        $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
+        $path = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
+
+        if ($server === 'github.com') {
+            $mirrorUrl = 'https://gitlab.com/' . $path;
+            // Quick check if GitLab mirror exists (single attempt, no retry).
+            $encodedProject = urlencode($path);
+            $apiUrl = 'https://gitlab.com/api/v4/projects/' . $encodedProject;
+            $response = $this->curl($apiUrl, [], false, 1);
+            if (!empty($response) && !empty($response->id)) {
+                $runtimeCache[$addonUrl] = $mirrorUrl;
+                $this->addMirrorUrl($addonUrl, $mirrorUrl);
+                return $mirrorUrl;
+            }
+        } elseif ($server === 'gitlab.com') {
+            $mirrorUrl = 'https://github.com/' . $path;
+            // Quick check if GitHub mirror exists.
+            $parts = explode('/', $path, 2);
+            $owner = $parts[0] ?? '';
+            $name = $parts[1] ?? '';
+            if ($owner && $name) {
+                $token = $this->options['token']['api.github.com'] ?? '';
+                if (!empty($token)) {
+                    $query = '{ repository(owner: "' . $owner . '", name: "' . $name . '") { url } }';
+                    $response = $this->curlGraphQL($query);
+                    if (!empty($response->data->repository->url)) {
+                        $runtimeCache[$addonUrl] = $mirrorUrl;
+                        $this->addMirrorUrl($addonUrl, $mirrorUrl);
+                        return $mirrorUrl;
+                    }
+                } else {
+                    $apiUrl = 'https://api.github.com/repos/' . $owner . '/' . $name;
+                    $response = $this->curl($apiUrl, [], false, 1);
+                    if (!empty($response) && !empty($response->html_url)) {
+                        $runtimeCache[$addonUrl] = $mirrorUrl;
+                        $this->addMirrorUrl($addonUrl, $mirrorUrl);
+                        return $mirrorUrl;
+                    }
+                }
+            }
+        }
+
+        $runtimeCache[$addonUrl] = '';
+        $this->addMirrorUrl($addonUrl, '');
+        return '';
+    }
+
+    /**
+     * Fetch stats from alternate/mirror urls and sum them into the addon row.
+     *
+     * @param array &$addon The addon row (modified in place).
+     * @param string $alternateUrls Comma-separated mirror urls.
+     */
+    protected function sumMirrorStats(array &$addon, string $alternateUrls): void
+    {
+        $headers = $this->headers;
+        $statFields = ['Stars', 'Forks', 'Watchers', 'Open issues', 'Total issues',
+            'Open PRs', 'Total PRs', 'Count tags'];
+
+        foreach (explode(',', $alternateUrls) as $mirrorUrl) {
+            $mirrorUrl = trim($mirrorUrl);
+            if (empty($mirrorUrl)) continue;
+
+            $server = strtolower(parse_url($mirrorUrl, PHP_URL_HOST));
+
+            // Fetch stats from the mirror.
+            $mirrorStats = [];
+            if ($server === 'github.com') {
+                // Use GraphQL if available.
+                $graphqlData = $this->fetchAddonGraphQL($mirrorUrl);
+                if ($graphqlData !== null) {
+                    $mirrorStats = $graphqlData;
+                } else {
+                    // REST fallback: get basic stats from repo endpoint.
+                    $path = trim(parse_url($mirrorUrl, PHP_URL_PATH), '/');
+                    $apiUrl = 'https://api.github.com/repos/' . $path;
+                    $response = $this->curl($apiUrl, [], false);
+                    if (!empty($response) && !empty($response->stargazers_count)) {
+                        $mirrorStats['Stars'] = $response->stargazers_count ?? 0;
+                        $mirrorStats['Forks'] = $response->forks_count ?? 0;
+                        $mirrorStats['Watchers'] = $response->subscribers_count ?? 0;
+                    }
+                }
+            } elseif ($server === 'gitlab.com') {
+                $path = trim(parse_url($mirrorUrl, PHP_URL_PATH), '/');
+                $encodedProject = urlencode($path);
+                $apiUrl = 'https://gitlab.com/api/v4/projects/' . $encodedProject;
+                $response = $this->curl($apiUrl, [], false);
+                if (!empty($response) && !empty($response->id)) {
+                    $mirrorStats['Stars'] = $response->star_count ?? 0;
+                    $mirrorStats['Forks'] = $response->forks_count ?? 0;
+                    $mirrorStats['Open issues'] = $response->open_issues_count ?? 0;
+                }
+            }
+
+            // Sum stats into the addon row.
+            foreach ($statFields as $field) {
+                if (!isset($headers[$field]) || !isset($mirrorStats[$field])) continue;
+                $current = (int) ($addon[$headers[$field]] ?? 0);
+                $mirror = (int) ($mirrorStats[$field] ?? 0);
+                if ($mirror > 0) {
+                    $addon[$headers[$field]] = $current + $mirror;
+                }
+            }
+        }
     }
 
     /**
@@ -3213,6 +3507,160 @@ class UpdateDataExtensions
         $lines = '';
         foreach ($this->invalidUrlsCache as $url => $dates) {
             $lines .= $url . "\t" . $dates['first'] . "\t" . $dates['last'] . "\n";
+        }
+        file_put_contents($cacheFile, $lines, LOCK_EX);
+    }
+
+    /**
+     * Load cached mirror url lookups for this type.
+     *
+     * Format: url\tmirror_url_or_none\tdate
+     * Entries are re-checked every 3 months (mirrors don't change often).
+     */
+    protected function loadMirrorUrlsCache(): void
+    {
+        if (empty($this->options['cacheMirrorUrls'])) {
+            return;
+        }
+
+        $cacheFile = $this->getMirrorUrlsCacheFile();
+        if (!file_exists($cacheFile)) {
+            $this->mirrorUrlsCache = [];
+            return;
+        }
+
+        $content = file_get_contents($cacheFile);
+        if (empty($content)) {
+            $this->mirrorUrlsCache = [];
+            return;
+        }
+
+        $lines = array_filter(array_map('trim', explode("\n", $content)));
+        $threeMonthsAgo = strtotime('-3 months');
+        $this->mirrorUrlsCache = [];
+        $expired = 0;
+
+        foreach ($lines as $line) {
+            $parts = explode("\t", $line, 3);
+            $url = $parts[0] ?? '';
+            $mirrorUrl = $parts[1] ?? '';
+            $lastCheck = $parts[2] ?? '';
+
+            if (empty($url) || empty($lastCheck)) {
+                ++$expired;
+                continue;
+            }
+
+            $lastTs = strtotime($lastCheck);
+            if ($lastTs < $threeMonthsAgo) {
+                ++$expired;
+                continue;
+            }
+
+            // 'none' means no mirror was found; store as empty string.
+            $this->mirrorUrlsCache[$url] = ($mirrorUrl === 'none') ? '' : $mirrorUrl;
+        }
+
+        if ($expired) {
+            $this->rewriteMirrorUrlsCache();
+            $this->log(sprintf('[Cache] Expired %d mirror url entries for type "%s"', $expired, $this->type));
+        }
+
+        if ($this->options['debug']) {
+            $this->log(sprintf('[Cache] Loaded %d mirror url entries for type "%s"', count($this->mirrorUrlsCache), $this->type));
+        }
+    }
+
+    /**
+     * Save new mirror url lookups to the cache file.
+     */
+    protected function saveMirrorUrlsCache(): void
+    {
+        if (empty($this->options['cacheMirrorUrls'])) {
+            return;
+        }
+
+        if (empty($this->newMirrorUrls)) {
+            return;
+        }
+
+        $cacheFile = $this->getMirrorUrlsCacheFile();
+        $cacheDir = dirname($cacheFile);
+
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0755, true);
+        }
+
+        $today = date('Y-m-d');
+        $lines = '';
+        foreach ($this->newMirrorUrls as $entry) {
+            $mirrorValue = $entry['mirror'] === '' ? 'none' : $entry['mirror'];
+            $lines .= $entry['url'] . "\t" . $mirrorValue . "\t" . $today . "\n";
+        }
+        file_put_contents($cacheFile, $lines, FILE_APPEND | LOCK_EX);
+
+        $this->log(sprintf('[Cache] Saved %d new mirror url entries for type "%s"', count($this->newMirrorUrls), $this->type));
+    }
+
+    /**
+     * Get the cache file path for mirror urls of this type.
+     */
+    protected function getMirrorUrlsCacheFile(): string
+    {
+        $cachePath = rtrim($this->options['cacheInvalidUrlsPath'] ?? '', '/\\');
+        return $cachePath . DIRECTORY_SEPARATOR . 'mirror_urls_' . $this->type . '.txt';
+    }
+
+    /**
+     * Check if a url has a cached mirror lookup result.
+     */
+    protected function isMirrorUrlCached(string $url): bool
+    {
+        if (empty($this->options['cacheMirrorUrls'])) {
+            return false;
+        }
+
+        return array_key_exists($url, $this->mirrorUrlsCache);
+    }
+
+    /**
+     * Add a mirror url lookup result to the cache.
+     *
+     * @param string $url The addon url.
+     * @param string $mirrorUrl The mirror url found, or '' if none.
+     */
+    protected function addMirrorUrl(string $url, string $mirrorUrl): void
+    {
+        if (empty($this->options['cacheMirrorUrls'])) {
+            return;
+        }
+
+        // Don't add if already in cache.
+        if (array_key_exists($url, $this->mirrorUrlsCache)) {
+            return;
+        }
+
+        $this->mirrorUrlsCache[$url] = $mirrorUrl;
+        $this->newMirrorUrls[] = ['url' => $url, 'mirror' => $mirrorUrl];
+    }
+
+    /**
+     * Rewrite the mirror urls cache file (after expiry of old entries).
+     */
+    protected function rewriteMirrorUrlsCache(): void
+    {
+        $cacheFile = $this->getMirrorUrlsCacheFile();
+        $cacheDir = dirname($cacheFile);
+
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0755, true);
+        }
+
+        $today = date('Y-m-d');
+        $lines = '';
+        foreach ($this->mirrorUrlsCache as $url => $mirrorUrl) {
+            $mirrorValue = $mirrorUrl === '' ? 'none' : $mirrorUrl;
+            $lines .= $url . "\t" . $mirrorValue . "\t" . $today . "\n";
         }
         file_put_contents($cacheFile, $lines, LOCK_EX);
     }
