@@ -3071,6 +3071,92 @@ GRAPHQL;
                 $this->curlMultiBatch($apiUrls, 10);
             }
         }
+
+        // Prefetch mirror url checks in parallel.
+        $this->prefetchMirrorUrls($addonUrls);
+    }
+
+    /**
+     * Prefetch mirror URL existence checks in parallel.
+     *
+     * For GitHub addons, check if a GitLab mirror exists (and vice versa).
+     * Results are stored in mirrorUrlsCache so that detectMirrorUrls()
+     * finds them already resolved.
+     *
+     * @param array $addonUrls List of addon URLs to check.
+     */
+    protected function prefetchMirrorUrls(array $addonUrls): void
+    {
+        if (empty($this->options['cacheMirrorUrls'])) {
+            return;
+        }
+
+        // Collect URLs that need mirror checking (not already cached).
+        // Map: GitLab API URL => original addon URL.
+        $gitlabChecks = [];
+        $githubChecks = [];
+
+        foreach ($addonUrls as $addonUrl) {
+            if ($this->isMirrorUrlCached($addonUrl)) {
+                continue;
+            }
+
+            $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
+            $path = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
+
+            if ($server === 'github.com') {
+                // Check if GitLab mirror exists.
+                $encodedProject = urlencode($path);
+                $apiUrl = 'https://gitlab.com/api/v4/projects/'
+                    . $encodedProject;
+                $gitlabChecks[$apiUrl] = $addonUrl;
+            } elseif ($server === 'gitlab.com') {
+                // Check if GitHub mirror exists.
+                $parts = explode('/', $path, 2);
+                if (!empty($parts[0]) && !empty($parts[1])) {
+                    $apiUrl = 'https://api.github.com/repos/' . $path;
+                    $githubChecks[$apiUrl] = $addonUrl;
+                }
+            }
+        }
+
+        // Batch check GitLab mirrors for GitHub addons.
+        if ($gitlabChecks) {
+            $responses = $this->curlMultiBatch(
+                array_keys($gitlabChecks),
+                10
+            );
+            foreach ($gitlabChecks as $apiUrl => $addonUrl) {
+                $response = $responses[$apiUrl] ?? null;
+                if (!empty($response) && is_object($response)
+                    && !empty($response->id)
+                ) {
+                    $path = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
+                    $this->addMirrorUrl($addonUrl, 'https://gitlab.com/' . $path);
+                } else {
+                    $this->addMirrorUrl($addonUrl, '');
+                }
+            }
+        }
+
+        // Batch check GitHub mirrors for GitLab addons.
+        if ($githubChecks) {
+            $responses = $this->curlMultiBatch(
+                array_keys($githubChecks),
+                10
+            );
+            foreach ($githubChecks as $apiUrl => $addonUrl) {
+                $response = $responses[$apiUrl] ?? null;
+                if (!empty($response) && is_object($response)
+                    && !empty($response->html_url)
+                ) {
+                    $path = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
+                    $this->addMirrorUrl($addonUrl, 'https://github.com/' . $path);
+                } else {
+                    $this->addMirrorUrl($addonUrl, '');
+                }
+            }
+        }
     }
 
     /**
