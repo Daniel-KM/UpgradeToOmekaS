@@ -1138,6 +1138,42 @@ class UpdateDataExtensions
             $addon[$headers['Total downloads']] = $value;
         }
 
+        $value = $this->findData($addonUrl, 'stars');
+        if ($value !== '') {
+            $addon[$headers['Stars']] = $value;
+        }
+
+        $value = $this->findData($addonUrl, 'forks');
+        if ($value !== '') {
+            $addon[$headers['Forks']] = $value;
+        }
+
+        $value = $this->findData($addonUrl, 'watchers');
+        if ($value !== '') {
+            $addon[$headers['Watchers']] = $value;
+        }
+
+        // Fetch before issues because issues count depends on prs count.
+        $value = $this->findData($addonUrl, 'open prs');
+        if ($value !== '') {
+            $addon[$headers['Open PRs']] = $value;
+        }
+
+        $value = $this->findData($addonUrl, 'total prs');
+        if ($value !== '') {
+            $addon[$headers['Total PRs']] = $value;
+        }
+
+        $value = $this->findData($addonUrl, 'open issues');
+        if ($value !== '') {
+            $addon[$headers['Open issues']] = $value;
+        }
+
+        $value = $this->findData($addonUrl, 'total issues');
+        if ($value !== '') {
+            $addon[$headers['Total issues']] = $value;
+        }
+
         $ini = $this->getIniForAddon($addonUrl, $addon[$headers['Ini path']] ?? null);
         if (empty($ini) && empty($addon[$headers['Ini path']])) {
             return $addon;
@@ -1790,9 +1826,43 @@ class UpdateDataExtensions
                         }
                         return array_sum($counts);
 
+                    case 'stars':
+                        return $response->stargazers_count ?? '';
+
+                    case 'forks':
+                        return $response->forks_count ?? '';
+
+                    case 'watchers':
+                        return $response->subscribers_count ?? '';
+
+                    case 'open prs':
+                        return $this->curlCount('https://api.github.com/repos/' . $user . '/' . $projectName . '/pulls?state=open&per_page=1');
+
+                    case 'total prs':
+                        return $this->curlCount('https://api.github.com/repos/' . $user . '/' . $projectName . '/pulls?state=all&per_page=1');
+
+                    case 'open issues':
+                        // GitHub open_issues_count includes prs, so subtract open prs.
+                        $openPrs = $this->findData($addonUrl, 'open prs');
+                        $openIssuesWithPrs = $response->open_issues_count ?? 0;
+                        if ($openPrs === '' || $openIssuesWithPrs === '') {
+                            return '';
+                        }
+                        return max(0, (int) $openIssuesWithPrs - (int) $openPrs);
+
+                    case 'total issues':
+                        // GitHub /issues includes prs, so subtract total prs.
+                        $totalPrs = $this->findData($addonUrl, 'total prs');
+                        $totalIssuesWithPrs = $this->curlCount('https://api.github.com/repos/' . $user . '/' . $projectName . '/issues?state=all&per_page=1');
+                        if ($totalPrs === '' || $totalIssuesWithPrs === '') {
+                            return '';
+                        }
+                        return max(0, (int) $totalIssuesWithPrs - (int) $totalPrs);
+
                     default:
                         return '';
                 }
+
             case 'gitlab.com':
                 $encodedProject = urlencode($project);
                 switch ($dataToFind) {
@@ -1840,6 +1910,33 @@ class UpdateDataExtensions
                         // GitLab does not provide download counts via API.
                         // Return 0 or could try to get from project statistics.
                         return 0;
+
+                    case 'stars':
+                        return $response->star_count ?? '';
+
+                    case 'forks':
+                        return $response->forks_count ?? '';
+
+                    case 'watchers':
+                        // GitLab does not provide a watchers/subscribers count.
+                        return '';
+
+                    case 'open issues':
+                        return $response->open_issues_count ?? '';
+
+                    case 'total issues':
+                        $apiUrl = 'https://gitlab.com/api/v4/projects/' . $encodedProject . '/issues_statistics';
+                        $stats = $this->curl($apiUrl, [], false);
+                        if (!empty($stats) && !empty($stats->statistics) && !empty($stats->statistics->counts)) {
+                            return $stats->statistics->counts->all ?? '';
+                        }
+                        return '';
+
+                    case 'open prs':
+                        return $this->curlCount('https://gitlab.com/api/v4/projects/' . $encodedProject . '/merge_requests?state=opened&per_page=1');
+
+                    case 'total prs':
+                        return $this->curlCount('https://gitlab.com/api/v4/projects/' . $encodedProject . '/merge_requests?per_page=1');
 
                     default:
                         return '';
@@ -1995,6 +2092,93 @@ class UpdateDataExtensions
         $data[$url] = $output;
 
         return $output;
+    }
+
+    /**
+     * Get the total count of items from a paginated API endpoint.
+     *
+     * For GitHub, parses the Link header to find the last page number.
+     * For GitLab, reads the X-Total header.
+     *
+     * @param string $url The API URL (should include per_page=1).
+     * @return int|string The total count, or '' if unavailable.
+     */
+    protected function curlCount($url)
+    {
+        static $data = [];
+
+        if (isset($data[$url])) {
+            return $data[$url];
+        }
+
+        $data[$url] = '';
+
+        $server = strtolower(parse_url($url, PHP_URL_HOST));
+
+        if (strpos($server, 'github') !== false) {
+            $userAgent = 'Daniel-KM/UpgradeToOmekaS';
+            $headers = [
+                'Accept: application/vnd.github+json',
+                'X-GitHub-Api-Version: 2022-11-28',
+            ];
+            if (!empty($this->options['token'][$server])) {
+                $headers[] = 'Authorization: token ' . $this->options['token'][$server];
+            }
+        } else {
+            $userAgent = 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/135.0';
+            $headers = [];
+        }
+
+        $responseHeaders = [];
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+        if ($headers) {
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        }
+        // Capture response headers.
+        curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($ch, $header) use (&$responseHeaders) {
+            $len = strlen($header);
+            $parts = explode(':', $header, 2);
+            if (count($parts) === 2) {
+                $responseHeaders[strtolower(trim($parts[0]))] = trim($parts[1]);
+            }
+            return $len;
+        });
+
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($curl);
+        curl_close($curl);
+
+        if ($curlError || $httpCode < 200 || $httpCode >= 400) {
+            return '';
+        }
+
+        // GitHub: parse Link header for last page.
+        if (strpos($server, 'github') !== false) {
+            if (!empty($responseHeaders['link'])) {
+                if (preg_match('/[?&]page=(\d+)>;\s*rel="last"/', $responseHeaders['link'], $matches)) {
+                    $data[$url] = (int) $matches[1];
+                    return $data[$url];
+                }
+            }
+            // No Link header means 0 or 1 result. Check the response body.
+            $body = json_decode($response);
+            $data[$url] = is_array($body) ? count($body) : 0;
+            return $data[$url];
+        }
+
+        // GitLab: read X-Total header.
+        if (!empty($responseHeaders['x-total'])) {
+            $data[$url] = (int) $responseHeaders['x-total'];
+            return $data[$url];
+        }
+
+        return '';
     }
 
     /**
