@@ -344,6 +344,12 @@ class UpdateDataExtensions
      */
     protected $newMirrorUrls = [];
 
+    /**
+     * Cache of GraphQL responses keyed by addon URL.
+     * @var array
+     */
+    protected $graphqlCache = [];
+
     public function __construct($type, $args = [], $options = [])
     {
         $this->type = $type;
@@ -2560,9 +2566,12 @@ class UpdateDataExtensions
      * requests).
      *
      * @param string $query The GraphQL query string.
+     * @param bool $allowPartial When true, return the response even if
+     *   it contains errors alongside valid data (useful for batched
+     *   queries where some repos may fail).
      * @return object|null The decoded response, or null on error.
      */
-    protected function curlGraphQL(string $query): ?object
+    protected function curlGraphQL(string $query, bool $allowPartial = false): ?object
     {
         $token = $this->options['token']['api.github.com'] ?? '';
         if (empty($token)) {
@@ -2610,7 +2619,14 @@ class UpdateDataExtensions
             if (stripos($msg, 'rate limit') !== false) {
                 $this->log('[GraphQL] Rate limit exceeded. Waiting 60 seconds...');
                 sleep(60);
-                return $this->curlGraphQL($query);
+                return $this->curlGraphQL($query, $allowPartial);
+            }
+            // In batch mode, partial data alongside errors is valid.
+            if ($allowPartial && !empty($output->data)) {
+                if ($this->options['debug']) {
+                    $this->log(sprintf('[GraphQL] Partial error: %s', $msg));
+                }
+                return $output;
             }
             if ($this->options['debug']) {
                 $this->log(sprintf('[GraphQL] Error: %s', $msg));
@@ -2632,20 +2648,19 @@ class UpdateDataExtensions
      */
     protected function fetchAddonGraphQL(string $addonUrl): ?array
     {
-        static $cache = [];
-        if (array_key_exists($addonUrl, $cache)) {
-            return $cache[$addonUrl];
+        if (array_key_exists($addonUrl, $this->graphqlCache)) {
+            return $this->graphqlCache[$addonUrl];
         }
 
         $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
         if ($server !== 'github.com') {
-            $cache[$addonUrl] = null;
+            $this->graphqlCache[$addonUrl] = null;
             return null;
         }
 
         $token = $this->options['token']['api.github.com'] ?? '';
         if (empty($token)) {
-            $cache[$addonUrl] = null;
+            $this->graphqlCache[$addonUrl] = null;
             return null;
         }
 
@@ -2654,7 +2669,7 @@ class UpdateDataExtensions
         $owner = $parts[0] ?? '';
         $name = $parts[1] ?? '';
         if (empty($owner) || empty($name)) {
-            $cache[$addonUrl] = null;
+            $this->graphqlCache[$addonUrl] = null;
             return null;
         }
 
@@ -2696,12 +2711,25 @@ class UpdateDataExtensions
 
         $response = $this->curlGraphQL($query);
         if (empty($response) || empty($response->data) || empty($response->data->repository)) {
-            $cache[$addonUrl] = null;
+            $this->graphqlCache[$addonUrl] = null;
             return null;
         }
 
-        $repo = $response->data->repository;
+        $result = $this->parseGraphQLRepo($response->data->repository, $name);
 
+        $this->graphqlCache[$addonUrl] = $result;
+        return $result;
+    }
+
+    /**
+     * Parse a GraphQL repository object into an associative array.
+     *
+     * @param object $repo The repository object from GraphQL response.
+     * @param string $projectName The project name (repo part of the URL).
+     * @return array Associative array keyed by CSV header names.
+     */
+    protected function parseGraphQLRepo(object $repo, string $projectName): array
+    {
         $result = [];
 
         // Dates.
@@ -2735,7 +2763,7 @@ class UpdateDataExtensions
 
         // Downloads and last released zip from release assets.
         $releases = $repo->releases->nodes ?? [];
-        $namespace = $this->extractNamespaceFromProjectName($name);
+        $namespace = $this->extractNamespaceFromProjectName($projectName);
         $totalDownloads = 0;
         $lastReleasedZip = '';
         foreach ($releases as $i => $release) {
@@ -2767,8 +2795,136 @@ class UpdateDataExtensions
         // Ini file content (internal, not a CSV column).
         $result['_ini_content'] = $repo->iniFile->text ?? null;
 
-        $cache[$addonUrl] = $result;
         return $result;
+    }
+
+    /**
+     * Fetch addon data for multiple GitHub repos using batched GraphQL.
+     *
+     * Groups URLs into batches of 10 and sends a single GraphQL query
+     * per batch using aliases (repo0, repo1, …). Results are stored in
+     * $this->graphqlCache so that subsequent fetchAddonGraphQL() calls
+     * find the data already cached.
+     *
+     * @param array $addonUrls GitHub addon URLs.
+     */
+    protected function fetchAddonsGraphQLBatch(array $addonUrls): void
+    {
+        $token = $this->options['token']['api.github.com'] ?? '';
+        if (empty($token)) {
+            return;
+        }
+
+        $iniPath = str_replace(DIRECTORY_SEPARATOR, '/', $this->args['ini']);
+
+        // Build list of repos to fetch (skip already cached).
+        $repos = [];
+        foreach ($addonUrls as $url) {
+            if (array_key_exists($url, $this->graphqlCache)) {
+                continue;
+            }
+            $server = strtolower(parse_url($url, PHP_URL_HOST));
+            if ($server !== 'github.com') {
+                continue;
+            }
+            $project = trim(parse_url($url, PHP_URL_PATH), '/');
+            $parts = explode('/', $project, 2);
+            $owner = $parts[0] ?? '';
+            $name = $parts[1] ?? '';
+            if (empty($owner) || empty($name)) {
+                $this->graphqlCache[$url] = null;
+                continue;
+            }
+            $repos[] = [
+                'url' => $url,
+                'owner' => $owner,
+                'name' => $name,
+            ];
+        }
+
+        if (empty($repos)) {
+            return;
+        }
+
+        $batchSize = 10;
+        $chunks = array_chunk($repos, $batchSize);
+        $totalFetched = 0;
+
+        foreach ($chunks as $chunk) {
+            // Build batched query with aliases.
+            $fields = <<<'GRAPHQL'
+                createdAt
+                updatedAt
+                pushedAt
+                isFork
+                isArchived
+                parent { url }
+                stargazerCount
+                forkCount
+                watchers { totalCount }
+                openIssues: issues(states: OPEN) { totalCount }
+                closedIssues: issues(states: CLOSED) { totalCount }
+                openPRs: pullRequests(states: OPEN) { totalCount }
+                closedPRs: pullRequests(states: CLOSED) { totalCount }
+                mergedPRs: pullRequests(states: MERGED) { totalCount }
+                releases(first: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
+                  totalCount
+                  nodes {
+                    tagName
+                    releaseAssets(first: 50) {
+                      nodes { name downloadCount downloadUrl }
+                    }
+                  }
+                }
+                tags: refs(refPrefix: "refs/tags/") { totalCount }
+GRAPHQL;
+
+            $parts = [];
+            foreach ($chunk as $i => $repo) {
+                $owner = addcslashes($repo['owner'], '"\\');
+                $name = addcslashes($repo['name'], '"\\');
+                $parts[] = <<<GRAPHQL
+                  repo{$i}: repository(owner: "{$owner}", name: "{$name}") {
+                    {$fields}
+                    iniFile: object(expression: "HEAD:{$iniPath}") {
+                      ... on Blob { text }
+                    }
+                  }
+GRAPHQL;
+            }
+
+            $query = "{\n" . implode("\n", $parts) . "\n}";
+
+            $response = $this->curlGraphQL($query, true);
+            if (empty($response) || empty($response->data)) {
+                // Mark all as null so individual calls don't retry.
+                foreach ($chunk as $repo) {
+                    $this->graphqlCache[$repo['url']] = null;
+                }
+                continue;
+            }
+
+            // Parse each alias result.
+            foreach ($chunk as $i => $repo) {
+                $alias = 'repo' . $i;
+                $repoData = $response->data->$alias ?? null;
+                if (empty($repoData)) {
+                    $this->graphqlCache[$repo['url']] = null;
+                    continue;
+                }
+                $result = $this->parseGraphQLRepo($repoData, $repo['name']);
+                $this->graphqlCache[$repo['url']] = $result;
+                $totalFetched++;
+            }
+        }
+
+        if ($totalFetched > 0) {
+            $this->log(sprintf(
+                '[GraphQL] Batch prefetched %d repos in %d request(s).',
+                $totalFetched,
+                count($chunks)
+            ));
+        }
     }
 
     /**
@@ -2876,25 +3032,44 @@ class UpdateDataExtensions
      */
     protected function prefetchAddonData(array $addonUrls): void
     {
-        $apiUrls = [];
-
+        // Try GraphQL batch first (GitHub only, needs token).
+        $githubUrls = [];
+        $restUrls = [];
         foreach ($addonUrls as $addonUrl) {
             $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
-            $project = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
-
-            switch ($server) {
-                case 'github.com':
-                    $apiUrls[] = 'https://api.github.com/repos/' . $project;
-                    break;
-                case 'gitlab.com':
-                    $encodedProject = urlencode($project);
-                    $apiUrls[] = 'https://gitlab.com/api/v4/projects/' . $encodedProject;
-                    break;
+            if ($server === 'github.com'
+                && !empty($this->options['token']['api.github.com'])
+            ) {
+                $githubUrls[] = $addonUrl;
+            } else {
+                $restUrls[] = $addonUrl;
             }
         }
 
-        if ($apiUrls) {
-            $this->curlMultiBatch($apiUrls, 10);
+        if ($githubUrls) {
+            $this->fetchAddonsGraphQLBatch($githubUrls);
+        }
+
+        // GitLab or GitHub without token: use REST prefetch.
+        if ($restUrls) {
+            $apiUrls = [];
+            foreach ($restUrls as $addonUrl) {
+                $server = strtolower(parse_url($addonUrl, PHP_URL_HOST));
+                $project = trim(parse_url($addonUrl, PHP_URL_PATH), '/');
+                switch ($server) {
+                    case 'github.com':
+                        $apiUrls[] = 'https://api.github.com/repos/' . $project;
+                        break;
+                    case 'gitlab.com':
+                        $encodedProject = urlencode($project);
+                        $apiUrls[] = 'https://gitlab.com/api/v4/projects/'
+                            . $encodedProject;
+                        break;
+                }
+            }
+            if ($apiUrls) {
+                $this->curlMultiBatch($apiUrls, 10);
+            }
         }
     }
 
