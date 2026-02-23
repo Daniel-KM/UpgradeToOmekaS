@@ -75,6 +75,7 @@
     .version-rc {
         color: #339933;
     }
+    .addon-stats { white-space: nowrap; font-size: 0.9em; }
     .form-control::placeholder {
         color: #999;
         opacity: 1;

@@ -31,6 +31,7 @@ Feel free to add missing themes.
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
                     <th><span class="sort" data-sort="addon-downloads" title="Warning: The number of downloads don’t mean popularity. In particular, some addons have no release and some other ones have many releases.">Downloads</span></th>
+                    <th><span class="sort" data-sort="addon-stats">Stats</span></th>
                 </tr>
             </thead>
             {% include omeka_themes_table_body.md %}
