@@ -196,6 +196,8 @@ foreach ($types as $type => $args) {
     }
 }
 
+$scriptStart = microtime(true);
+
 foreach ($types as $type => $args) {
     if ($options['processOnlyType'] && !in_array($type, $options['processOnlyType'])) {
         continue;
@@ -212,6 +214,19 @@ foreach ($types as $type => $args) {
     $result = $update->process();
     $update->processUpdateLastVersions();
 }
+
+$totalSeconds = microtime(true) - $scriptStart;
+$hours = (int) ($totalSeconds / 3600);
+$minutes = (int) (($totalSeconds % 3600) / 60);
+$seconds = (int) ($totalSeconds % 60);
+$formatted = $hours > 0
+    ? sprintf('%dh %02dm %02ds', $hours, $minutes, $seconds)
+    : ($minutes > 0
+        ? sprintf('%dm %02ds', $minutes, $seconds)
+        : sprintf('%ds', $seconds));
+echo "\n" . str_repeat('=', 70) . "\n";
+echo "Total script duration: {$formatted}\n";
+echo str_repeat('=', 70) . "\n";
 
 exit($result ? 0 : 'An error occurred.');
 
