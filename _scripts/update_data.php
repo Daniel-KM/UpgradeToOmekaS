@@ -3401,7 +3401,7 @@ GRAPHQL;
             $addonIni = $iniPath ?: ('main/' . $this->args['ini']);
             $addonIni = $addonIniBase . '/' . $addonIni;
             $ini = $this->fetchRawFile($addonIni);
-            if (empty($ini) && empty($iniPath)) {
+            if (empty($ini)) {
                 $this->log('[No config ini ]' . ' ' . $addonUrl);
                 if ($this->options['debug']) {
                     $this->log(' Addon ini: ' . $addonIni);
@@ -3410,6 +3410,13 @@ GRAPHQL;
                 $this->addInvalidUrl($addonUrl);
                 return '';
             }
+        }
+
+        // Reject HTML pages (Cloudflare challenges, error pages, etc.).
+        if (preg_match('/^\s*</', $ini)) {
+            $this->log('[No config ini ]' . ' ' . $addonUrl);
+            $this->addInvalidUrl($addonUrl);
+            return '';
         }
 
         $addons[$keyAddon] = $ini;
