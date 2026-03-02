@@ -8,7 +8,7 @@ AddThis	0.1
 AdminAnalytics	1.0
 AdminImages	1.6
 adminMessage	0.0.0
-AdminTools	2.1
+AdminTools	2.3
 AdminUserManagement	1.0
 AdvSearchElementOrder	1.0
 AjaxCreate	0.1
@@ -57,7 +57,7 @@ Bibnumbxm	2.0
 Bibtex	0.1
 BIOElementSet	0.9
 BlockParty	1.0.1
-Blocks	0.3
+Blocks	2.3
 Blogger	1.1
 BlogShortcode	1.0
 BookCore	0.1
@@ -65,6 +65,7 @@ Bookmarks	0.1
 Bookmeka	0.1
 BookReader	2.7
 BookReaderGalleryLayout	1.0
+BotChallenge	2.3.0
 BrowseValues	1.0.0
 BulkImportFiles	2.0.4.1
 BulkMetadataEditor	2.9.1
@@ -118,7 +119,7 @@ CourseTools	1.2
 CreativeCommonsChooser	2.3.1
 CrowdEd	0.8.1
 CSSEditor	1.2
-CSVExport	1.1
+CSVExport	1.3
 CsvExport	1.1.2
 GoogleCsvImport	1.3
 CsvImport	2.0.7
@@ -303,7 +304,7 @@ KDNPObject	1.0.0
 KohaAuthoritySuggest	0.2.0
 KudlIdentityClient	0.0.0
 Landmarks	1.4
-LanguageSwitcher	1.1
+LanguageSwitcher	0.0.1
 LatLon	0.0.1
 LcSuggest	2.0.4
 LDAP	0.4.0
@@ -322,7 +323,7 @@ LinnaeusAdminHelper	1.0
 Bibnum	2.8
 LocalContexts	1.1
 Locale	1.0
-LocaleSwitcher	0.2.1
+LocaleSwitcher	0.3.0
 LoggedInLinks	1.0
 LoginHome	0.1
 Maintenance	0.1.0
@@ -339,8 +340,8 @@ MediaRss	1.0
 MerrittLink	1.9
 MetadataBrowser	2.11
 MetaMetaData	0.1
-MetsExport	1.3
 METSExport	1.1
+MetsExport	2.3
 MLMPContribution	1.2
 Mirador	2.2
 MirrorExhibitPage	1.0
@@ -360,7 +361,7 @@ Mosaic	1.0
 Mud	-
 Multilanguage	1.5.0
 MultimediaDisplay	1.3
-MultiCollections	1.0
+MultiCollections	2.1
 MuslimJourneysAdmin	0.1
 My	1.0
 NALLayouts	1.2
@@ -373,7 +374,7 @@ NeatlineEditions	0.1
 NeatlineFeatures	2.0.5
 NeatlineMaps	1.0.1
 NeatlineMerge	0.0.1
-NeatlineTime	2.1.2
+NeatlineTime	2.3.1
 NeatlineWebService	0.1
 NeatlineSimile	2.0.4
 NeatlineText	1.1.0
@@ -398,6 +399,7 @@ OHMSExport	2.1
 OhmsImport	2.0.7
 OHMSObject	1.0.0
 CustomElementSet	1.0.0
+ClassicOilApi	0.1
 ApiImport	1.2
 BootstrapSocial	0.6
 Devel	1.1
@@ -510,6 +512,7 @@ SubjectToTags	0.1
 SuggestAnything	2.3.2
 Super8festivals	1.0.0
 SuperRss	1.1.0
+SwitchLang	1.1
 Tagging	2.3.2
 TagInfo	0.0.1
 TM	1.0
@@ -565,5 +568,3 @@ XMLSitemap	0.11
 YouTubeImport	1.3
 Zoomit	2.0
 ZoteroImport	2.3
-Pwa	
-Downloadmanager	
