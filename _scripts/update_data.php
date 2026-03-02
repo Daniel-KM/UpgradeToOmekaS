@@ -1661,15 +1661,17 @@ class UpdateDataExtensions
 
             if (count($byPlatform) < 2) continue;
 
-            // Cross-platform duplicate found. Pick primary (most stars, then most downloads).
+            // Cross-platform duplicate found. Pick primary by most
+            // recent update, then highest version.
             $allKeys = array_merge(...array_values($byPlatform));
             usort($allKeys, function ($a, $b) use ($addons, $headers) {
-                $starsA = (int) ($addons[$a][$headers['Stars']] ?? 0);
-                $starsB = (int) ($addons[$b][$headers['Stars']] ?? 0);
-                if ($starsA !== $starsB) return $starsB - $starsA;
-                $dlA = (int) ($addons[$a][$headers['Total downloads']] ?? 0);
-                $dlB = (int) ($addons[$b][$headers['Total downloads']] ?? 0);
-                return $dlB - $dlA;
+                $dateA = $addons[$a][$headers['Last update']] ?? '';
+                $dateB = $addons[$b][$headers['Last update']] ?? '';
+                if ($dateA !== $dateB) return strcmp($dateB, $dateA);
+                $verA = $addons[$a][$headers['Last version']] ?? '';
+                $verB = $addons[$b][$headers['Last version']] ?? '';
+                if ($verA !== $verB) return version_compare($verB, $verA);
+                return 0;
             });
 
             $primaryKey = $allKeys[0];
