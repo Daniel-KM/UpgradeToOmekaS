@@ -1168,7 +1168,8 @@ class UpdateDataExtensions
         if ($graphqlData !== null) {
             // GraphQL returned all data in a single request.
             $graphqlFields = array(
-                'Creation date', 'Last update', 'Fork source',
+                'Creation date', 'Last update', 'Last activity',
+                'Fork source',
                 'Last released zip', 'Directory name',
                 'Count versions', 'Count tags', 'Total downloads',
                 'Stars', 'Forks', 'Watchers',
@@ -1195,6 +1196,11 @@ class UpdateDataExtensions
             $value = $this->findData($addonUrl, 'last update');
             if ($value) {
                 $addon[$headers['Last update']] = $value;
+            }
+
+            $value = $this->findData($addonUrl, 'last activity');
+            if ($value) {
+                $addon[$headers['Last activity']] = $value;
             }
 
             $value = $this->findData($addonUrl, 'fork source');
@@ -2123,15 +2129,13 @@ class UpdateDataExtensions
                     case 'creation date':
                         return $response->created_at;
 
-                    // "updated_at" means the last update in metadata or local
-                    // commit, whereas "pushed_at" means the last commit, but it
-                    // may be a commit on a fork if there is a pull request.
                     case 'last update':
-                        // $url = 'https://api.github.com/repos/' . $project . '/commits/HEAD';
-                        // $date = $response->commit->committer->date;
                         return $response->fork
                             ? $response->updated_at
-                            : max($response->updated_at, $response->pushed_at);
+                            : $response->pushed_at;
+
+                    case 'last activity':
+                        return $response->updated_at;
 
                     case 'fork source':
                         if (!$response->fork) {
@@ -2234,7 +2238,9 @@ class UpdateDataExtensions
                         return $response->created_at ?? '';
 
                     case 'last update':
-                        // GitLab uses last_activity_at for the last update.
+                        return $response->last_activity_at ?? '';
+
+                    case 'last activity':
                         return $response->last_activity_at ?? '';
 
                     case 'fork source':
@@ -2734,9 +2740,11 @@ class UpdateDataExtensions
 
         // Dates.
         $result['Creation date'] = $repo->createdAt ?? '';
+        // pushedAt = last code push; updatedAt = any repo event.
         $result['Last update'] = ($repo->isFork ?? false)
             ? ($repo->updatedAt ?? '')
-            : max($repo->updatedAt ?? '', $repo->pushedAt ?? '');
+            : ($repo->pushedAt ?? '');
+        $result['Last activity'] = $repo->updatedAt ?? '';
 
         // Fork source: direct parent URL (empty if not a fork).
         $result['Fork source'] = ($repo->isFork ?? false) && !empty($repo->parent)
