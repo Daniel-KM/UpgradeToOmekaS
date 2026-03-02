@@ -217,6 +217,33 @@ foreach ($types as $type => $args) {
 
 $scriptStart = microtime(true);
 
+// Display processing plan.
+$typesToProcess = $options['processOnlyType']
+    ? array_intersect_key($types, array_flip($options['processOnlyType']))
+    : $types;
+echo "\n";
+echo str_repeat('=', 70) . "\n";
+echo "Processing plan\n";
+echo str_repeat('=', 70) . "\n";
+echo sprintf("  %-12s %-35s %s\n", 'Type', 'CSV file', 'Steps');
+echo str_repeat('-', 70) . "\n";
+$steps = [];
+if ($options['processSearch']) $steps[] = 'search';
+if ($options['processUpdate']) $steps[] = 'update';
+$steps[] = 'filter+order';
+$steps[] = 'save';
+$steps[] = 'versions';
+$stepsStr = implode(' → ', $steps);
+foreach ($typesToProcess as $typeName => $typeArgs) {
+    echo sprintf(
+        "  %-12s %-35s %s\n",
+        $typeName,
+        basename($typeArgs['source']),
+        $stepsStr
+    );
+}
+echo str_repeat('=', 70) . "\n";
+
 foreach ($types as $type => $args) {
     if ($options['processOnlyType'] && !in_array($type, $options['processOnlyType'])) {
         continue;
@@ -1111,7 +1138,7 @@ class UpdateDataExtensions
             $progressInterval = max(1, min(10, (int)($totalAddons / 20)));
             if ($processedCount % $progressInterval === 0 || $processedCount === $totalAddons) {
                 $this->log(sprintf(
-                    '[Update] %d/%d (%d%%) - %s [%s elapsed, ~%s remaining]',
+                    '[Update] %d/%d (%d%%) - %s [step: %s elapsed, ~%s remaining]',
                     $processedCount,
                     $totalAddons,
                     $percent,
@@ -3541,7 +3568,7 @@ GRAPHQL;
 
             if ($itemName) {
                 $this->log(sprintf(
-                    '[%s] %d/%d (%d%%) - %s [%.1fs elapsed, ~%.1fs remaining]',
+                    '[%s] %d/%d (%d%%) - %s [step: %.1fs elapsed, ~%.1fs remaining]',
                     $this->currentStep,
                     $current,
                     $this->progressTotal,
@@ -3552,7 +3579,7 @@ GRAPHQL;
                 ));
             } else {
                 $this->log(sprintf(
-                    '[%s] %d/%d (%d%%) [%.1fs elapsed, ~%.1fs remaining]',
+                    '[%s] %d/%d (%d%%) [step: %.1fs elapsed, ~%.1fs remaining]',
                     $this->currentStep,
                     $current,
                     $this->progressTotal,
