@@ -862,10 +862,28 @@ class UpdateDataExtensions
             ? array_filter(array_map('trim', explode("\n", file_get_contents($this->options['excludedUrlsPath']))))
             : [];
 
-        // GitLab search queries.
-        $searchTerms = ['omeka-s-module', 'omeka module', 'omeka-s'];
+        // GitLab search queries adapted to the current type.
+        $searchTerms = [];
         if (!empty($this->args['topic'])) {
             $searchTerms[] = $this->args['topic'];
+        }
+        switch ($this->type) {
+            case 'module':
+                $searchTerms[] = 'omeka-s-module';
+                $searchTerms[] = 'omeka module';
+                break;
+            case 'template':
+                $searchTerms[] = 'omeka-s-theme';
+                $searchTerms[] = 'omeka theme';
+                break;
+            case 'plugin':
+                $searchTerms[] = 'omeka-plugin';
+                $searchTerms[] = 'omeka plugin';
+                break;
+            case 'theme':
+                $searchTerms[] = 'omeka-theme';
+                $searchTerms[] = 'omeka theme classic';
+                break;
         }
 
         $this->log('[Search:gitlab] Searching GitLab...');
