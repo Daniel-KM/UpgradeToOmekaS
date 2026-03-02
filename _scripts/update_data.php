@@ -1862,7 +1862,7 @@ class UpdateDataExtensions
     {
         $headers = $this->headers;
         $statFields = ['Stars', 'Forks', 'Watchers', 'Open issues', 'Total issues',
-            'Open PRs', 'Total PRs', 'Count tags'];
+            'Open PRs', 'Total PRs', 'Count versions', 'Count tags', 'Total downloads'];
 
         foreach (explode(',', $alternateUrls) as $mirrorUrl) {
             $mirrorUrl = trim($mirrorUrl);
