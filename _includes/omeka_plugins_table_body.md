@@ -101,8 +101,8 @@
             {%- endif -%}
             {%- if addon['Total issues'] and addon['Total issues'] != '0'
                 or addon['Total PRs'] and addon['Total PRs'] != '0' -%}
-                <span title="{{ t_issues }}">{%- if addon['Total issues'] and addon['Total issues'] != '0' -%}⚠ {{ addon['Open issues'] | default: '0' }}/{{ addon['Total issues'] }}{%- endif -%}</span>
                 <span></span>
+                <span title="{{ t_issues }}">{%- if addon['Total issues'] and addon['Total issues'] != '0' -%}⚠ {{ addon['Open issues'] | default: '0' }}/{{ addon['Total issues'] }}{%- endif -%}</span>
                 <span title="{{ t_prs }}">{%- if addon['Total PRs'] and addon['Total PRs'] != '0' -%}⑃ {{ addon['Open PRs'] | default: '0' }}/{{ addon['Total PRs'] }}{%- endif -%}</span>
             {%- endif -%}
             </span>
