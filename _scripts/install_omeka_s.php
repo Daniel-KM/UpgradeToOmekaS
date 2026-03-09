@@ -530,7 +530,7 @@ class Addons
                 } elseif ($row) {
                     $name = $row[$headers['Name']] ?? '';
                     if ($name) {
-                        $this->selections[$name] = array_map('trim', explode(',', $row[$headers['Modules and themes']] ?? ''));
+                        $this->selections[$name] = array_map(fn ($v) => str_replace(' ', '', trim($v)), explode(',', $row[$headers['Modules and themes']] ?? ''));
                     }
                 }
             }
