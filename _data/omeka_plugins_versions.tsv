@@ -1,6 +1,6 @@
 AccessibilityPlus	1.0
 AccessKeys	1.2
-ActivityLog	1.0-alpha
+ActivityLog	1.0
 AddItem	0.1
 AdditionnalResources	1.0
 AddSubtitle	0.1.0
@@ -8,7 +8,7 @@ AddThis	0.1
 AdminAnalytics	1.0
 AdminImages	1.6
 adminMessage	0.0.0
-AdminTools	2.3
+AdminTools	2.4
 AdminUserManagement	1.0
 AdvSearchElementOrder	1.0
 AjaxCreate	0.1
@@ -86,7 +86,7 @@ CheckLinks	0.1
 CleanUrl	2.16.1
 Apc	0.1
 ClickableLinks	0.1
-ClickableLinksPlus	1.5
+ClickableLinksPlus	1.6
 Coins	2.1.1
 Collaborate	0.1
 CollationBuilder	0.1
@@ -97,7 +97,7 @@ Collections	1.0
 CollectionBrowseResults	0.0.0
 Colsort	2.0.2
 CollectionSpaceImport	-
-CollectionsPlus	1.4
+CollectionsPlus	1.5
 CollectionTree	2.1
 ColorCodeSyntaxHighlighter	0.1
 Commenting	2.5
@@ -129,9 +129,10 @@ CTCGuides	1.0
 CulCustomize	1
 CuratescapeAdminHelper	1.6.5
 CuratescapeGalleries	1.0
+CuratescapeJSON	1.5.4
 CuratescapeSeo	1.0
 CuratorMonitor	2.4.7
-CustomCitation	1.0
+CustomCitation	2.0
 CustomHeadBodyContent	1.0
 CustomItemsBatchForm	0.1
 DatabaseBackup	0.1
@@ -166,7 +167,7 @@ DS	0.1
 DspaceRestapiHarvester	0.1
 DublinCoreExtended	2.3
 DuplicateItem	0.1
-EmailNotification	1.5
+EmailNotification	1.6
 EmailUsers	1.2
 Ead	2.4.3
 EadImporter	1.0
@@ -448,7 +449,7 @@ RecursiveSuppression	0.0.3
 RedactElements	1.0
 Reference	2.7
 RefnumElementSet	2.4
-RelatedContent	2.1.1
+RelatedContent	3.0
 Remotefile	 1.0 beta 
 RenderJSON	0.0.0
 ReorderElementTexts	0.1
@@ -539,6 +540,7 @@ TimelineShortcode	1.1
 TinyMceMod	-
 TinyMCEMod	0.1
 TocForUniversalViewer	1.0.1
+TourBuilder	2.0
 Transcript	0.9
 TransferFileText	0.0.1
 Translations	2.1
