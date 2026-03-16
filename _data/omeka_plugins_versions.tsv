@@ -194,14 +194,14 @@ Europeana	2.1.0
 Europeana4dExport	0.1
 EuropeanaElementSet	2.1
 ExhibitAccess	-
-ExhibitBuilder	3.8
+ExhibitBuilder	3.9
 ExhibitImageAnnotation	1.3
 ExhibitMicrosite	0.9
 ExperimentalBeijing	0.1.0
 Export	0.1
 Export20	2.0
 ExportEacCpf	0.1
-Exports	1.0-alpha
+Exports	1.0
 ExportSpokeJson	0.0.20
 ExternalFeed	1.0
 Extractocr	1.0.1
@@ -250,7 +250,7 @@ Heist	1.1
 Helper	0.9
 Helpers	2.13
 HideElements	1.4
-HideFiles	1.3
+HideFiles	1.5
 HistoryLog	2.10
 HmpBrowseItemsMenu	0.1
 HonorThyContributors	0.1.3
@@ -519,6 +519,7 @@ TagInfo	0.0.1
 TM	1.0
 Tagroups	0.0.1
 TagsInCollection	1.0
+TagsPlus	1.1
 TakebackCustomizations	0.0.1
 Taxonomy	0.3.0
 TCsDialogue	0.3
