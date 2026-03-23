@@ -1,4 +1,5 @@
 AccessibilityPlus	1.0
+AccessibilityToolbar	1.0
 AccessKeys	1.2
 ActivityLog	1.0
 AddItem	0.1
@@ -128,9 +129,10 @@ CsvImportPenn	2.0.4
 CTCGuides	1.0
 CulCustomize	1
 CuratescapeAdminHelper	1.6.5
-CuratescapeGalleries	1.0
+CuratescapeGalleries	1.0.1
 CuratescapeJSON	1.5.4
-CuratescapeSeo	1.0
+CuratescapeSeo	1.0.1
+Curatescape	1.0.1
 CuratorMonitor	2.4.7
 CustomCitation	2.0
 CustomHeadBodyContent	1.0
@@ -216,7 +218,7 @@ FeedImporter	0.1
 FileDownload	1.0
 FileIconPreview	1.0
 FileModify	2.4
-FilePaginator	1.0
+FilePaginator	1.1
 FileRelations	0.1
 FilterCreatorAdminForm	1.0
 FindAndReplace	2.0.0
@@ -260,6 +262,7 @@ Html5Media	2.8.1
 HtmlDisplay	1.0
 HtmlViewer	0.2.3
 HydraHlsEmbed	0.1
+IconBusinessOs	1.0.0
 Identity	0.0.0
 Idref	0.1
 IframeAllowFullscreen	1.0.0
