@@ -3,9 +3,9 @@ ActivityLog	1.0.1
 AdminAddon	0.0.14
 Adminer	3.4.13-5.4.2
 AdminPlus	3.0.3
-AdvancedResourceTemplate	3.4.52
-AdvancedSearch	3.4.59
-SearchSolr	3.5.66
+AdvancedResourceTemplate	3.4.53
+AdvancedSearch	3.4.60
+SearchSolr	3.5.67
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.3.1
 AiGenerator	3.4.4
@@ -70,7 +70,7 @@ Columbo	0.1.4
 ColumnsMaker	0.0.1
 ComemApi	1.0.0
 Comment	3.4.16
-Common	3.4.81
+Common	3.4.82
 Compilatio	3.4.2
 ConnectedSites	1.0
 ContactUs	3.4.28
@@ -106,7 +106,7 @@ DerivativeMedia	3.4.15
 DescriptionWithAI	1.0.0
 DiigoImport	0.0.7
 DiskQuota	0.0.0
-Diva	3.3.2.3
+Diva	3.4.3-7.2.2
 DocArchive	2.1.0
 DomainManager	2.0.0
 RrchnmDonate	1.0.1
@@ -161,7 +161,7 @@ GoogleTagManager	1.0.0
 Gpuraseed	1.0.0
 Group	3.4.7
 GroupEdit	1.0
-Guest	3.4.42
+Guest	3.4.43
 GuestApi	3.4.5
 GuestPrivate	3.4.7
 GuestRole	0.3.1
@@ -191,11 +191,11 @@ IiifPreview	3.0.3
 Iiifremoteimages	1.2.0
 IiifSearch	3.4.12
 IiifSearchCarousel	0.2.38
-IiifServer	3.6.30
+IiifServer	3.6.31
 IiifViewers	1.2.5
 ImageAnnotate	1.1.0
 ImageMap	1.0
-ImageServer	3.6.23
+ImageServer	3.6.24
 ImageWithText	1.3.0
 Impersonate	0.0.0
 ImportIt	0.2.0
@@ -224,7 +224,7 @@ Kalturastream	1.1.0
 Kintme	0.1.7
 KohaImport	1.2.1
 LandingBlock	1.0.0
-Ldap	0.5.1
+Ldap	0.6.0
 LearningObject	1.0.0
 Lessonplans	1.1
 LHDBlang	1.0.0
@@ -237,7 +237,7 @@ LocalMediaIngester	0.3.0
 Locate	3.4.1
 LockEdit	3.4.2
 Lockout	3.4.6
-Log	3.4.36
+Log	3.4.37
 LogSentry	3.4.2
 Mailing	1.0.0
 MailTrap	0.1.0
@@ -259,7 +259,7 @@ Mesostiche	0.0.2
 MetadataBrowse	1.6.1
 MetadataEditor	1.0.0
 MetaTags	3.4.6
-Mirador	3.4.13
+Mirador	3.4.14
 ModelViewer	3.4.4-183
 Template	0.0.0
 MPCustomInput	0.1.0
@@ -308,7 +308,7 @@ PerformanceLabRestApi	1.0.0
 Performancelabrestapi	1.0.0
 PersistentIdentifiers	1.1.1
 CorporateImage	0.1.0
-PersonalNotebook	0.2.0
+PersonalNotebook	0.3.0
 PerseeOaiHarvester	0.5.0
 PlaceFunctions	0.0.0
 Polifonia	3.4.8
@@ -326,13 +326,13 @@ Reciprocal	3.4.2
 RedactValues	1.1.0
 RedirectAfterLogin	0.4.0
 Redirector	3.4.3
-Reference	3.4.59
+Reference	3.4.60
 RefFormation	0.1.0
 Relators	1.0
 ResourceMeta	1.1.0
 ItemNetworks	0.0.1
 ResourceTree	2.1.0
-ResourceVisualizations	1.7.1
+ResourceVisualizations	1.17.0
 RestrictedSites	2.3
 ResumeCours	1.0.0
 RightsStatements	1.2.1
@@ -409,7 +409,7 @@ UniqueConstraintViolationException	0.1.0
 UniqueProperties	0.0.1
 UnitedSearch	1.0.0
 UnityAPI	
-UniversalViewer	3.6.13-4.2.1
+UniversalViewer	3.6.14-4.2.1
 UpgradeFromOmekaClassic	3.1.3
 UriDereferencer	1.4.3
 Urify	3.4.3
@@ -423,7 +423,7 @@ VideoThumbnail	2.0.0
 VideoThumbnails	3.5.42
 ViewerJs	3.4.5-0.7.2
 ViewPrivateResources	1.0.2
-Vips	3.4.5
+Vips	3.4.6
 VocabularyAddon	1.0.3
 Watermarker	1.1.0
 WebMCP	0.0.0
@@ -440,4 +440,4 @@ FiskRosenwaldZipToBulkImport	0.0.1
 ZoteroCitations	1.0.0
 ZoteroImport	1.3.0
 ZoteroImportplus	3.0.1
-Like	3.4.2
+Like	3.4.3
