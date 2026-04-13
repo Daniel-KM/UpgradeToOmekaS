@@ -66,7 +66,7 @@ Bookmarks	0.1
 Bookmeka	0.1
 BookReader	2.7
 BookReaderGalleryLayout	1.0
-BotChallenge	2.3.0
+BotChallenge	2.3.1
 BrowseValues	1.0.0
 BulkImportFiles	2.0.4.1
 BulkMetadataEditor	2.9.1
@@ -132,7 +132,7 @@ CuratescapeAdminHelper	1.6.5
 CuratescapeGalleries	1.0.1
 CuratescapeJSON	1.5.4
 CuratescapeSeo	1.0.1
-Curatescape	1.0.1
+Curatescape	1.0.2
 CuratorMonitor	2.4.7
 CustomCitation	2.0
 CustomHeadBodyContent	1.0
@@ -530,6 +530,7 @@ TeachingImageItemtype	0.0.1
 TeiAnnotations	1.0
 TeiDisplay	2.0
 TeiEditions	1.0.0-pre13
+TEIInteract	0.2.2
 Template	1.0
 TermsOfService	0.2.2
 FacetedSearch	0.1
