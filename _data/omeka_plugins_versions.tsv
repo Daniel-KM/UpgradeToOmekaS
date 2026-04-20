@@ -132,7 +132,7 @@ CuratescapeAdminHelper	1.6.5
 CuratescapeGalleries	1.0.1
 CuratescapeJSON	1.5.4
 CuratescapeSeo	1.0.1
-Curatescape	1.0.2
+Curatescape	1.0.4
 CuratorMonitor	2.4.7
 CustomCitation	2.0
 CustomHeadBodyContent	1.0
@@ -196,7 +196,7 @@ Europeana	2.1.0
 Europeana4dExport	0.1
 EuropeanaElementSet	2.1
 ExhibitAccess	-
-ExhibitBuilder	3.9
+ExhibitBuilder	3.10
 ExhibitImageAnnotation	1.3
 ExhibitMicrosite	0.9
 ExperimentalBeijing	0.1.0
@@ -409,7 +409,7 @@ BootstrapSocial	0.6
 Devel	1.1
 ElementSetExample	0.1
 Errbit	0.0.1
-FootnotesJS	1.1
+FootnotesJS	1.2
 Mapfigtudio	1.0
 OnOvh	2.3
 OgTwitterMetatags	1.0
@@ -506,7 +506,7 @@ Specific	2.0
 SpokedbAccession	0.0.0
 SpokeRelationships	0.0.1
 Spreadsheet	
-StaticSiteExport	1.0.0-alpha
+StaticSiteExport	1.0
 Stats	2.2.4.2
 StreamOnly	1.0.2
 StructuredNames	0.0.0
