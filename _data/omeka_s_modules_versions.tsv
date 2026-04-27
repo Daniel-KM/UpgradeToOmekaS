@@ -1,11 +1,11 @@
 Access	3.4.41
 ActivityLog	1.0.1
-AdminAddon	0.4.0
-Adminer	3.4.13-5.4.2
+AdminAddon	0.5.1
+Adminer	3.4.14-5.4.2
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.53
-AdvancedSearch	3.4.60
-SearchSolr	3.5.67
+AdvancedSearch	3.4.61
+SearchSolr	3.5.68
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.3.1
 AiGenerator	3.4.4
@@ -54,9 +54,9 @@ BulkExport	3.4.40
 BulkImport	3.4.64
 BulkImportFiles	3.4.9
 BuMaps	0.0.1
-CacheNavigation	3.4.0
+CacheNavigation	3.4.1
 CartoAffect	0.1.9
-CAS	0.7.0
+CAS	0.8.0
 CatalogSearch	0.1.0
 ChaoticumSeminario	0.0.13
 CiteShare	1.0.0
@@ -64,7 +64,7 @@ Citing	1.0.0
 Ckeconfig	0.1.4
 CleanUrl	3.17.12
 CmapImport	0.0.2
-Coins	3.4.5
+Coins	3.4.6
 Collecting	1.13.0
 CollectingTogether	0.1.0
 Columbo	0.1.4
@@ -87,6 +87,7 @@ CSVImport	2.6.2
 CustomAdvancedSearch	0.0.1
 CustomFloat	1.0
 Customfloat	1.0
+CustomHeadBodyContent	1.0.0
 CustomMaps	0.0.1
 CustomOntology	3.4.6
 CustomVocab	2.1.0
@@ -108,7 +109,7 @@ DerivativeMedia	3.4.15
 DescriptionWithAI	1.0.0
 DiigoImport	0.0.7
 DiskQuota	0.0.0
-Diva	3.4.3-7.2.2
+Diva	3.4.4-7.2.2
 DocArchive	2.1.0
 DomainManager	2.0.0
 RrchnmDonate	1.0.1
@@ -134,7 +135,7 @@ Exports	1.0.0
 ExtendedSiteDescription	0.2.0
 ExtraBlocks	0.1.0
 ExtractMetadata	1.2.0
-ExtractOcr	3.4.10
+ExtractOcr	3.4.11
 ExtractText	2.1.0
 FacetedBrowse	1.9.2
 FacetedSearch	0.1.0
@@ -154,9 +155,10 @@ Folksonomy	3.4.12
 Footnotes	3.3.0.2-3.4.1
 Formularium	0.2.2
 FreeSpace	1.0.1
+FromClassicWithLove	0.1.0
 Generic	3.4.47
 GestionFormation	0.0.1
-GlobalLandingPage	1.0.5
+GlobalLandingPage	1.0.6
 GlycerineViewer	1.0.1
 GoogleAnalytics	1.3.2
 GoogleTagManager	1.0.0
@@ -186,6 +188,7 @@ IiifAnnotationsSearch	0.1.0
 IiifBulkImport	0.1.0
 IiifCanonicalRedirect	0.1.0
 IiifDownload	1.0.1
+IiifFromFile	3.4.0
 IIIFHosting	1.0.0-beta
 IiifManifestDerivatives	0.0.1
 IiifPresentation	1.1.2
@@ -193,11 +196,12 @@ IiifPreview	3.0.3
 Iiifremoteimages	1.2.0
 IiifSearch	3.4.12
 IiifSearchCarousel	0.2.38
-IiifServer	3.6.31
+IiifServer	3.6.32
+IiifToFile	3.4.0
 IiifViewers	1.2.5
 ImageAnnotate	1.1.0
 ImageMap	1.0
-ImageServer	3.6.24
+ImageServer	3.6.25
 ImageWithText	1.3.0
 Impersonate	0.0.0
 ImportIt	0.2.0
@@ -217,7 +221,7 @@ ItemSetSearch	1.1.0
 ItemSetsGraph	1.1
 ItemSetsTree	0.7.5
 TotalPages	0.1.0
-IwacSearch	0.1.0-dev
+IwacSearch	0.2.6
 IwacSentiment	1.3.0
 IwacVisualizations	0.14.4
 JDC	0.0.11
@@ -258,12 +262,12 @@ MediaArchive	2.1.0
 MediaOrderFixer	0.1.0
 MediaWatermark	1.0
 MeetingMind	1.0.0
-Menu	3.4.13
+Menu	3.4.14
 Mesostiche	0.0.2
 MetadataBrowse	1.6.1
 MetadataEditor	1.0.0
 MetaTags	3.4.6
-Mirador	3.4.15
+Mirador	3.4.16
 ModelViewer	3.4.4-183
 Template	0.0.0
 MPCustomInput	0.1.0
@@ -289,6 +293,7 @@ OaiPmhUnimarc	1.0.0
 MediaViewer	0.10.3
 OhmsEmbed	1.0.1
 Oidc	1.0.1
+ClassicImporter	0.1.0
 2Importer	1.5.1
 Rapper	0.1.0
 Osii	1.4.0
@@ -330,7 +335,7 @@ Reciprocal	3.4.2
 RedactValues	1.1.0
 RedirectAfterLogin	0.4.0
 Redirector	3.4.3
-Reference	3.4.60
+Reference	3.4.61
 RefFormation	0.1.0
 Relators	1.0
 ResourceMeta	1.1.0
@@ -396,6 +401,7 @@ AgileStorymap	3.4.4
 Table	3.4.7
 Taxonomy	0.9.2
 Teams	4.1.0
+TextEmbed	1.2.0
 Thesauri	0.1.0
 Thesaurus	3.4.23
 ThesaurusOnroerendErfgoedVlaanderen	3.2.0
@@ -413,7 +419,7 @@ UniqueConstraintViolationException	0.1.0
 UniqueProperties	0.0.1
 UnitedSearch	1.0.0
 UnityAPI	
-UniversalViewer	3.6.14-4.2.1
+UniversalViewer	3.6.15-4.2.1
 UpgradeFromOmekaClassic	3.1.3
 UriDereferencer	1.4.3
 Urify	3.4.3
@@ -435,6 +441,7 @@ WebMonetization	1.0.0
 WhaaatBlock	0.0.3
 Wikibase	1.0.0
 Wikidata	1.5.0.alpha1
+XmlEmbed	1.0.0
 XmlViewer	3.4.11
 ZenodoExporter	1.0.0
 Zip	3.4.4
