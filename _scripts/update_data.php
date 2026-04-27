@@ -106,7 +106,93 @@ $options = [
     'debugDiff' => 'diff',
     // If true, the updated whole csv is saved in the destination after debug.
     'debugOutput' => false,
+    // Run only the JSON build step from existing CSVs (no search, no update, no
+    // versions tsv). Useful to (re)build the four omeka_*.json files.
+    'processOnlyJson' => false,
 ];
+
+if (PHP_SAPI === 'cli' && !empty($argv)) {
+    $aliases = [
+        'json-only' => 'processOnlyJson',
+        'only-json' => 'processOnlyJson',
+        'only-type' => 'processOnlyType',
+        'only-addon' => 'processOnlyAddon',
+        'only-new-urls' => 'processOnlyNewUrls',
+        'no-search' => ['processSearch', false],
+        'no-update' => ['processUpdate', false],
+        'format-csv-only' => 'processFormatCsvOnly',
+    ];
+    $resolveKey = function (string $name) use (&$options, $aliases): ?array {
+        if (isset($aliases[$name])) {
+            $a = $aliases[$name];
+            return is_array($a) ? $a : [$a, null];
+        }
+        $camel = lcfirst(str_replace(' ', '', ucwords(str_replace('-', ' ', $name))));
+        if (array_key_exists($camel, $options)) {
+            return [$camel, null];
+        }
+        if (array_key_exists($name, $options)) {
+            return [$name, null];
+        }
+        return null;
+    };
+    $cast = function ($current, string $value) {
+        if (is_bool($current)) {
+            return in_array(strtolower($value), ['1', 'true', 'yes', 'on'], true);
+        }
+        if (is_int($current)) {
+            return (int) $value;
+        }
+        if (is_array($current)) {
+            return $value === '' ? [] : array_map('trim', explode(',', $value));
+        }
+        return $value;
+    };
+    foreach (array_slice($argv, 1) as $arg) {
+        if ($arg === '-h' || $arg === '--help') {
+            echo "Usage: php update_data.php [--option[=value]] ...\n";
+            echo "Options (defaults shown): \n";
+            foreach ($options as $k => $v) {
+                $disp = is_bool($v) ? ($v ? 'true' : 'false') : (is_array($v) ? implode(',', $v) : (string) $v);
+                echo sprintf("  --%s=%s\n", $k, $disp);
+            }
+            echo "Aliases: --json-only, --no-search, --no-update, --only-type=, --only-addon=, --format-csv-only\n";
+            exit(0);
+        }
+        if (strncmp($arg, '--', 2) !== 0) {
+            continue;
+        }
+        $body = substr($arg, 2);
+        $negate = false;
+        if (strncmp($body, 'no-', 3) === 0 && !isset($aliases[$body])) {
+            $tryKey = $resolveKey(substr($body, 3));
+            if ($tryKey && is_bool($options[$tryKey[0]])) {
+                $options[$tryKey[0]] = false;
+                continue;
+            }
+        }
+        $eq = strpos($body, '=');
+        $name = $eq === false ? $body : substr($body, 0, $eq);
+        $value = $eq === false ? null : substr($body, $eq + 1);
+        $resolved = $resolveKey($name);
+        if ($resolved === null) {
+            fwrite(STDERR, "Unknown option: --{$name}\n");
+            exit(2);
+        }
+        [$key, $forced] = $resolved;
+        if ($forced !== null) {
+            $options[$key] = $forced;
+        } elseif ($value === null) {
+            $options[$key] = is_bool($options[$key]) ? true : $options[$key];
+        } else {
+            $options[$key] = $cast($options[$key], $value);
+        }
+    }
+}
+if ($options['processOnlyJson']) {
+    $options['processSearch'] = false;
+    $options['processUpdate'] = false;
+}
 
 $types = [
     'plugin' => [
@@ -216,6 +302,7 @@ foreach ($types as $type => $args) {
 }
 
 $scriptStart = microtime(true);
+$result = true;
 
 // Display processing plan.
 $typesToProcess = $options['processOnlyType']
@@ -257,6 +344,10 @@ foreach ($types as $type => $args) {
     }
     $options['otherTypesUrls'] = array_flip($otherTypesUrls);
     $update = new UpdateDataExtensions($type, $args, $options);
+    if ($options['processOnlyJson']) {
+        $result = $update->processUpdateJson();
+        continue;
+    }
     $result = $update->process();
     $update->processUpdateLastVersions();
     $update->processUpdateJson();
