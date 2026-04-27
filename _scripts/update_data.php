@@ -259,6 +259,7 @@ foreach ($types as $type => $args) {
     $update = new UpdateDataExtensions($type, $args, $options);
     $result = $update->process();
     $update->processUpdateLastVersions();
+    $update->processUpdateJson();
 }
 
 $totalSeconds = (int) (microtime(true) - $scriptStart);
@@ -597,6 +598,205 @@ class UpdateDataExtensions
 
         $this->log(sprintf('[Versions] Saved %d unique addons to TSV.', count($addonsLastVersions)));
 
+        return true;
+    }
+
+    /**
+     * Create the JSON file mirroring omeka.org add-ons format.
+     *
+     * @link https://omeka.org/add-ons/json/s_module.json
+     */
+    public function processUpdateJson()
+    {
+        $destination = str_replace('.csv', '.json', $this->args['destination']);
+        $this->log(sprintf('[Json] Generating %s...', basename($destination)));
+
+        if (!$this->checkFiles($this->args['source'], $destination)) {
+            return false;
+        }
+
+        $rows = array_map('str_getcsv', file($this->args['source']));
+        if (empty($rows)) {
+            $this->log(sprintf('[Json] Error: No content in "%s".', $this->args['source']));
+            return false;
+        }
+
+        $headers = array_flip($rows[0]);
+        unset($rows[0]);
+
+        $typeMap = [
+            'plugin' => 'classic_plugin',
+            'theme' => 'classic_theme',
+            'module' => 's_module',
+            'template' => 's_theme',
+        ];
+        $jsonType = $typeMap[$this->type] ?? $this->type;
+
+        $get = function (array $row, string $key) use ($headers): string {
+            return isset($headers[$key]) ? trim((string) ($row[$headers[$key]] ?? '')) : '';
+        };
+
+        $output = [];
+        if (file_exists($destination)) {
+            $existing = json_decode((string) file_get_contents($destination), true);
+            if (is_array($existing)) {
+                $output = $existing;
+            }
+        }
+
+        foreach ($rows as $row) {
+            $name = $get($row, 'Name');
+            if ($name === '') {
+                continue;
+            }
+            $url = rtrim($get($row, 'Url'), '/');
+            if ($url === '') {
+                continue;
+            }
+            $dirName = $get($row, 'Directory name');
+            if ($dirName === '' || $dirName === strtolower($dirName)) {
+                $derived = $this->extractNamespaceFromProjectName(basename($url));
+                if ($derived !== '') {
+                    $dirName = $derived;
+                }
+            }
+            if ($dirName === '') {
+                $dirName = $name;
+            }
+
+            $owner = '';
+            $repo = '';
+            if (preg_match('~^https?://(?:www\.)?(?:github|gitlab)\.com/([^/]+)/([^/]+)~i', $url, $m)) {
+                $owner = $m[1];
+                $repo = $m[2];
+            }
+
+            $version = $get($row, 'Last version');
+            $constraint = $get($row, 'Omeka constraint');
+            $downloadUrl = $get($row, 'Last released zip');
+            $registered = $get($row, 'Creation date');
+
+            $key = $name;
+            if (isset($output[$key]) && ($output[$key]['owner'] ?? '') !== '' && $owner !== '' && $output[$key]['owner'] !== $owner) {
+                $key = $name . '_' . $owner;
+            }
+
+            $existingEntry = $output[$key] ?? null;
+            $versions = is_array($existingEntry['versions'] ?? null) ? $existingEntry['versions'] : [];
+
+            $addonId = (int) ($existingEntry['id'] ?? 0);
+            if ($addonId === 0) {
+                $addonId = (int) sprintf('%u', crc32($jsonType . '|' . $owner . '/' . $repo . '|' . $dirName));
+            }
+
+            $buildVersion = function (array $rel) use ($addonId): array {
+                $tag = $rel['tag_name'] ?? $rel['version'] ?? '';
+                $ver = $rel['version'] ?? ltrim($tag, 'vV');
+                $dl = $rel['download_url'] ?? '';
+                $assetName = $dl !== '' ? basename(parse_url($dl, PHP_URL_PATH) ?: $dl) : '';
+                $vid = (int) sprintf('%u', crc32($addonId . '|' . $ver));
+                $aid = $assetName !== '' ? (int) sprintf('%u', crc32($dl)) : 0;
+                $created = $rel['created'] ?? '';
+                return [
+                    'addon_id' => $addonId,
+                    'asset_id' => $aid,
+                    'asset_name' => $assetName,
+                    'created' => $created,
+                    'download_url' => $dl,
+                    'downloads' => (int) ($rel['downloads'] ?? 0),
+                    'id' => $vid,
+                    'omeka_version_constraint' => $rel['omeka_version_constraint'] ?? '',
+                    'tag_name' => $tag,
+                    'version' => $ver,
+                ];
+            };
+
+            // TODO Releases ne sont pas publiées sur GitLab : utiliser le
+            // miroir GitHub quand disponible. Quand GitLab supportera la
+            // publication des releases côté API, retirer ce contournement.
+            $fetchUrl = $url;
+            if (stripos(parse_url($url, PHP_URL_HOST) ?? '', 'gitlab.com') !== false) {
+                $alternates = array_filter(array_map('trim', explode(',', $get($row, 'Alternate urls'))));
+                foreach ($alternates as $alt) {
+                    if (stripos(parse_url($alt, PHP_URL_HOST) ?? '', 'github.com') !== false) {
+                        $fetchUrl = $alt;
+                        break;
+                    }
+                }
+            }
+
+            $isIncomplete = function (array $v): bool {
+                return empty($v['download_url']) || empty($v['omeka_version_constraint']);
+            };
+            $hasIncomplete = false;
+            foreach ($versions as $v) {
+                if ($isIncomplete($v)) {
+                    $hasIncomplete = true;
+                    break;
+                }
+            }
+
+            $countVersions = (int) $get($row, 'Count versions');
+            if (count($versions) < $countVersions || $hasIncomplete) {
+                foreach ($this->fetchAllReleases($fetchUrl) as $rel) {
+                    $v = $rel['version'];
+                    if ($v === '') {
+                        continue;
+                    }
+                    if (isset($versions[$v]) && !$isIncomplete($versions[$v])) {
+                        continue;
+                    }
+                    $versions[$v] = $buildVersion($rel);
+                }
+            }
+
+            if ($version !== '') {
+                $existingV = $versions[$version] ?? [];
+                $merged = $buildVersion([
+                    'tag_name' => $existingV['tag_name'] ?? $version,
+                    'version' => $version,
+                    'download_url' => $downloadUrl !== '' ? $downloadUrl : ($existingV['download_url'] ?? ''),
+                    'created' => $existingV['created'] ?? '',
+                    'downloads' => $existingV['downloads'] ?? 0,
+                    'omeka_version_constraint' => $constraint,
+                ]);
+                $versions[$version] = $merged + $existingV;
+            }
+
+            uksort($versions, 'version_compare');
+
+            $output[$key] = [
+                'dirname' => $dirName,
+                'id' => $addonId,
+                'latest_version' => $version !== '' ? $version : ($existingEntry['latest_version'] ?? ''),
+                'owner' => $owner !== '' ? $owner : ($existingEntry['owner'] ?? ''),
+                'registered' => $registered !== '' ? $registered : ($existingEntry['registered'] ?? ''),
+                'repo' => $repo !== '' ? $repo : ($existingEntry['repo'] ?? ''),
+                'type' => $jsonType,
+                'versions' => $versions,
+            ];
+
+            if (!($this->options['debug'] && !$this->options['debugOutput'])) {
+                $sorted = $output;
+                ksort($sorted);
+                $this->saveToJsonFile($destination, $sorted);
+            }
+        }
+
+        ksort($output);
+
+        if ($this->options['debug'] && !$this->options['debugOutput']) {
+            $this->log('[Json] Debug mode: no output.');
+            return true;
+        }
+
+        $result = $this->saveToJsonFile($destination, $output);
+        if (!$result) {
+            $this->log(sprintf('[Json] Error saving "%s".', $destination));
+            return false;
+        }
+
+        $this->log(sprintf('[Json] Saved %d addons to JSON.', count($output)));
         return true;
     }
 
@@ -3212,6 +3412,162 @@ GRAPHQL;
                 }
             }
         }
+    }
+
+    /**
+     * Fetch and parse the omeka_version_constraint from an ini raw URL.
+     */
+    protected function fetchConstraintFromIni(string $url): string
+    {
+        $ini = $this->fetchRawFile($url);
+        if (empty($ini) || preg_match('/^\s*</', $ini)) {
+            return '';
+        }
+        $parsed = @parse_ini_string($ini, true, INI_SCANNER_RAW);
+        if (!is_array($parsed)) {
+            return '';
+        }
+        $info = $parsed['info'] ?? $parsed;
+        foreach (['omeka_version_constraint', 'omeka_minimum_version', 'omeka_target_version'] as $k) {
+            if (!empty($info[$k])) {
+                return trim((string) $info[$k], " \t\"'");
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Fetch full release history (normalized) for a repository URL.
+     *
+     * @return array<string, array> Indexed by version with keys:
+     *   download_url, tag_name, version, created, downloads.
+     */
+    protected function fetchAllReleases(string $addonUrl): array
+    {
+        $parts = parse_url($addonUrl);
+        if (empty($parts['host']) || empty($parts['path'])) {
+            return [];
+        }
+        $host = strtolower($parts['host']);
+        $path = trim($parts['path'], '/');
+        $segments = explode('/', $path);
+        if (count($segments) < 2) {
+            return [];
+        }
+        [$user, $project] = $segments;
+        $project = preg_replace('~\.git$~', '', $project);
+
+        $out = [];
+        $iniPath = str_replace(DIRECTORY_SEPARATOR, '/', $this->args['ini'] ?? '');
+
+        if ($host === 'github.com' || $host === 'www.github.com') {
+            $base = 'https://api.github.com/repos/' . $user . '/' . $project . '/releases?per_page=100';
+            $releases = $this->fetchAllGitHubPages($base);
+            if (empty($releases)) {
+                $tagsUrl = 'https://api.github.com/repos/' . $user . '/' . $project . '/tags?per_page=100';
+                foreach ($this->fetchAllGitHubPages($tagsUrl) as $t) {
+                    $tag = $t->name ?? '';
+                    if ($tag === '') {
+                        continue;
+                    }
+                    $version = ltrim($tag, 'vV');
+                    $dl = sprintf('https://github.com/%s/%s/archive/refs/tags/%s.zip', $user, $project, $tag);
+                    $rawBase = sprintf('https://raw.githubusercontent.com/%s/%s/%s/', $user, $project, $tag);
+                    $out[$version] = [
+                        'created' => '',
+                        'download_url' => $dl,
+                        'downloads' => 0,
+                        'omeka_version_constraint' => $iniPath !== '' ? $this->fetchConstraintFromIni($rawBase . $iniPath) : '',
+                        'tag_name' => $tag,
+                        'version' => $version,
+                    ];
+                }
+                return $out;
+            }
+            foreach ($releases as $r) {
+                $tag = $r->tag_name ?? '';
+                if ($tag === '') {
+                    continue;
+                }
+                $version = ltrim($tag, 'vV');
+                $dl = '';
+                $downloads = 0;
+                if (!empty($r->assets)) {
+                    foreach ($r->assets as $a) {
+                        $downloads += (int) ($a->download_count ?? 0);
+                        if ($dl === '' && !empty($a->browser_download_url) && substr($a->name ?? '', -4) === '.zip') {
+                            $dl = $a->browser_download_url;
+                        }
+                    }
+                }
+                if ($dl === '') {
+                    $dl = sprintf('https://github.com/%s/%s/archive/refs/tags/%s.zip', $user, $project, $tag);
+                }
+                $rawBase = sprintf('https://raw.githubusercontent.com/%s/%s/%s/', $user, $project, $tag);
+                $out[$version] = [
+                    'created' => $r->created_at ?? '',
+                    'download_url' => $dl,
+                    'downloads' => $downloads,
+                    'omeka_version_constraint' => $iniPath !== '' ? $this->fetchConstraintFromIni($rawBase . $iniPath) : '',
+                    'tag_name' => $tag,
+                    'version' => $version,
+                ];
+            }
+        } elseif ($host === 'gitlab.com') {
+            $encoded = urlencode($path);
+            $base = 'https://gitlab.com/api/v4/projects/' . $encoded . '/releases?per_page=100';
+            $releases = $this->fetchAllGitLabPages($base);
+            if (empty($releases)) {
+                $tagsUrl = 'https://gitlab.com/api/v4/projects/' . $encoded . '/repository/tags?per_page=100';
+                foreach ($this->fetchAllGitLabPages($tagsUrl) as $t) {
+                    $tag = $t->name ?? '';
+                    if ($tag === '') {
+                        continue;
+                    }
+                    $version = ltrim($tag, 'vV');
+                    $dl = sprintf('https://gitlab.com/%s/-/archive/%s/%s-%s.zip', $path, $tag, $project, $tag);
+                    $rawBase = sprintf('https://gitlab.com/%s/-/raw/%s/', $path, $tag);
+                    $out[$version] = [
+                        'created' => $t->commit->created_at ?? '',
+                        'download_url' => $dl,
+                        'downloads' => 0,
+                        'omeka_version_constraint' => $iniPath !== '' ? $this->fetchConstraintFromIni($rawBase . $iniPath) : '',
+                        'tag_name' => $tag,
+                        'version' => $version,
+                    ];
+                }
+                return $out;
+            }
+            foreach ($releases as $r) {
+                $tag = $r->tag_name ?? '';
+                if ($tag === '') {
+                    continue;
+                }
+                $version = ltrim($tag, 'vV');
+                $dl = '';
+                if (!empty($r->assets) && !empty($r->assets->sources)) {
+                    foreach ($r->assets->sources as $s) {
+                        if (($s->format ?? '') === 'zip') {
+                            $dl = $s->url;
+                            break;
+                        }
+                    }
+                }
+                if ($dl === '') {
+                    $dl = sprintf('https://gitlab.com/%s/-/archive/%s/%s-%s.zip', $path, $tag, $project, $tag);
+                }
+                $rawBase = sprintf('https://gitlab.com/%s/-/raw/%s/', $path, $tag);
+                $out[$version] = [
+                    'created' => $r->created_at ?? ($r->released_at ?? ''),
+                    'download_url' => $dl,
+                    'downloads' => 0,
+                    'omeka_version_constraint' => $iniPath !== '' ? $this->fetchConstraintFromIni($rawBase . $iniPath) : '',
+                    'tag_name' => $tag,
+                    'version' => $version,
+                ];
+            }
+        }
+        return $out;
     }
 
     /**
