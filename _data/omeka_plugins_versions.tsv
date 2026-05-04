@@ -132,7 +132,7 @@ CuratescapeAdminHelper	1.6.5
 CuratescapeGalleries	1.0.1
 CuratescapeJSON	1.5.4
 CuratescapeSeo	1.0.1
-Curatescape	1.0.4
+Curatescape	1.0.5
 CuratorMonitor	2.4.7
 CustomCitation	2.0
 CustomHeadBodyContent	1.0
@@ -453,7 +453,7 @@ RecursiveSuppression	0.0.3
 RedactElements	1.0
 Reference	2.7
 RefnumElementSet	2.4
-RelatedContent	3.0
+RelatedContent	3.01
 Remotefile	 1.0 beta 
 RenderJSON	0.0.0
 ReorderElementTexts	0.1
