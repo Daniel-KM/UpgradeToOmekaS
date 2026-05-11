@@ -1369,7 +1369,7 @@
                 "asset_name": "centerrow-1.8.5.zip",
                 "created": "2026-01-05T15:17:26Z",
                 "download_url": "https://github.com/omeka-s-themes/centerrow/releases/download/v1.8.5/centerrow-1.8.5.zip",
-                "downloads": 286,
+                "downloads": 314,
                 "id": 1159138880,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.8.5",
@@ -1841,7 +1841,7 @@
                 "asset_name": "cozy-1.6.3.zip",
                 "created": "2026-01-08T15:43:25Z",
                 "download_url": "https://github.com/omeka-s-themes/cozy/releases/download/v1.6.3/cozy-1.6.3.zip",
-                "downloads": 192,
+                "downloads": 210,
                 "id": 2935156422,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.6.3",
@@ -2712,7 +2712,7 @@
                 "asset_name": "default-1.9.2.zip",
                 "created": "2025-12-04T20:22:17Z",
                 "download_url": "https://github.com/omeka-s-themes/default/releases/download/v1.9.2/default-1.9.2.zip",
-                "downloads": 1102,
+                "downloads": 1146,
                 "id": 1766364487,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.9.2",
@@ -2898,7 +2898,7 @@
     "FIT Archive on Demand": {
         "dirname": "FitAod",
         "id": 3203553559,
-        "latest_version": "1.0.6",
+        "latest_version": "1.0.7",
         "owner": "fitnycdigitalinitiatives",
         "registered": "2023-03-17T19:49:47Z",
         "repo": "fit-aod",
@@ -2915,13 +2915,25 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.6",
                 "version": "1.0.6"
+            },
+            "1.0.7": {
+                "addon_id": 3203553559,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3031500055,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.7",
+                "version": "1.0.7"
             }
         }
     },
     "FIT Designer Files": {
         "dirname": "FitDf",
         "id": 3669261353,
-        "latest_version": "1.2.2",
+        "latest_version": "1.2.3",
         "owner": "fitnycdigitalinitiatives",
         "registered": "2024-09-26T14:17:36Z",
         "repo": "fit-df",
@@ -2938,6 +2950,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.2.2",
                 "version": "1.2.2"
+            },
+            "1.2.3": {
+                "addon_id": 3669261353,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3327927524,
+                "omeka_version_constraint": "",
+                "tag_name": "1.2.3",
+                "version": "1.2.3"
             }
         }
     },
@@ -2967,7 +2991,7 @@
     "FIT Institutional Repository": {
         "dirname": "FitIr",
         "id": 2102688533,
-        "latest_version": "1.2.8",
+        "latest_version": "1.2.9",
         "owner": "fitnycdigitalinitiatives",
         "registered": "2022-04-19T14:43:08Z",
         "repo": "fit-ir",
@@ -2984,6 +3008,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.2.8",
                 "version": "1.2.8"
+            },
+            "1.2.9": {
+                "addon_id": 2102688533,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 352054490,
+                "omeka_version_constraint": "",
+                "tag_name": "1.2.9",
+                "version": "1.2.9"
             }
         }
     },
@@ -3013,7 +3049,7 @@
     "Foundation": {
         "dirname": "Foundation",
         "id": 1778763558,
-        "latest_version": "1.5.3",
+        "latest_version": "1.5.4",
         "owner": "omeka-s-themes",
         "registered": "2019-06-10T18:17:57Z",
         "repo": "foundation",
@@ -3253,11 +3289,23 @@
                 "asset_name": "theme-foundation-s-v1.5.3.zip",
                 "created": "2025-02-18T20:47:11Z",
                 "download_url": "https://github.com/omeka-s-themes/foundation/releases/download/v1.5.3/theme-foundation-s-v1.5.3.zip",
-                "downloads": 1031,
+                "downloads": 1057,
                 "id": 1352302148,
-                "omeka_version_constraint": "",
+                "omeka_version_constraint": "^4.1.0",
                 "tag_name": "v1.5.3",
                 "version": "1.5.3"
+            },
+            "1.5.4": {
+                "addon_id": 1778763558,
+                "asset_id": 968807425,
+                "asset_name": "foundation-1.5.4.zip",
+                "created": "2026-05-12T14:52:54Z",
+                "download_url": "https://github.com/omeka-s-themes/foundation/releases/download/v1.5.4/foundation-1.5.4.zip",
+                "downloads": 28,
+                "id": 3472813031,
+                "omeka_version_constraint": "",
+                "tag_name": "v1.5.4",
+                "version": "1.5.4"
             }
         }
     },
@@ -3473,7 +3521,7 @@
     "IWAC": {
         "dirname": "IWAC",
         "id": 4212721562,
-        "latest_version": "1.8.0",
+        "latest_version": "2.1.1",
         "owner": "fmadore",
         "registered": "2025-12-13T08:41:00Z",
         "repo": "IWAC-theme",
@@ -3502,6 +3550,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.8.0",
                 "version": "1.8.0"
+            },
+            "2.1.1": {
+                "addon_id": 4212721562,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3954014331,
+                "omeka_version_constraint": "",
+                "tag_name": "2.1.1",
+                "version": "2.1.1"
             }
         }
     },
@@ -3832,7 +3892,7 @@
                 "asset_name": "lively-v1.1.0.zip",
                 "created": "2026-02-10T23:47:12Z",
                 "download_url": "https://github.com/omeka-s-themes/lively/releases/download/v1.1.0/lively-v1.1.0.zip",
-                "downloads": 208,
+                "downloads": 233,
                 "id": 4256693059,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.1.0",
@@ -4636,7 +4696,7 @@
                 "asset_name": "theme-papers-v1.4.5.zip",
                 "created": "2024-10-28T20:11:21Z",
                 "download_url": "https://github.com/omeka-s-themes/papers/releases/download/v1.4.5/theme-papers-v1.4.5.zip",
-                "downloads": 684,
+                "downloads": 693,
                 "id": 3562580949,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.4.5",
@@ -6536,7 +6596,7 @@
                 "asset_name": "theme-thanksroy-v1.2.2.zip",
                 "created": "2024-10-28T18:52:10Z",
                 "download_url": "https://github.com/omeka-s-themes/thanksroy/releases/download/v1.2.2/theme-thanksroy-v1.2.2.zip",
-                "downloads": 640,
+                "downloads": 660,
                 "id": 4039951992,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.2.2",

@@ -109,7 +109,7 @@ ConditionalElements	0.1
 Concarousel	2.2
 CdmLink	1.6
 ContextualLabels	1.0
-Contribution	3.4
+Contribution	3.4.1
 ContributionTweaks	0.9
 ContributorContact	1.1
 ContributorMetadata	1.0
@@ -296,7 +296,7 @@ ItemOrder	2.2
 ItemReferences	0.1
 ItemRelations	2.2.1
 ItemReview	1.1
-ItemSEO	1.0.1
+ItemSEO	1.0.2
 ItemsPartialShortcode	0.1
 ItemShowLog	1.0
 ItemViews	1.0.1
