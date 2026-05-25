@@ -1,6 +1,6 @@
 Access	3.4.43
 ActivityLog	1.0.1
-AdminAddon	0.6.5
+AdminAddon	0.7.3
 Adminer	3.4.15-5.4.2
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.53
@@ -45,7 +45,7 @@ BiblionumberSupport	1.0.0
 BienEtreBot	1.0.0
 BlockLayoutSkeleton	0.1.0
 BlockPlus	3.4.44
-BlocksAddon	0.0.6
+BlocksAddon	0.1.2
 BlocksDisposition	3.4.5
 BokehBall	0.0.2
 BotChallenge	3.4.1
@@ -101,7 +101,7 @@ DataTypeEdtf	3.4.5
 DataTypeGeometry	3.4.7
 DataTypePlace	3.4.2
 DataTypeRdf	3.4.16
-Datavis	1.4.0
+Datavis	1.5.0
 DclMisc	1.0.3
 Deduplicate	3.4.5
 Deploy	0.1.0
@@ -195,7 +195,7 @@ IiifManifestDerivatives	0.0.1
 IiifPresentation	1.1.2
 IiifPreview	3.0.3
 Iiifremoteimages	1.2.0
-IiifSearch	3.4.13
+IiifSearch	3.4.14
 IiifSearchCarousel	0.2.38
 IiifServer	3.6.32
 IiifToFile	3.4.0
@@ -286,7 +286,7 @@ NetworkMap	1.0
 Next	3.4.50
 NodeGraph	1.0.1
 NoGoogleChromeFlockTracking	3.4.1
-NumericDataTypes	1.14.2
+NumericDataTypes	1.14.3
 OaiPmhHarvester	3.4.26
 OaiPmhRepository	3.4.12
 OaiPmhRepositoryMediaPropertyMapper	0.1.0
@@ -348,7 +348,7 @@ ResumeCours	1.0.0
 RightsStatements	1.2.1
 Robots	1.0.1
 RoleBasedNavigation	1.2
-RolesManager	0.7.0
+RolesManager	0.8.8
 S3FileStore	1.1.3
 S3MediaIngester	0.1.1
 Saclay	3.3.0.4
@@ -356,7 +356,7 @@ SACO	0.3
 FiskPhpSandblock	0.1.0
 Scanr	1.1.0.0
 Scaping	0.0.3
-Scripto	1.5.0
+Scripto	1.5.1
 ScriptoIiif	0.2.0
 ScriptoImportContributors	0.2.1
 ScriptoPageBlocks	0.1
@@ -428,7 +428,7 @@ UserNames	1.2
 UserProfile	3.4.12
 ValueSuggest	1.20.1
 ValueSuggestAny	3.4.5
-ValueSuggestUpdater	0.1.4
+ValueSuggestUpdater	0.1.5
 Verovio	3.4.9-6.0.1
 VideoThumbnail	2.0.0
 VideoThumbnails	3.5.42

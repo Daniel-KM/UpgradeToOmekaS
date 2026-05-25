@@ -634,7 +634,7 @@
     "Admin Addon": {
         "dirname": "AdminAddon",
         "id": 621834616,
-        "latest_version": "0.6.5",
+        "latest_version": "0.7.3",
         "owner": "vovanshu",
         "registered": "2026-01-22T10:32:27Z",
         "repo": "AdminAddon",
@@ -663,6 +663,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "0.6.5",
                 "version": "0.6.5"
+            },
+            "0.7.3": {
+                "addon_id": 621834616,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3159146783,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "0.7.3",
+                "version": "0.7.3"
             }
         }
     },
@@ -5710,14 +5722,14 @@
         "versions": {
             "1.0.0": {
                 "addon_id": 1100378292,
-                "asset_id": 0,
-                "asset_name": "",
-                "created": "",
-                "download_url": "",
+                "asset_id": 2280838056,
+                "asset_name": "v1.0.0.zip",
+                "created": "2026-05-18T16:19:54Z",
+                "download_url": "https://github.com/antoine37120/omekas-audio-video-player-iiif/archive/refs/tags/v1.0.0.zip",
                 "downloads": 0,
                 "id": 2142927050,
                 "omeka_version_constraint": "^4.0.0",
-                "tag_name": "1.0.0",
+                "tag_name": "v1.0.0",
                 "version": "1.0.0"
             }
         }
@@ -7069,7 +7081,7 @@
     "Blocks Addititon": {
         "dirname": "BlocksAddon",
         "id": 4125625285,
-        "latest_version": "0.0.6",
+        "latest_version": "0.1.2",
         "owner": "vovanshu",
         "registered": "2026-01-27T14:05:54Z",
         "repo": "BlocksAddon",
@@ -7098,6 +7110,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "0.0.6",
                 "version": "0.0.6"
+            },
+            "0.1.2": {
+                "addon_id": 4125625285,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 1040817723,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "0.1.2",
+                "version": "0.1.2"
             }
         }
     },
@@ -14875,7 +14899,7 @@
     "Data Visualization": {
         "dirname": "Datavis",
         "id": 1224847281,
-        "latest_version": "1.4.0",
+        "latest_version": "1.5.0",
         "owner": "omeka-s-modules",
         "registered": "2020-10-22T23:03:09Z",
         "repo": "Datavis",
@@ -14964,6 +14988,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v1.4.0",
                 "version": "1.4.0"
+            },
+            "1.5.0": {
+                "addon_id": 1224847281,
+                "asset_id": 1035437045,
+                "asset_name": "Datavis-1.5.0.zip",
+                "created": "2026-05-20T15:48:17Z",
+                "download_url": "https://github.com/omeka-s-modules/Datavis/releases/download/v1.5.0/Datavis-1.5.0.zip",
+                "downloads": 9,
+                "id": 2917334498,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.5.0",
+                "version": "1.5.0"
             }
         }
     },
@@ -19163,7 +19199,7 @@
                 "asset_name": "FreeSpace-1.0.1.zip",
                 "created": "2024-03-22T10:19:16Z",
                 "download_url": "https://github.com/smachefert/Omeka-S-module-FreeSpace/releases/download/1.0.1/FreeSpace-1.0.1.zip",
-                "downloads": 322,
+                "downloads": 323,
                 "id": 3031282658,
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.1",
@@ -22594,7 +22630,7 @@
     "IIIF Search": {
         "dirname": "IiifSearch",
         "id": 302399461,
-        "latest_version": "3.4.13",
+        "latest_version": "3.4.14",
         "owner": "Daniel-KM",
         "registered": "2020-08-23T14:04:23.678Z",
         "repo": "Omeka-S-module-IiifSearch",
@@ -22719,6 +22755,18 @@
                 "omeka_version_constraint": "^3.1 || ^4.0",
                 "tag_name": "3.4.13",
                 "version": "3.4.13"
+            },
+            "3.4.14": {
+                "addon_id": 302399461,
+                "asset_id": 3617861435,
+                "asset_name": "IiifSearch-3.4.14.zip",
+                "created": "2026-05-04T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-IiifSearch/releases/download/3.4.14/IiifSearch-3.4.14.zip",
+                "downloads": 0,
+                "id": 3666870970,
+                "omeka_version_constraint": "^3.1 || ^4.0",
+                "tag_name": "3.4.14",
+                "version": "3.4.14"
             }
         }
     },
@@ -25400,7 +25448,7 @@
                 "asset_name": "ItemCopy.zip",
                 "created": "2018-11-18T11:44:51Z",
                 "download_url": "https://github.com/azur-scd/ItemCopy/releases/download/1.0.1/ItemCopy.zip",
-                "downloads": 1373,
+                "downloads": 1376,
                 "id": 3543697507,
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.1",
@@ -30810,7 +30858,7 @@
     "Numeric Data Types": {
         "dirname": "NumericDataTypes",
         "id": 907128258,
-        "latest_version": "1.14.2",
+        "latest_version": "1.14.3",
         "owner": "omeka-s-modules",
         "registered": "2018-10-31T15:17:31Z",
         "repo": "NumericDataTypes",
@@ -31067,6 +31115,18 @@
                 "omeka_version_constraint": "^4.2.0",
                 "tag_name": "v1.14.2",
                 "version": "1.14.2"
+            },
+            "1.14.3": {
+                "addon_id": 907128258,
+                "asset_id": 3845427326,
+                "asset_name": "NumericDataTypes-1.14.3.zip",
+                "created": "2026-05-20T15:36:58Z",
+                "download_url": "https://github.com/omeka-s-modules/NumericDataTypes/releases/download/v1.14.3/NumericDataTypes-1.14.3.zip",
+                "downloads": 22,
+                "id": 1770365813,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v1.14.3",
+                "version": "1.14.3"
             }
         }
     },
@@ -35304,7 +35364,7 @@
     "Roles Manager": {
         "dirname": "RolesManager",
         "id": 3800091688,
-        "latest_version": "0.7.0",
+        "latest_version": "0.8.8",
         "owner": "vovanshu",
         "registered": "2025-10-22T12:58:20Z",
         "repo": "RolesManager",
@@ -35333,6 +35393,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "0.7.0",
                 "version": "0.7.0"
+            },
+            "0.8.8": {
+                "addon_id": 3800091688,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 1594582556,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "0.8.8",
+                "version": "0.8.8"
             }
         }
     },
@@ -35595,7 +35667,7 @@
     "Scripto": {
         "dirname": "Scripto",
         "id": 3947999729,
-        "latest_version": "1.5.0",
+        "latest_version": "1.5.1",
         "owner": "omeka-s-modules",
         "registered": "2017-11-17T20:22:19Z",
         "repo": "Scripto",
@@ -35732,6 +35804,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v1.5.0",
                 "version": "1.5.0"
+            },
+            "1.5.1": {
+                "addon_id": 3947999729,
+                "asset_id": 40785157,
+                "asset_name": "Scripto-1.5.1.zip",
+                "created": "2026-05-20T16:03:48Z",
+                "download_url": "https://github.com/omeka-s-modules/Scripto/releases/download/v1.5.1/Scripto-1.5.1.zip",
+                "downloads": 7,
+                "id": 1626951594,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.5.1",
+                "version": "1.5.1"
             }
         }
     },
@@ -43330,7 +43414,7 @@
     "Value Suggest Updater": {
         "dirname": "ValueSuggestUpdater",
         "id": 2177651630,
-        "latest_version": "0.1.4",
+        "latest_version": "0.1.5",
         "owner": "biblibre",
         "registered": "2025-06-17T07:50:29Z",
         "repo": "omeka-s-module-ValueSuggestUpdater",
@@ -43383,6 +43467,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v0.1.4",
                 "version": "0.1.4"
+            },
+            "0.1.5": {
+                "addon_id": 2177651630,
+                "asset_id": 535082092,
+                "asset_name": "ValueSuggestUpdater-0.1.4.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-ValueSuggestUpdater/releases/download/v0.1.4/ValueSuggestUpdater-0.1.4.zip",
+                "downloads": 0,
+                "id": 1701670494,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "0.1.5",
+                "version": "0.1.5"
             }
         }
     },
@@ -44875,7 +44971,7 @@
                 "asset_name": "jQueryUI-1.12.1.zip",
                 "created": "2017-11-09T12:48:46Z",
                 "download_url": "https://github.com/biblibre/omeka-s-module-jQueryUI/releases/download/v1.12.1/jQueryUI-1.12.1.zip",
-                "downloads": 1588,
+                "downloads": 1589,
                 "id": 1222877488,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.12.1",
