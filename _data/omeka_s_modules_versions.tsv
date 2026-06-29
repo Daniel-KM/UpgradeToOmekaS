@@ -1,6 +1,7 @@
+ATOVisualisation	1.0
 Access	3.4.43
 ActivityLog	1.0.1
-AdminAddon	0.8.6
+AdminAddon	0.8.7
 Adminer	3.4.15-5.4.2
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.54
@@ -8,7 +9,7 @@ AdvancedSearch	3.4.62
 SearchSolr	3.5.69
 AdvancedSearchPlus	3.3.5.7
 AgileTools	1.3.1
-AiGenerator	3.4.4
+AiGenerator	3.4.5
 AlineImporter	1.1
 FindIdref	1.0.1
 AllInOneAccessibility	1.0
@@ -45,7 +46,7 @@ BiblionumberSupport	1.0.0
 BienEtreBot	1.0.0
 BlockLayoutSkeleton	0.1.0
 BlockPlus	3.4.45
-BlocksAddon	0.1.4
+BlocksAddon	0.1.5
 BlocksDisposition	3.4.5
 BokehBall	0.0.2
 BotChallenge	3.4.1
@@ -54,6 +55,7 @@ BulkEdit	3.4.39
 BulkExport	3.4.40
 BulkImport	3.4.65
 BulkImportFiles	3.4.9
+BulkSiteItemSets	1.0.0
 BuMaps	0.0.1
 CacheNavigation	3.4.1
 CartoAffect	0.1.9
@@ -63,7 +65,7 @@ ChaoticumSeminario	0.0.13
 CiteShare	1.0.0
 Citing	1.0.0
 Ckeconfig	0.1.4
-CleanUrl	3.17.13
+CleanUrl	3.17.14
 CmapImport	0.0.2
 Coins	3.4.6
 Collecting	1.13.0
@@ -78,13 +80,16 @@ ConnectedSites	1.0
 ContactUs	3.4.30
 ContentReader	1.0.0
 Contribute	3.4.38
+ContributeEnhancements	1.3.4
 CopIdRef	3.4.13
-CopyResources	1.0.1
+CopyResources	1.0.2
 Correction	3.0.11
 CreateMissingThumbnails	0.3.0
 Cron	3.4.2
+Cronical	0.1.1
 CSSEditor	1.3.1
 CSVImport	2.6.3
+CuratedTextLinks	0.1.0
 CustomAdvancedSearch	0.0.1
 CustomFloat	1.0
 Customfloat	1.0
@@ -115,9 +120,9 @@ Diva	3.4.4-7.2.2
 DocArchive	2.1.0
 DomainManager	2.0.0
 RrchnmDonate	1.0.1
-DRESearch	1.15.3
-DRESEO	0.4.0
-ResourceVisualizations	2.9.0
+DRESearch	1.16.0
+DRESEO	0.5.0
+ResourceVisualizations	2.20.0
 DspaceConnector	1.7.1
 DynamicItemSets	3.4.6
 Ead	3.0.4
@@ -155,7 +160,7 @@ FileSideload	1.7.1
 FirstMediaVisibility	0.1.3
 FIT	1.4.9
 FixCjkSearch	4.1.0
-FixCliAndJob	0.1.4
+FixCliAndJob	0.2.0
 FluentAPI	0.3
 Folksonomy	3.4.12
 Footnotes	3.3.0.2-3.4.1
@@ -188,6 +193,8 @@ Hierarchy	1.2.2
 HistoryLog	3.4.10-beta-8
 bannerMessage	1.0.1
 HttpHeaderAuth	1.0
+InternetArchiveInboundSync	1.3.0
+InternetArchiveOutboundSync	1.0.0
 IdRef	0.1.0
 IdResolver	1.0.0
 IframeEmbed	1.1.0
@@ -211,7 +218,7 @@ ImageMap	1.0
 ImageServer	3.6.25
 ImageWithText	1.3.0
 Impersonate	0.0.0
-ImportIt	0.2.0
+ImportIt	0.2.1
 InputMethodEditor	1.0
 Internationalisation	3.4.20
 Interviews	0.0.0
@@ -225,13 +232,14 @@ ItemSetGroup	0.2.4
 ItemSetLinksMusic	1.1.0
 ItemSetParty	0.3.1
 ItemSetSearch	1.1.0
+ItemSetSelections	0.2.0
 ItemSetsGraph	1.1
 ItemSetsTree	0.7.5
 TotalPages	0.1.0
-IwacSearch	3.4.4
+IwacSearch	3.5.2
 IwacSentiment	1.3.0
 IWACSEO	0.3.0
-IwacVisualizations	1.14.4
+IwacVisualizations	1.20.0
 JDC	0.0.11
 JobAddon	1.0.2
 jQueryParallax	1.0
@@ -258,10 +266,10 @@ LogSentry	3.4.2
 Mailing	1.0.0
 MailTrap	0.1.1
 Maintenance	3.3.3.2
-Mapper	3.4.7
+Mapper	3.4.8
 Mapping	2.2.0
 Mare	1.0.0
-MappingExtensions	1.0.1
+MappingExtensions	1.1.1
 MarcXmlExport	1.1.2
 Mason	0.1.1
 Matomo	0.2.0
@@ -323,7 +331,7 @@ PdfToc	2.0
 PdfViewer	3.4.4
 PerformanceLabRestApi	1.0.0
 Performancelabrestapi	1.0.0
-PersistentIdentifiers	1.1.1
+PersistentIdentifiers	1.2.0
 CorporateImage	0.1.0
 PersonalNotebook	0.3.0
 PerseeOaiHarvester	0.5.0
@@ -347,6 +355,7 @@ Redirector	3.4.5
 Reference	3.4.62
 RefFormation	0.1.0
 Relators	1.0
+RepositoryCounts	1.0.0
 ResourceMeta	1.1.0
 ItemNetworks	0.0.1
 ResourceTree	2.1.0
@@ -355,7 +364,7 @@ ResumeCours	1.0.0
 RightsStatements	1.2.1
 Robots	1.0.1
 RoleBasedNavigation	1.2
-RolesManager	0.8.11
+RolesManager	0.9.0
 S3FileStore	1.1.3
 S3MediaIngester	0.1.1
 Saclay	3.3.0.4
@@ -460,5 +469,5 @@ FiskRosenwaldZipToBulkImport	0.0.1
 ZoteroCitations	1.0.0
 ZoteroImport	1.3.0
 ZoteroImportplus	3.0.1
-ZYXFixer	0.10.0
-Like	3.4.4
+ZYXFixer	0.16.2
+Like	3.4.5

@@ -1,7 +1,7 @@
 AccessibilityPlus	1.0
 AccessibilityToolbar	1.0
 AccessKeys	1.2
-ActivityLog	1.0
+ActivityLog	1.1
 AddItem	0.1
 AdditionnalResources	1.0
 AddSubtitle	0.1.0
@@ -81,6 +81,7 @@ Casify	1.0
 CatalogSearch	1.0.3
 CategoryBrowse	2.1
 2CategoryTree	1.0
+CategoryTree	2.0.1
 CATimeline	1.0
 CentralAuth	2.0
 CheckLinks	0.1
@@ -176,7 +177,7 @@ EadImporter	1.0
 EditLink	1.0
 EditLinks	0.1
 Editorial	1.3
-Ehri	2.0.0
+Ehri	2.0.1
 Southern	0.1
 Elasticsearch	1.2.0
 ElementAdministration	0.1
@@ -304,6 +305,7 @@ IuWebsite	2.0
 JobDiagnostics	1.0.1
 Jquery	
 RSSFeaturedItems	0.1
+JwtAuth	0.1.0
 KalturaVideo	1.0
 KDNPObject	1.0.0
 KohaAuthoritySuggest	0.2.0
