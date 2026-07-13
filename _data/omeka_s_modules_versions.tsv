@@ -1,8 +1,8 @@
 ATOVisualisation	1.0
-Access	3.4.45
+Access	3.4.46
 ActivityLog	1.0.1
 AdminAddon	0.8.7
-Adminer	3.4.16-5.4.3
+Adminer	3.4.16-5.4.4
 AdminPlus	3.0.3
 AdvancedResourceTemplate	3.4.54
 AdvancedSearch	3.4.62
@@ -65,7 +65,7 @@ ChaoticumSeminario	0.0.13
 CiteShare	1.0.0
 Citing	1.0.0
 Ckeconfig	0.1.4
-CleanUrl	3.17.14
+CleanUrl	3.17.15
 CmapImport	0.0.2
 Coins	3.4.6
 Collecting	1.13.0
@@ -74,7 +74,7 @@ Columbo	0.1.4
 ColumnsMaker	0.0.1
 ComemApi	1.0.0
 Comment	3.4.18
-Common	3.4.87
+Common	3.4.88
 Compilatio	3.4.4
 ConnectedSites	1.0
 ContactUs	3.4.30
@@ -85,7 +85,7 @@ CopIdRef	3.4.13
 CopyResources	1.0.2
 Correction	3.0.11
 CreateMissingThumbnails	0.3.0
-Cron	3.4.2
+Cron	3.4.3
 Cronical	0.1.1
 CSSEditor	1.3.1
 CSVImport	2.6.3
@@ -128,7 +128,7 @@ DynamicItemSets	3.4.6
 Ead	3.0.4
 EADImport	2.0.0
 EadXmlDataType	1.0.0
-EasyAdmin	3.4.45
+EasyAdmin	3.4.46
 EasyInstall	3.3.7
 Ebook	3.4.10
 EdtfDataType	0.0.1
@@ -420,7 +420,7 @@ Taxonomy	0.9.2
 Teams	4.1.0
 TextEmbed	1.2.0
 Thesauri	0.1.0
-Thesaurus	3.4.23
+Thesaurus	3.4.24
 ThesaurusOnroerendErfgoedVlaanderen	3.2.0
 ThreeDViewer	0.0.0
 Tify	1.0
