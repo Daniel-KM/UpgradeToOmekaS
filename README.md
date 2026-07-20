@@ -61,12 +61,17 @@ sudo gem install rubygems-update
 sudo update_rubygems
 sudo gem update
 
+# If extensions are too much old or in multiple versions.
+gem cleanup
+gem pristine --extensions
+
 # May be not installed by default.
 gem install bundler eventmachine http_parser.rb sass-embedded
 
 # The main process to run the site locally.
 # Important: It should be done every time the file _config.yml is updated.
 cd UpgradeToOmekaS
+bundle config set --local path 'vendor/bundle'
 bundle install
 bundle exec jekyll serve --incremental
 ```
