@@ -908,20 +908,22 @@ class UpdateDataExtensions
 
         // Build multiple search queries to catch more modules.
         // The main query uses the standard keywords.
+        // "is:public" is required: the requests are authenticated, so without
+        // it the search returns the private repositories readable by the token.
         $searches = [
-            'keywords' => 'https://api.github.com/search/repositories?q=' . $this->args['keywords'] . '+fork%3Afalse' . '+in:topics,name,description,readme',
+            'keywords' => 'https://api.github.com/search/repositories?q=' . $this->args['keywords'] . '+fork%3Afalse+is%3Apublic' . '+in:topics,name,description,readme',
         ];
 
         // Add extra keyword searches if configured.
         if (!empty($this->args['keywords_extra'])) {
             foreach ($this->args['keywords_extra'] as $i => $extraKeywords) {
-                $searches['extra_' . $i] = 'https://api.github.com/search/repositories?q=' . $extraKeywords . '+fork%3Afalse' . '+in:topics,name,description,readme';
+                $searches['extra_' . $i] = 'https://api.github.com/search/repositories?q=' . $extraKeywords . '+fork%3Afalse+is%3Apublic' . '+in:topics,name,description,readme';
             }
         }
 
         // Add topic-based search.
         if (!empty($this->args['topic'])) {
-            $searches['topic'] = 'https://api.github.com/search/repositories?q=topic%3A' . $this->args['topic'] . '+fork%3Afalse';
+            $searches['topic'] = 'https://api.github.com/search/repositories?q=topic%3A' . $this->args['topic'] . '+fork%3Afalse+is%3Apublic';
         }
 
         foreach ($searches as $searchType => $url) {
@@ -1037,7 +1039,9 @@ class UpdateDataExtensions
         if (!empty($this->args['organizations']['github.com'])) {
             $this->log('[Search:orgs] Searching known GitHub organizations...');
             foreach ($this->args['organizations']['github.com'] as $org) {
-                $apiUrl = 'https://api.github.com/users/' . $org . '/repos?per_page=100&type=all';
+                // "type=public": the requests are authenticated, so "type=all"
+                // would include the private repositories readable by the token.
+                $apiUrl = 'https://api.github.com/users/' . $org . '/repos?per_page=100&type=public';
                 $page = 1;
                 $foundInOrg = 0;
 
@@ -1051,6 +1055,12 @@ class UpdateDataExtensions
 
                     foreach ($response as $repo) {
                         $repoUrl = $repo->html_url;
+
+                        // Defensive: never publish a non-public repository.
+                        if (!empty($repo->private) || (isset($repo->visibility) && $repo->visibility !== 'public')) {
+                            $this->log(sprintf('[Private skipped] %s', $repoUrl));
+                            continue;
+                        }
 
                         // Skip if already known or excluded.
                         if (in_array($repoUrl, $urls) || in_array($repoUrl, $newUrls)) {
@@ -1102,7 +1112,7 @@ class UpdateDataExtensions
             $this->log('[Search:orgs] Searching known GitLab groups...');
             foreach ($this->args['organizations']['gitlab.com'] as $group) {
                 $encodedGroup = urlencode($group);
-                $apiUrl = 'https://gitlab.com/api/v4/groups/' . $encodedGroup . '/projects?per_page=100&include_subgroups=true';
+                $apiUrl = 'https://gitlab.com/api/v4/groups/' . $encodedGroup . '/projects?per_page=100&include_subgroups=true&visibility=public';
                 $page = 1;
                 $foundInOrg = 0;
 
@@ -1116,6 +1126,12 @@ class UpdateDataExtensions
 
                     foreach ($response as $project) {
                         $repoUrl = $project->web_url;
+
+                        // Defensive: never publish a non-public project.
+                        if (($project->visibility ?? 'public') !== 'public') {
+                            $this->log(sprintf('[Private skipped] %s', $repoUrl));
+                            continue;
+                        }
 
                         // Skip if already known or excluded.
                         if (in_array($repoUrl, $urls) || in_array($repoUrl, $newUrls)) {
@@ -1207,7 +1223,7 @@ class UpdateDataExtensions
         $this->log('[Search:gitlab] Searching GitLab...');
 
         foreach ($searchTerms as $term) {
-            $apiUrl = 'https://gitlab.com/api/v4/projects?search=' . urlencode($term) . '&per_page=100';
+            $apiUrl = 'https://gitlab.com/api/v4/projects?search=' . urlencode($term) . '&per_page=100&visibility=public';
             $page = 1;
 
             do {
@@ -1220,6 +1236,12 @@ class UpdateDataExtensions
 
                 foreach ($response as $project) {
                     $repoUrl = $project->web_url;
+
+                    // Defensive: never publish a non-public project.
+                    if (($project->visibility ?? 'public') !== 'public') {
+                        $this->log(sprintf('[Private skipped] %s', $repoUrl));
+                        continue;
+                    }
 
                     // Skip if already known or excluded.
                     if (in_array($repoUrl, $urls) || in_array($repoUrl, $newUrls)) {
@@ -1279,6 +1301,12 @@ class UpdateDataExtensions
           : [];
 
         foreach ($response->items as $repo) {
+            // Defensive: never publish a non-public repository, whatever the
+            // scope of the token used for the authenticated requests.
+            if (!empty($repo->private) || (isset($repo->visibility) && $repo->visibility !== 'public')) {
+                $this->log(sprintf('[Private skipped] %s', $repo->html_url));
+                continue;
+            }
             if (in_array($repo->html_url, $urls)) {
                 if ($this->options['debug']) {
                     $this->log(sprintf('Exists    : %s', $repo->html_url));
