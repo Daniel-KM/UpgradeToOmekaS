@@ -1075,7 +1075,8 @@ $isDatabaseValid = true;
 // $requireChmod = false;
 $failed = false;
 
-$isPost = filter_input(INPUT_SERVER, 'REQUEST_METHOD') === 'POST';
+// Use $_SERVER instead of INPUT_SERVER for tests.
+$isPost = ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
 if ($isPost) {
     // TODO Mysqli permet aussi d’utiliser directement les paramètres définis par défaut, mais c’est rare, et de toute façon Omeka utilise pdo.
     $host = trim((string) filter_input(INPUT_POST, 'host'));
@@ -1539,12 +1540,15 @@ if ($isFinalized) {
     unlink(__FILE__);
 
     // Préparer la redirection.
-    $urlOmeka = filter_input(INPUT_SERVER, 'REQUEST_SCHEME')
+    $scheme = ($_SERVER['REQUEST_SCHEME'] ?? '')
+        ?: (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http');
+    $serverPort = (string) ($_SERVER['SERVER_PORT'] ?? '');
+    $urlOmeka = $scheme
         . '://'
-        . filter_input(INPUT_SERVER, 'SERVER_NAME')
-        . (in_array(filter_input(INPUT_SERVER, 'SERVER_PORT'), ['80', '443']) ? '' : ':' . filter_input(INPUT_SERVER, 'SERVER_PORT'))
+        . ($_SERVER['SERVER_NAME'] ?? '')
+        . (in_array($serverPort, ['', '80', '443']) ? '' : ':' . $serverPort)
         // Ne pas ajouter « index.php ».
-        . dirname(filter_input(INPUT_SERVER, 'REQUEST_URI'));
+        . dirname((string) ($_SERVER['REQUEST_URI'] ?? ''));
 }
 
 $meta = [

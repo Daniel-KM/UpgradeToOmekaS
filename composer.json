@@ -27,7 +27,8 @@
     },
     "scripts": {
         "test": "phpunit",
-        "test-coverage": "phpunit --coverage-html coverage"
+        "test-coverage": "phpunit --coverage-html coverage",
+        "test-install": "php tests/full_install_test.php"
     },
     "config": {
         "sort-packages": true
