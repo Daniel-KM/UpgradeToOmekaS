@@ -1112,7 +1112,15 @@ class UpdateDataExtensions
             $this->log('[Search:orgs] Searching known GitLab groups...');
             foreach ($this->args['organizations']['gitlab.com'] as $group) {
                 $encodedGroup = urlencode($group);
+                // A namespace is either a group or a user: /groups/ answers 404
+                // for a user and /users/ answers 404 for a group, so detect the
+                // right endpoint. The probe is cached by curl(), so the first
+                // page is not fetched twice.
                 $apiUrl = 'https://gitlab.com/api/v4/groups/' . $encodedGroup . '/projects?per_page=100&include_subgroups=true&visibility=public';
+                $probe = $this->curl($apiUrl . '&page=1', [], false);
+                if (empty($probe) || !is_array($probe)) {
+                    $apiUrl = 'https://gitlab.com/api/v4/users/' . $encodedGroup . '/projects?per_page=100&visibility=public';
+                }
                 $page = 1;
                 $foundInOrg = 0;
 
