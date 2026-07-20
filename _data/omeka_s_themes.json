@@ -931,7 +931,7 @@
                 "asset_name": "Bootstrap5-4.0.2.zip",
                 "created": "2024-04-17T09:04:07Z",
                 "download_url": "https://github.com/ldasjp8/Omeka-S-theme-Bootstrap5/releases/download/4.0.2/Bootstrap5-4.0.2.zip",
-                "downloads": 143,
+                "downloads": 145,
                 "id": 960760936,
                 "omeka_version_constraint": "",
                 "tag_name": "4.0.2",
@@ -1381,7 +1381,7 @@
                 "asset_name": "centerrow-1.8.5.zip",
                 "created": "2026-01-05T15:17:26Z",
                 "download_url": "https://github.com/omeka-s-themes/centerrow/releases/download/v1.8.5/centerrow-1.8.5.zip",
-                "downloads": 460,
+                "downloads": 471,
                 "id": 1159138880,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.8.5",
@@ -1877,7 +1877,7 @@
                 "asset_name": "cozy-1.6.3.zip",
                 "created": "2026-01-08T15:43:25Z",
                 "download_url": "https://github.com/omeka-s-themes/cozy/releases/download/v1.6.3/cozy-1.6.3.zip",
-                "downloads": 312,
+                "downloads": 317,
                 "id": 2935156422,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.6.3",
@@ -2760,7 +2760,7 @@
                 "asset_name": "default-1.9.3.zip",
                 "created": "2026-06-18T16:31:12Z",
                 "download_url": "https://github.com/omeka-s-themes/default/releases/download/v1.9.3/default-1.9.3.zip",
-                "downloads": 217,
+                "downloads": 249,
                 "id": 508536273,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.9.3",
@@ -3396,7 +3396,7 @@
                 "asset_name": "foundation-1.5.4.zip",
                 "created": "2026-05-12T14:52:54Z",
                 "download_url": "https://github.com/omeka-s-themes/foundation/releases/download/v1.5.4/foundation-1.5.4.zip",
-                "downloads": 249,
+                "downloads": 274,
                 "id": 3472813031,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.5.4",
@@ -3919,7 +3919,7 @@
     "Korematsu": {
         "dirname": "Korematsu",
         "id": 1730260103,
-        "latest_version": "1.1.5",
+        "latest_version": "1.1.6",
         "owner": "Omeka-External",
         "registered": "2024-12-29T14:35:33Z",
         "repo": "korematsu-theme",
@@ -3960,6 +3960,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.1.5",
                 "version": "1.1.5"
+            },
+            "1.1.6": {
+                "addon_id": 1730260103,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 13220320,
+                "omeka_version_constraint": "",
+                "tag_name": "1.1.6",
+                "version": "1.1.6"
             }
         }
     },
@@ -4082,7 +4094,7 @@
                 "asset_name": "lively-v1.1.0.zip",
                 "created": "2026-02-10T23:47:12Z",
                 "download_url": "https://github.com/omeka-s-themes/lively/releases/download/v1.1.0/lively-v1.1.0.zip",
-                "downloads": 363,
+                "downloads": 375,
                 "id": 4256693059,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.1.0",
@@ -4469,6 +4481,65 @@
             }
         }
     },
+    "Multilingual": {
+        "dirname": "Multilingual",
+        "id": 2228927996,
+        "latest_version": "2.0",
+        "owner": "arepr",
+        "registered": "2021-06-10T17:51:33Z",
+        "repo": "omeka-s-theme-multilingual",
+        "type": "s_theme",
+        "versions": {
+            "1.0": {
+                "addon_id": 2228927996,
+                "asset_id": 1171682347,
+                "asset_name": "1.0.zip",
+                "created": "2022-02-16T16:00:23Z",
+                "download_url": "https://github.com/arepr/omeka-s-theme-multilingual/archive/refs/tags/1.0.zip",
+                "downloads": 0,
+                "id": 2495998587,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "1.0",
+                "version": "1.0"
+            },
+            "1.1": {
+                "addon_id": 2228927996,
+                "asset_id": 2025217435,
+                "asset_name": "1.1.zip",
+                "created": "2022-03-03T02:06:37Z",
+                "download_url": "https://github.com/arepr/omeka-s-theme-multilingual/archive/refs/tags/1.1.zip",
+                "downloads": 0,
+                "id": 3821198061,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "1.1",
+                "version": "1.1"
+            },
+            "1.2": {
+                "addon_id": 2228927996,
+                "asset_id": 1058416459,
+                "asset_name": "1.2.zip",
+                "created": "2022-06-08T16:30:26Z",
+                "download_url": "https://github.com/arepr/omeka-s-theme-multilingual/archive/refs/tags/1.2.zip",
+                "downloads": 0,
+                "id": 2060159831,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "1.2",
+                "version": "1.2"
+            },
+            "2.0": {
+                "addon_id": 2228927996,
+                "asset_id": 2536853268,
+                "asset_name": "Multilingual.zip",
+                "created": "2022-06-13T17:52:36Z",
+                "download_url": "https://github.com/arepr/omeka-s-theme-multilingual/releases/download/2.0/Multilingual.zip",
+                "downloads": 2077,
+                "id": 2525189154,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "2.0",
+                "version": "2.0"
+            }
+        }
+    },
     "Nebraskaland": {
         "dirname": "Nebraskaland",
         "id": 4200276529,
@@ -4661,7 +4732,7 @@
                 "asset_name": "omekalia_v1.0.12.zip",
                 "created": "2026-07-06T08:26:57Z",
                 "download_url": "https://github.com/biblibre/omeka-s-theme-omekalia/releases/download/v1.0.12/omekalia_v1.0.12.zip",
-                "downloads": 0,
+                "downloads": 6,
                 "id": 3830543778,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.0.12",
@@ -4898,7 +4969,7 @@
                 "asset_name": "theme-papers-v1.4.5.zip",
                 "created": "2024-10-28T20:11:21Z",
                 "download_url": "https://github.com/omeka-s-themes/papers/releases/download/v1.4.5/theme-papers-v1.4.5.zip",
-                "downloads": 798,
+                "downloads": 802,
                 "id": 3562580949,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.4.5",
@@ -6834,7 +6905,7 @@
                 "asset_name": "theme-thanksroy-v1.2.2.zip",
                 "created": "2024-10-28T18:52:10Z",
                 "download_url": "https://github.com/omeka-s-themes/thanksroy/releases/download/v1.2.2/theme-thanksroy-v1.2.2.zip",
-                "downloads": 772,
+                "downloads": 784,
                 "id": 4039951992,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.2.2",
@@ -7097,7 +7168,7 @@
                 "asset_name": "theme-thedaily-v1.7.2.zip",
                 "created": "2024-04-18T01:49:15Z",
                 "download_url": "https://github.com/omeka-s-themes/thedaily/releases/download/v1.7.2/theme-thedaily-v1.7.2.zip",
-                "downloads": 80,
+                "downloads": 82,
                 "id": 2146105110,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.7.2",
@@ -7167,7 +7238,7 @@
     "UC CAAN": {
         "dirname": "UcCaan",
         "id": 47743586,
-        "latest_version": "1.0.0",
+        "latest_version": "1.0.4",
         "owner": "Omeka-External",
         "registered": "2026-07-09T22:44:09Z",
         "repo": "uc-caan-theme",
@@ -7184,6 +7255,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.0",
                 "version": "1.0.0"
+            },
+            "1.0.4": {
+                "addon_id": 47743586,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 899958404,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.4",
+                "version": "1.0.4"
             }
         }
     },
