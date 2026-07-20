@@ -283,7 +283,7 @@ $allUrlsByType = [];
 foreach ($types as $type => $args) {
     $allUrlsByType[$type] = [];
     if (file_exists($args['source'])) {
-        $rows = array_map('str_getcsv', file($args['source']));
+        $rows = UpdateDataExtensions::readCsvRows($args['source']);
         if (!empty($rows)) {
             $csvHeaders = array_flip($rows[0]);
             if (isset($csvHeaders['Url'])) {
@@ -510,7 +510,7 @@ class UpdateDataExtensions
             return false;
         }
 
-        $addons = array_map('str_getcsv', file($this->args['source']));
+        $addons = self::readCsvRows($this->args['source']);
         if (empty($addons)) {
             $this->log(sprintf('No content in the csv file "%s".', $this->args['source']));
             return false;
@@ -607,7 +607,7 @@ class UpdateDataExtensions
             return false;
         }
 
-        $addons = array_map('str_getcsv', file($this->args['source']));
+        $addons = self::readCsvRows($this->args['source']);
         if (empty($addons)) {
             $this->log(sprintf('[Versions] Error: No content in "%s".', $this->args['source']));
             return false;
@@ -706,7 +706,7 @@ class UpdateDataExtensions
             return false;
         }
 
-        $rows = array_map('str_getcsv', file($this->args['source']));
+        $rows = self::readCsvRows($this->args['source']);
         if (empty($rows)) {
             $this->log(sprintf('[Json] Error: No content in "%s".', $this->args['source']));
             return false;
@@ -3897,6 +3897,28 @@ GRAPHQL;
         $addonTypes[$keyAddon] = $this->type;
 
         return $ini;
+    }
+
+    /**
+     * Read a csv file into rows, handling quoted multi-line fields. A
+     * line-based str_getcsv (array_map('str_getcsv', file(...))) splits fields
+     * containing newlines, corrupting records such as multi-line descriptions.
+     *
+     * @param string $path
+     * @return array
+     */
+    public static function readCsvRows(string $path): array
+    {
+        $rows = [];
+        $handle = fopen($path, 'r');
+        if ($handle === false) {
+            return $rows;
+        }
+        while (($row = fgetcsv($handle)) !== false) {
+            $rows[] = $row;
+        }
+        fclose($handle);
+        return $rows;
     }
 
     /**
