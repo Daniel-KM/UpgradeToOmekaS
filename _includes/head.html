@@ -10,7 +10,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   {% if page.redirect %}
-  <meta http-equiv="Refresh" content="0;url={{ site.baseurl }}/{{ site.default_lang }}{{ page.redirect_url | default: page.url }}" />
+  {%- assign redirect_path = page.redirect_url | default: page.url -%}
+  <script>
+  (function () {
+    var langs = {{ site.languages | jsonify }};
+    var def = {{ site.default_lang | jsonify }};
+    var base = {{ site.baseurl | jsonify }};
+    var path = {{ redirect_path | jsonify }};
+    var navLangs = navigator.languages || [navigator.language || navigator.userLanguage || def];
+    var chosen = def;
+    outer:
+    for (var i = 0; i < navLangs.length; i++) {
+      var code = String(navLangs[i]).toLowerCase().split('-')[0];
+      for (var j = 0; j < langs.length; j++) {
+        if (langs[j].toLowerCase() === code) {
+          chosen = langs[j];
+          break outer;
+        }
+      }
+    }
+    window.location.replace(base + '/' + chosen + path + window.location.search + window.location.hash);
+  })();
+  </script>
+  <noscript>
+    <meta http-equiv="Refresh" content="0;url={{ site.baseurl }}/{{ site.default_lang }}{{ redirect_path }}" />
+  </noscript>
   {% endif %}
 
   {% comment %}
