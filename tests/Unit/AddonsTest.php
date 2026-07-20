@@ -158,80 +158,107 @@ class AddonsTest extends TestCase
         }
     }
 
-    // ==========================================================================
-    // GetMissingDependencies Tests (via reflection)
-    // ==========================================================================
+    // =========================================================================
+    // = SatisfiesConstraint Tests (via reflection)
+    // =========================================================================
+    // =
 
-    public function testGetMissingDependenciesWithNoDependencies(): void
+    private function invokeSatisfies(string $version, string $constraint): bool
     {
         $reflection = new \ReflectionClass($this->addons);
-        $method = $reflection->getMethod('getMissingDependencies');
+        $method = $reflection->getMethod('satisfiesConstraint');
         $method->setAccessible(true);
-
-        $result = $method->invoke($this->addons, []);
-
-        $this->assertIsArray($result);
-        $this->assertEmpty($result);
+        return $method->invoke($this->addons, $version, $constraint);
     }
 
-    public function testGetMissingDependenciesWithMissingModules(): void
+    public function testSatisfiesConstraintEmptyOrWildcard(): void
     {
-        $reflection = new \ReflectionClass($this->addons);
-        $method = $reflection->getMethod('getMissingDependencies');
-        $method->setAccessible(true);
-
-        $result = $method->invoke($this->addons, ['NonExistentModule1', 'NonExistentModule2']);
-
-        $this->assertIsArray($result);
-        $this->assertCount(2, $result);
-        $this->assertContains('NonExistentModule1', $result);
-        $this->assertContains('NonExistentModule2', $result);
+        $this->assertTrue($this->invokeSatisfies('4.2.1', ''));
+        $this->assertTrue($this->invokeSatisfies('4.2.1', '*'));
     }
 
-    public function testGetMissingDependenciesWithEmptyStrings(): void
+    public function testSatisfiesConstraintOperators(): void
     {
-        $reflection = new \ReflectionClass($this->addons);
-        $method = $reflection->getMethod('getMissingDependencies');
-        $method->setAccessible(true);
-
-        $result = $method->invoke($this->addons, ['', '  ', 'ValidModule']);
-
-        $this->assertIsArray($result);
-        // Should only contain ValidModule, empty strings should be filtered
-        $this->assertContains('ValidModule', $result);
-        $this->assertNotContains('', $result);
+        $this->assertTrue($this->invokeSatisfies('4.2.1', '^4.0.0'));
+        $this->assertTrue($this->invokeSatisfies('4.2.1', '~4.2.0'));
+        $this->assertTrue($this->invokeSatisfies('4.2.1', '>=4.0.0'));
+        $this->assertTrue($this->invokeSatisfies('4.2.1', '>=3.0.0 <5.0.0'));
+        $this->assertTrue($this->invokeSatisfies('4.2.1', '4.0.0 - 4.9.9'));
+        $this->assertTrue($this->invokeSatisfies('4.2.1', '^3.0 || ^4.0'));
     }
 
-    // ==========================================================================
-    // FindAddonByName Tests (via reflection)
-    // ==========================================================================
-
-    public function testFindAddonByNameWithNonExistent(): void
+    public function testSatisfiesConstraintIncompatible(): void
     {
-        $reflection = new \ReflectionClass($this->addons);
-        $method = $reflection->getMethod('findAddonByName');
-        $method->setAccessible(true);
-
-        $result = $method->invoke($this->addons, 'NonExistentModuleXYZ');
-
-        $this->assertNull($result);
+        $this->assertFalse($this->invokeSatisfies('4.2.1', '^5.0.0'));
+        $this->assertFalse($this->invokeSatisfies('4.2.1', '>=5.0.0'));
+        $this->assertFalse($this->invokeSatisfies('4.2.1', '~4.1.0'));
     }
 
-    public function testFindAddonByNameCaseInsensitive(): void
+    // =========================================================================
+    // = PickCompatibleVersion Tests (via reflection)
+    // =========================================================================
+    // =
+
+    private function invokePick(array $addon): ?array
     {
-        // This test ensures the method handles case-insensitivity
         $reflection = new \ReflectionClass($this->addons);
-        $method = $reflection->getMethod('findAddonByName');
+        $method = $reflection->getMethod('pickCompatibleVersion');
+        $method->setAccessible(true);
+        return $method->invoke($this->addons, $addon);
+    }
+
+    public function testPickCompatibleVersionPicksNewestCompatible(): void
+    {
+        // Versions sorted descending, as built by the parser.
+        $addon = ['versions' => [
+            '3.0.0' => ['version' => '3.0.0', 'omeka_version_constraint' => '^5.0.0', 'download_url' => 'a'],
+            '2.0.0' => ['version' => '2.0.0', 'omeka_version_constraint' => '^4.0.0', 'download_url' => 'b'],
+        ]];
+        $picked = $this->invokePick($addon);
+        $this->assertIsArray($picked);
+        $this->assertSame('2.0.0', $picked['version']);
+    }
+
+    public function testPickCompatibleVersionNullWhenNoVersions(): void
+    {
+        $this->assertNull($this->invokePick([]));
+        $this->assertNull($this->invokePick(['versions' => []]));
+    }
+
+    public function testPickCompatibleVersionNullWhenNoneCompatible(): void
+    {
+        $addon = ['versions' => [
+            '3.0.0' => ['version' => '3.0.0', 'omeka_version_constraint' => '^5.0.0', 'download_url' => 'a'],
+        ]];
+        $this->assertNull($this->invokePick($addon));
+    }
+
+    public function testPickCompatibleVersionEmptyConstraintIsCompatible(): void
+    {
+        $addon = ['versions' => [
+            '1.0.0' => ['version' => '1.0.0', 'omeka_version_constraint' => '', 'download_url' => 'a'],
+        ]];
+        $picked = $this->invokePick($addon);
+        $this->assertIsArray($picked);
+        $this->assertSame('1.0.0', $picked['version']);
+    }
+
+    // =========================================================================
+    // = FallbackArchiveUrl Tests (via reflection)
+    // =========================================================================
+    // =
+
+    public function testFallbackArchiveUrlByHost(): void
+    {
+        $reflection = new \ReflectionClass($this->addons);
+        $method = $reflection->getMethod('fallbackArchiveUrl');
         $method->setAccessible(true);
 
-        // Both should return the same result (or both null if not found)
-        $result1 = $method->invoke($this->addons, 'common');
-        $result2 = $method->invoke($this->addons, 'COMMON');
-        $result3 = $method->invoke($this->addons, 'Common');
+        $github = $method->invoke($this->addons, 'github.com', 'https://github.com/u/Repo', 'Repo', 'master');
+        $this->assertSame('https://github.com/u/Repo/archive/refs/heads/master.zip', $github);
 
-        // All three should be equal (either all found or all null)
-        $this->assertEquals($result1, $result2);
-        $this->assertEquals($result2, $result3);
+        $gitlab = $method->invoke($this->addons, 'gitlab.com', 'https://gitlab.com/u/Repo', 'Repo', 'main');
+        $this->assertSame('https://gitlab.com/u/Repo/-/archive/main/Repo-main.zip', $gitlab);
     }
 
     // ==========================================================================

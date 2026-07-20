@@ -45,11 +45,11 @@ const OMEKA_PATH = __DIR__;
  *
  * @see https://github.com/omeka/omeka-s/blob/develop/application/src/Stdlib/Cli.php
  * @see https://github.com/omeka/omeka-s/blob/develop/application/src/Stdlib/Environment.php
- * @see https://gitlab.com/Daniel-KM/Omeka-S-module-EasyAdmin/-/blob/master/src/Mvc/Controller/Plugin/Addons.php
+ * @see https://gitlab.com/Daniel-KM/Omeka-S-module-EasyAdmin/-/blob/3.4.46/src/Mvc/Controller/Plugin/Addons.php
  */
 class Utils
 {
-    const OMEKA_VERSION = '4.2.0';
+    const OMEKA_VERSION = '4.2.1';
     const PHP_MINIMUM_VERSION = '8.1.0';
     const PHP_MINIMUM_VERSION_ID = 80100;
     const MYSQL_MINIMUM_VERSION = '5.7.9';
@@ -211,13 +211,68 @@ class Utils
      */
     public function downloadFile($source, $destination): bool
     {
+        // Only allow http/https to prevent local file reads via file://,
+        // php://, etc.
+        $scheme = parse_url($source, PHP_URL_SCHEME);
+        if (!in_array($scheme, ['http', 'https'])) {
+            return false;
+        }
+
+        // Restrict to trusted hosts to prevent SSRF. The suffix match covers
+        // subdomains such as raw/objects/codeload.githubusercontent.com and
+        // api.github.com.
+        $host = strtolower((string) parse_url($source, PHP_URL_HOST));
+        $trustedHosts = [
+            'github.com',
+            'githubusercontent.com',
+            'gitlab.com',
+            'omeka.org',
+        ];
+        $isTrusted = false;
+        foreach ($trustedHosts as $trusted) {
+            if ($host === $trusted || str_ends_with($host, '.' . $trusted)) {
+                $isTrusted = true;
+                break;
+            }
+        }
+        if (!$isTrusted) {
+            return false;
+        }
+
+        // Limit download size to 200 MB to prevent disk exhaustion.
+        $maxSize = 200 * 1024 * 1024;
+
         $handle = @fopen($source, 'rb');
         if (empty($handle)) {
             return false;
         }
-        $result = (bool) file_put_contents($destination, $handle);
+
+        $destHandle = @fopen($destination, 'wb');
+        if (!$destHandle) {
+            @fclose($handle);
+            return false;
+        }
+
+        $written = 0;
+        while (!feof($handle)) {
+            $chunk = @fread($handle, 8192);
+            if ($chunk === false) {
+                break;
+            }
+            $written += strlen($chunk);
+            if ($written > $maxSize) {
+                @fclose($handle);
+                @fclose($destHandle);
+                @unlink($destination);
+                return false;
+            }
+            fwrite($destHandle, $chunk);
+        }
+
         @fclose($handle);
-        return $result;
+        @fclose($destHandle);
+
+        return $written > 0;
     }
 
     /**
@@ -234,7 +289,24 @@ class Utils
             $zip = new ZipArchive;
             $result = $zip->open($source);
             if ($result === true) {
-                $result = $zip->extractTo($destination);
+                // Validate entries to prevent zip-slip (path traversal).
+                for ($i = 0; $i < $zip->numFiles; $i++) {
+                    $entryName = $zip->getNameIndex($i);
+                    if ($entryName === false
+                        || strpos($entryName, '..') !== false
+                        || strpos($entryName, '/') === 0
+                        || strpos($entryName, '\\') === 0
+                        || preg_match('/^[a-zA-Z]:/', $entryName)
+                    ) {
+                        $zip->close();
+                        $this->log('Archive zip invalide (chemin non conforme).');
+                        return false;
+                    }
+                }
+                // Suppress harmless "File exists" warnings emitted by some
+                // archives (duplicate directory entries) without losing the
+                // boolean return value.
+                $result = @$zip->extractTo($destination);
                 $zip->close();
             } else {
                 $zipErrors = [
@@ -462,11 +534,11 @@ class Addons
                 'destination' => '/themes',
             ],
             'module' => [
-                'source' => $baseUrl . 'omeka_s_modules.csv',
+                'source' => $baseUrl . 'omeka_s_modules.json',
                 'destination' => '/modules',
             ],
             'theme' => [
-                'source' => $baseUrl . 'omeka_s_themes.csv',
+                'source' => $baseUrl . 'omeka_s_themes.json',
                 'destination' => '/themes',
             ],
         ];
@@ -530,7 +602,11 @@ class Addons
                 } elseif ($row) {
                     $name = $row[$headers['Name']] ?? '';
                     if ($name) {
-                        $this->selections[$name] = array_map(fn ($v) => str_replace(' ', '', trim($v)), explode(',', $row[$headers['Modules and themes']] ?? ''));
+                        $dirs = explode(',', $row[$headers['Modules and themes']] ?? '');
+                        $this->selections[$name] = array_values(array_filter(array_map(
+                            fn ($v) => str_replace(' ', '', trim($v)),
+                            $dirs
+                        )));
                     }
                 }
             }
@@ -629,7 +705,6 @@ class Addons
         switch ($type) {
             case 'module':
             case 'theme':
-                return $this->extractAddonList($content, $type);
             case 'omekamodule':
             case 'omekatheme':
                 return $this->extractAddonListFromOmeka($content, $type);
@@ -647,72 +722,14 @@ class Addons
     }
 
     /**
-     * Helper to parse a csv file to get urls and names of addons.
+     * Helper to parse json to get urls and names of addons.
      *
-     * @param string $csv
-     * @param string $type
-     */
-    protected function extractAddonList($csv, $type): array
-    {
-        $list = [];
-
-        $addons = array_map('str_getcsv', explode(PHP_EOL, $csv));
-        $headers = array_flip($addons[0]);
-
-        foreach ($addons as $key => $row) {
-            if ($key === 0 || empty($row) || !isset($row[$headers['Url']])) {
-                continue;
-            }
-
-            $url = $row[$headers['Url']];
-            $name = $row[$headers['Name']];
-            $version = $row[$headers['Last version']];
-            $addonName = preg_replace('~[^A-Za-z0-9]~', '', $name);
-            $dirname = $row[$headers['Directory name']] ?: $addonName;
-            $server = strtolower(parse_url($url, PHP_URL_HOST));
-            $dependencies = empty($headers['Dependencies']) || empty($row[$headers['Dependencies']])
-                ? []
-                : array_filter(array_map('trim', explode(',', $row[$headers['Dependencies']])));
-
-            $zip = $row[$headers['Last released zip']];
-            // Warning: the url with master may not have dependencies.
-            if (!$zip) {
-                switch ($server) {
-                    case 'github.com':
-                        $zip = $url . '/archive/master.zip';
-                        break;
-                    case 'gitlab.com':
-                        $zip = $url . '/repository/archive.zip';
-                        break;
-                    default:
-                        $zip = $url . '/master.zip';
-                        break;
-                }
-            }
-
-            $addon = [];
-            $addon['type'] = $type;
-            $addon['server'] = $server;
-            $addon['name'] = $name;
-            $addon['basename'] = basename($url);
-            $addon['dir'] = $dirname;
-            $addon['version'] = $version;
-            $addon['url'] = $url;
-            $addon['zip'] = $zip;
-            $addon['dependencies'] = $dependencies;
-
-            $list[$url] = $addon;
-        }
-
-        return $list;
-    }
-
-    /**
-     * Helper to parse json to get urls and names of addons from omeka.org.
+     * The omeka.org api and the UpgradeToOmekaS json lists share the same
+     * schema (name => {dirname, owner, repo, latest_version, versions}).
      *
-     * Note: The omeka.org api doesn't include dependency information.
-     * Dependencies are available in the full csv addon lists which parse
-     * the module.ini files from each repository.
+     * Note: the json lists don't include dependency information. Curated
+     * selections must enumerate every needed addon (Common and Generic are
+     * always added).
      *
      * @param string $json
      * @param string $type
@@ -732,21 +749,36 @@ class Addons
             }
 
             $version = $data['latest_version'];
-            $url = 'https://github.com/' . $data['owner'] . '/' . $data['repo'];
-            // Warning: the url with master may not have dependencies.
-            $zip = $data['versions'][$version]['download_url'] ?? $url . '/archive/master.zip';
+            $host = $data['host'] ?? 'github.com';
+            $url = 'https://' . $host . '/' . $data['owner'] . '/' . $data['repo'];
+            // Fallback when no download_url: use a host-specific archive url.
+            // The url with the default branch may not include dependencies.
+            $zip = $data['versions'][$version]['download_url']
+                ?? $this->fallbackArchiveUrl($host, $url, $data['repo'], $version);
+
+            // Build a sorted list of versions with their omeka compatibility
+            // constraint (descending, latest first).
+            $versions = [];
+            foreach (($data['versions'] ?? []) as $v => $vData) {
+                $versions[$v] = [
+                    'version' => $v,
+                    'omeka_version_constraint' => $vData['omeka_version_constraint'] ?? '',
+                    'download_url' => $vData['download_url'] ?? '',
+                ];
+            }
+            uksort($versions, 'version_compare');
+            $versions = array_reverse($versions, true);
 
             $addon = [];
-            $addon['type'] = str_replace('omeka', '', $type);
-            $addon['server'] = 'omeka.org';
+            $addon['type'] = in_array($type, ['module', 'omekamodule'], true) ? 'module' : 'theme';
+            $addon['server'] = strpos($type, 'omeka') === 0 ? 'omeka.org' : $host;
             $addon['name'] = $name;
             $addon['basename'] = $data['dirname'];
             $addon['dir'] = $data['dirname'];
-            $addon['version'] = $data['latest_version'];
+            $addon['version'] = $version;
+            $addon['versions'] = $versions;
             $addon['url'] = $url;
             $addon['zip'] = $zip;
-            // Dependencies not available in omeka.org api; use csv lists for
-            // full dependency info.
             $addon['dependencies'] = [];
 
             $list[$url] = $addon;
@@ -756,13 +788,119 @@ class Addons
     }
 
     /**
+     * Pick the latest version compatible with the current Omeka S. Returns null
+     * if no version is compatible, or if the addon has no versions metadata.
+     *
+     * @param array $addon
+     */
+    protected function pickCompatibleVersion(array $addon): ?array
+    {
+        if (empty($addon['versions']) || !is_array($addon['versions'])) {
+            return null;
+        }
+        $omekaVersion = Utils::OMEKA_VERSION;
+        foreach ($addon['versions'] as $v => $vData) {
+            $constraint = (string) ($vData['omeka_version_constraint'] ?? '');
+            if ($constraint === ''
+                || $this->satisfiesConstraint($omekaVersion, $constraint)
+            ) {
+                return ['version' => $v] + $vData;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * version_compare-based constraint check (no Composer dependency). Supports
+     * comma/space AND groups, "||" OR groups, hyphen ranges, and the operators
+     * >=, <=, !=, =, >, <, ^ and ~. Returns false when it cannot be parsed.
+     *
+     * @param string $version
+     * @param string $constraint
+     */
+    protected function satisfiesConstraint(string $version, string $constraint): bool
+    {
+        $constraint = trim($constraint);
+        if ($constraint === '' || $constraint === '*') {
+            return true;
+        }
+        foreach (preg_split('~\s*\|\|\s*~', $constraint) as $orPart) {
+            $orPart = trim($orPart);
+            if ($orPart === '') {
+                continue;
+            }
+            if (preg_match('~^(?<a>\d[\d.]*)\s*-\s*(?<b>\d[\d.]*)$~', $orPart, $m)) {
+                if (version_compare($version, $m['a'], '>=') && version_compare($version, $m['b'], '<=')) {
+                    return true;
+                }
+                continue;
+            }
+            $allOk = true;
+            foreach (preg_split('~[\s,]+~', $orPart) as $clause) {
+                if ($clause === '') {
+                    continue;
+                }
+                if (!preg_match('#^(?<op>>=|<=|<>|!=|==|=|>|<|\^|~)?\s*(?<v>\d[\d.A-Za-z\-+]*)$#', $clause, $m)) {
+                    $allOk = false;
+                    break;
+                }
+                $op = $m['op'] ?: '=';
+                $v = $m['v'];
+                if ($op === '^' || $op === '~') {
+                    $parts = explode('.', $v);
+                    $major = (int) ($parts[0] ?? 0);
+                    $minor = (int) ($parts[1] ?? 0);
+                    $upper = $op === '^' ? ($major + 1) . '.0.0' : $major . '.' . ($minor + 1) . '.0';
+                    if (!version_compare($version, $v, '>=') || !version_compare($version, $upper, '<')) {
+                        $allOk = false;
+                        break;
+                    }
+                    continue;
+                }
+                $cmpOp = $op === '=' ? '==' : $op;
+                if (!version_compare($version, $v, $cmpOp)) {
+                    $allOk = false;
+                    break;
+                }
+            }
+            if ($allOk) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Build an archive url for the default branch when no release zip is
+     * available. Handles github, gitlab, and a sensible default.
+     *
+     * @param string $host
+     * @param string $url
+     * @param string $repo
+     * @param string $version
+     */
+    protected function fallbackArchiveUrl(string $host, string $url, string $repo, string $version = 'master'): string
+    {
+        $branch = $version ?: 'master';
+        switch (strtolower($host)) {
+            case 'github.com':
+                return $url . '/archive/refs/heads/' . $branch . '.zip';
+            case 'gitlab.com':
+            default:
+                if (strpos($host, 'gitlab') !== false) {
+                    return $url . '/-/archive/' . $branch . '/' . $repo . '-' . $branch . '.zip';
+                }
+                return $url . '/archive/' . $branch . '.zip';
+        }
+    }
+
+    /**
      * Helper to install an addon.
      *
      * @param array $addon The addon data.
-     * @param bool $installDependencies Whether to automatically install missing dependencies.
      * @return bool
      */
-    public function installAddon(array $addon, bool $installDependencies = true): bool
+    public function installAddon(array $addon): bool
     {
         switch ($addon['type']) {
             case 'module':
@@ -781,40 +919,17 @@ class Addons
             return true;
         }
 
-        // Check and optionally install dependencies.
-        if (!empty($addon['dependencies'])) {
-            $missing = $this->getMissingDependencies($addon['dependencies']);
-            if ($missing) {
-                if ($installDependencies) {
-                    foreach ($missing as $depName) {
-                        $depAddon = $this->findAddonByName($depName);
-                        if ($depAddon) {
-                            $this->utils->psrLog(
-                                'Installation de la dependance "{dep}" pour {type} "{name}".',
-                                ['dep' => $depName, 'type' => $type, 'name' => $addon['name']]
-                            );
-                            // Recursive install with dependencies.
-                            if (!$this->installAddon($depAddon, true)) {
-                                $this->utils->psrLog(
-                                    'Impossible d\'installer la dependance "{dep}".',
-                                    ['dep' => $depName]
-                                );
-                                return false;
-                            }
-                        } else {
-                            $this->utils->psrLog(
-                                'Dependance "{dep}" introuvable pour {type} "{name}".',
-                                ['dep' => $depName, 'type' => $type, 'name' => $addon['name']]
-                            );
-                        }
-                    }
-                } else {
-                    $this->utils->psrLog(
-                        'Le {type} "{name}" a des dependances manquantes: {deps}.',
-                        ['type' => $type, 'name' => $addon['name'], 'deps' => implode(', ', $missing)]
-                    );
-                }
-            }
+        // Pick the latest version compatible with the current Omeka S.
+        $compatible = $this->pickCompatibleVersion($addon);
+        if ($compatible) {
+            $addon['version'] = $compatible['version'];
+            $addon['zip'] = $compatible['download_url'] ?: $addon['zip'];
+        } elseif (!empty($addon['versions'])) {
+            $this->utils->psrLog(
+                'Aucune version du {type} "{name}" n’est compatible avec cette version d’Omeka S.', // @translate
+                ['type' => $type, 'name' => $addon['name']]
+            );
+            return false;
         }
 
         $zipFile = $destination . DIRECTORY_SEPARATOR . basename($addon['zip']);
@@ -942,61 +1057,6 @@ class Addons
 
         $dirs[$dir] = $list;
         return $dirs[$dir];
-    }
-
-    /**
-     * Get list of missing dependencies that are not installed.
-     *
-     * @param array $dependencies List of dependency names (module directory names).
-     * @return array List of missing dependency names.
-     */
-    protected function getMissingDependencies(array $dependencies): array
-    {
-        $missing = [];
-        $modulesDir = OMEKA_PATH . '/modules';
-
-        foreach ($dependencies as $dep) {
-            $dep = trim($dep);
-            if ($dep === '') {
-                continue;
-            }
-            // Check if the module directory exists.
-            if (!file_exists($modulesDir . DIRECTORY_SEPARATOR . $dep)) {
-                $missing[] = $dep;
-            }
-        }
-
-        return $missing;
-    }
-
-    /**
-     * Find an addon by its name or directory name.
-     *
-     * @param string $name The addon name or directory name.
-     * @return array|null The addon data or null if not found.
-     */
-    protected function findAddonByName(string $name): ?array
-    {
-        $this->initAddons();
-
-        $nameLower = strtolower(trim($name));
-
-        foreach ($this->addons as $addon) {
-            // Check by directory name (most reliable).
-            if (strtolower($addon['dir'] ?? '') === $nameLower) {
-                return $addon;
-            }
-            // Check by display name.
-            if (strtolower($addon['name'] ?? '') === $nameLower) {
-                return $addon;
-            }
-            // Check by basename.
-            if (strtolower($addon['basename'] ?? '') === $nameLower) {
-                return $addon;
-            }
-        }
-
-        return null;
     }
 }
 

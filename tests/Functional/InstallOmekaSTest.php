@@ -206,46 +206,58 @@ class InstallOmekaSTest extends TestCase
         }
     }
 
-    // ==========================================================================
-    // Dependency Resolution Tests
-    // ==========================================================================
+    // =========================================================================
+    // = Version Compatibility Tests
+    // =========================================================================
+    // =
 
-    public function testFindAddonWithDependencies(): void
+    public function testAddonsCarryVersions(): void
     {
         $utils = new Utils();
         $addons = new Addons($utils);
 
         $addonList = $addons->getAddons();
 
-        // Find an addon with dependencies
-        $addonWithDeps = null;
+        // Find an addon exposing a versions list with omeka constraints.
+        $addonWithVersions = null;
         foreach ($addonList['module'] as $addon) {
-            if (!empty($addon['dependencies'])) {
-                $addonWithDeps = $addon;
+            if (!empty($addon['versions'])) {
+                $addonWithVersions = $addon;
                 break;
             }
         }
 
-        $this->assertNotNull($addonWithDeps, 'Should find at least one addon with dependencies');
-        $this->assertIsArray($addonWithDeps['dependencies']);
-        $this->assertNotEmpty($addonWithDeps['dependencies']);
+        $this->assertNotNull($addonWithVersions, 'Should find at least one addon with versions');
+        $this->assertIsArray($addonWithVersions['versions']);
+        $first = reset($addonWithVersions['versions']);
+        $this->assertArrayHasKey('version', $first);
+        $this->assertArrayHasKey('omeka_version_constraint', $first);
+        $this->assertArrayHasKey('download_url', $first);
     }
 
-    public function testMissingDependenciesDetection(): void
+    public function testSatisfiesConstraint(): void
     {
         $utils = new Utils();
         $addons = new Addons($utils);
 
         $reflection = new \ReflectionClass($addons);
-        $method = $reflection->getMethod('getMissingDependencies');
+        $method = $reflection->getMethod('satisfiesConstraint');
         $method->setAccessible(true);
 
-        // Test with known missing modules
-        $missing = $method->invoke($addons, ['NonExistentModule', 'AnotherMissing']);
+        $version = Utils::OMEKA_VERSION;
 
-        $this->assertCount(2, $missing);
-        $this->assertContains('NonExistentModule', $missing);
-        $this->assertContains('AnotherMissing', $missing);
+        $this->assertTrue($method->invoke($addons, $version, ''));
+        $this->assertTrue($method->invoke($addons, $version, '*'));
+        $this->assertTrue($method->invoke($addons, $version, '^4.0.0'));
+        $this->assertTrue($method->invoke($addons, $version, '>=4.0.0'));
+        $this->assertTrue($method->invoke($addons, $version, '>=3.0.0 <5.0.0'));
+        $this->assertTrue($method->invoke($addons, $version, '4.0.0 - 4.9.9'));
+        $this->assertTrue($method->invoke($addons, $version, '^3.0 || ^4.0'));
+        $this->assertTrue($method->invoke($addons, $version, '~4.2.0'));
+
+        $this->assertFalse($method->invoke($addons, $version, '^5.0.0'));
+        $this->assertFalse($method->invoke($addons, $version, '>=5.0.0'));
+        $this->assertFalse($method->invoke($addons, $version, '~4.1.0'));
     }
 
     // ==========================================================================
@@ -297,40 +309,48 @@ class InstallOmekaSTest extends TestCase
         $this->assertFileExists($extractPath . '/TestModule/Module.php');
     }
 
-    // ==========================================================================
-    // Integration Test - Full Addon Workflow
-    // ==========================================================================
+    // =========================================================================
+    // = Integration Test - Compatible Version Selection
+    // =========================================================================
+    // =
 
-    public function testAddonWorkflowWithMockData(): void
+    public function testPickCompatibleVersion(): void
     {
         $utils = new Utils();
         $addons = new Addons($utils);
 
-        // Create a mock addon data structure
+        // Versions are sorted descending, latest first, as built by the parser.
         $mockAddon = [
             'type' => 'module',
             'server' => 'github.com',
             'name' => 'MockModule',
             'basename' => 'MockModule',
             'dir' => 'MockModule',
-            'version' => '1.0.0',
+            'version' => '3.0.0',
             'url' => 'https://github.com/test/MockModule',
             'zip' => '',
-            'dependencies' => ['Common'],
+            'versions' => [
+                '3.0.0' => ['version' => '3.0.0', 'omeka_version_constraint' => '^5.0.0', 'download_url' => 'https://github.com/test/MockModule/releases/download/3.0.0/x.zip'],
+                '2.0.0' => ['version' => '2.0.0', 'omeka_version_constraint' => '^4.0.0', 'download_url' => 'https://github.com/test/MockModule/releases/download/2.0.0/x.zip'],
+            ],
+            'dependencies' => [],
         ];
 
-        // Verify structure
-        $this->assertArrayHasKey('type', $mockAddon);
-        $this->assertArrayHasKey('dependencies', $mockAddon);
-        $this->assertIsArray($mockAddon['dependencies']);
-
-        // Verify dependency checking works
         $reflection = new \ReflectionClass($addons);
-        $method = $reflection->getMethod('getMissingDependencies');
+        $method = $reflection->getMethod('pickCompatibleVersion');
         $method->setAccessible(true);
 
-        $missing = $method->invoke($addons, $mockAddon['dependencies']);
-        $this->assertContains('Common', $missing);
+        // Omeka 4.2.1: 3.0.0 requires ^5, so 2.0.0 (^4) must be picked.
+        $picked = $method->invoke($addons, $mockAddon);
+        $this->assertIsArray($picked);
+        $this->assertEquals('2.0.0', $picked['version']);
+
+        // No compatible version returns null.
+        $incompatible = $mockAddon;
+        $incompatible['versions'] = [
+            '3.0.0' => ['version' => '3.0.0', 'omeka_version_constraint' => '^5.0.0', 'download_url' => ''],
+        ];
+        $this->assertNull($method->invoke($addons, $incompatible));
     }
 
     // ==========================================================================
