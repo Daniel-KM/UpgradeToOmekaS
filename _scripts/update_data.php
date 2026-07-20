@@ -153,7 +153,12 @@ if (PHP_SAPI === 'cli' && !empty($argv)) {
             echo "Usage: php update_data.php [--option[=value]] ...\n";
             echo "Options (defaults shown): \n";
             foreach ($options as $k => $v) {
-                $disp = is_bool($v) ? ($v ? 'true' : 'false') : (is_array($v) ? implode(',', $v) : (string) $v);
+                // Never print secrets, only whether they are set.
+                if ($k === 'token') {
+                    $disp = implode(',', array_map(fn ($t) => $t ? '***' : '', $v));
+                } else {
+                    $disp = is_bool($v) ? ($v ? 'true' : 'false') : (is_array($v) ? implode(',', $v) : (string) $v);
+                }
                 echo sprintf("  --%s=%s\n", $k, $disp);
             }
             echo "Aliases: --json-only, --no-search, --no-update, --only-type=, --only-addon=, --format-csv-only\n";
