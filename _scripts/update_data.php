@@ -2595,13 +2595,24 @@ class UpdateDataExtensions
                         }
                         // The latest release is the first in the list.
                         $release = reset($content);
-                        if (empty($release) || empty($release->assets) || empty($release->assets->sources)) {
+                        if (empty($release) || empty($release->assets)) {
                             return '';
                         }
-                        // Find the zip source.
-                        foreach ($release->assets->sources as $source) {
-                            if ($source->format === 'zip') {
-                                return $source->url;
+                        // Prefer the release asset link (full package zip with
+                        // vendor/); "sources" is the git archive without
+                        // vendor/.
+                        if (!empty($release->assets->links)) {
+                            foreach ($release->assets->links as $link) {
+                                if (substr($link->name ?? '', -4) === '.zip' || substr($link->url ?? '', -4) === '.zip') {
+                                    return $link->url;
+                                }
+                            }
+                        }
+                        if (!empty($release->assets->sources)) {
+                            foreach ($release->assets->sources as $source) {
+                                if (($source->format ?? '') === 'zip') {
+                                    return $source->url;
+                                }
                             }
                         }
                         return '';
@@ -3636,7 +3647,18 @@ GRAPHQL;
                 }
                 $version = ltrim($tag, 'vV');
                 $dl = '';
-                if (!empty($r->assets) && !empty($r->assets->sources)) {
+                // Prefer release asset links: gulp uploads a full package zip
+                // (with vendor/) as a generic package. The "sources" are the
+                // git archive (tracked files only, vendor/ is gitignored).
+                if (!empty($r->assets) && !empty($r->assets->links)) {
+                    foreach ($r->assets->links as $l) {
+                        if (substr($l->name ?? '', -4) === '.zip' || substr($l->url ?? '', -4) === '.zip') {
+                            $dl = $l->url;
+                            break;
+                        }
+                    }
+                }
+                if ($dl === '' && !empty($r->assets) && !empty($r->assets->sources)) {
                     foreach ($r->assets->sources as $s) {
                         if (($s->format ?? '') === 'zip') {
                             $dl = $s->url;
