@@ -150,6 +150,149 @@
             }
         }
     },
+    "Africa Multiple — DRE": {
+        "dirname": "DRE",
+        "id": 3162324479,
+        "latest_version": "2.30.3",
+        "owner": "AM-Digital-Research-Environment",
+        "registered": "2026-05-29T05:43:43Z",
+        "repo": "DRE-theme",
+        "type": "s_theme",
+        "versions": {
+            "2.0.2": {
+                "addon_id": 3162324479,
+                "asset_id": 3121910335,
+                "asset_name": "v2.0.2.zip",
+                "created": "2026-06-01T17:17:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/archive/refs/tags/v2.0.2.zip",
+                "downloads": 0,
+                "id": 3335965478,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.0.2",
+                "version": "2.0.2"
+            },
+            "2.7.1": {
+                "addon_id": 3162324479,
+                "asset_id": 940824161,
+                "asset_name": "v2.7.1.zip",
+                "created": "2026-06-10T12:54:03Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/archive/refs/tags/v2.7.1.zip",
+                "downloads": 0,
+                "id": 1519422489,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.7.1",
+                "version": "2.7.1"
+            },
+            "2.25.0": {
+                "addon_id": 3162324479,
+                "asset_id": 708837923,
+                "asset_name": "DRE-theme.zip",
+                "created": "2026-08-04T06:46:54Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.25.0/DRE-theme.zip",
+                "downloads": 1,
+                "id": 2048742736,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.25.0",
+                "version": "2.25.0"
+            },
+            "2.26.0": {
+                "addon_id": 3162324479,
+                "asset_id": 2044352935,
+                "asset_name": "DRE-theme.zip",
+                "created": "2026-08-04T11:57:03Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.26.0/DRE-theme.zip",
+                "downloads": 0,
+                "id": 2019289865,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.26.0",
+                "version": "2.26.0"
+            },
+            "2.26.1": {
+                "addon_id": 3162324479,
+                "asset_id": 3223421519,
+                "asset_name": "DRE-theme.zip",
+                "created": "2026-08-04T11:57:03Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.26.1/DRE-theme.zip",
+                "downloads": 0,
+                "id": 257743775,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.26.1",
+                "version": "2.26.1"
+            },
+            "2.27.0": {
+                "addon_id": 3162324479,
+                "asset_id": 4269576932,
+                "asset_name": "DRE-theme.zip",
+                "created": "2026-08-04T11:57:04Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.27.0/DRE-theme.zip",
+                "downloads": 0,
+                "id": 2040103230,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.27.0",
+                "version": "2.27.0"
+            },
+            "2.28.0": {
+                "addon_id": 3162324479,
+                "asset_id": 956211505,
+                "asset_name": "DRE-theme.zip",
+                "created": "2026-08-04T12:12:45Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.28.0/DRE-theme.zip",
+                "downloads": 1,
+                "id": 1925563907,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.28.0",
+                "version": "2.28.0"
+            },
+            "2.29.0": {
+                "addon_id": 3162324479,
+                "asset_id": 3210242674,
+                "asset_name": "DRE-theme.zip",
+                "created": "2026-08-05T13:12:02Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.29.0/DRE-theme.zip",
+                "downloads": 8,
+                "id": 1929882676,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.29.0",
+                "version": "2.29.0"
+            },
+            "2.30.1": {
+                "addon_id": 3162324479,
+                "asset_id": 2286388134,
+                "asset_name": "DRE-theme.zip",
+                "created": "2026-08-28T06:58:04Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.30.1/DRE-theme.zip",
+                "downloads": 12,
+                "id": 3010314312,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.30.1",
+                "version": "2.30.1"
+            },
+            "2.30.2": {
+                "addon_id": 3162324479,
+                "asset_id": 2570775007,
+                "asset_name": "DRE-theme.zip",
+                "created": "2026-09-07T10:41:22Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.30.2/DRE-theme.zip",
+                "downloads": 7,
+                "id": 711234034,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.30.2",
+                "version": "2.30.2"
+            },
+            "2.30.3": {
+                "addon_id": 3162324479,
+                "asset_id": 549532215,
+                "asset_name": "DRE-theme.zip",
+                "created": "2026-09-07T13:04:20Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.30.3/DRE-theme.zip",
+                "downloads": 5,
+                "id": 1566810468,
+                "omeka_version_constraint": "",
+                "tag_name": "v2.30.3",
+                "version": "2.30.3"
+            }
+        }
+    },
     "Agile Base Omeka": {
         "dirname": "AgileBase",
         "id": 2751115252,
@@ -297,6 +440,29 @@
                 "omeka_version_constraint": "",
                 "tag_name": "0.1",
                 "version": "0.1"
+            }
+        }
+    },
+    "Atlas": {
+        "dirname": "Atlas",
+        "id": 2869488912,
+        "latest_version": "1.17.0",
+        "owner": "ionm",
+        "registered": "2026-09-01T17:48:36Z",
+        "repo": "omeka-s-theme-atlas",
+        "type": "s_theme",
+        "versions": {
+            "1.17.0": {
+                "addon_id": 2869488912,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3196924060,
+                "omeka_version_constraint": "",
+                "tag_name": "1.17.0",
+                "version": "1.17.0"
             }
         }
     },
@@ -883,7 +1049,7 @@
                 "asset_name": "Bootstrap5-1.0.1.zip",
                 "created": "2022-09-22T11:19:56Z",
                 "download_url": "https://github.com/ldasjp8/Omeka-S-theme-Bootstrap5/releases/download/1.0.1/Bootstrap5-1.0.1.zip",
-                "downloads": 7,
+                "downloads": 8,
                 "id": 1756222114,
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.1",
@@ -895,7 +1061,7 @@
                 "asset_name": "Bootstrap5-1.0.2.zip",
                 "created": "2022-09-26T02:13:10Z",
                 "download_url": "https://github.com/ldasjp8/Omeka-S-theme-Bootstrap5/releases/download/1.0.2/Bootstrap5-1.0.2.zip",
-                "downloads": 61,
+                "downloads": 62,
                 "id": 4054090520,
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.2",
@@ -931,7 +1097,7 @@
                 "asset_name": "Bootstrap5-4.0.2.zip",
                 "created": "2024-04-17T09:04:07Z",
                 "download_url": "https://github.com/ldasjp8/Omeka-S-theme-Bootstrap5/releases/download/4.0.2/Bootstrap5-4.0.2.zip",
-                "downloads": 145,
+                "downloads": 156,
                 "id": 960760936,
                 "omeka_version_constraint": "",
                 "tag_name": "4.0.2",
@@ -1046,7 +1212,7 @@
     "CML": {
         "dirname": "GmuCml",
         "id": 1570183235,
-        "latest_version": "1.0.2",
+        "latest_version": "1.0.4",
         "owner": "Omeka-External",
         "registered": "2026-02-27T00:05:15Z",
         "repo": "gmu-cml-theme",
@@ -1075,6 +1241,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.2",
                 "version": "1.0.2"
+            },
+            "1.0.4": {
+                "addon_id": 1570183235,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 1143128216,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.4",
+                "version": "1.0.4"
             }
         }
     },
@@ -1381,7 +1559,7 @@
                 "asset_name": "centerrow-1.8.5.zip",
                 "created": "2026-01-05T15:17:26Z",
                 "download_url": "https://github.com/omeka-s-themes/centerrow/releases/download/v1.8.5/centerrow-1.8.5.zip",
-                "downloads": 471,
+                "downloads": 579,
                 "id": 1159138880,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.8.5",
@@ -1602,7 +1780,7 @@
     "Constellations": {
         "dirname": "Constellations",
         "id": 4142480791,
-        "latest_version": "1.0.0",
+        "latest_version": "1.0.1",
         "owner": "Omeka-External",
         "registered": "2024-12-29T14:30:36Z",
         "repo": "constellations-theme",
@@ -1619,6 +1797,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.0",
                 "version": "1.0.0"
+            },
+            "1.0.1": {
+                "addon_id": 4142480791,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 2229054837,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.1",
+                "version": "1.0.1"
             }
         }
     },
@@ -1877,7 +2067,7 @@
                 "asset_name": "cozy-1.6.3.zip",
                 "created": "2026-01-08T15:43:25Z",
                 "download_url": "https://github.com/omeka-s-themes/cozy/releases/download/v1.6.3/cozy-1.6.3.zip",
-                "downloads": 317,
+                "downloads": 422,
                 "id": 2935156422,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.6.3",
@@ -2760,10 +2950,93 @@
                 "asset_name": "default-1.9.3.zip",
                 "created": "2026-06-18T16:31:12Z",
                 "download_url": "https://github.com/omeka-s-themes/default/releases/download/v1.9.3/default-1.9.3.zip",
-                "downloads": 249,
+                "downloads": 444,
                 "id": 508536273,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.9.3",
+                "version": "1.9.3"
+            }
+        }
+    },
+    "Default Fondo Documental ILV": {
+        "dirname": "DefaultFondoDocumentalIlv",
+        "id": 3212261012,
+        "latest_version": "1.9.3",
+        "owner": "MonicaCabanas23",
+        "registered": "2026-07-29T03:39:03Z",
+        "repo": "default-fondo-documental-ilv",
+        "type": "s_theme",
+        "versions": {
+            "1.0.0": {
+                "addon_id": 3212261012,
+                "asset_id": 608497311,
+                "asset_name": "v1.0.0.zip",
+                "created": "2026-08-19T04:46:14Z",
+                "download_url": "https://github.com/MonicaCabanas23/default-fondo-documental-ilv/archive/refs/tags/v1.0.0.zip",
+                "downloads": 0,
+                "id": 1327098043,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "v1.0.0",
+                "version": "1.0.0"
+            },
+            "1.0.1": {
+                "addon_id": 3212261012,
+                "asset_id": 421840687,
+                "asset_name": "v1.0.1.zip",
+                "created": "2026-08-19T15:48:56Z",
+                "download_url": "https://github.com/MonicaCabanas23/default-fondo-documental-ilv/archive/refs/tags/v1.0.1.zip",
+                "downloads": 0,
+                "id": 941545517,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "v1.0.1",
+                "version": "1.0.1"
+            },
+            "1.0.2": {
+                "addon_id": 3212261012,
+                "asset_id": 1585757695,
+                "asset_name": "v1.0.2.zip",
+                "created": "2026-08-19T16:11:11Z",
+                "download_url": "https://github.com/MonicaCabanas23/default-fondo-documental-ilv/archive/refs/tags/v1.0.2.zip",
+                "downloads": 0,
+                "id": 2702674327,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "v1.0.2",
+                "version": "1.0.2"
+            },
+            "1.0.3": {
+                "addon_id": 3212261012,
+                "asset_id": 1675924559,
+                "asset_name": "v1.0.3.zip",
+                "created": "2026-08-25T04:16:27Z",
+                "download_url": "https://github.com/MonicaCabanas23/default-fondo-documental-ilv/archive/refs/tags/v1.0.3.zip",
+                "downloads": 0,
+                "id": 3591420161,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "v1.0.3",
+                "version": "1.0.3"
+            },
+            "1.0.4": {
+                "addon_id": 3212261012,
+                "asset_id": 3519301727,
+                "asset_name": "v1.0.4.zip",
+                "created": "2026-08-26T03:02:05Z",
+                "download_url": "https://github.com/MonicaCabanas23/default-fondo-documental-ilv/archive/refs/tags/v1.0.4.zip",
+                "downloads": 0,
+                "id": 1215573154,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "v1.0.4",
+                "version": "1.0.4"
+            },
+            "1.9.3": {
+                "addon_id": 3212261012,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3653337742,
+                "omeka_version_constraint": "",
+                "tag_name": "1.9.3",
                 "version": "1.9.3"
             }
         }
@@ -2923,7 +3196,7 @@
     "FAM - Online Educator Resource": {
         "dirname": "FamOer",
         "id": 2223290382,
-        "latest_version": "1.0.4",
+        "latest_version": "1.0.6",
         "owner": "Omeka-External",
         "registered": "2025-10-06T22:44:58Z",
         "repo": "fam-oer-theme",
@@ -2964,6 +3237,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.4",
                 "version": "1.0.4"
+            },
+            "1.0.6": {
+                "addon_id": 2223290382,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 4078803031,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.6",
+                "version": "1.0.6"
             }
         }
     },
@@ -3396,7 +3681,7 @@
                 "asset_name": "foundation-1.5.4.zip",
                 "created": "2026-05-12T14:52:54Z",
                 "download_url": "https://github.com/omeka-s-themes/foundation/releases/download/v1.5.4/foundation-1.5.4.zip",
-                "downloads": 274,
+                "downloads": 489,
                 "id": 3472813031,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.5.4",
@@ -3639,7 +3924,7 @@
     "IWAC": {
         "dirname": "IWAC",
         "id": 4212721562,
-        "latest_version": "2.9.0",
+        "latest_version": "2.19.1",
         "owner": "fmadore",
         "registered": "2025-12-13T08:41:00Z",
         "repo": "IWAC-theme",
@@ -3728,6 +4013,294 @@
                 "omeka_version_constraint": "",
                 "tag_name": "2.9.0",
                 "version": "2.9.0"
+            },
+            "2.9.5": {
+                "addon_id": 4212721562,
+                "asset_id": 4143477622,
+                "asset_name": "IWAC-theme-v2.9.5.zip",
+                "created": "2026-08-05T10:55:13Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.5/IWAC-theme-v2.9.5.zip",
+                "downloads": 0,
+                "id": 3805539802,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.5",
+                "version": "2.9.5"
+            },
+            "2.9.6": {
+                "addon_id": 4212721562,
+                "asset_id": 3351064731,
+                "asset_name": "IWAC-theme-v2.9.6.zip",
+                "created": "2026-08-05T11:57:38Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.6/IWAC-theme-v2.9.6.zip",
+                "downloads": 1,
+                "id": 2077932640,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.6",
+                "version": "2.9.6"
+            },
+            "2.9.7": {
+                "addon_id": 4212721562,
+                "asset_id": 1638855679,
+                "asset_name": "IWAC-theme-v2.9.7.zip",
+                "created": "2026-08-06T09:47:28Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.7/IWAC-theme-v2.9.7.zip",
+                "downloads": 1,
+                "id": 215846134,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.7",
+                "version": "2.9.7"
+            },
+            "2.9.8": {
+                "addon_id": 4212721562,
+                "asset_id": 2516500390,
+                "asset_name": "IWAC-theme-v2.9.8.zip",
+                "created": "2026-08-07T06:05:19Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.8/IWAC-theme-v2.9.8.zip",
+                "downloads": 1,
+                "id": 2623705447,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.8",
+                "version": "2.9.8"
+            },
+            "2.9.9": {
+                "addon_id": 4212721562,
+                "asset_id": 871201986,
+                "asset_name": "IWAC-theme-v2.9.9.zip",
+                "created": "2026-08-07T07:22:18Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.9/IWAC-theme-v2.9.9.zip",
+                "downloads": 1,
+                "id": 3949306353,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.9",
+                "version": "2.9.9"
+            },
+            "2.9.10": {
+                "addon_id": 4212721562,
+                "asset_id": 2818839015,
+                "asset_name": "IWAC-theme-v2.9.10.zip",
+                "created": "2026-08-07T07:52:17Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.10/IWAC-theme-v2.9.10.zip",
+                "downloads": 1,
+                "id": 4132696578,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.10",
+                "version": "2.9.10"
+            },
+            "2.9.11": {
+                "addon_id": 4212721562,
+                "asset_id": 339828080,
+                "asset_name": "IWAC-theme-v2.9.11.zip",
+                "created": "2026-08-10T07:37:46Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.11/IWAC-theme-v2.9.11.zip",
+                "downloads": 1,
+                "id": 2169815700,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.11",
+                "version": "2.9.11"
+            },
+            "2.9.12": {
+                "addon_id": 4212721562,
+                "asset_id": 201297544,
+                "asset_name": "IWAC-theme-v2.9.12.zip",
+                "created": "2026-08-12T05:45:11Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.12/IWAC-theme-v2.9.12.zip",
+                "downloads": 1,
+                "id": 408785710,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.12",
+                "version": "2.9.12"
+            },
+            "2.9.13": {
+                "addon_id": 4212721562,
+                "asset_id": 3082469919,
+                "asset_name": "IWAC-theme-v2.9.13.zip",
+                "created": "2026-08-12T12:25:33Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.13/IWAC-theme-v2.9.13.zip",
+                "downloads": 1,
+                "id": 1868211128,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.13",
+                "version": "2.9.13"
+            },
+            "2.9.14": {
+                "addon_id": 4212721562,
+                "asset_id": 880945528,
+                "asset_name": "IWAC-theme-v2.9.14.zip",
+                "created": "2026-08-14T07:49:13Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.9.14/IWAC-theme-v2.9.14.zip",
+                "downloads": 0,
+                "id": 4047386139,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.9.14",
+                "version": "2.9.14"
+            },
+            "2.10.0": {
+                "addon_id": 4212721562,
+                "asset_id": 116090881,
+                "asset_name": "IWAC-theme-v2.10.0.zip",
+                "created": "2026-08-14T09:06:58Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.10.0/IWAC-theme-v2.10.0.zip",
+                "downloads": 0,
+                "id": 3892664841,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.10.0",
+                "version": "2.10.0"
+            },
+            "2.10.1": {
+                "addon_id": 4212721562,
+                "asset_id": 3131974806,
+                "asset_name": "IWAC-theme-v2.10.1.zip",
+                "created": "2026-08-17T06:13:33Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.10.1/IWAC-theme-v2.10.1.zip",
+                "downloads": 1,
+                "id": 2667735711,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.10.1",
+                "version": "2.10.1"
+            },
+            "2.11.0": {
+                "addon_id": 4212721562,
+                "asset_id": 1199686946,
+                "asset_name": "IWAC-theme-v2.11.0.zip",
+                "created": "2026-08-20T06:55:37Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.11.0/IWAC-theme-v2.11.0.zip",
+                "downloads": 1,
+                "id": 3922145342,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.11.0",
+                "version": "2.11.0"
+            },
+            "2.12.0": {
+                "addon_id": 4212721562,
+                "asset_id": 2218668615,
+                "asset_name": "IWAC-theme-v2.12.0.zip",
+                "created": "2026-08-24T12:30:57Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.12.0/IWAC-theme-v2.12.0.zip",
+                "downloads": 1,
+                "id": 3951136359,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.12.0",
+                "version": "2.12.0"
+            },
+            "2.13.0": {
+                "addon_id": 4212721562,
+                "asset_id": 3310657380,
+                "asset_name": "IWAC-theme-v2.13.0.zip",
+                "created": "2026-08-24T18:56:12Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.13.0/IWAC-theme-v2.13.0.zip",
+                "downloads": 1,
+                "id": 3930317904,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.13.0",
+                "version": "2.13.0"
+            },
+            "2.14.0": {
+                "addon_id": 4212721562,
+                "asset_id": 3627080396,
+                "asset_name": "IWAC-theme-v2.14.0.zip",
+                "created": "2026-08-25T05:12:00Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.14.0/IWAC-theme-v2.14.0.zip",
+                "downloads": 1,
+                "id": 4010603221,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.14.0",
+                "version": "2.14.0"
+            },
+            "2.14.1": {
+                "addon_id": 4212721562,
+                "asset_id": 1685427803,
+                "asset_name": "IWAC-theme-v2.14.1.zip",
+                "created": "2026-08-26T10:01:11Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.14.1/IWAC-theme-v2.14.1.zip",
+                "downloads": 2,
+                "id": 2550907459,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.14.1",
+                "version": "2.14.1"
+            },
+            "2.15.0": {
+                "addon_id": 4212721562,
+                "asset_id": 2572842991,
+                "asset_name": "IWAC-theme-v2.15.0.zip",
+                "created": "2026-08-27T08:33:48Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.15.0/IWAC-theme-v2.15.0.zip",
+                "downloads": 1,
+                "id": 4006516962,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.15.0",
+                "version": "2.15.0"
+            },
+            "2.16.0": {
+                "addon_id": 4212721562,
+                "asset_id": 1524990090,
+                "asset_name": "IWAC-theme-v2.16.0.zip",
+                "created": "2026-08-27T10:34:52Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.16.0/IWAC-theme-v2.16.0.zip",
+                "downloads": 1,
+                "id": 3968345787,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.16.0",
+                "version": "2.16.0"
+            },
+            "2.17.0": {
+                "addon_id": 4212721562,
+                "asset_id": 462368169,
+                "asset_name": "IWAC-theme-v2.17.0.zip",
+                "created": "2026-08-31T20:21:33Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.17.0/IWAC-theme-v2.17.0.zip",
+                "downloads": 1,
+                "id": 3981069452,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.17.0",
+                "version": "2.17.0"
+            },
+            "2.17.1": {
+                "addon_id": 4212721562,
+                "asset_id": 2815058238,
+                "asset_name": "IWAC-theme-v2.17.1.zip",
+                "created": "2026-09-01T07:25:42Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.17.1/IWAC-theme-v2.17.1.zip",
+                "downloads": 1,
+                "id": 2588769306,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.17.1",
+                "version": "2.17.1"
+            },
+            "2.18.0": {
+                "addon_id": 4212721562,
+                "asset_id": 1613564890,
+                "asset_name": "IWAC-theme-v2.18.0.zip",
+                "created": "2026-09-01T08:23:09Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.18.0/IWAC-theme-v2.18.0.zip",
+                "downloads": 1,
+                "id": 3860204465,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.18.0",
+                "version": "2.18.0"
+            },
+            "2.19.0": {
+                "addon_id": 4212721562,
+                "asset_id": 558343929,
+                "asset_name": "IWAC-theme-v2.19.0.zip",
+                "created": "2026-09-03T08:33:20Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.19.0/IWAC-theme-v2.19.0.zip",
+                "downloads": 1,
+                "id": 3889455494,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v2.19.0",
+                "version": "2.19.0"
+            },
+            "2.19.1": {
+                "addon_id": 4212721562,
+                "asset_id": 2634213998,
+                "asset_name": "IWAC-theme-v2.19.1.zip",
+                "created": "2026-09-03T09:19:17Z",
+                "download_url": "https://github.com/fmadore/IWAC-theme/releases/download/v2.19.1/IWAC-theme-v2.19.1.zip",
+                "downloads": 1,
+                "id": 2429767952,
+                "omeka_version_constraint": "",
+                "tag_name": "v2.19.1",
+                "version": "2.19.1"
             }
         }
     },
@@ -3919,7 +4492,7 @@
     "Korematsu": {
         "dirname": "Korematsu",
         "id": 1730260103,
-        "latest_version": "1.1.6",
+        "latest_version": "1.1.8",
         "owner": "Omeka-External",
         "registered": "2024-12-29T14:35:33Z",
         "repo": "korematsu-theme",
@@ -3972,6 +4545,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.1.6",
                 "version": "1.1.6"
+            },
+            "1.1.8": {
+                "addon_id": 1730260103,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3882980583,
+                "omeka_version_constraint": "",
+                "tag_name": "1.1.8",
+                "version": "1.1.8"
             }
         }
     },
@@ -4094,7 +4679,7 @@
                 "asset_name": "lively-v1.1.0.zip",
                 "created": "2026-02-10T23:47:12Z",
                 "download_url": "https://github.com/omeka-s-themes/lively/releases/download/v1.1.0/lively-v1.1.0.zip",
-                "downloads": 375,
+                "downloads": 520,
                 "id": 4256693059,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.1.0",
@@ -4612,7 +5197,7 @@
     "Omekalia": {
         "dirname": "omekalia",
         "id": 3246380062,
-        "latest_version": "1.0.12",
+        "latest_version": "1.0.13",
         "owner": "biblibre",
         "registered": "2024-10-04T09:23:22Z",
         "repo": "omeka-s-theme-omekalia",
@@ -4732,11 +5317,23 @@
                 "asset_name": "omekalia_v1.0.12.zip",
                 "created": "2026-07-06T08:26:57Z",
                 "download_url": "https://github.com/biblibre/omeka-s-theme-omekalia/releases/download/v1.0.12/omekalia_v1.0.12.zip",
-                "downloads": 6,
+                "downloads": 22,
                 "id": 3830543778,
-                "omeka_version_constraint": "",
+                "omeka_version_constraint": "^4.1.1",
                 "tag_name": "v1.0.12",
                 "version": "1.0.12"
+            },
+            "1.0.13": {
+                "addon_id": 3246380062,
+                "asset_id": 4087580918,
+                "asset_name": "omekalia_v1.0.13.zip",
+                "created": "2026-07-27T15:32:05Z",
+                "download_url": "https://github.com/biblibre/omeka-s-theme-omekalia/releases/download/v1.0.13/omekalia_v1.0.13.zip",
+                "downloads": 10,
+                "id": 2471904564,
+                "omeka_version_constraint": "",
+                "tag_name": "v1.0.13",
+                "version": "1.0.13"
             }
         }
     },
@@ -4969,7 +5566,7 @@
                 "asset_name": "theme-papers-v1.4.5.zip",
                 "created": "2024-10-28T20:11:21Z",
                 "download_url": "https://github.com/omeka-s-themes/papers/releases/download/v1.4.5/theme-papers-v1.4.5.zip",
-                "downloads": 802,
+                "downloads": 890,
                 "id": 3562580949,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.4.5",
@@ -6905,7 +7502,7 @@
                 "asset_name": "theme-thanksroy-v1.2.2.zip",
                 "created": "2024-10-28T18:52:10Z",
                 "download_url": "https://github.com/omeka-s-themes/thanksroy/releases/download/v1.2.2/theme-thanksroy-v1.2.2.zip",
-                "downloads": 784,
+                "downloads": 881,
                 "id": 4039951992,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.2.2",
@@ -7168,7 +7765,7 @@
                 "asset_name": "theme-thedaily-v1.7.2.zip",
                 "created": "2024-04-18T01:49:15Z",
                 "download_url": "https://github.com/omeka-s-themes/thedaily/releases/download/v1.7.2/theme-thedaily-v1.7.2.zip",
-                "downloads": 82,
+                "downloads": 87,
                 "id": 2146105110,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.7.2",
@@ -7238,7 +7835,7 @@
     "UC CAAN": {
         "dirname": "UcCaan",
         "id": 47743586,
-        "latest_version": "1.0.4",
+        "latest_version": "1.0.6",
         "owner": "Omeka-External",
         "registered": "2026-07-09T22:44:09Z",
         "repo": "uc-caan-theme",
@@ -7267,6 +7864,18 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.4",
                 "version": "1.0.4"
+            },
+            "1.0.6": {
+                "addon_id": 47743586,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3685361576,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.6",
+                "version": "1.0.6"
             }
         }
     },

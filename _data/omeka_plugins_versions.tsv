@@ -48,6 +48,7 @@ AvantRelationships	3.1.0
 AvantS3	3.2.0
 AvantSearch	4.0.0
 AvantZoom	3.1.0
+AwsS3	1.0
 Babel	0.9
 Belogs	1.0
 BagIt	2.0.1
@@ -66,7 +67,7 @@ Bookmarks	0.1
 Bookmeka	0.1
 BookReader	2.7
 BookReaderGalleryLayout	1.0
-BotChallenge	2.3.1
+BotChallenge	2.3.4
 BrowseValues	1.0.0
 BulkImportFiles	2.0.4.1
 BulkMetadataEditor	2.9.1
@@ -130,10 +131,10 @@ CsvImportPenn	2.0.4
 CTCGuides	1.0
 CulCustomize	1
 CuratescapeAdminHelper	1.6.5
-CuratescapeGalleries	1.0.1
+CuratescapeGalleries	1.0.2
 CuratescapeJSON	1.5.4
 CuratescapeSeo	1.0.1
-Curatescape	1.0.10
+Curatescape	1.0.12
 CuratorMonitor	2.4.7
 CustomCitation	2.0
 CustomHeadBodyContent	1.0
@@ -170,7 +171,7 @@ DS	0.1
 DspaceRestapiHarvester	0.1
 DublinCoreExtended	2.3
 DuplicateItem	0.1
-EmailNotification	1.6
+EmailNotification	1.7
 EmailUsers	1.2
 Ead	2.4.3
 EadImporter	1.0
@@ -200,6 +201,7 @@ ExhibitAccess	-
 ExhibitBuilder	3.10.1
 ExhibitImageAnnotation	1.3
 ExhibitMicrosite	0.9
+ExhibitBuilderTinyMceCustomizer	1.1.0
 ExperimentalBeijing	0.1.0
 Export	0.1
 Export20	2.0
@@ -290,7 +292,7 @@ IpRestrict	1.1.0
 ISADgElementSet	2.1
 ItemCompare	0.2
 ItemDuplicateCheck	0.2.0
-ItemDuplicator	1.4
+ItemDuplicator	1.5
 ItemEditLock	1.0
 ItemMetastoFiles	1.0
 ItemOrder	2.2
@@ -305,7 +307,7 @@ IuWebsite	2.0
 JobDiagnostics	1.0.1
 Jquery	
 RSSFeaturedItems	0.1
-JwtAuth	0.1.0
+JwtAuth	0.2.0
 KalturaVideo	1.0
 KDNPObject	1.0.0
 KohaAuthoritySuggest	0.2.0
@@ -460,7 +462,7 @@ Remotefile	 1.0 beta 
 RenderJSON	0.0.0
 ReorderElementTexts	0.1
 ReplaceDcTitle	1.2
-Reports	2.0.3
+Reports	2.1
 ResourceMeta	1.0.0
 REST	0.0.3
 RightsStatements	1.2
@@ -526,20 +528,21 @@ TagInfo	0.0.1
 TM	1.0
 Tagroups	0.0.1
 TagsInCollection	1.0
-TagsPlus	1.1
+TagsPlus	1.2
 TakebackCustomizations	0.0.1
 Taxonomy	0.3.0
 TCsDialogue	0.3
 TeachingImageItemtype	0.0.1
 TeiAnnotations	1.0
 TeiDisplay	2.0
-TeiEditions	1.0.0-pre13
+TeiEditions	1.0.0-pre16
 TEIInteract	0.2.2
 Template	1.0
 TermsOfService	0.2.2
 FacetedSearch	0.1
 TextAnalysis	2.5
 TextAnnotation	1.0
+TextExhibit	0.1
 StarterKit	0.1
 ThreeJS	0.0.4
 ThumbnailFixer	1.0
