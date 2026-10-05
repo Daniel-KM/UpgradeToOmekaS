@@ -1116,7 +1116,7 @@ class UpdateDataExtensions
         if (!empty($this->args['organizations']['gitlab.com'])) {
             $this->log('[Search:orgs] Searching known GitLab groups...');
             foreach ($this->args['organizations']['gitlab.com'] as $group) {
-                $encodedGroup = urlencode($group);
+                $encodedGroup = self::encodeGitLabPath($group);
                 // A namespace is either a group or a user: /groups/ answers 404
                 // for a user and /users/ answers 404 for a group, so detect the
                 // right endpoint. The probe is cached by curl(), so the first
@@ -2143,7 +2143,7 @@ class UpdateDataExtensions
         if ($server === 'github.com') {
             $mirrorUrl = 'https://gitlab.com/' . $path;
             // Quick check if GitLab mirror exists (single attempt, no retry).
-            $encodedProject = urlencode($path);
+            $encodedProject = self::encodeGitLabPath($path);
             $apiUrl = 'https://gitlab.com/api/v4/projects/' . $encodedProject;
             $response = $this->curl($apiUrl, [], false, 1);
             if (!empty($response) && !empty($response->id)) {
@@ -2222,7 +2222,7 @@ class UpdateDataExtensions
                 }
             } elseif ($server === 'gitlab.com') {
                 $path = trim(parse_url($mirrorUrl, PHP_URL_PATH), '/');
-                $encodedProject = urlencode($path);
+                $encodedProject = self::encodeGitLabPath($path);
                 $apiUrl = 'https://gitlab.com/api/v4/projects/' . $encodedProject;
                 $response = $this->curl($apiUrl, [], false);
                 if (!empty($response) && !empty($response->id)) {
@@ -2488,7 +2488,7 @@ class UpdateDataExtensions
                 break;
             case 'gitlab.com':
                 // GitLab API requires URL-encoded project path.
-                $encodedProject = urlencode($project);
+                $encodedProject = self::encodeGitLabPath($project);
                 $url = 'https://gitlab.com/api/v4/projects/' . $encodedProject;
                 $response = $this->curl($url);
                 $projectName = basename($project);
@@ -2611,7 +2611,7 @@ class UpdateDataExtensions
                 }
 
             case 'gitlab.com':
-                $encodedProject = urlencode($project);
+                $encodedProject = self::encodeGitLabPath($project);
                 switch ($dataToFind) {
                     case 'creation date':
                         return $response->created_at ?? '';
@@ -3473,7 +3473,7 @@ GRAPHQL;
                         $apiUrls[] = 'https://api.github.com/repos/' . $project;
                         break;
                     case 'gitlab.com':
-                        $encodedProject = urlencode($project);
+                        $encodedProject = self::encodeGitLabPath($project);
                         $apiUrls[] = 'https://gitlab.com/api/v4/projects/'
                             . $encodedProject;
                         break;
@@ -3518,7 +3518,7 @@ GRAPHQL;
 
             if ($server === 'github.com') {
                 // Check if GitLab mirror exists.
-                $encodedProject = urlencode($path);
+                $encodedProject = self::encodeGitLabPath($path);
                 $apiUrl = 'https://gitlab.com/api/v4/projects/'
                     . $encodedProject;
                 $gitlabChecks[$apiUrl] = $addonUrl;
@@ -3671,7 +3671,7 @@ GRAPHQL;
                 ];
             }
         } elseif ($host === 'gitlab.com') {
-            $encoded = urlencode($path);
+            $encoded = self::encodeGitLabPath($path);
             $base = 'https://gitlab.com/api/v4/projects/' . $encoded . '/releases?per_page=100';
             $releases = $this->fetchAllGitLabPages($base);
             if (empty($releases)) {
@@ -3974,6 +3974,17 @@ GRAPHQL;
         $addonTypes[$keyAddon] = $this->type;
 
         return $ini;
+    }
+
+    /**
+     * Encode a GitLab namespace or project path for the api.
+     *
+     * The dot is encoded too: else GitLab takes the part after it as a format
+     * extension (for example "matthewd.xyzAI/Foo") and answers a wrong project.
+     */
+    public static function encodeGitLabPath(string $path): string
+    {
+        return str_replace('.', '%2E', rawurlencode($path));
     }
 
     /**
