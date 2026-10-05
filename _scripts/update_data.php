@@ -2828,9 +2828,14 @@ class UpdateDataExtensions
         // All api are json.
         $output = json_decode($response);
         if (empty($output)) {
-            // Don't log for 404 errors (common for non-existent files).
-            if ($httpCode !== 404) {
-                $this->log(sprintf('Empty response from curl for url %s (HTTP %d).', $url, $httpCode));
+            // A valid empty json (no release, no tag, last page) is not an
+            // error. Don't log 404 either (common for non-existent files).
+            if ($output !== null && $httpCode >= 200 && $httpCode < 300) {
+                if ($this->options['debug']) {
+                    $this->log(sprintf('[No data      ] %s', $url));
+                }
+            } elseif ($httpCode !== 404) {
+                $this->log(sprintf('Unexpected response for url %s (HTTP %d).', $url, $httpCode));
             }
             return [];
         }
