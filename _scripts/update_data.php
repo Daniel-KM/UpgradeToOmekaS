@@ -2759,24 +2759,38 @@ class UpdateDataExtensions
         while ($attempt < $maxRetries) {
             $attempt++;
 
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
-            // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-            // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            // Timeout to avoid blocking on slow/unresponsive servers.
-            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+            // Follow redirects (renamed or moved repositories) manually, only
+            // to the same host over https: the token headers are custom ones,
+            // so curl would send them to any other host too.
+            $requestUrl = $url;
+            $redirects = 0;
+            do {
+                $curl = curl_init();
+                curl_setopt($curl, CURLOPT_URL, $requestUrl);
+                curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                // Timeout to avoid blocking on slow/unresponsive servers.
+                curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+                curl_setopt($curl, CURLOPT_TIMEOUT, 30);
 
-            if ($headers) {
-                curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-            }
+                if ($headers) {
+                    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+                }
 
-            $response = curl_exec($curl);
-            $curlError = curl_error($curl);
-            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            curl_close($curl);
+                $response = curl_exec($curl);
+                $curlError = curl_error($curl);
+                $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                $redirectUrl = (string) curl_getinfo($curl, CURLINFO_REDIRECT_URL);
+                curl_close($curl);
+
+                $isRedirect = in_array($httpCode, [301, 302, 307, 308], true)
+                    && $redirectUrl !== ''
+                    && parse_url($redirectUrl, PHP_URL_SCHEME) === 'https'
+                    && strtolower((string) parse_url($redirectUrl, PHP_URL_HOST)) === $server;
+                if ($isRedirect) {
+                    $requestUrl = $redirectUrl;
+                }
+            } while ($isRedirect && ++$redirects <= 5);
 
             // Success - break out of retry loop.
             if ($response !== false && empty($curlError) && $httpCode >= 200 && $httpCode < 500) {
