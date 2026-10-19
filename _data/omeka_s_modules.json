@@ -142,7 +142,7 @@
     "Access": {
         "dirname": "Access",
         "id": 978920321,
-        "latest_version": "3.4.47",
+        "latest_version": "3.4.48",
         "owner": "Daniel-KM",
         "registered": "2020-01-20T18:58:41Z",
         "repo": "Omeka-S-module-Access",
@@ -699,6 +699,65 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.47",
                 "version": "3.4.47"
+            },
+            "3.4.48": {
+                "addon_id": 978920321,
+                "asset_id": 1782112017,
+                "asset_name": "Access-3.4.48.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-Access/releases/download/3.4.48/Access-3.4.48.zip",
+                "downloads": 32,
+                "id": 2623824801,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.48",
+                "version": "3.4.48"
+            }
+        }
+    },
+    "Active Sessions": {
+        "dirname": "ActiveSessions",
+        "id": 74427831,
+        "latest_version": "0.3.0",
+        "owner": "phumraphee",
+        "registered": "2026-10-19T23:46:06Z",
+        "repo": "ActiveSessions",
+        "type": "s_module",
+        "versions": {
+            "0.1.0": {
+                "addon_id": 74427831,
+                "asset_id": 4178424704,
+                "asset_name": "ActiveSessions.zip",
+                "created": "2026-10-19T23:59:58Z",
+                "download_url": "https://github.com/phumraphee/ActiveSessions/releases/download/v0.1.0/ActiveSessions.zip",
+                "downloads": 1,
+                "id": 813888841,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.1.0",
+                "version": "0.1.0"
+            },
+            "0.2.0": {
+                "addon_id": 74427831,
+                "asset_id": 2210760125,
+                "asset_name": "ActiveSessions-0.2.0.zip",
+                "created": "2026-10-22T06:49:47Z",
+                "download_url": "https://github.com/phumraphee/ActiveSessions/releases/download/v0.2.0/ActiveSessions-0.2.0.zip",
+                "downloads": 1,
+                "id": 851725072,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.2.0",
+                "version": "0.2.0"
+            },
+            "0.3.0": {
+                "addon_id": 74427831,
+                "asset_id": 604467988,
+                "asset_name": "ActiveSessions-0.3.0.zip",
+                "created": "2026-10-22T13:46:19Z",
+                "download_url": "https://github.com/phumraphee/ActiveSessions/releases/download/v0.3.0/ActiveSessions-0.3.0.zip",
+                "downloads": 0,
+                "id": 856039719,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.3.0",
+                "version": "0.3.0"
             }
         }
     },
@@ -869,7 +928,7 @@
     "Adminer database manager": {
         "dirname": "Adminer",
         "id": 978560404,
-        "latest_version": "3.4.18-p6.1.1",
+        "latest_version": "3.4.18-p6.1.2",
         "owner": "Daniel-KM",
         "registered": "2021-02-04T07:16:16.850Z",
         "repo": "Omeka-S-module-Adminer",
@@ -1114,13 +1173,25 @@
                 "omeka_version_constraint": "^3.1.0 || ^4.0.0",
                 "tag_name": "3.4.18-p6.1.1",
                 "version": "3.4.18-p6.1.1"
+            },
+            "3.4.18-p6.1.2": {
+                "addon_id": 978560404,
+                "asset_id": 2028654979,
+                "asset_name": "Adminer-3.4.18-p6.1.2.zip",
+                "created": "2026-10-19T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-Adminer/packages/generic/Adminer/3.4.18-p6.1.2/Adminer-3.4.18-p6.1.2.zip",
+                "downloads": 26,
+                "id": 2687856793,
+                "omeka_version_constraint": "^3.1.0 || ^4.0.0",
+                "tag_name": "3.4.18-p6.1.2",
+                "version": "3.4.18-p6.1.2"
             }
         }
     },
     "Advanced Resource Template": {
         "dirname": "AdvancedResourceTemplate",
         "id": 2694999351,
-        "latest_version": "3.4.55",
+        "latest_version": "3.4.56",
         "owner": "Daniel-KM",
         "registered": "2020-09-02T11:02:09.954Z",
         "repo": "Omeka-S-module-AdvancedResourceTemplate",
@@ -1713,13 +1784,25 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "3.4.55",
                 "version": "3.4.55"
+            },
+            "3.4.56": {
+                "addon_id": 2694999351,
+                "asset_id": 3909840562,
+                "asset_name": "AdvancedResourceTemplate-3.4.56.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-AdvancedResourceTemplate/packages/generic/AdvancedResourceTemplate/3.4.56/AdvancedResourceTemplate-3.4.56.zip",
+                "downloads": 78,
+                "id": 2375018351,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "3.4.56",
+                "version": "3.4.56"
             }
         }
     },
     "Advanced Search": {
         "dirname": "AdvancedSearch",
         "id": 130296694,
-        "latest_version": "3.4.64",
+        "latest_version": "3.4.66",
         "owner": "Daniel-KM",
         "registered": "2021-08-24T11:28:20.667Z",
         "repo": "Omeka-S-module-AdvancedSearch",
@@ -2696,6 +2779,30 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.64",
                 "version": "3.4.64"
+            },
+            "3.4.65": {
+                "addon_id": 130296694,
+                "asset_id": 2670709769,
+                "asset_name": "AdvancedSearch-3.4.65.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-AdvancedSearch/releases/download/3.4.65/AdvancedSearch-3.4.65.zip",
+                "downloads": 88,
+                "id": 1218909079,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.65",
+                "version": "3.4.65"
+            },
+            "3.4.66": {
+                "addon_id": 130296694,
+                "asset_id": 3773578699,
+                "asset_name": "AdvancedSearch-3.4.66.zip",
+                "created": "2026-10-19T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-AdvancedSearch/packages/generic/AdvancedSearch/3.4.66/AdvancedSearch-3.4.66.zip",
+                "downloads": 20,
+                "id": 3517858349,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.66",
+                "version": "3.4.66"
             }
         }
     },
@@ -2845,7 +2952,7 @@
     "Advanced Search adapter for Solr": {
         "dirname": "SearchSolr",
         "id": 2110164110,
-        "latest_version": "3.5.73",
+        "latest_version": "3.5.75",
         "owner": "Daniel-KM",
         "registered": "2020-04-27T20:04:51Z",
         "repo": "Omeka-S-module-SearchSolr",
@@ -3630,6 +3737,18 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.5.73",
                 "version": "3.5.73"
+            },
+            "3.5.75": {
+                "addon_id": 2110164110,
+                "asset_id": 2492769895,
+                "asset_name": "SearchSolr-3.5.75.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-SearchSolr/releases/download/3.5.75/SearchSolr-3.5.75.zip",
+                "downloads": 0,
+                "id": 3277883503,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.5.75",
+                "version": "3.5.75"
             }
         }
     },
@@ -5216,7 +5335,7 @@
                 "asset_name": "AnyCloudv0.2.0.zip",
                 "created": "2019-01-29T22:15:57Z",
                 "download_url": "https://github.com/HBLL-Collection-Development/omeka-s-any-cloud/releases/download/v0.2.0/AnyCloudv0.2.0.zip",
-                "downloads": 6,
+                "downloads": 8,
                 "id": 2011015111,
                 "omeka_version_constraint": "",
                 "tag_name": "v0.2.0",
@@ -5228,7 +5347,7 @@
                 "asset_name": "AnyCloudv0.3.0.zip",
                 "created": "2019-02-03T23:45:47Z",
                 "download_url": "https://github.com/HBLL-Collection-Development/omeka-s-any-cloud/releases/download/v0.3.0/AnyCloudv0.3.0.zip",
-                "downloads": 39,
+                "downloads": 41,
                 "id": 1981795824,
                 "omeka_version_constraint": "",
                 "tag_name": "v0.3.0",
@@ -5240,7 +5359,7 @@
                 "asset_name": "AnyCloudv0.3.1.zip",
                 "created": "2019-02-05T21:13:44Z",
                 "download_url": "https://github.com/HBLL-Collection-Development/omeka-s-any-cloud/releases/download/v0.3.1/AnyCloudv0.3.1.zip",
-                "downloads": 57,
+                "downloads": 59,
                 "id": 18414950,
                 "omeka_version_constraint": "",
                 "tag_name": "v0.3.1",
@@ -5252,7 +5371,7 @@
                 "asset_name": "AnyCloudv0.3.2.zip",
                 "created": "2019-02-07T17:31:29Z",
                 "download_url": "https://github.com/HBLL-Collection-Development/omeka-s-any-cloud/releases/download/v0.3.2/AnyCloudv0.3.2.zip",
-                "downloads": 55,
+                "downloads": 57,
                 "id": 2551295196,
                 "omeka_version_constraint": "",
                 "tag_name": "v0.3.2",
@@ -6525,10 +6644,57 @@
             }
         }
     },
+    "Batch Values": {
+        "dirname": "BatchValues",
+        "id": 2414928563,
+        "latest_version": "1.0.2",
+        "owner": "phumraphee",
+        "registered": "2026-10-19T16:13:16Z",
+        "repo": "BatchValues",
+        "type": "s_module",
+        "versions": {
+            "1.0.0": {
+                "addon_id": 2414928563,
+                "asset_id": 3638734653,
+                "asset_name": "BatchValues.zip",
+                "created": "2026-10-19T16:12:04Z",
+                "download_url": "https://github.com/phumraphee/BatchValues/releases/download/v1.0.0/BatchValues.zip",
+                "downloads": 0,
+                "id": 3088435617,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.0",
+                "version": "1.0.0"
+            },
+            "1.0.1": {
+                "addon_id": 2414928563,
+                "asset_id": 322650885,
+                "asset_name": "BatchValues-1.0.1.zip",
+                "created": "2026-10-20T09:35:11Z",
+                "download_url": "https://github.com/phumraphee/BatchValues/releases/download/v1.0.1/BatchValues-1.0.1.zip",
+                "downloads": 1,
+                "id": 3474127159,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.1",
+                "version": "1.0.1"
+            },
+            "1.0.2": {
+                "addon_id": 2414928563,
+                "asset_id": 578683112,
+                "asset_name": "BatchValues-1.0.2.zip",
+                "created": "2026-10-21T04:33:36Z",
+                "download_url": "https://github.com/phumraphee/BatchValues/releases/download/v1.0.2/BatchValues-1.0.2.zip",
+                "downloads": 1,
+                "id": 1444653197,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.2",
+                "version": "1.0.2"
+            }
+        }
+    },
     "Bibliography": {
         "dirname": "Bibliography",
         "id": 248613821,
-        "latest_version": "3.4.12",
+        "latest_version": "3.4.13",
         "owner": "Daniel-KM",
         "registered": "2019-06-03T11:01:16Z",
         "repo": "Omeka-S-module-Bibliography",
@@ -6773,6 +6939,18 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.12",
                 "version": "3.4.12"
+            },
+            "3.4.13": {
+                "addon_id": 248613821,
+                "asset_id": 4070373092,
+                "asset_name": "Bibliography-3.4.13.zip",
+                "created": "2026-10-19T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-Bibliography/releases/download/3.4.13/Bibliography-3.4.13.zip",
+                "downloads": 0,
+                "id": 210474395,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.13",
+                "version": "3.4.13"
             }
         }
     },
@@ -10019,7 +10197,7 @@
     "Bulk Import": {
         "dirname": "BulkImport",
         "id": 446324410,
-        "latest_version": "3.4.65",
+        "latest_version": "3.4.66",
         "owner": "Daniel-KM",
         "registered": "2019-01-11T08:34:19Z",
         "repo": "Omeka-S-module-BulkImport",
@@ -10972,6 +11150,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "3.4.65",
                 "version": "3.4.65"
+            },
+            "3.4.66": {
+                "addon_id": 446324410,
+                "asset_id": 2413353919,
+                "asset_name": "BulkImport-3.4.66.zip",
+                "created": "2026-10-19T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-BulkImport/releases/download/3.4.66/BulkImport-3.4.66.zip",
+                "downloads": 22,
+                "id": 121332482,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "3.4.66",
+                "version": "3.4.66"
             }
         }
     },
@@ -12539,10 +12729,10 @@
         "versions": {
             "0.0.0": {
                 "addon_id": 717510180,
-                "asset_id": 1833561579,
-                "asset_name": "CodeSnippets-1.0.2.zip",
+                "asset_id": 3507265916,
+                "asset_name": "CodeSnippets-1.0.3.zip",
                 "created": "",
-                "download_url": "https://github.com/ateeducacion/omeka-s-CodeSnippets/releases/download/1.0.2/CodeSnippets-1.0.2.zip",
+                "download_url": "https://github.com/ateeducacion/omeka-s-CodeSnippets/releases/download/1.0.3/CodeSnippets-1.0.3.zip",
                 "downloads": 0,
                 "id": 2460220483,
                 "omeka_version_constraint": "^4.1.0",
@@ -13030,7 +13220,7 @@
     "Comment": {
         "dirname": "Comment",
         "id": 46724108,
-        "latest_version": "3.4.18",
+        "latest_version": "3.4.19",
         "owner": "Daniel-KM",
         "registered": "2018-01-08T09:30:19Z",
         "repo": "Omeka-S-module-Comment",
@@ -13215,13 +13405,25 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.18",
                 "version": "3.4.18"
+            },
+            "3.4.19": {
+                "addon_id": 46724108,
+                "asset_id": 1445048676,
+                "asset_name": "Comment-3.4.19.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-Comment/releases/download/3.4.19/Comment-3.4.19.zip",
+                "downloads": 9,
+                "id": 613025702,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.19",
+                "version": "3.4.19"
             }
         }
     },
     "Common": {
         "dirname": "Common",
         "id": 1348566563,
-        "latest_version": "3.4.93",
+        "latest_version": "3.4.94",
         "owner": "Daniel-KM",
         "registered": "2024-01-19T11:31:04.092Z",
         "repo": "Omeka-S-module-Common",
@@ -13790,6 +13992,18 @@
                 "omeka_version_constraint": "^3.1 || ^4.0",
                 "tag_name": "3.4.93",
                 "version": "3.4.93"
+            },
+            "3.4.94": {
+                "addon_id": 1348566563,
+                "asset_id": 668616642,
+                "asset_name": "Common-3.4.94.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-Common/packages/generic/Common/3.4.94/Common-3.4.94.zip",
+                "downloads": 290,
+                "id": 1030501711,
+                "omeka_version_constraint": "^3.1 || ^4.0",
+                "tag_name": "3.4.94",
+                "version": "3.4.94"
             }
         }
     },
@@ -14021,7 +14235,7 @@
     "Contact us or author and report": {
         "dirname": "ContactUs",
         "id": 1957579759,
-        "latest_version": "3.4.32",
+        "latest_version": "3.4.33",
         "owner": "Daniel-KM",
         "registered": "2019-02-06T15:17:35Z",
         "repo": "Omeka-S-module-ContactUs",
@@ -14506,6 +14720,18 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.32",
                 "version": "3.4.32"
+            },
+            "3.4.33": {
+                "addon_id": 1957579759,
+                "asset_id": 1754187791,
+                "asset_name": "ContactUs-3.4.33.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-ContactUs/releases/download/3.4.33/ContactUs-3.4.33.zip",
+                "downloads": 18,
+                "id": 3873363405,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.33",
+                "version": "3.4.33"
             }
         }
     },
@@ -15332,7 +15558,7 @@
     "Cronical": {
         "dirname": "Cronical",
         "id": 3524607437,
-        "latest_version": "0.1.1",
+        "latest_version": "0.2.0",
         "owner": "biblibre",
         "registered": "2026-06-26T08:17:59Z",
         "repo": "omeka-s-module-Cronical",
@@ -15361,6 +15587,30 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "v0.1.1",
                 "version": "0.1.1"
+            },
+            "0.1.2": {
+                "addon_id": 3524607437,
+                "asset_id": 2050279570,
+                "asset_name": "Cronical-0.1.2.zip",
+                "created": "2026-10-23T11:05:37Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Cronical/releases/download/v0.1.2/Cronical-0.1.2.zip",
+                "downloads": 0,
+                "id": 1902954401,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "v0.1.2",
+                "version": "0.1.2"
+            },
+            "0.2.0": {
+                "addon_id": 3524607437,
+                "asset_id": 3265944227,
+                "asset_name": "Cronical-0.2.0.zip",
+                "created": "2026-10-23T11:59:50Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Cronical/releases/download/v0.2.0/Cronical-0.2.0.zip",
+                "downloads": 0,
+                "id": 2636388564,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "v0.2.0",
+                "version": "0.2.0"
             }
         }
     },
@@ -15848,10 +16098,93 @@
             }
         }
     },
+    "DRE Linked Data": {
+        "dirname": "DRELinkedData",
+        "id": 2002944533,
+        "latest_version": "0.5.0",
+        "owner": "AM-Digital-Research-Environment",
+        "registered": "2026-10-12T04:44:21Z",
+        "repo": "DRE-LinkedData",
+        "type": "s_module",
+        "versions": {
+            "0.1.0": {
+                "addon_id": 2002944533,
+                "asset_id": 2560995969,
+                "asset_name": "DRELinkedData.zip",
+                "created": "2026-10-12T04:45:04Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-LinkedData/releases/download/v0.1.0/DRELinkedData.zip",
+                "downloads": 5,
+                "id": 2303259975,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.1.0",
+                "version": "0.1.0"
+            },
+            "0.2.0": {
+                "addon_id": 2002944533,
+                "asset_id": 3820695650,
+                "asset_name": "DRELinkedData.zip",
+                "created": "2026-10-14T14:11:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-LinkedData/releases/download/v0.2.0/DRELinkedData.zip",
+                "downloads": 7,
+                "id": 2332969758,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.2.0",
+                "version": "0.2.0"
+            },
+            "0.3.0": {
+                "addon_id": 2002944533,
+                "asset_id": 2086777852,
+                "asset_name": "DRELinkedData.zip",
+                "created": "2026-10-15T06:34:34Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-LinkedData/releases/download/v0.3.0/DRELinkedData.zip",
+                "downloads": 5,
+                "id": 2328633641,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.3.0",
+                "version": "0.3.0"
+            },
+            "0.3.1": {
+                "addon_id": 2002944533,
+                "asset_id": 2877502372,
+                "asset_name": "DRELinkedData.zip",
+                "created": "2026-10-15T07:30:32Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-LinkedData/releases/download/v0.3.1/DRELinkedData.zip",
+                "downloads": 32,
+                "id": 4257943999,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.3.1",
+                "version": "0.3.1"
+            },
+            "0.4.0": {
+                "addon_id": 2002944533,
+                "asset_id": 361117092,
+                "asset_name": "DRELinkedData.zip",
+                "created": "2026-10-22T07:56:45Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-LinkedData/releases/download/v0.4.0/DRELinkedData.zip",
+                "downloads": 5,
+                "id": 2407741356,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.4.0",
+                "version": "0.4.0"
+            },
+            "0.5.0": {
+                "addon_id": 2002944533,
+                "asset_id": 2321331770,
+                "asset_name": "DRELinkedData.zip",
+                "created": "2026-10-22T08:18:20Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-LinkedData/releases/download/v0.5.0/DRELinkedData.zip",
+                "downloads": 6,
+                "id": 2386648475,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.5.0",
+                "version": "0.5.0"
+            }
+        }
+    },
     "DRE SEO": {
         "dirname": "DRESEO",
         "id": 900683719,
-        "latest_version": "0.10.0",
+        "latest_version": "0.15.0",
         "owner": "AM-Digital-Research-Environment",
         "registered": "2026-06-03T18:03:34Z",
         "repo": "DRE-SEO",
@@ -15916,13 +16249,97 @@
                 "omeka_version_constraint": "^4.2.0",
                 "tag_name": "v0.10.0",
                 "version": "0.10.0"
+            },
+            "0.10.1": {
+                "addon_id": 900683719,
+                "asset_id": 3711150958,
+                "asset_name": "DRESeo.zip",
+                "created": "2026-10-07T12:59:15Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-SEO/releases/download/v0.10.1/DRESeo.zip",
+                "downloads": 7,
+                "id": 3977896011,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.10.1",
+                "version": "0.10.1"
+            },
+            "0.11.0": {
+                "addon_id": 900683719,
+                "asset_id": 3684238967,
+                "asset_name": "DRESeo.zip",
+                "created": "2026-10-09T05:06:41Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-SEO/releases/download/v0.11.0/DRESeo.zip",
+                "downloads": 22,
+                "id": 2614934250,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.11.0",
+                "version": "0.11.0"
+            },
+            "0.12.0": {
+                "addon_id": 900683719,
+                "asset_id": 2818057132,
+                "asset_name": "DRESeo.zip",
+                "created": "2026-10-14T14:28:25Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-SEO/releases/download/v0.12.0/DRESeo.zip",
+                "downloads": 5,
+                "id": 2577007795,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.12.0",
+                "version": "0.12.0"
+            },
+            "0.13.0": {
+                "addon_id": 900683719,
+                "asset_id": 989315802,
+                "asset_name": "DRESeo.zip",
+                "created": "2026-10-15T06:34:37Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-SEO/releases/download/v0.13.0/DRESeo.zip",
+                "downloads": 5,
+                "id": 2555932292,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.13.0",
+                "version": "0.13.0"
+            },
+            "0.13.1": {
+                "addon_id": 900683719,
+                "asset_id": 2706542261,
+                "asset_name": "DRESeo.zip",
+                "created": "2026-10-15T07:30:37Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-SEO/releases/download/v0.13.1/DRESeo.zip",
+                "downloads": 9,
+                "id": 4016004626,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.13.1",
+                "version": "0.13.1"
+            },
+            "0.14.0": {
+                "addon_id": 900683719,
+                "asset_id": 1597663258,
+                "asset_name": "DRESeo.zip",
+                "created": "2026-10-15T08:58:37Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-SEO/releases/download/v0.14.0/DRESeo.zip",
+                "downloads": 3,
+                "id": 2635560961,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.14.0",
+                "version": "0.14.0"
+            },
+            "0.15.0": {
+                "addon_id": 900683719,
+                "asset_id": 801659409,
+                "asset_name": "DRESeo.zip.sha256",
+                "created": "2026-10-15T15:28:13Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-SEO/releases/download/v0.15.0/DRESeo.zip.sha256",
+                "downloads": 29,
+                "id": 2631209526,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.15.0",
+                "version": "0.15.0"
             }
         }
     },
     "DRE Search": {
         "dirname": "DRESearch",
         "id": 3122915725,
-        "latest_version": "1.22.0",
+        "latest_version": "1.31.0",
         "owner": "AM-Digital-Research-Environment",
         "registered": "2026-06-02T05:24:34Z",
         "repo": "DRESearch",
@@ -16107,18 +16524,390 @@
                 "omeka_version_constraint": "^4.2.0",
                 "tag_name": "v1.22.0",
                 "version": "1.22.0"
+            },
+            "1.22.1": {
+                "addon_id": 3122915725,
+                "asset_id": 3613482651,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-07T10:04:34Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.22.1/DRESearch.zip",
+                "downloads": 6,
+                "id": 2130568347,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v1.22.1",
+                "version": "1.22.1"
+            },
+            "1.23.0": {
+                "addon_id": 3122915725,
+                "asset_id": 3913043504,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-07T12:07:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.23.0/DRESearch.zip",
+                "downloads": 4,
+                "id": 137936442,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v1.23.0",
+                "version": "1.23.0"
+            },
+            "1.24.0": {
+                "addon_id": 3122915725,
+                "asset_id": 3383636603,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-07T15:23:13Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.24.0/DRESearch.zip",
+                "downloads": 0,
+                "id": 225945791,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v1.24.0",
+                "version": "1.24.0"
+            },
+            "1.25.0": {
+                "addon_id": 3122915725,
+                "asset_id": 1309210936,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-07T17:16:43Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.25.0/DRESearch.zip",
+                "downloads": 8,
+                "id": 213238408,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v1.25.0",
+                "version": "1.25.0"
+            },
+            "1.26.0": {
+                "addon_id": 3122915725,
+                "asset_id": 496149180,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-08T14:19:58Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.26.0/DRESearch.zip",
+                "downloads": 0,
+                "id": 250838225,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v1.26.0",
+                "version": "1.26.0"
+            },
+            "1.26.3": {
+                "addon_id": 3122915725,
+                "asset_id": 217041093,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-08T14:56:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.26.3/DRESearch.zip",
+                "downloads": 4,
+                "id": 2549755243,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v1.26.3",
+                "version": "1.26.3"
+            },
+            "1.26.4": {
+                "addon_id": 3122915725,
+                "asset_id": 2549008351,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-08T15:36:37Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.26.4/DRESearch.zip",
+                "downloads": 3,
+                "id": 161396936,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v1.26.4",
+                "version": "1.26.4"
+            },
+            "1.27.0": {
+                "addon_id": 3122915725,
+                "asset_id": 2587126271,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-09T10:26:05Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.27.0/DRESearch.zip",
+                "downloads": 4,
+                "id": 254875366,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v1.27.0",
+                "version": "1.27.0"
+            },
+            "1.28.0": {
+                "addon_id": 3122915725,
+                "asset_id": 1555454506,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-11T08:14:06Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.28.0/DRESearch.zip",
+                "downloads": 5,
+                "id": 74273243,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v1.28.0",
+                "version": "1.28.0"
+            },
+            "1.28.1": {
+                "addon_id": 3122915725,
+                "asset_id": 3847061954,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-12T05:12:29Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.28.1/DRESearch.zip",
+                "downloads": 35,
+                "id": 1936351565,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v1.28.1",
+                "version": "1.28.1"
+            },
+            "1.29.0": {
+                "addon_id": 3122915725,
+                "asset_id": 3675296105,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-15T18:09:52Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.29.0/DRESearch.zip",
+                "downloads": 3,
+                "id": 95370220,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v1.29.0",
+                "version": "1.29.0"
+            },
+            "1.30.0": {
+                "addon_id": 3122915725,
+                "asset_id": 1442095957,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-16T05:32:59Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.30.0/DRESearch.zip",
+                "downloads": 26,
+                "id": 2999084806,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v1.30.0",
+                "version": "1.30.0"
+            },
+            "1.31.0": {
+                "addon_id": 3122915725,
+                "asset_id": 3528615958,
+                "asset_name": "DRESearch.zip",
+                "created": "2026-10-23T07:00:43Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRESearch/releases/download/v1.31.0/DRESearch.zip",
+                "downloads": 0,
+                "id": 3003125041,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v1.31.0",
+                "version": "1.31.0"
             }
         }
     },
     "DRE Visualizations": {
         "dirname": "DREVisualizations",
         "id": 3845826928,
-        "latest_version": "2.29.0",
+        "latest_version": "2.42.0",
         "owner": "AM-Digital-Research-Environment",
         "registered": "2026-03-27T10:33:14Z",
         "repo": "DRE-Visualizations",
         "type": "s_module",
         "versions": {
+            "semantic-embeddings-v1-3": {
+                "addon_id": 3845826928,
+                "asset_id": 711664030,
+                "asset_name": "semantic-embeddings-v1-3.zip",
+                "created": "2026-10-13T09:36:42Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-3.zip",
+                "downloads": 3,
+                "id": 1818055728,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-3",
+                "version": "semantic-embeddings-v1-3"
+            },
+            "semantic-embeddings-v1-4": {
+                "addon_id": 3845826928,
+                "asset_id": 2555116942,
+                "asset_name": "semantic-embeddings-v1-4.zip",
+                "created": "2026-10-13T10:13:21Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-4.zip",
+                "downloads": 0,
+                "id": 4063871379,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-4",
+                "version": "semantic-embeddings-v1-4"
+            },
+            "semantic-embeddings-v1-5": {
+                "addon_id": 3845826928,
+                "asset_id": 2771113022,
+                "asset_name": "semantic-embeddings-v1-5.zip",
+                "created": "2026-10-15T18:08:14Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-5.zip",
+                "downloads": 0,
+                "id": 2235494661,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-5",
+                "version": "semantic-embeddings-v1-5"
+            },
+            "semantic-embeddings-v1-7": {
+                "addon_id": 3845826928,
+                "asset_id": 3756754782,
+                "asset_name": "semantic-embeddings-v1-7.zip",
+                "created": "2026-10-16T12:57:46Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-7.zip",
+                "downloads": 0,
+                "id": 1798344745,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-7",
+                "version": "semantic-embeddings-v1-7"
+            },
+            "semantic-embeddings-v1-8": {
+                "addon_id": 3845826928,
+                "asset_id": 1572540559,
+                "asset_name": "semantic-embeddings-v1-8.zip",
+                "created": "2026-10-16T12:57:46Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-8.zip",
+                "downloads": 0,
+                "id": 4220489144,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-8",
+                "version": "semantic-embeddings-v1-8"
+            },
+            "semantic-embeddings-v1-9": {
+                "addon_id": 3845826928,
+                "asset_id": 1624979775,
+                "asset_name": "semantic-embeddings-v1-9.zip",
+                "created": "2026-10-17T07:21:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-9.zip",
+                "downloads": 0,
+                "id": 2357771566,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-9",
+                "version": "semantic-embeddings-v1-9"
+            },
+            "semantic-embeddings-v1-10": {
+                "addon_id": 3845826928,
+                "asset_id": 3331190783,
+                "asset_name": "semantic-embeddings-v1-10.zip",
+                "created": "2026-10-17T07:21:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-10.zip",
+                "downloads": 0,
+                "id": 3763916891,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-10",
+                "version": "semantic-embeddings-v1-10"
+            },
+            "semantic-embeddings-v1-11": {
+                "addon_id": 3845826928,
+                "asset_id": 4226664015,
+                "asset_name": "semantic-embeddings-v1-11.zip",
+                "created": "2026-10-17T07:21:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-11.zip",
+                "downloads": 0,
+                "id": 2539643085,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-11",
+                "version": "semantic-embeddings-v1-11"
+            },
+            "semantic-embeddings-v1-12": {
+                "addon_id": 3845826928,
+                "asset_id": 3159211167,
+                "asset_name": "semantic-embeddings-v1-12.zip",
+                "created": "2026-10-17T07:21:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-12.zip",
+                "downloads": 0,
+                "id": 240562551,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-12",
+                "version": "semantic-embeddings-v1-12"
+            },
+            "semantic-embeddings-v1-13": {
+                "addon_id": 3845826928,
+                "asset_id": 2167248175,
+                "asset_name": "semantic-embeddings-v1-13.zip",
+                "created": "2026-10-21T10:01:31Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-embeddings-v1-13.zip",
+                "downloads": 0,
+                "id": 2035384801,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-embeddings-v1-13",
+                "version": "semantic-embeddings-v1-13"
+            },
+            "semantic-inputs-6": {
+                "addon_id": 3845826928,
+                "asset_id": 3183844529,
+                "asset_name": "semantic-inputs-6.zip",
+                "created": "2026-10-16T12:14:08Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-inputs-6.zip",
+                "downloads": 4,
+                "id": 2120109713,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-inputs-6",
+                "version": "semantic-inputs-6"
+            },
+            "semantic-inputs-7": {
+                "addon_id": 3845826928,
+                "asset_id": 2158343425,
+                "asset_name": "semantic-inputs-7.zip",
+                "created": "2026-10-16T12:57:46Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-inputs-7.zip",
+                "downloads": 5,
+                "id": 156859911,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-inputs-7",
+                "version": "semantic-inputs-7"
+            },
+            "semantic-inputs-8": {
+                "addon_id": 3845826928,
+                "asset_id": 49619664,
+                "asset_name": "semantic-inputs-8.zip",
+                "created": "2026-10-16T12:57:46Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-inputs-8.zip",
+                "downloads": 3,
+                "id": 2582012822,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-inputs-8",
+                "version": "semantic-inputs-8"
+            },
+            "semantic-inputs-9": {
+                "addon_id": 3845826928,
+                "asset_id": 1066732384,
+                "asset_name": "semantic-inputs-9.zip",
+                "created": "2026-10-17T07:21:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-inputs-9.zip",
+                "downloads": 6,
+                "id": 4007744256,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-inputs-9",
+                "version": "semantic-inputs-9"
+            },
+            "semantic-inputs-10": {
+                "addon_id": 3845826928,
+                "asset_id": 1023864232,
+                "asset_name": "semantic-inputs-10.zip",
+                "created": "2026-10-17T07:21:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-inputs-10.zip",
+                "downloads": 0,
+                "id": 1022145658,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-inputs-10",
+                "version": "semantic-inputs-10"
+            },
+            "semantic-inputs-11": {
+                "addon_id": 3845826928,
+                "asset_id": 6734872,
+                "asset_name": "semantic-inputs-11.zip",
+                "created": "2026-10-17T07:21:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-inputs-11.zip",
+                "downloads": 0,
+                "id": 1273726188,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-inputs-11",
+                "version": "semantic-inputs-11"
+            },
+            "semantic-inputs-12": {
+                "addon_id": 3845826928,
+                "asset_id": 1204207304,
+                "asset_name": "semantic-inputs-12.zip",
+                "created": "2026-10-17T07:21:17Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-inputs-12.zip",
+                "downloads": 0,
+                "id": 3538081110,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-inputs-12",
+                "version": "semantic-inputs-12"
+            },
+            "semantic-inputs-13": {
+                "addon_id": 3845826928,
+                "asset_id": 2057738104,
+                "asset_name": "semantic-inputs-13.zip",
+                "created": "2026-10-21T10:01:31Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/archive/refs/tags/semantic-inputs-13.zip",
+                "downloads": 5,
+                "id": 2783307200,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "semantic-inputs-13",
+                "version": "semantic-inputs-13"
+            },
             "1.12.0": {
                 "addon_id": 3845826928,
                 "asset_id": 2942303687,
@@ -16394,6 +17183,246 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v2.29.0",
                 "version": "2.29.0"
+            },
+            "2.29.1": {
+                "addon_id": 3845826928,
+                "asset_id": 410454231,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-07T09:12:27Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.29.1/DreVisualizations.zip",
+                "downloads": 9,
+                "id": 3629531438,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v2.29.1",
+                "version": "2.29.1"
+            },
+            "2.30.0": {
+                "addon_id": 3845826928,
+                "asset_id": 3986245421,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-07T18:44:07Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.30.0/DreVisualizations.zip",
+                "downloads": 4,
+                "id": 406596946,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v2.30.0",
+                "version": "2.30.0"
+            },
+            "2.31.2": {
+                "addon_id": 3845826928,
+                "asset_id": 2776892618,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-08T14:52:21Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.31.2/DreVisualizations.zip",
+                "downloads": 8,
+                "id": 4159710793,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.31.2",
+                "version": "2.31.2"
+            },
+            "2.32.0": {
+                "addon_id": 3845826928,
+                "asset_id": 2113888624,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-11T11:48:47Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.32.0/DreVisualizations.zip",
+                "downloads": 3,
+                "id": 465107260,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.32.0",
+                "version": "2.32.0"
+            },
+            "2.32.1": {
+                "addon_id": 3845826928,
+                "asset_id": 3867970468,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-11T12:34:26Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.32.1/DreVisualizations.zip",
+                "downloads": 3,
+                "id": 1824508330,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.32.1",
+                "version": "2.32.1"
+            },
+            "2.33.0": {
+                "addon_id": 3845826928,
+                "asset_id": 3631542654,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-12T05:38:57Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.33.0/DreVisualizations.zip",
+                "downloads": 3,
+                "id": 444240651,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.33.0",
+                "version": "2.33.0"
+            },
+            "2.34.0": {
+                "addon_id": 3845826928,
+                "asset_id": 371461590,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-12T08:54:12Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.34.0/DreVisualizations.zip",
+                "downloads": 5,
+                "id": 523601294,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.34.0",
+                "version": "2.34.0"
+            },
+            "2.35.0": {
+                "addon_id": 3845826928,
+                "asset_id": 3014630872,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-13T08:24:44Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.35.0/DreVisualizations.zip",
+                "downloads": 5,
+                "id": 519565241,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.35.0",
+                "version": "2.35.0"
+            },
+            "2.35.1": {
+                "addon_id": 3845826928,
+                "asset_id": 685537036,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-13T09:52:07Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.35.1/DreVisualizations.zip",
+                "downloads": 3,
+                "id": 1777393455,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.35.1",
+                "version": "2.35.1"
+            },
+            "2.36.0": {
+                "addon_id": 3845826928,
+                "asset_id": 2252483467,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-13T10:20:05Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.36.0/DreVisualizations.zip",
+                "downloads": 2,
+                "id": 481382880,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.36.0",
+                "version": "2.36.0"
+            },
+            "2.37.0": {
+                "addon_id": 3845826928,
+                "asset_id": 600423301,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-13T10:47:45Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.37.0/DreVisualizations.zip",
+                "downloads": 0,
+                "id": 494091223,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.37.0",
+                "version": "2.37.0"
+            },
+            "2.37.1": {
+                "addon_id": 3845826928,
+                "asset_id": 3099218257,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-13T10:54:32Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.37.1/DreVisualizations.zip",
+                "downloads": 21,
+                "id": 1785989953,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.37.1",
+                "version": "2.37.1"
+            },
+            "2.37.2": {
+                "addon_id": 3845826928,
+                "asset_id": 3462359148,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-15T09:00:13Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.37.2/DreVisualizations.zip",
+                "downloads": 3,
+                "id": 4085078779,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.37.2",
+                "version": "2.37.2"
+            },
+            "2.38.0": {
+                "addon_id": 3845826928,
+                "asset_id": 3247625370,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-15T15:29:24Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.38.0/DreVisualizations.zip",
+                "downloads": 4,
+                "id": 372210922,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.38.0",
+                "version": "2.38.0"
+            },
+            "2.38.1": {
+                "addon_id": 3845826928,
+                "asset_id": 1524710990,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-15T18:08:14Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.38.1/DreVisualizations.zip",
+                "downloads": 4,
+                "id": 1630030972,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.38.1",
+                "version": "2.38.1"
+            },
+            "2.38.2": {
+                "addon_id": 3845826928,
+                "asset_id": 738461555,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-16T11:53:07Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.38.2/DreVisualizations.zip",
+                "downloads": 0,
+                "id": 4162919878,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.38.2",
+                "version": "2.38.2"
+            },
+            "2.39.0": {
+                "addon_id": 3845826928,
+                "asset_id": 1679377556,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-16T12:14:08Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.39.0/DreVisualizations.zip",
+                "downloads": 3,
+                "id": 401413853,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.39.0",
+                "version": "2.39.0"
+            },
+            "2.39.1": {
+                "addon_id": 3845826928,
+                "asset_id": 4285181504,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-16T12:57:46Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.39.1/DreVisualizations.zip",
+                "downloads": 10,
+                "id": 1625957963,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.39.1",
+                "version": "2.39.1"
+            },
+            "2.41.0": {
+                "addon_id": 3845826928,
+                "asset_id": 2429660165,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-17T07:22:33Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.41.0/DreVisualizations.zip",
+                "downloads": 3,
+                "id": 2217312220,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.41.0",
+                "version": "2.41.0"
+            },
+            "2.42.0": {
+                "addon_id": 3845826928,
+                "asset_id": 2772179542,
+                "asset_name": "DreVisualizations.zip",
+                "created": "2026-10-21T10:02:15Z",
+                "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-Visualizations/releases/download/v2.42.0/DreVisualizations.zip",
+                "downloads": 15,
+                "id": 2255470981,
+                "omeka_version_constraint": "^4.2.1",
+                "tag_name": "v2.42.0",
+                "version": "2.42.0"
             }
         }
     },
@@ -16494,7 +17523,7 @@
     "Data Type Extended Date Time": {
         "dirname": "DataTypeEdtf",
         "id": 1984227645,
-        "latest_version": "3.4.7",
+        "latest_version": "3.4.8",
         "owner": "Daniel-KM",
         "registered": "2026-04-06T15:07:06.665Z",
         "repo": "Omeka-S-module-DataTypeEdtf",
@@ -16547,6 +17576,18 @@
                 "omeka_version_constraint": "^3.2 || ^4.0",
                 "tag_name": "3.4.7",
                 "version": "3.4.7"
+            },
+            "3.4.8": {
+                "addon_id": 1984227645,
+                "asset_id": 2296464675,
+                "asset_name": "DataTypeEdtf-3.4.8.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-DataTypeEdtf/packages/generic/DataTypeEdtf/3.4.8/DataTypeEdtf-3.4.8.zip",
+                "downloads": 2,
+                "id": 678851216,
+                "omeka_version_constraint": "^3.2 || ^4.0",
+                "tag_name": "3.4.8",
+                "version": "3.4.8"
             }
         }
     },
@@ -17227,6 +18268,66 @@
         "repo": "Datascribe-module",
         "type": "s_module",
         "versions": {
+            ".1.1.1-beta": {
+                "addon_id": 1657010061,
+                "asset_id": 2648379818,
+                "asset_name": "v.1.1.1-beta.zip",
+                "created": "2024-02-19T21:12:44Z",
+                "download_url": "https://github.com/chnm/Datascribe-module/archive/refs/tags/v.1.1.1-beta.zip",
+                "downloads": 0,
+                "id": 3576341553,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v.1.1.1-beta",
+                "version": ".1.1.1-beta"
+            },
+            ".1.1.1": {
+                "addon_id": 1657010061,
+                "asset_id": 823516120,
+                "asset_name": "Datascribe.zip",
+                "created": "2023-09-19T18:05:44Z",
+                "download_url": "https://github.com/omeka-s-modules/Datascribe/releases/download/v.1.1.1/Datascribe.zip",
+                "downloads": 1159,
+                "id": 2375805208,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "v.1.1.1",
+                "version": ".1.1.1"
+            },
+            "1.0.0-beta": {
+                "addon_id": 1657010061,
+                "asset_id": 1047136874,
+                "asset_name": "Datascribe-1.0.0-beta.zip",
+                "created": "2020-11-11T15:31:43Z",
+                "download_url": "https://github.com/omeka-s-modules/Datascribe/releases/download/v1.0.0-beta/Datascribe-1.0.0-beta.zip",
+                "downloads": 345,
+                "id": 2080685539,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "v1.0.0-beta",
+                "version": "1.0.0-beta"
+            },
+            "1.0.0": {
+                "addon_id": 1657010061,
+                "asset_id": 3077329597,
+                "asset_name": "Datascribe.zip",
+                "created": "2022-03-24T13:09:18Z",
+                "download_url": "https://github.com/omeka-s-modules/Datascribe/releases/download/v1.0.0/Datascribe.zip",
+                "downloads": 1705,
+                "id": 1470719765,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "v1.0.0",
+                "version": "1.0.0"
+            },
+            "1.1.0": {
+                "addon_id": 1657010061,
+                "asset_id": 1480516700,
+                "asset_name": "Datascribe.zip",
+                "created": "2022-08-25T15:43:27Z",
+                "download_url": "https://github.com/omeka-s-modules/Datascribe/releases/download/v1.1.0/Datascribe.zip",
+                "downloads": 537,
+                "id": 1449856290,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "v1.1.0",
+                "version": "1.1.0"
+            },
             "1.2.0": {
                 "addon_id": 1657010061,
                 "asset_id": 462786662,
@@ -17771,10 +18872,10 @@
         "versions": {
             "0.0.0": {
                 "addon_id": 1545011375,
-                "asset_id": 4110956578,
-                "asset_name": "DiskQuota-1.0.3.zip",
+                "asset_id": 2356529220,
+                "asset_name": "DiskQuota-1.0.5.zip",
                 "created": "",
-                "download_url": "https://github.com/ateeducacion/omeka-s-DiskQuota/releases/download/1.0.3/DiskQuota-1.0.3.zip",
+                "download_url": "https://github.com/ateeducacion/omeka-s-DiskQuota/releases/download/1.0.5/DiskQuota-1.0.5.zip",
                 "downloads": 0,
                 "id": 1749877655,
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
@@ -17804,6 +18905,42 @@
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
                 "tag_name": "v1.0.2",
                 "version": "1.0.2"
+            },
+            "1.0.3": {
+                "addon_id": 1545011375,
+                "asset_id": 4110956578,
+                "asset_name": "DiskQuota-1.0.3.zip",
+                "created": "2026-09-22T07:48:00Z",
+                "download_url": "https://github.com/ateeducacion/omeka-s-DiskQuota/releases/download/1.0.3/DiskQuota-1.0.3.zip",
+                "downloads": 14,
+                "id": 3424943005,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "1.0.3",
+                "version": "1.0.3"
+            },
+            "1.0.4": {
+                "addon_id": 1545011375,
+                "asset_id": 785343082,
+                "asset_name": "DiskQuota-1.0.4.zip",
+                "created": "2026-10-06T17:01:02Z",
+                "download_url": "https://github.com/ateeducacion/omeka-s-DiskQuota/releases/download/1.0.4/DiskQuota-1.0.4.zip",
+                "downloads": 8,
+                "id": 1379987006,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "1.0.4",
+                "version": "1.0.4"
+            },
+            "1.0.5": {
+                "addon_id": 1545011375,
+                "asset_id": 2356529220,
+                "asset_name": "DiskQuota-1.0.5.zip",
+                "created": "2026-10-12T15:40:25Z",
+                "download_url": "https://github.com/ateeducacion/omeka-s-DiskQuota/releases/download/1.0.5/DiskQuota-1.0.5.zip",
+                "downloads": 5,
+                "id": 625467048,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "1.0.5",
+                "version": "1.0.5"
             }
         }
     },
@@ -18010,7 +19147,7 @@
                 "asset_name": "DspaceConnector.zip",
                 "created": "2015-10-14T13:57:32Z",
                 "download_url": "https://github.com/omeka-s-modules/DspaceConnector/releases/download/0.1-alpha/DspaceConnector.zip",
-                "downloads": 358,
+                "downloads": 360,
                 "id": 2277924708,
                 "omeka_version_constraint": "",
                 "tag_name": "0.1-alpha",
@@ -18711,7 +19848,7 @@
     "Easy Admin": {
         "dirname": "EasyAdmin",
         "id": 3576889194,
-        "latest_version": "3.4.49",
+        "latest_version": "3.4.50",
         "owner": "Daniel-KM",
         "registered": "2022-02-04T09:58:40.470Z",
         "repo": "Omeka-S-module-EasyAdmin",
@@ -19340,6 +20477,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "3.4.49",
                 "version": "3.4.49"
+            },
+            "3.4.50": {
+                "addon_id": 3576889194,
+                "asset_id": 2637652848,
+                "asset_name": "EasyAdmin-3.4.50.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-EasyAdmin/packages/generic/EasyAdmin/3.4.50/EasyAdmin-3.4.50.zip",
+                "downloads": 133,
+                "id": 713906580,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "3.4.50",
+                "version": "3.4.50"
             }
         }
     },
@@ -19657,6 +20806,138 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "0.0.0",
                 "version": "0.0.0"
+            },
+            "4.0.0-beta3": {
+                "addon_id": 867387046,
+                "asset_id": 987357468,
+                "asset_name": "ExeLearning-4.0.0-beta3.zip",
+                "created": "2026-03-23T21:10:18Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.0-beta3/ExeLearning-4.0.0-beta3.zip",
+                "downloads": 7,
+                "id": 1814396874,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v4.0.0-beta3",
+                "version": "4.0.0-beta3"
+            },
+            "4.0.0-rc1": {
+                "addon_id": 867387046,
+                "asset_id": 3555882017,
+                "asset_name": "ExeLearning-4.0.0-rc1.zip",
+                "created": "2026-04-08T08:54:07Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.0-rc1/ExeLearning-4.0.0-rc1.zip",
+                "downloads": 7,
+                "id": 443091728,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v4.0.0-rc1",
+                "version": "4.0.0-rc1"
+            },
+            "4.0.0-rc2": {
+                "addon_id": 867387046,
+                "asset_id": 667296562,
+                "asset_name": "ExeLearning-4.0.0-rc2.zip",
+                "created": "2026-04-23T09:19:56Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.0-rc2/ExeLearning-4.0.0-rc2.zip",
+                "downloads": 5,
+                "id": 2204129962,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v4.0.0-rc2",
+                "version": "4.0.0-rc2"
+            },
+            "4.0.0-rc3": {
+                "addon_id": 867387046,
+                "asset_id": 1948914115,
+                "asset_name": "ExeLearning-4.0.0-rc3.zip",
+                "created": "2026-04-28T10:07:55Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.0-rc3/ExeLearning-4.0.0-rc3.zip",
+                "downloads": 5,
+                "id": 4100418108,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v4.0.0-rc3",
+                "version": "4.0.0-rc3"
+            },
+            "4.0.0": {
+                "addon_id": 867387046,
+                "asset_id": 3336122734,
+                "asset_name": "ExeLearning-4.0.0.zip",
+                "created": "2026-04-30T07:29:01Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.0/ExeLearning-4.0.0.zip",
+                "downloads": 7,
+                "id": 63866868,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v4.0.0",
+                "version": "4.0.0"
+            },
+            "4.0.1": {
+                "addon_id": 867387046,
+                "asset_id": 1623912970,
+                "asset_name": "ExeLearning-4.0.1.zip",
+                "created": "2026-06-09T11:28:52Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.1/ExeLearning-4.0.1.zip",
+                "downloads": 6,
+                "id": 1959376738,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v4.0.1",
+                "version": "4.0.1"
+            },
+            "4.0.2": {
+                "addon_id": 867387046,
+                "asset_id": 1368371687,
+                "asset_name": "ExeLearning-4.0.2.zip",
+                "created": "2026-07-07T08:38:49Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.2/ExeLearning-4.0.2.zip",
+                "downloads": 19,
+                "id": 3988842200,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v4.0.2",
+                "version": "4.0.2"
+            },
+            "4.0.3": {
+                "addon_id": 867387046,
+                "asset_id": 4154225283,
+                "asset_name": "ExeLearning-4.0.3.zip",
+                "created": "2026-08-06T13:30:28Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.3/ExeLearning-4.0.3.zip",
+                "downloads": 10,
+                "id": 2596787790,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v4.0.3",
+                "version": "4.0.3"
+            },
+            "4.0.5": {
+                "addon_id": 867387046,
+                "asset_id": 2501309785,
+                "asset_name": "ExeLearning-4.0.5.zip",
+                "created": "2026-09-16T15:30:25Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.5/ExeLearning-4.0.5.zip",
+                "downloads": 29,
+                "id": 1940157307,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v4.0.5",
+                "version": "4.0.5"
+            },
+            "4.0.6-rc.1": {
+                "addon_id": 867387046,
+                "asset_id": 1872571295,
+                "asset_name": "ExeLearning-4.0.6-rc.1.zip",
+                "created": "2026-09-18T11:28:20Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.6-rc.1/ExeLearning-4.0.6-rc.1.zip",
+                "downloads": 6,
+                "id": 2238872411,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v4.0.6-rc.1",
+                "version": "4.0.6-rc.1"
+            },
+            "4.0.6-rc.2": {
+                "addon_id": 867387046,
+                "asset_id": 719541864,
+                "asset_name": "ExeLearning-4.0.6-rc.2.zip",
+                "created": "2026-09-28T11:29:01Z",
+                "download_url": "https://github.com/exelearning/omeka-s-exelearning/releases/download/v4.0.6-rc.2/ExeLearning-4.0.6-rc.2.zip",
+                "downloads": 7,
+                "id": 477833953,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v4.0.6-rc.2",
+                "version": "4.0.6-rc.2"
             }
         }
     },
@@ -19891,6 +21172,29 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "v1.0.0",
                 "version": "1.0.0"
+            }
+        }
+    },
+    "Express Alt Text": {
+        "dirname": "ExpressAltText",
+        "id": 331742536,
+        "latest_version": "1.1.11",
+        "owner": "Tyjmz",
+        "registered": "2026-10-15T17:46:53Z",
+        "repo": "Omeka-S-ExpressAltText",
+        "type": "s_module",
+        "versions": {
+            "1.1.11": {
+                "addon_id": 331742536,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 1867981818,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "1.1.11",
+                "version": "1.1.11"
             }
         }
     },
@@ -20360,7 +21664,7 @@
                 "asset_name": "ExtractOcr-0.1.zip",
                 "created": "2018-06-06T12:09:19Z",
                 "download_url": "https://github.com/smachefert/Omeka-S-module-ExtractOcr/releases/download/0.1/ExtractOcr-0.1.zip",
-                "downloads": 2635,
+                "downloads": 2657,
                 "id": 213877698,
                 "omeka_version_constraint": "",
                 "tag_name": "0.1",
@@ -20372,7 +21676,7 @@
                 "asset_name": "ExtractOcr-1.1.zip",
                 "created": "2019-10-22T09:32:10Z",
                 "download_url": "https://github.com/smachefert/Omeka-S-module-ExtractOcr/releases/download/v1.1/ExtractOcr-1.1.zip",
-                "downloads": 2585,
+                "downloads": 2605,
                 "id": 226355701,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.1",
@@ -20904,7 +22208,7 @@
                 "asset_name": "FedoraConnector.zip",
                 "created": "2015-10-13T14:44:40Z",
                 "download_url": "https://github.com/omeka-s-modules/FedoraConnector/releases/download/0.1-alpha/FedoraConnector.zip",
-                "downloads": 353,
+                "downloads": 355,
                 "id": 20804188,
                 "omeka_version_constraint": "",
                 "tag_name": "0.1-alpha",
@@ -22020,7 +23324,7 @@
                 "asset_name": "FreeSpace-1.0.zip",
                 "created": "2019-10-08T14:02:26Z",
                 "download_url": "https://github.com/smachefert/Omeka-S-module-FreeSpace/releases/download/v1.0/FreeSpace-1.0.zip",
-                "downloads": 1183,
+                "downloads": 1185,
                 "id": 3563178212,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.0",
@@ -22032,7 +23336,7 @@
                 "asset_name": "FreeSpace-1.0.1.zip",
                 "created": "2024-03-22T10:19:16Z",
                 "download_url": "https://github.com/smachefert/Omeka-S-module-FreeSpace/releases/download/1.0.1/FreeSpace-1.0.1.zip",
-                "downloads": 374,
+                "downloads": 380,
                 "id": 3031282658,
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.1",
@@ -22043,7 +23347,7 @@
     "FromClassicWithLove": {
         "dirname": "FromClassicWithLove",
         "id": 2994189492,
-        "latest_version": "0.3.2",
+        "latest_version": "0.3.3",
         "owner": "biblibre",
         "registered": "2026-04-24T10:16:23Z",
         "repo": "omeka-s-module-FromClassicWithLove",
@@ -22120,6 +23424,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v0.3.2",
                 "version": "0.3.2"
+            },
+            "0.3.3": {
+                "addon_id": 2994189492,
+                "asset_id": 427245007,
+                "asset_name": "FromClassicWithLove-v0.3.3.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-FromClassicWithLove/releases/download/v0.3.3/FromClassicWithLove-v0.3.3.zip",
+                "downloads": 0,
+                "id": 2988452823,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "0.3.3",
+                "version": "0.3.3"
             }
         }
     },
@@ -23327,15 +24643,27 @@
             },
             "1.0.6": {
                 "addon_id": 139220244,
-                "asset_id": 2353571254,
-                "asset_name": "GlobalLandingPage-v1.0.6.zip",
+                "asset_id": 2972722536,
+                "asset_name": "GlobalLandingPage-1.0.7.zip",
                 "created": "2026-04-22T08:39:00Z",
-                "download_url": "https://github.com/ateeducacion/omeka-s-GlobalLandingPage/releases/download/v1.0.6/GlobalLandingPage-v1.0.6.zip",
+                "download_url": "https://github.com/ateeducacion/omeka-s-GlobalLandingPage/releases/download/1.0.7/GlobalLandingPage-1.0.7.zip",
                 "downloads": 6,
                 "id": 147189310,
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v1.0.6",
                 "version": "1.0.6"
+            },
+            "1.0.7": {
+                "addon_id": 139220244,
+                "asset_id": 2972722536,
+                "asset_name": "GlobalLandingPage-1.0.7.zip",
+                "created": "2026-10-06T17:03:32Z",
+                "download_url": "https://github.com/ateeducacion/omeka-s-GlobalLandingPage/releases/download/1.0.7/GlobalLandingPage-1.0.7.zip",
+                "downloads": 10,
+                "id": 2143477416,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "1.0.7",
+                "version": "1.0.7"
             }
         }
     },
@@ -23897,7 +25225,7 @@
     "Guest": {
         "dirname": "Guest",
         "id": 3324184636,
-        "latest_version": "3.4.44",
+        "latest_version": "3.4.45",
         "owner": "Daniel-KM",
         "registered": "2020-08-23T14:04:18.151Z",
         "repo": "Omeka-S-module-Guest",
@@ -24514,6 +25842,18 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.44",
                 "version": "3.4.44"
+            },
+            "3.4.45": {
+                "addon_id": 3324184636,
+                "asset_id": 154709060,
+                "asset_name": "Guest-3.4.45.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-Guest/packages/generic/Guest/3.4.45/Guest-3.4.45.zip",
+                "downloads": 24,
+                "id": 3142737645,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.45",
+                "version": "3.4.45"
             }
         }
     },
@@ -25071,10 +26411,10 @@
         "versions": {
             "1.0.0": {
                 "addon_id": 2987992190,
-                "asset_id": 270304483,
-                "asset_name": "HelpAssistant-v1.0.2.zip",
+                "asset_id": 311605697,
+                "asset_name": "HelpAssistant-1.0.3.zip",
                 "created": "2025-11-26T12:09:34Z",
-                "download_url": "https://github.com/ateeducacion/omeka-s-HelpAssistant/releases/download/v1.0.2/HelpAssistant-v1.0.2.zip",
+                "download_url": "https://github.com/ateeducacion/omeka-s-HelpAssistant/releases/download/1.0.3/HelpAssistant-1.0.3.zip",
                 "downloads": 10,
                 "id": 3600836243,
                 "omeka_version_constraint": "^4.0.0 || ^3.0.0",
@@ -25104,6 +26444,18 @@
                 "omeka_version_constraint": "^4.0.0 || ^3.0.0",
                 "tag_name": "v1.0.2",
                 "version": "1.0.2"
+            },
+            "1.0.3": {
+                "addon_id": 2987992190,
+                "asset_id": 311605697,
+                "asset_name": "HelpAssistant-1.0.3.zip",
+                "created": "2026-10-06T17:03:26Z",
+                "download_url": "https://github.com/ateeducacion/omeka-s-HelpAssistant/releases/download/1.0.3/HelpAssistant-1.0.3.zip",
+                "downloads": 14,
+                "id": 1336489769,
+                "omeka_version_constraint": "^4.0.0 || ^3.0.0",
+                "tag_name": "1.0.3",
+                "version": "1.0.3"
             }
         }
     },
@@ -25791,7 +27143,7 @@
     "IIIF Search": {
         "dirname": "IiifSearch",
         "id": 302399461,
-        "latest_version": "3.4.15",
+        "latest_version": "3.4.16",
         "owner": "Daniel-KM",
         "registered": "2020-08-23T14:04:23.678Z",
         "repo": "Omeka-S-module-IiifSearch",
@@ -25940,6 +27292,18 @@
                 "omeka_version_constraint": "^3.1 || ^4.0",
                 "tag_name": "3.4.15",
                 "version": "3.4.15"
+            },
+            "3.4.16": {
+                "addon_id": 302399461,
+                "asset_id": 3206233562,
+                "asset_name": "IiifSearch-3.4.16.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-IiifSearch/packages/generic/IiifSearch/3.4.16/IiifSearch-3.4.16.zip",
+                "downloads": 7,
+                "id": 882795414,
+                "omeka_version_constraint": "^3.1 || ^4.0",
+                "tag_name": "3.4.16",
+                "version": "3.4.16"
             }
         }
     },
@@ -26459,7 +27823,7 @@
     "IIIF Server": {
         "dirname": "IiifServer",
         "id": 4142043609,
-        "latest_version": "3.6.33",
+        "latest_version": "3.6.34",
         "owner": "Daniel-KM",
         "registered": "2017-03-06T12:04:44Z",
         "repo": "Omeka-S-module-IiifServer",
@@ -27196,6 +28560,18 @@
                 "omeka_version_constraint": "^3.1 || ^4.0",
                 "tag_name": "3.6.33",
                 "version": "3.6.33"
+            },
+            "3.6.34": {
+                "addon_id": 4142043609,
+                "asset_id": 1183008507,
+                "asset_name": "IiifServer-3.6.34.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-IiifServer/releases/download/3.6.34/IiifServer-3.6.34.zip",
+                "downloads": 101,
+                "id": 1159551413,
+                "omeka_version_constraint": "^3.1 || ^4.0",
+                "tag_name": "3.6.34",
+                "version": "3.6.34"
             }
         }
     },
@@ -27390,7 +28766,7 @@
     "IWAC SEO": {
         "dirname": "IWACSEO",
         "id": 3519480207,
-        "latest_version": "1.1.1",
+        "latest_version": "1.2.1",
         "owner": "fmadore",
         "registered": "2026-06-06T11:02:44Z",
         "repo": "IWAC-SEO",
@@ -27539,6 +28915,30 @@
                 "omeka_version_constraint": "^4.2.0",
                 "tag_name": "v1.1.1",
                 "version": "1.1.1"
+            },
+            "1.2.0": {
+                "addon_id": 3519480207,
+                "asset_id": 623798342,
+                "asset_name": "IwacSeo-1.2.0.zip",
+                "created": "2026-10-23T07:23:34Z",
+                "download_url": "https://github.com/fmadore/IWAC-SEO/releases/download/v1.2.0/IwacSeo-1.2.0.zip",
+                "downloads": 1,
+                "id": 3535302155,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v1.2.0",
+                "version": "1.2.0"
+            },
+            "1.2.1": {
+                "addon_id": 3519480207,
+                "asset_id": 3484205486,
+                "asset_name": "IwacSeo-1.2.1.zip",
+                "created": "2026-10-23T10:20:51Z",
+                "download_url": "https://github.com/fmadore/IWAC-SEO/releases/download/v1.2.1/IwacSeo-1.2.1.zip",
+                "downloads": 0,
+                "id": 2780782237,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v1.2.1",
+                "version": "1.2.1"
             }
         }
     },
@@ -27568,7 +28968,7 @@
     "IWAC Visualizations": {
         "dirname": "IwacVisualizations",
         "id": 3342236804,
-        "latest_version": "1.75.2",
+        "latest_version": "1.84.0",
         "owner": "fmadore",
         "registered": "2026-04-09T15:42:34Z",
         "repo": "IwacVisualizations",
@@ -27693,6 +29093,90 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "data-build-37444006357-1",
                 "version": "data-build-37444006357-1"
+            },
+            "data-build-37927946046-1": {
+                "addon_id": 3342236804,
+                "asset_id": 1696132876,
+                "asset_name": "iwac-data.zip",
+                "created": "2026-10-09T12:06:55Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/data-build-37927946046-1/iwac-data.zip",
+                "downloads": 2,
+                "id": 2138588124,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "data-build-37927946046-1",
+                "version": "data-build-37927946046-1"
+            },
+            "data-build-38123295390-1": {
+                "addon_id": 3342236804,
+                "asset_id": 3022994721,
+                "asset_name": "iwac-data.zip",
+                "created": "2026-10-11T08:00:05Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/data-build-38123295390-1/iwac-data.zip",
+                "downloads": 2,
+                "id": 3786259811,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "data-build-38123295390-1",
+                "version": "data-build-38123295390-1"
+            },
+            "data-build-38364312983-1": {
+                "addon_id": 3342236804,
+                "asset_id": 699736249,
+                "asset_name": "iwac-data.zip",
+                "created": "2026-10-13T07:41:45Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/data-build-38364312983-1/iwac-data.zip",
+                "downloads": 0,
+                "id": 3326179021,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "data-build-38364312983-1",
+                "version": "data-build-38364312983-1"
+            },
+            "data-build-38366182371-1": {
+                "addon_id": 3342236804,
+                "asset_id": 252551139,
+                "asset_name": "iwac-data.zip",
+                "created": "2026-10-13T08:05:08Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/data-build-38366182371-1/iwac-data.zip",
+                "downloads": 4,
+                "id": 777896060,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "data-build-38366182371-1",
+                "version": "data-build-38366182371-1"
+            },
+            "data-build-39615609610-1": {
+                "addon_id": 3342236804,
+                "asset_id": 886225913,
+                "asset_name": "iwac-data.zip",
+                "created": "2026-10-21T14:17:16Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/data-build-39615609610-1/iwac-data.zip",
+                "downloads": 4,
+                "id": 2690255563,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "data-build-39615609610-1",
+                "version": "data-build-39615609610-1"
+            },
+            "data-build-39914400669-1": {
+                "addon_id": 3342236804,
+                "asset_id": 462329087,
+                "asset_name": "iwac-data.zip",
+                "created": "2026-10-23T07:04:16Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/data-build-39914400669-1/iwac-data.zip",
+                "downloads": 0,
+                "id": 3556097997,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "data-build-39914400669-1",
+                "version": "data-build-39914400669-1"
+            },
+            "data-build-39916652195-1": {
+                "addon_id": 3342236804,
+                "asset_id": 3069982797,
+                "asset_name": "iwac-data.zip",
+                "created": "2026-10-23T07:16:04Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/data-build-39916652195-1/iwac-data.zip",
+                "downloads": 2,
+                "id": 1133456312,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "data-build-39916652195-1",
+                "version": "data-build-39916652195-1"
             },
             "data": {
                 "addon_id": 3342236804,
@@ -28353,6 +29837,138 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v1.75.2",
                 "version": "1.75.2"
+            },
+            "1.76.0": {
+                "addon_id": 3342236804,
+                "asset_id": 3395199532,
+                "asset_name": "IwacVisualizations-1.76.0.zip",
+                "created": "2026-10-10T19:10:04Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/v1.76.0/IwacVisualizations-1.76.0.zip",
+                "downloads": 1,
+                "id": 489703898,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.76.0",
+                "version": "1.76.0"
+            },
+            "1.77.0": {
+                "addon_id": 3342236804,
+                "asset_id": 1524316523,
+                "asset_name": "IwacVisualizations-1.77.0.zip",
+                "created": "2026-10-11T08:00:05Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/v1.77.0/IwacVisualizations-1.77.0.zip",
+                "downloads": 1,
+                "id": 485630957,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.77.0",
+                "version": "1.77.0"
+            },
+            "1.78.0": {
+                "addon_id": 3342236804,
+                "asset_id": 1084963458,
+                "asset_name": "IwacVisualizations-1.78.0.zip",
+                "created": "2026-10-13T07:41:45Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/v1.78.0/IwacVisualizations-1.78.0.zip",
+                "downloads": 0,
+                "id": 397305040,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.78.0",
+                "version": "1.78.0"
+            },
+            "1.79.0": {
+                "addon_id": 3342236804,
+                "asset_id": 3492716997,
+                "asset_name": "IwacVisualizations-1.79.0.zip",
+                "created": "2026-10-13T07:58:05Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/v1.79.0/IwacVisualizations-1.79.0.zip",
+                "downloads": 1,
+                "id": 376180455,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.79.0",
+                "version": "1.79.0"
+            },
+            "1.80.0": {
+                "addon_id": 3342236804,
+                "asset_id": 3329089507,
+                "asset_name": "IwacVisualizations-1.80.0.zip",
+                "created": "2026-10-21T14:17:16Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/v1.80.0/IwacVisualizations-1.80.0.zip",
+                "downloads": 0,
+                "id": 1105077566,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.80.0",
+                "version": "1.80.0"
+            },
+            "1.80.1": {
+                "addon_id": 3342236804,
+                "asset_id": 4125761154,
+                "asset_name": "IwacVisualizations-1.80.1.zip",
+                "created": "2026-10-21T14:48:07Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/v1.80.1/IwacVisualizations-1.80.1.zip",
+                "downloads": 1,
+                "id": 920196520,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.80.1",
+                "version": "1.80.1"
+            },
+            "1.81.0": {
+                "addon_id": 3342236804,
+                "asset_id": 417770376,
+                "asset_name": "v1.81.0.zip",
+                "created": "2026-10-21T20:15:32Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/archive/refs/tags/v1.81.0.zip",
+                "downloads": 0,
+                "id": 1075597065,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.81.0",
+                "version": "1.81.0"
+            },
+            "1.81.1": {
+                "addon_id": 3342236804,
+                "asset_id": 1701807557,
+                "asset_name": "IwacVisualizations-1.81.1.zip",
+                "created": "2026-10-21T20:21:25Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/v1.81.1/IwacVisualizations-1.81.1.zip",
+                "downloads": 0,
+                "id": 924549023,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.81.1",
+                "version": "1.81.1"
+            },
+            "1.82.0": {
+                "addon_id": 3342236804,
+                "asset_id": 1008201516,
+                "asset_name": "IwacVisualizations-1.82.0.zip",
+                "created": "2026-10-21T20:48:12Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/v1.82.0/IwacVisualizations-1.82.0.zip",
+                "downloads": 2,
+                "id": 1113256272,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.82.0",
+                "version": "1.82.0"
+            },
+            "1.83.0": {
+                "addon_id": 3342236804,
+                "asset_id": 2895279211,
+                "asset_name": "IwacVisualizations-1.83.0.zip",
+                "created": "2026-10-23T06:54:30Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/v1.83.0/IwacVisualizations-1.83.0.zip",
+                "downloads": 0,
+                "id": 1134074727,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.83.0",
+                "version": "1.83.0"
+            },
+            "1.84.0": {
+                "addon_id": 3342236804,
+                "asset_id": 2546734472,
+                "asset_name": "iwac-data.zip.sha256",
+                "created": "2026-10-23T07:16:04Z",
+                "download_url": "https://github.com/fmadore/IwacVisualizations/releases/download/data-build-39916652195-1/iwac-data.zip.sha256",
+                "downloads": 1,
+                "id": 1188531682,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.84.0",
+                "version": "1.84.0"
             }
         }
     },
@@ -28545,7 +30161,7 @@
     "Image Server": {
         "dirname": "ImageServer",
         "id": 4043664812,
-        "latest_version": "3.6.25",
+        "latest_version": "3.6.26",
         "owner": "Daniel-KM",
         "registered": "2020-03-12T11:40:04Z",
         "repo": "Omeka-S-module-ImageServer",
@@ -28910,6 +30526,18 @@
                 "omeka_version_constraint": "^3.1 || ^4.0",
                 "tag_name": "3.6.25",
                 "version": "3.6.25"
+            },
+            "3.6.26": {
+                "addon_id": 4043664812,
+                "asset_id": 1157567893,
+                "asset_name": "ImageServer-3.6.26.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-ImageServer/releases/download/3.6.26/ImageServer-3.6.26.zip",
+                "downloads": 78,
+                "id": 2958169432,
+                "omeka_version_constraint": "^3.1 || ^4.0",
+                "tag_name": "3.6.26",
+                "version": "3.6.26"
             }
         }
     },
@@ -28971,10 +30599,10 @@
         "versions": {
             "0.0.0": {
                 "addon_id": 3359800322,
-                "asset_id": 2371960076,
-                "asset_name": "Impersonate-v1.0.4.zip",
+                "asset_id": 2767805009,
+                "asset_name": "Impersonate-1.0.5.zip",
                 "created": "",
-                "download_url": "https://github.com/ateeducacion/omeka-s-Impersonate/releases/download/v1.0.4/Impersonate-v1.0.4.zip",
+                "download_url": "https://github.com/ateeducacion/omeka-s-Impersonate/releases/download/1.0.5/Impersonate-1.0.5.zip",
                 "downloads": 0,
                 "id": 1873107041,
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
@@ -29028,6 +30656,30 @@
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
                 "tag_name": "v1.0.3",
                 "version": "1.0.3"
+            },
+            "1.0.4": {
+                "addon_id": 3359800322,
+                "asset_id": 2371960076,
+                "asset_name": "Impersonate-v1.0.4.zip",
+                "created": "2026-06-01T10:49:52Z",
+                "download_url": "https://github.com/ateeducacion/omeka-s-Impersonate/releases/download/v1.0.4/Impersonate-v1.0.4.zip",
+                "downloads": 33,
+                "id": 1437119944,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v1.0.4",
+                "version": "1.0.4"
+            },
+            "1.0.5": {
+                "addon_id": 3359800322,
+                "asset_id": 2767805009,
+                "asset_name": "Impersonate-1.0.5.zip",
+                "created": "2026-10-06T17:01:15Z",
+                "download_url": "https://github.com/ateeducacion/omeka-s-Impersonate/releases/download/1.0.5/Impersonate-1.0.5.zip",
+                "downloads": 11,
+                "id": 581928286,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "1.0.5",
+                "version": "1.0.5"
             }
         }
     },
@@ -29104,7 +30756,7 @@
     "Internationalisation": {
         "dirname": "Internationalisation",
         "id": 4161260466,
-        "latest_version": "3.4.22",
+        "latest_version": "3.4.23",
         "owner": "Daniel-KM",
         "registered": "2019-04-08T13:27:15Z",
         "repo": "Omeka-S-module-Internationalisation",
@@ -29493,6 +31145,18 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.22",
                 "version": "3.4.22"
+            },
+            "3.4.23": {
+                "addon_id": 4161260466,
+                "asset_id": 4049531901,
+                "asset_name": "Internationalisation-3.4.23.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-Internationalisation/releases/download/3.4.23/Internationalisation-3.4.23.zip",
+                "downloads": 2,
+                "id": 130439000,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.23",
+                "version": "3.4.23"
             }
         }
     },
@@ -29661,10 +31325,10 @@
             },
             "1.0.5": {
                 "addon_id": 2736877388,
-                "asset_id": 1807225513,
-                "asset_name": "IsolatedSites-v1.0.7.zip",
+                "asset_id": 2183230366,
+                "asset_name": "IsolatedSites-1.0.8.zip",
                 "created": "2026-03-23T12:35:10Z",
-                "download_url": "https://github.com/ateeducacion/omeka-s-IsolatedSites/releases/download/v1.0.7/IsolatedSites-v1.0.7.zip",
+                "download_url": "https://github.com/ateeducacion/omeka-s-IsolatedSites/releases/download/1.0.8/IsolatedSites-1.0.8.zip",
                 "downloads": 65,
                 "id": 660513363,
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
@@ -29694,6 +31358,18 @@
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
                 "tag_name": "v1.0.7",
                 "version": "1.0.7"
+            },
+            "1.0.8": {
+                "addon_id": 2736877388,
+                "asset_id": 2183230366,
+                "asset_name": "IsolatedSites-1.0.8.zip",
+                "created": "2026-10-06T17:03:29Z",
+                "download_url": "https://github.com/ateeducacion/omeka-s-IsolatedSites/releases/download/1.0.8/IsolatedSites-1.0.8.zip",
+                "downloads": 16,
+                "id": 1508892398,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "1.0.8",
+                "version": "1.0.8"
             }
         }
     },
@@ -29706,6 +31382,90 @@
         "repo": "CarouselBrowseBlock",
         "type": "s_module",
         "versions": {
+            "1.0.0": {
+                "addon_id": 1293345496,
+                "asset_id": 871790172,
+                "asset_name": "ItemCarouselBlock-1.0.0.zip",
+                "created": "2021-07-13T20:39:11Z",
+                "download_url": "https://github.com/omeka-s-modules/ItemCarouselBlock/releases/download/v1.0.0/ItemCarouselBlock-1.0.0.zip",
+                "downloads": 281,
+                "id": 2517774613,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "v1.0.0",
+                "version": "1.0.0"
+            },
+            "1.0.1": {
+                "addon_id": 1293345496,
+                "asset_id": 1838253768,
+                "asset_name": "ItemCarouselBlock-1.0.1.zip",
+                "created": "2022-02-21T19:34:14Z",
+                "download_url": "https://github.com/omeka-s-modules/ItemCarouselBlock/releases/download/v1.0.1/ItemCarouselBlock-1.0.1.zip",
+                "downloads": 397,
+                "id": 3776250243,
+                "omeka_version_constraint": "^3.0.0",
+                "tag_name": "v1.0.1",
+                "version": "1.0.1"
+            },
+            "1.2.0": {
+                "addon_id": 1293345496,
+                "asset_id": 3114710743,
+                "asset_name": "ItemCarouselBlock-1.2.0.zip",
+                "created": "2022-12-14T18:15:45Z",
+                "download_url": "https://github.com/omeka-s-modules/ItemCarouselBlock/releases/download/v1.2.0/ItemCarouselBlock-1.2.0.zip",
+                "downloads": 342,
+                "id": 2509694331,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.2.0",
+                "version": "1.2.0"
+            },
+            "1.2.1": {
+                "addon_id": 1293345496,
+                "asset_id": 3888203331,
+                "asset_name": "ItemCarouselBlock-1.2.1.zip",
+                "created": "2023-06-20T21:47:20Z",
+                "download_url": "https://github.com/omeka-s-modules/ItemCarouselBlock/releases/download/v1.2.1/ItemCarouselBlock-1.2.1.zip",
+                "downloads": 1107,
+                "id": 3801208301,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.2.1",
+                "version": "1.2.1"
+            },
+            "1.2.2": {
+                "addon_id": 1293345496,
+                "asset_id": 90789887,
+                "asset_name": "ItemCarouselBlock-1.2.2.zip",
+                "created": "2024-05-28T21:51:24Z",
+                "download_url": "https://github.com/omeka-s-modules/ItemCarouselBlock/releases/download/v1.2.2/ItemCarouselBlock-1.2.2.zip",
+                "downloads": 58,
+                "id": 2073592919,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.2.2",
+                "version": "1.2.2"
+            },
+            "1.3.0": {
+                "addon_id": 1293345496,
+                "asset_id": 288773554,
+                "asset_name": "ItemCarouselBlock-1.3.0.zip",
+                "created": "2024-06-20T18:40:35Z",
+                "download_url": "https://github.com/omeka-s-modules/ItemCarouselBlock/releases/download/v1.3.0/ItemCarouselBlock-1.3.0.zip",
+                "downloads": 679,
+                "id": 2488569676,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.3.0",
+                "version": "1.3.0"
+            },
+            "1.4.0": {
+                "addon_id": 1293345496,
+                "asset_id": 4230410507,
+                "asset_name": "ItemCarouselBlock-1.4.0.zip",
+                "created": "2025-05-29T17:13:02Z",
+                "download_url": "https://github.com/omeka-s-modules/ItemCarouselBlock/releases/download/v1.4.0/ItemCarouselBlock-1.4.0.zip",
+                "downloads": 266,
+                "id": 2434505161,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.4.0",
+                "version": "1.4.0"
+            },
             "1.4.1": {
                 "addon_id": 1293345496,
                 "asset_id": 2722169247,
@@ -29731,11 +31491,11 @@
         "versions": {
             "1.0.0": {
                 "addon_id": 3252377074,
-                "asset_id": 2080788101,
+                "asset_id": 1523964071,
                 "asset_name": "ItemCopy.zip",
                 "created": "2018-10-10T08:23:27Z",
-                "download_url": "https://github.com/azur-scd/ItemCopy/releases/download/v1.0.0/ItemCopy.zip",
-                "downloads": 50,
+                "download_url": "https://github.com/gegedenice/ItemCopy/releases/download/v1.0.0/ItemCopy.zip",
+                "downloads": 54,
                 "id": 2755639541,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.0.0",
@@ -29743,11 +31503,11 @@
             },
             "1.0.1": {
                 "addon_id": 3252377074,
-                "asset_id": 3890284773,
+                "asset_id": 3980887765,
                 "asset_name": "ItemCopy.zip",
                 "created": "2018-11-18T11:44:51Z",
-                "download_url": "https://github.com/azur-scd/ItemCopy/releases/download/1.0.1/ItemCopy.zip",
-                "downloads": 1508,
+                "download_url": "https://github.com/gegedenice/ItemCopy/releases/download/1.0.1/ItemCopy.zip",
+                "downloads": 1595,
                 "id": 3543697507,
                 "omeka_version_constraint": "",
                 "tag_name": "1.0.1",
@@ -30041,7 +31801,7 @@
     "Item Sets Tree": {
         "dirname": "ItemSetsTree",
         "id": 2352996994,
-        "latest_version": "0.7.5",
+        "latest_version": "0.8.0",
         "owner": "biblibre",
         "registered": "2016-06-10T09:57:50Z",
         "repo": "omeka-s-module-ItemSetsTree",
@@ -30190,6 +31950,18 @@
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
                 "tag_name": "v0.7.5",
                 "version": "0.7.5"
+            },
+            "0.8.0": {
+                "addon_id": 2352996994,
+                "asset_id": 1496369208,
+                "asset_name": "ItemSetsTree-0.7.5.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-ItemSetsTree/releases/download/v0.7.5/ItemSetsTree-0.7.5.zip",
+                "downloads": 0,
+                "id": 1853195956,
+                "omeka_version_constraint": "^3.1.0 || ^4.0.0",
+                "tag_name": "0.8.0",
+                "version": "0.8.0"
             }
         }
     },
@@ -30348,7 +32120,7 @@
     "IwacSearch": {
         "dirname": "IwacSearch",
         "id": 4212689555,
-        "latest_version": "3.21.1",
+        "latest_version": "3.25.0",
         "owner": "fmadore",
         "registered": "2026-04-20T05:38:27Z",
         "repo": "IwacSearch",
@@ -30677,6 +32449,78 @@
                 "omeka_version_constraint": "^4.0",
                 "tag_name": "v3.21.1",
                 "version": "3.21.1"
+            },
+            "3.22.1": {
+                "addon_id": 4212689555,
+                "asset_id": 1709427556,
+                "asset_name": "IwacSearch-v3.22.1.zip",
+                "created": "2026-10-10T19:15:23Z",
+                "download_url": "https://github.com/fmadore/IwacSearch/releases/download/v3.22.1/IwacSearch-v3.22.1.zip",
+                "downloads": 1,
+                "id": 4215613383,
+                "omeka_version_constraint": "^4.0",
+                "tag_name": "v3.22.1",
+                "version": "3.22.1"
+            },
+            "3.23.0": {
+                "addon_id": 4212689555,
+                "asset_id": 2563517136,
+                "asset_name": "IwacSearch-v3.23.0.zip",
+                "created": "2026-10-19T05:09:08Z",
+                "download_url": "https://github.com/fmadore/IwacSearch/releases/download/v3.23.0/IwacSearch-v3.23.0.zip",
+                "downloads": 1,
+                "id": 2374008166,
+                "omeka_version_constraint": "^4.0",
+                "tag_name": "v3.23.0",
+                "version": "3.23.0"
+            },
+            "3.23.1": {
+                "addon_id": 4212689555,
+                "asset_id": 612984391,
+                "asset_name": "IwacSearch-v3.23.1.zip",
+                "created": "2026-10-20T12:52:03Z",
+                "download_url": "https://github.com/fmadore/IwacSearch/releases/download/v3.23.1/IwacSearch-v3.23.1.zip",
+                "downloads": 1,
+                "id": 4203171312,
+                "omeka_version_constraint": "^4.0",
+                "tag_name": "v3.23.1",
+                "version": "3.23.1"
+            },
+            "3.23.2": {
+                "addon_id": 4212689555,
+                "asset_id": 993506751,
+                "asset_name": "IwacSearch-v3.23.2.zip",
+                "created": "2026-10-21T14:45:27Z",
+                "download_url": "https://github.com/fmadore/IwacSearch/releases/download/v3.23.2/IwacSearch-v3.23.2.zip",
+                "downloads": 1,
+                "id": 1670257738,
+                "omeka_version_constraint": "^4.0",
+                "tag_name": "v3.23.2",
+                "version": "3.23.2"
+            },
+            "3.24.0": {
+                "addon_id": 4212689555,
+                "asset_id": 2242408312,
+                "asset_name": "IwacSearch-v3.24.0.zip",
+                "created": "2026-10-21T20:26:35Z",
+                "download_url": "https://github.com/fmadore/IwacSearch/releases/download/v3.24.0/IwacSearch-v3.24.0.zip",
+                "downloads": 1,
+                "id": 2295294947,
+                "omeka_version_constraint": "^4.0",
+                "tag_name": "v3.24.0",
+                "version": "3.24.0"
+            },
+            "3.25.0": {
+                "addon_id": 4212689555,
+                "asset_id": 3301098075,
+                "asset_name": "IwacSearch-v3.25.0.zip",
+                "created": "2026-10-23T07:05:58Z",
+                "download_url": "https://github.com/fmadore/IwacSearch/releases/download/v3.25.0/IwacSearch-v3.25.0.zip",
+                "downloads": 1,
+                "id": 2299331028,
+                "omeka_version_constraint": "^4.0",
+                "tag_name": "v3.25.0",
+                "version": "3.25.0"
             }
         }
     },
@@ -30810,7 +32654,7 @@
     "Kobun OCR / Translation": {
         "dirname": "KobunOcrTranslation",
         "id": 21432046,
-        "latest_version": "0.10.2",
+        "latest_version": "0.12.8",
         "owner": "wakitosh",
         "registered": "2026-10-06T14:54:13Z",
         "repo": "KobunOcrTranslation",
@@ -30827,6 +32671,42 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "0.10.2",
                 "version": "0.10.2"
+            },
+            "0.11.2": {
+                "addon_id": 21432046,
+                "asset_id": 966505875,
+                "asset_name": "v0.11.2.zip",
+                "created": "2026-10-08T04:05:22Z",
+                "download_url": "https://github.com/wakitosh/KobunOcrTranslation/archive/refs/tags/v0.11.2.zip",
+                "downloads": 0,
+                "id": 4135258801,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.11.2",
+                "version": "0.11.2"
+            },
+            "0.11.4": {
+                "addon_id": 21432046,
+                "asset_id": 3067822131,
+                "asset_name": "v0.11.4.zip",
+                "created": "2026-10-11T14:20:10Z",
+                "download_url": "https://github.com/wakitosh/KobunOcrTranslation/archive/refs/tags/v0.11.4.zip",
+                "downloads": 0,
+                "id": 521711492,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.11.4",
+                "version": "0.11.4"
+            },
+            "0.12.8": {
+                "addon_id": 21432046,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 350772726,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "0.12.8",
+                "version": "0.12.8"
             }
         }
     },
@@ -31087,15 +32967,27 @@
         "versions": {
             "1.0.0": {
                 "addon_id": 2424353473,
-                "asset_id": 3022014435,
-                "asset_name": "LearningObjectAdapter-v1.0.0.zip",
+                "asset_id": 1202162910,
+                "asset_name": "LearningObjectAdapter-1.0.1.zip",
                 "created": "2025-06-18T14:42:53Z",
-                "download_url": "https://github.com/ateeducacion/OmekaS-LearningObject/releases/download/v1.0.0/LearningObjectAdapter-v1.0.0.zip",
+                "download_url": "https://github.com/ateeducacion/OmekaS-LearningObject/releases/download/1.0.1/LearningObjectAdapter-1.0.1.zip",
                 "downloads": 163,
                 "id": 608829106,
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
                 "tag_name": "v1.0.0",
                 "version": "1.0.0"
+            },
+            "1.0.1": {
+                "addon_id": 2424353473,
+                "asset_id": 1202162910,
+                "asset_name": "LearningObjectAdapter-1.0.1.zip",
+                "created": "2026-10-06T17:01:42Z",
+                "download_url": "https://github.com/ateeducacion/OmekaS-LearningObject/releases/download/1.0.1/LearningObjectAdapter-1.0.1.zip",
+                "downloads": 9,
+                "id": 1397673508,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "1.0.1",
+                "version": "1.0.1"
             }
         }
     },
@@ -31177,6 +33069,29 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v0.2",
                 "version": "0.2"
+            }
+        }
+    },
+    "Literal Translator": {
+        "dirname": "LiteralTranslator",
+        "id": 3679583753,
+        "latest_version": "1.0.0",
+        "owner": "coret",
+        "registered": "2026-09-19T14:54:29Z",
+        "repo": "Omeka-S-module-LiteralTranslator",
+        "type": "s_module",
+        "versions": {
+            "1.0.0": {
+                "addon_id": 3679583753,
+                "asset_id": 424275469,
+                "asset_name": "LiteralTranslator-1.0.0.zip",
+                "created": "2026-09-19T16:55:35Z",
+                "download_url": "https://github.com/coret/Omeka-S-module-LiteralTranslator/releases/download/v1.0.0/LiteralTranslator-1.0.0.zip",
+                "downloads": 0,
+                "id": 3190359038,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.0",
+                "version": "1.0.0"
             }
         }
     },
@@ -31453,7 +33368,7 @@
     "Log": {
         "dirname": "Log",
         "id": 4283011383,
-        "latest_version": "3.4.40",
+        "latest_version": "3.4.42",
         "owner": "Daniel-KM",
         "registered": "2018-01-08T06:43:53Z",
         "repo": "Omeka-S-module-Log",
@@ -32154,6 +34069,30 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "3.4.40",
                 "version": "3.4.40"
+            },
+            "3.4.41": {
+                "addon_id": 4283011383,
+                "asset_id": 933996231,
+                "asset_name": "Log-3.4.41.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-Log/releases/download/3.4.41/Log-3.4.41.zip",
+                "downloads": 98,
+                "id": 770946131,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "3.4.41",
+                "version": "3.4.41"
+            },
+            "3.4.42": {
+                "addon_id": 4283011383,
+                "asset_id": 1505978597,
+                "asset_name": "Log-3.4.42.zip",
+                "created": "2026-10-19T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-Log/releases/download/3.4.42/Log-3.4.42.zip",
+                "downloads": 45,
+                "id": 3036341737,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "3.4.42",
+                "version": "3.4.42"
             }
         }
     },
@@ -33133,6 +35072,29 @@
                 "omeka_version_constraint": "^3.0.0",
                 "tag_name": "2.1.0",
                 "version": "2.1.0"
+            }
+        }
+    },
+    "MediaText": {
+        "dirname": "MediaText",
+        "id": 1597654345,
+        "latest_version": "0.2.2",
+        "owner": "biblibre",
+        "registered": "2026-10-22T06:34:14Z",
+        "repo": "omeka-s-module-MediaText",
+        "type": "s_module",
+        "versions": {
+            "0.2.2": {
+                "addon_id": 1597654345,
+                "asset_id": 1831959112,
+                "asset_name": "MediaText-0.2.2.zip",
+                "created": "2026-10-22T13:25:24Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-MediaText/releases/download/v0.2.2/MediaText-0.2.2.zip",
+                "downloads": 0,
+                "id": 1696819456,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "v0.2.2",
+                "version": "0.2.2"
             }
         }
     },
@@ -37002,7 +38964,7 @@
     "OIDC": {
         "dirname": "Oidc",
         "id": 2055668300,
-        "latest_version": "1.0.12",
+        "latest_version": "1.0.15",
         "owner": "indiana-university",
         "registered": "2025-05-08T17:41:34Z",
         "repo": "omeka-s-module-oidc",
@@ -37151,6 +39113,42 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "1.0.12",
                 "version": "1.0.12"
+            },
+            "1.0.13": {
+                "addon_id": 2055668300,
+                "asset_id": 1735893015,
+                "asset_name": "1.0.13.zip",
+                "created": "2026-10-15T17:29:08Z",
+                "download_url": "https://github.com/indiana-university/omeka-s-module-oidc/archive/refs/tags/1.0.13.zip",
+                "downloads": 0,
+                "id": 3256816027,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "1.0.13",
+                "version": "1.0.13"
+            },
+            "1.0.14": {
+                "addon_id": 2055668300,
+                "asset_id": 3579280391,
+                "asset_name": "1.0.14.zip",
+                "created": "2026-10-21T16:52:10Z",
+                "download_url": "https://github.com/indiana-university/omeka-s-module-oidc/archive/refs/tags/1.0.14.zip",
+                "downloads": 0,
+                "id": 1551598648,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "1.0.14",
+                "version": "1.0.14"
+            },
+            "1.0.15": {
+                "addon_id": 2055668300,
+                "asset_id": 3895940535,
+                "asset_name": "1.0.15.zip",
+                "created": "2026-10-22T12:41:13Z",
+                "download_url": "https://github.com/indiana-university/omeka-s-module-oidc/archive/refs/tags/1.0.15.zip",
+                "downloads": 0,
+                "id": 729593006,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "1.0.15",
+                "version": "1.0.15"
             }
         }
     },
@@ -37273,7 +39271,7 @@
                 "asset_name": "OaiPmhUnimarc.zip",
                 "created": "2026-03-06T15:10:51Z",
                 "download_url": "https://github.com/justAndre02/OaiPmhUnimarc/releases/download/Module/OaiPmhUnimarc.zip",
-                "downloads": 80,
+                "downloads": 89,
                 "id": 3374239162,
                 "omeka_version_constraint": "",
                 "tag_name": "Module",
@@ -37302,6 +39300,330 @@
         "repo": "omeka-s-module-MediaViewer",
         "type": "s_module",
         "versions": {
+            "0.1.0": {
+                "addon_id": 1629002724,
+                "asset_id": 1446452507,
+                "asset_name": "MediaViewer-0.1.0.zip",
+                "created": "2023-01-26T11:20:46Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.1.0/MediaViewer-0.1.0.zip",
+                "downloads": 1072,
+                "id": 2202583435,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.1.0",
+                "version": "0.1.0"
+            },
+            "0.2.0": {
+                "addon_id": 1629002724,
+                "asset_id": 2090552869,
+                "asset_name": "OctopusViewer-0.2.0.zip",
+                "created": "2023-04-11T10:18:49Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.2.0/OctopusViewer-0.2.0.zip",
+                "downloads": 23,
+                "id": 2165211090,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.2.0",
+                "version": "0.2.0"
+            },
+            "0.2.1": {
+                "addon_id": 1629002724,
+                "asset_id": 3832608667,
+                "asset_name": "OctopusViewer-0.2.1.zip",
+                "created": "2023-04-12T11:58:59Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.2.1/OctopusViewer-0.2.1.zip",
+                "downloads": 39,
+                "id": 4127805252,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.2.1",
+                "version": "0.2.1"
+            },
+            "0.3.0": {
+                "addon_id": 1629002724,
+                "asset_id": 3026214608,
+                "asset_name": "OctopusViewer-0.3.0.zip",
+                "created": "2023-10-04T14:19:17Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.3.0/OctopusViewer-0.3.0.zip",
+                "downloads": 27,
+                "id": 2160858597,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.3.0",
+                "version": "0.3.0"
+            },
+            "0.4.0": {
+                "addon_id": 1629002724,
+                "asset_id": 2735875800,
+                "asset_name": "OctopusViewer-0.4.0.zip",
+                "created": "2023-11-14T13:24:39Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.4.0/OctopusViewer-0.4.0.zip",
+                "downloads": 28,
+                "id": 2239955808,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.4.0",
+                "version": "0.4.0"
+            },
+            "0.4.1": {
+                "addon_id": 1629002724,
+                "asset_id": 1006215014,
+                "asset_name": "OctopusViewer-0.4.1.zip",
+                "created": "2023-12-12T12:43:53Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.4.1/OctopusViewer-0.4.1.zip",
+                "downloads": 25,
+                "id": 4068750326,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.4.1",
+                "version": "0.4.1"
+            },
+            "0.4.2": {
+                "addon_id": 1629002724,
+                "asset_id": 1236554725,
+                "asset_name": "OctopusViewer-0.4.2.zip",
+                "created": "2024-01-26T15:40:54Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.4.2/OctopusViewer-0.4.2.zip",
+                "downloads": 27,
+                "id": 1804427852,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.4.2",
+                "version": "0.4.2"
+            },
+            "0.5.0": {
+                "addon_id": 1629002724,
+                "asset_id": 1810445869,
+                "asset_name": "OctopusViewer-0.5.0.zip",
+                "created": "2024-02-01T10:44:09Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.5.0/OctopusViewer-0.5.0.zip",
+                "downloads": 29,
+                "id": 2218879319,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.5.0",
+                "version": "0.5.0"
+            },
+            "0.5.1": {
+                "addon_id": 1629002724,
+                "asset_id": 4077031315,
+                "asset_name": "OctopusViewer-0.5.1.zip",
+                "created": "2024-03-13T15:41:55Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.5.1/OctopusViewer-0.5.1.zip",
+                "downloads": 19,
+                "id": 4081473985,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.5.1",
+                "version": "0.5.1"
+            },
+            "0.5.2": {
+                "addon_id": 1629002724,
+                "asset_id": 2169455376,
+                "asset_name": "OctopusViewer-0.5.2.zip",
+                "created": "2024-03-14T09:51:40Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.5.2/OctopusViewer-0.5.2.zip",
+                "downloads": 55,
+                "id": 1783564411,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.5.2",
+                "version": "0.5.2"
+            },
+            "0.5.3": {
+                "addon_id": 1629002724,
+                "asset_id": 430242478,
+                "asset_name": "OctopusViewer-0.5.3.zip",
+                "created": "2024-05-06T08:49:35Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.5.3/OctopusViewer-0.5.3.zip",
+                "downloads": 29,
+                "id": 491272429,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.5.3",
+                "version": "0.5.3"
+            },
+            "0.5.4": {
+                "addon_id": 1629002724,
+                "asset_id": 1708448278,
+                "asset_name": "OctopusViewer-0.5.4.zip",
+                "created": "2024-05-10T07:03:51Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.5.4/OctopusViewer-0.5.4.zip",
+                "downloads": 33,
+                "id": 2200743246,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.5.4",
+                "version": "0.5.4"
+            },
+            "0.5.5": {
+                "addon_id": 1629002724,
+                "asset_id": 4248789928,
+                "asset_name": "OctopusViewer-0.5.5.zip",
+                "created": "2024-06-13T10:26:33Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.5.5/OctopusViewer-0.5.5.zip",
+                "downloads": 59,
+                "id": 4096499160,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.5.5",
+                "version": "0.5.5"
+            },
+            "0.6.0": {
+                "addon_id": 1629002724,
+                "asset_id": 3918856563,
+                "asset_name": "OctopusViewer-0.6.0.zip",
+                "created": "2024-08-28T14:06:40Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.6.0/OctopusViewer-0.6.0.zip",
+                "downloads": 19,
+                "id": 2248660750,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.6.0",
+                "version": "0.6.0"
+            },
+            "0.7.0": {
+                "addon_id": 1629002724,
+                "asset_id": 560861574,
+                "asset_name": "OctopusViewer-0.7.0.zip",
+                "created": "2024-08-29T07:09:53Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.7.0/OctopusViewer-0.7.0.zip",
+                "downloads": 15,
+                "id": 2277883193,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.7.0",
+                "version": "0.7.0"
+            },
+            "0.7.1": {
+                "addon_id": 1629002724,
+                "asset_id": 3112544312,
+                "asset_name": "OctopusViewer-0.7.1.zip",
+                "created": "2024-08-29T07:45:49Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.7.1/OctopusViewer-0.7.1.zip",
+                "downloads": 21,
+                "id": 4039282095,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.7.1",
+                "version": "0.7.1"
+            },
+            "0.7.2": {
+                "addon_id": 1629002724,
+                "asset_id": 3418907835,
+                "asset_name": "OctopusViewer-0.7.2.zip",
+                "created": "2024-09-02T14:12:08Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.7.2/OctopusViewer-0.7.2.zip",
+                "downloads": 20,
+                "id": 1774967829,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.7.2",
+                "version": "0.7.2"
+            },
+            "0.7.3": {
+                "addon_id": 1629002724,
+                "asset_id": 1394859269,
+                "asset_name": "OctopusViewer-0.7.3.zip",
+                "created": "2024-09-12T08:20:44Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.7.3/OctopusViewer-0.7.3.zip",
+                "downloads": 38,
+                "id": 516746371,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.7.3",
+                "version": "0.7.3"
+            },
+            "0.8.0": {
+                "addon_id": 1629002724,
+                "asset_id": 3346133347,
+                "asset_name": "OctopusViewer-0.8.0.zip",
+                "created": "2024-10-24T07:45:17Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.8.0/OctopusViewer-0.8.0.zip",
+                "downloads": 16,
+                "id": 2358901252,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.8.0",
+                "version": "0.8.0"
+            },
+            "0.8.1": {
+                "addon_id": 1629002724,
+                "asset_id": 1603946717,
+                "asset_name": "OctopusViewer-0.8.1.zip",
+                "created": "2024-10-30T12:40:47Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.8.1/OctopusViewer-0.8.1.zip",
+                "downloads": 55,
+                "id": 4221487762,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.8.1",
+                "version": "0.8.1"
+            },
+            "0.8.2": {
+                "addon_id": 1629002724,
+                "asset_id": 769098846,
+                "asset_name": "OctopusViewer-0.8.2.zip",
+                "created": "2024-11-29T12:37:18Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.8.2/OctopusViewer-0.8.2.zip",
+                "downloads": 102,
+                "id": 1654102824,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.8.2",
+                "version": "0.8.2"
+            },
+            "0.8.3": {
+                "addon_id": 1629002724,
+                "asset_id": 3040624096,
+                "asset_name": "OctopusViewer-0.8.3.zip",
+                "created": "2025-03-10T13:36:00Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.8.3/OctopusViewer-0.8.3.zip",
+                "downloads": 223,
+                "id": 361802686,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.8.3",
+                "version": "0.8.3"
+            },
+            "0.9.0": {
+                "addon_id": 1629002724,
+                "asset_id": 260759958,
+                "asset_name": "OctopusViewer-0.9.0.zip",
+                "created": "2025-10-28T13:15:55Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.9.0/OctopusViewer-0.9.0.zip",
+                "downloads": 63,
+                "id": 2371588147,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.9.0",
+                "version": "0.9.0"
+            },
+            "0.9.1": {
+                "addon_id": 1629002724,
+                "asset_id": 2539739176,
+                "asset_name": "OctopusViewer-0.9.1.zip",
+                "created": "2025-11-07T12:51:23Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.9.1/OctopusViewer-0.9.1.zip",
+                "downloads": 49,
+                "id": 4200374437,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.9.1",
+                "version": "0.9.1"
+            },
+            "0.10.0": {
+                "addon_id": 1629002724,
+                "asset_id": 1802058967,
+                "asset_name": "OctopusViewer-0.10.0.zip",
+                "created": "2025-12-18T10:16:01Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.10.0/OctopusViewer-0.10.0.zip",
+                "downloads": 13,
+                "id": 1288404205,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.10.0",
+                "version": "0.10.0"
+            },
+            "0.10.1": {
+                "addon_id": 1629002724,
+                "asset_id": 2970924016,
+                "asset_name": "OctopusViewer-0.10.1.zip",
+                "created": "2025-12-18T15:36:41Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.10.1/OctopusViewer-0.10.1.zip",
+                "downloads": 45,
+                "id": 1003244667,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.10.1",
+                "version": "0.10.1"
+            },
+            "0.10.2": {
+                "addon_id": 1629002724,
+                "asset_id": 81994968,
+                "asset_name": "OctopusViewer-0.10.2.zip",
+                "created": "2026-01-07T13:22:15Z",
+                "download_url": "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v0.10.2/OctopusViewer-0.10.2.zip",
+                "downloads": 12,
+                "id": 2730827201,
+                "omeka_version_constraint": "^3.0.0 || ^4.0.0",
+                "tag_name": "v0.10.2",
+                "version": "0.10.2"
+            },
             "0.10.3": {
                 "addon_id": 1629002724,
                 "asset_id": 3734940671,
@@ -37468,6 +39790,29 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v1.5.1",
                 "version": "1.5.1"
+            }
+        }
+    },
+    "Omeka DIP Viewer": {
+        "dirname": "DipViewer",
+        "id": 469561548,
+        "latest_version": "0.5.8",
+        "owner": "hitsave",
+        "registered": "2026-10-07T16:39:03Z",
+        "repo": "omeka-dip-viewer",
+        "type": "s_module",
+        "versions": {
+            "0.5.8": {
+                "addon_id": 469561548,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3954183690,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "0.5.8",
+                "version": "0.5.8"
             }
         }
     },
@@ -37696,23 +40041,203 @@
     "Omekalia": {
         "dirname": "lia",
         "id": 2633411946,
-        "latest_version": "26.07.0",
+        "latest_version": "26.10.0",
         "owner": "biblibre",
         "registered": "2026-09-15T07:57:28Z",
         "repo": "omeka-s-module-Omekalia",
         "type": "s_module",
         "versions": {
+            "24.11.0": {
+                "addon_id": 2633411946,
+                "asset_id": 1059093303,
+                "asset_name": "v24.11.0.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v24.11.0.zip",
+                "downloads": 0,
+                "id": 1729282212,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v24.11.0",
+                "version": "24.11.0"
+            },
+            "24.11.1": {
+                "addon_id": 2633411946,
+                "asset_id": 37769863,
+                "asset_name": "v24.11.1.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v24.11.1.zip",
+                "downloads": 0,
+                "id": 269873202,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v24.11.1",
+                "version": "24.11.1"
+            },
+            "24.11.2": {
+                "addon_id": 2633411946,
+                "asset_id": 1172318295,
+                "asset_name": "v24.11.2.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v24.11.2.zip",
+                "downloads": 0,
+                "id": 2300354952,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v24.11.2",
+                "version": "24.11.2"
+            },
+            "25.09.0": {
+                "addon_id": 2633411946,
+                "asset_id": 799497968,
+                "asset_name": "v25.09.0.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v25.09.0.zip",
+                "downloads": 0,
+                "id": 450962908,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v25.09.0",
+                "version": "25.09.0"
+            },
+            "25.09.1": {
+                "addon_id": 2633411946,
+                "asset_id": 315062080,
+                "asset_name": "v25.09.1.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v25.09.1.zip",
+                "downloads": 0,
+                "id": 1843795274,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v25.09.1",
+                "version": "25.09.1"
+            },
+            "26.02.0": {
+                "addon_id": 2633411946,
+                "asset_id": 3331830025,
+                "asset_name": "v26.02.0.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.02.0.zip",
+                "downloads": 0,
+                "id": 2418063507,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.02.0",
+                "version": "26.02.0"
+            },
+            "26.02.1": {
+                "addon_id": 2633411946,
+                "asset_id": 4227307705,
+                "asset_name": "v26.02.1.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.02.1.zip",
+                "downloads": 0,
+                "id": 3878127621,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.02.1",
+                "version": "26.02.1"
+            },
+            "26.02.2": {
+                "addon_id": 2633411946,
+                "asset_id": 3159876201,
+                "asset_name": "v26.02.2.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.02.2.zip",
+                "downloads": 0,
+                "id": 2116999615,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.02.2",
+                "version": "26.02.2"
+            },
+            "26.03.0": {
+                "addon_id": 2633411946,
+                "asset_id": 1625340605,
+                "asset_name": "v26.03.0.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.03.0.zip",
+                "downloads": 0,
+                "id": 2447561380,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.03.0",
+                "version": "26.03.0"
+            },
+            "26.03.1": {
+                "addon_id": 2633411946,
+                "asset_id": 1568707341,
+                "asset_name": "v26.03.1.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.03.1.zip",
+                "downloads": 0,
+                "id": 3873825330,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.03.1",
+                "version": "26.03.1"
+            },
+            "26.03.2": {
+                "addon_id": 2633411946,
+                "asset_id": 438364637,
+                "asset_name": "v26.03.2.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.03.2.zip",
+                "downloads": 0,
+                "id": 2146218888,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.03.2",
+                "version": "26.03.2"
+            },
+            "26.03.3": {
+                "addon_id": 2633411946,
+                "asset_id": 658554989,
+                "asset_name": "v26.03.3.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.03.3.zip",
+                "downloads": 0,
+                "id": 149652254,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.03.3",
+                "version": "26.03.3"
+            },
+            "26.06.0": {
+                "addon_id": 2633411946,
+                "asset_id": 853054746,
+                "asset_name": "v26.06.0.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.06.0.zip",
+                "downloads": 0,
+                "id": 2536050767,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.06.0",
+                "version": "26.06.0"
+            },
+            "26.06.1": {
+                "addon_id": 2633411946,
+                "asset_id": 263765162,
+                "asset_name": "v26.06.1.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.06.1.zip",
+                "downloads": 0,
+                "id": 3761119449,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.06.1",
+                "version": "26.06.1"
+            },
             "26.07.0": {
                 "addon_id": 2633411946,
-                "asset_id": 0,
-                "asset_name": "",
+                "asset_id": 2494537390,
+                "asset_name": "v26.07.0.zip",
                 "created": "",
-                "download_url": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.07.0.zip",
                 "downloads": 0,
                 "id": 2532014712,
                 "omeka_version_constraint": "^4.0.0",
-                "tag_name": "26.07.0",
+                "tag_name": "v26.07.0",
                 "version": "26.07.0"
+            },
+            "26.10.0": {
+                "addon_id": 2633411946,
+                "asset_id": 2644680894,
+                "asset_name": "v26.10.0.zip",
+                "created": "",
+                "download_url": "https://github.com/biblibre/omeka-s-module-Omekalia/archive/refs/tags/v26.10.0.zip",
+                "downloads": 0,
+                "id": 722996120,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v26.10.0",
+                "version": "26.10.0"
             }
         }
     },
@@ -38278,6 +40803,30 @@
         "repo": "Omeka-S-module-PdfToc",
         "type": "s_module",
         "versions": {
+            "1.0.0": {
+                "addon_id": 1027996657,
+                "asset_id": 2225409757,
+                "asset_name": "PdfToc-1.0.0.zip",
+                "created": "2019-10-30T08:38:56Z",
+                "download_url": "https://github.com/smachefert/Omeka-S-module-PdfToc/releases/download/1.0.0/PdfToc-1.0.0.zip",
+                "downloads": 8,
+                "id": 2762996199,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.0",
+                "version": "1.0.0"
+            },
+            "1.0.1": {
+                "addon_id": 1027996657,
+                "asset_id": 1452773772,
+                "asset_name": "PdfToc-1.0.1.zip",
+                "created": "2021-11-16T13:15:51Z",
+                "download_url": "https://github.com/smachefert/Omeka-S-module-PdfToc/releases/download/1.0.1/PdfToc-1.0.1.zip",
+                "downloads": 10,
+                "id": 3551054193,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.1",
+                "version": "1.0.1"
+            },
             "2.0": {
                 "addon_id": 1027996657,
                 "asset_id": 0,
@@ -38289,6 +40838,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "2.0",
                 "version": "2.0"
+            },
+            "2.0.0": {
+                "addon_id": 1027996657,
+                "asset_id": 932001983,
+                "asset_name": "2.0.0.zip",
+                "created": "2024-03-14T13:21:41Z",
+                "download_url": "https://github.com/bubdxm/Omeka-S-module-PdfToc/archive/refs/tags/2.0.0.zip",
+                "downloads": 0,
+                "id": 3809444663,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "2.0.0",
+                "version": "2.0.0"
             }
         }
     },
@@ -38318,7 +40879,7 @@
     "Persistent Identifiers": {
         "dirname": "PersistentIdentifiers",
         "id": 1049385123,
-        "latest_version": "1.2.0",
+        "latest_version": "1.2.1",
         "owner": "omeka-s-modules",
         "registered": "2021-06-24T00:11:07Z",
         "repo": "PersistentIdentifiers",
@@ -38371,6 +40932,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v1.2.0",
                 "version": "1.2.0"
+            },
+            "1.2.1": {
+                "addon_id": 1049385123,
+                "asset_id": 1377646765,
+                "asset_name": "PersistentIdentifiers-1.2.1.zip",
+                "created": "2026-10-15T21:48:11Z",
+                "download_url": "https://github.com/omeka-s-modules/PersistentIdentifiers/releases/download/v1.2.1/PersistentIdentifiers-1.2.1.zip",
+                "downloads": 17,
+                "id": 2288883320,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.2.1",
+                "version": "1.2.1"
             }
         }
     },
@@ -38432,10 +41005,10 @@
         "versions": {
             "0.1.0": {
                 "addon_id": 1636624620,
-                "asset_id": 0,
-                "asset_name": "",
+                "asset_id": 1306718476,
+                "asset_name": "PersonalizedHeaderFooter-1.0.0.zip",
                 "created": "",
-                "download_url": "",
+                "download_url": "https://github.com/ateeducacion/omeka-s-CorporateImage/releases/download/1.0.0/PersonalizedHeaderFooter-1.0.0.zip",
                 "downloads": 0,
                 "id": 1615636990,
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
@@ -40308,7 +42881,7 @@
                 "asset_name": "ReferentialIntegrity.zip",
                 "created": "2025-09-08T09:03:42Z",
                 "download_url": "https://github.com/ftheeten/OMEKA_S_ReferentialIntegrity_module/releases/download/v0.1.0/ReferentialIntegrity.zip",
-                "downloads": 154,
+                "downloads": 169,
                 "id": 3836078987,
                 "omeka_version_constraint": "",
                 "tag_name": "v0.1.0",
@@ -40599,7 +43172,7 @@
                 "asset_name": "RestrictedSites-0.8.zip",
                 "created": "2019-03-08T08:26:25Z",
                 "download_url": "https://github.com/ManOnDaMoon/omeka-s-module-RestrictedSites/releases/download/v0.8/RestrictedSites-0.8.zip",
-                "downloads": 132,
+                "downloads": 135,
                 "id": 1881944146,
                 "omeka_version_constraint": "",
                 "tag_name": "v0.8",
@@ -40735,6 +43308,89 @@
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
                 "tag_name": "v1.0.0",
                 "version": "1.0.0"
+            }
+        }
+    },
+    "Revision History": {
+        "dirname": "RevisionHistory",
+        "id": 736907744,
+        "latest_version": "1.0.5",
+        "owner": "phumraphee",
+        "registered": "2026-10-19T15:31:39Z",
+        "repo": "RevisionHistory",
+        "type": "s_module",
+        "versions": {
+            "1.0.0": {
+                "addon_id": 736907744,
+                "asset_id": 351324312,
+                "asset_name": "RevisionHistory.zip",
+                "created": "2026-10-19T15:44:33Z",
+                "download_url": "https://github.com/phumraphee/RevisionHistory/releases/download/v1.0.0/RevisionHistory.zip",
+                "downloads": 2,
+                "id": 1704528181,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.0",
+                "version": "1.0.0"
+            },
+            "1.0.1": {
+                "addon_id": 736907744,
+                "asset_id": 3869403552,
+                "asset_name": "RevisionHistory-1.0.1.zip",
+                "created": "2026-10-19T16:27:39Z",
+                "download_url": "https://github.com/phumraphee/RevisionHistory/releases/download/v1.0.1/RevisionHistory-1.0.1.zip",
+                "downloads": 14,
+                "id": 312359331,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.1",
+                "version": "1.0.1"
+            },
+            "1.0.2": {
+                "addon_id": 736907744,
+                "asset_id": 311836339,
+                "asset_name": "RevisionHistory-1.0.2.zip",
+                "created": "2026-10-20T10:03:40Z",
+                "download_url": "https://github.com/phumraphee/RevisionHistory/releases/download/v1.0.2/RevisionHistory-1.0.2.zip",
+                "downloads": 17,
+                "id": 2341955609,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.2",
+                "version": "1.0.2"
+            },
+            "1.0.3": {
+                "addon_id": 736907744,
+                "asset_id": 1098517570,
+                "asset_name": "RevisionHistory-1.0.3.zip",
+                "created": "2026-10-20T12:24:29Z",
+                "download_url": "https://github.com/phumraphee/RevisionHistory/releases/download/v1.0.3/RevisionHistory-1.0.3.zip",
+                "downloads": 4,
+                "id": 4237318287,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.3",
+                "version": "1.0.3"
+            },
+            "1.0.4": {
+                "addon_id": 736907744,
+                "asset_id": 563058388,
+                "asset_name": "RevisionHistory-1.0.4.zip",
+                "created": "2026-10-20T14:09:04Z",
+                "download_url": "https://github.com/phumraphee/RevisionHistory/releases/download/v1.0.4/RevisionHistory-1.0.4.zip",
+                "downloads": 9,
+                "id": 1660210476,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.4",
+                "version": "1.0.4"
+            },
+            "1.0.5": {
+                "addon_id": 736907744,
+                "asset_id": 1919132709,
+                "asset_name": "RevisionHistory-1.0.5.zip",
+                "created": "2026-10-21T05:28:07Z",
+                "download_url": "https://github.com/phumraphee/RevisionHistory/releases/download/v1.0.5/RevisionHistory-1.0.5.zip",
+                "downloads": 5,
+                "id": 368311738,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.0.5",
+                "version": "1.0.5"
             }
         }
     },
@@ -41194,6 +43850,29 @@
                 "omeka_version_constraint": "^3.0.2",
                 "tag_name": "3.3.0.4",
                 "version": "3.3.0.4"
+            }
+        }
+    },
+    "Saltaire Amendments": {
+        "dirname": "3SaltAmendments",
+        "id": 184574534,
+        "latest_version": "0.1",
+        "owner": "jna64",
+        "registered": "2026-10-13T15:27:37Z",
+        "repo": "omeka3-module-SaltAmendments",
+        "type": "s_module",
+        "versions": {
+            "0.1": {
+                "addon_id": 184574534,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3914310078,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "0.1",
+                "version": "0.1"
             }
         }
     },
@@ -42336,6 +45015,41 @@
                 "omeka_version_constraint": "^3.0.0",
                 "tag_name": "3.5.25.3",
                 "version": "3.5.25.3"
+            }
+        }
+    },
+    "Search Assistant AI": {
+        "dirname": "SearchAssistantAI",
+        "id": 2541705502,
+        "latest_version": "1.0.1",
+        "owner": "Limonadeandcoscop",
+        "registered": "2026-10-19T06:13:01Z",
+        "repo": "SearchAssistantAI",
+        "type": "s_module",
+        "versions": {
+            "1.0.0": {
+                "addon_id": 2541705502,
+                "asset_id": 2881225325,
+                "asset_name": "SearchAssistantAI-1.0.0.zip",
+                "created": "2026-10-21T05:25:06Z",
+                "download_url": "https://github.com/Limonadeandcoscop/SearchAssistantAI/releases/download/v1.0.0/SearchAssistantAI-1.0.0.zip",
+                "downloads": 1,
+                "id": 3168349291,
+                "omeka_version_constraint": "^3.2.0||^4.1.1",
+                "tag_name": "v1.0.0",
+                "version": "1.0.0"
+            },
+            "1.0.1": {
+                "addon_id": 2541705502,
+                "asset_id": 4124832505,
+                "asset_name": "SearchAssistantAI-1.0.1.zip",
+                "created": "2026-10-21T22:17:17Z",
+                "download_url": "https://github.com/Limonadeandcoscop/SearchAssistantAI/releases/download/v1.0.1/SearchAssistantAI-1.0.1.zip",
+                "downloads": 0,
+                "id": 3420331261,
+                "omeka_version_constraint": "^3.2.0||^4.1.1",
+                "tag_name": "v1.0.1",
+                "version": "1.0.1"
             }
         }
     },
@@ -44041,7 +46755,7 @@
     "Similar Items": {
         "dirname": "SimilarItems",
         "id": 3090791376,
-        "latest_version": "0.6.0",
+        "latest_version": "0.7.6",
         "owner": "wakitosh",
         "registered": "2025-10-29T16:00:14Z",
         "repo": "SimilarItems",
@@ -44346,6 +47060,90 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "v0.6.0",
                 "version": "0.6.0"
+            },
+            "0.7.0": {
+                "addon_id": 3090791376,
+                "asset_id": 1775935361,
+                "asset_name": "v0.7.0.zip",
+                "created": "2026-10-08T10:38:29Z",
+                "download_url": "https://github.com/wakitosh/SimilarItems/archive/refs/tags/v0.7.0.zip",
+                "downloads": 0,
+                "id": 2353225701,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.7.0",
+                "version": "0.7.0"
+            },
+            "0.7.1": {
+                "addon_id": 3090791376,
+                "asset_id": 1421522481,
+                "asset_name": "v0.7.1.zip",
+                "created": "2026-10-08T12:49:49Z",
+                "download_url": "https://github.com/wakitosh/SimilarItems/archive/refs/tags/v0.7.1.zip",
+                "downloads": 0,
+                "id": 4215566195,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.7.1",
+                "version": "0.7.1"
+            },
+            "0.7.2": {
+                "addon_id": 3090791376,
+                "asset_id": 320523489,
+                "asset_name": "v0.7.2.zip",
+                "created": "2026-10-10T15:34:39Z",
+                "download_url": "https://github.com/wakitosh/SimilarItems/archive/refs/tags/v0.7.2.zip",
+                "downloads": 0,
+                "id": 1649229513,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.7.2",
+                "version": "0.7.2"
+            },
+            "0.7.3": {
+                "addon_id": 3090791376,
+                "asset_id": 779806033,
+                "asset_name": "v0.7.3.zip",
+                "created": "2026-10-11T04:47:46Z",
+                "download_url": "https://github.com/wakitosh/SimilarItems/archive/refs/tags/v0.7.3.zip",
+                "downloads": 0,
+                "id": 357174879,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.7.3",
+                "version": "0.7.3"
+            },
+            "0.7.4": {
+                "addon_id": 3090791376,
+                "asset_id": 2623158593,
+                "asset_name": "v0.7.4.zip",
+                "created": "2026-10-13T01:27:58Z",
+                "download_url": "https://github.com/wakitosh/SimilarItems/archive/refs/tags/v0.7.4.zip",
+                "downloads": 0,
+                "id": 2335087612,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.7.4",
+                "version": "0.7.4"
+            },
+            "0.7.5": {
+                "addon_id": 3090791376,
+                "asset_id": 2704937201,
+                "asset_name": "v0.7.5.zip",
+                "created": "2026-10-14T10:50:04Z",
+                "download_url": "https://github.com/wakitosh/SimilarItems/archive/refs/tags/v0.7.5.zip",
+                "downloads": 0,
+                "id": 4230589290,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.7.5",
+                "version": "0.7.5"
+            },
+            "0.7.6": {
+                "addon_id": 3090791376,
+                "asset_id": 3868879393,
+                "asset_name": "v0.7.6.zip",
+                "created": "2026-10-16T14:04:18Z",
+                "download_url": "https://github.com/wakitosh/SimilarItems/archive/refs/tags/v0.7.6.zip",
+                "downloads": 0,
+                "id": 1696660176,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v0.7.6",
+                "version": "0.7.6"
             }
         }
     },
@@ -45083,7 +47881,7 @@
                 "asset_name": "Sitemaps-0.1.zip",
                 "created": "2021-06-05T20:29:15Z",
                 "download_url": "https://github.com/ManOnDaMoon/omeka-s-module-Sitemaps/releases/download/v0.1/Sitemaps-0.1.zip",
-                "downloads": 311,
+                "downloads": 312,
                 "id": 1099730550,
                 "omeka_version_constraint": "",
                 "tag_name": "v0.1",
@@ -45665,7 +48463,7 @@
     "Spam Guard": {
         "dirname": "SpamGuard",
         "id": 2536449746,
-        "latest_version": "3.4.0",
+        "latest_version": "3.4.2",
         "owner": "Daniel-KM",
         "registered": "2026-07-16T08:28:00.655Z",
         "repo": "Omeka-S-module-SpamGuard",
@@ -45682,6 +48480,30 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "3.4.0",
                 "version": "3.4.0"
+            },
+            "3.4.1": {
+                "addon_id": 2536449746,
+                "asset_id": 3678848772,
+                "asset_name": "SpamGuard-3.4.1.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-SpamGuard/releases/download/3.4.1/SpamGuard-3.4.1.zip",
+                "downloads": 5,
+                "id": 757139530,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "3.4.1",
+                "version": "3.4.1"
+            },
+            "3.4.2": {
+                "addon_id": 2536449746,
+                "asset_id": 3541326938,
+                "asset_name": "SpamGuard-3.4.2.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-SpamGuard/packages/generic/SpamGuard/3.4.2/SpamGuard-3.4.2.zip",
+                "downloads": 1,
+                "id": 3022543344,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "3.4.2",
+                "version": "3.4.2"
             }
         }
     },
@@ -46886,6 +49708,41 @@
             }
         }
     },
+    "TemaTres Value Suggest": {
+        "dirname": "Suggest",
+        "id": 2556962004,
+        "latest_version": "1.22.0",
+        "owner": "tematres",
+        "registered": "2026-10-15T13:48:47Z",
+        "repo": "suggest",
+        "type": "s_module",
+        "versions": {
+            "1": {
+                "addon_id": 2556962004,
+                "asset_id": 2290119466,
+                "asset_name": "1.zip",
+                "created": "2026-10-15T13:51:09Z",
+                "download_url": "https://github.com/tematres/suggest/archive/refs/tags/1.zip",
+                "downloads": 0,
+                "id": 2981379261,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "1",
+                "version": "1"
+            },
+            "1.22.0": {
+                "addon_id": 2556962004,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 2246253733,
+                "omeka_version_constraint": "^4.2.0",
+                "tag_name": "1.22.0",
+                "version": "1.22.0"
+            }
+        }
+    },
     "Thesauri": {
         "dirname": "Thesauri",
         "id": 3837425949,
@@ -46912,7 +49769,7 @@
     "Thesaurus": {
         "dirname": "Thesaurus",
         "id": 2604039402,
-        "latest_version": "3.4.26",
+        "latest_version": "3.4.27",
         "owner": "Daniel-KM",
         "registered": "2019-12-30T16:07:33Z",
         "repo": "Omeka-S-module-Thesaurus",
@@ -47301,6 +50158,18 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.26",
                 "version": "3.4.26"
+            },
+            "3.4.27": {
+                "addon_id": 2604039402,
+                "asset_id": 1182618263,
+                "asset_name": "Thesaurus-3.4.27.zip",
+                "created": "2026-10-19T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-Thesaurus/releases/download/3.4.27/Thesaurus-3.4.27.zip",
+                "downloads": 0,
+                "id": 2296245517,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.27",
+                "version": "3.4.27"
             }
         }
     },
@@ -47338,10 +50207,10 @@
         "versions": {
             "0.0.0": {
                 "addon_id": 3553593173,
-                "asset_id": 3214661260,
-                "asset_name": "ThreeDViewer-1.0.7.zip",
+                "asset_id": 3739110036,
+                "asset_name": "ThreeDViewer-1.0.8.zip",
                 "created": "",
-                "download_url": "https://github.com/ateeducacion/omeka-s-ThreeDViewer/releases/download/1.0.7/ThreeDViewer-1.0.7.zip",
+                "download_url": "https://github.com/ateeducacion/omeka-s-ThreeDViewer/releases/download/1.0.8/ThreeDViewer-1.0.8.zip",
                 "downloads": 0,
                 "id": 3115598731,
                 "omeka_version_constraint": "^3.0.0 || ^4.0.0",
@@ -47461,7 +50330,7 @@
     "Tify": {
         "dirname": "Tify",
         "id": 3476608869,
-        "latest_version": "1.0",
+        "latest_version": "1.1",
         "owner": "indic-archive",
         "registered": "2024-12-09T05:29:27Z",
         "repo": "omeka-s-tify",
@@ -47478,6 +50347,18 @@
                 "omeka_version_constraint": "^4.0.0",
                 "tag_name": "1.0",
                 "version": "1.0"
+            },
+            "1.1": {
+                "addon_id": 3476608869,
+                "asset_id": 0,
+                "asset_name": "",
+                "created": "",
+                "download_url": "",
+                "downloads": 0,
+                "id": 3344037703,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "1.1",
+                "version": "1.1"
             }
         }
     },
@@ -47519,7 +50400,7 @@
     "Timeline": {
         "dirname": "Timeline",
         "id": 3244908989,
-        "latest_version": "3.4.30",
+        "latest_version": "3.4.31",
         "owner": "Daniel-KM",
         "registered": "2017-04-19T05:47:33Z",
         "repo": "Omeka-S-module-Timeline",
@@ -47848,6 +50729,18 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.30",
                 "version": "3.4.30"
+            },
+            "3.4.31": {
+                "addon_id": 3244908989,
+                "asset_id": 3653243843,
+                "asset_name": "Timeline-3.4.31.zip",
+                "created": "2026-10-05T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-S-module-Timeline/releases/download/3.4.31/Timeline-3.4.31.zip",
+                "downloads": 25,
+                "id": 2206706168,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.31",
+                "version": "3.4.31"
             }
         }
     },
@@ -50388,6 +53281,77 @@
             }
         }
     },
+    "Vocab Sync": {
+        "dirname": "VocabSync",
+        "id": 1225937069,
+        "latest_version": "1.38.3",
+        "owner": "phumraphee",
+        "registered": "2026-10-19T16:22:54Z",
+        "repo": "VocabSync",
+        "type": "s_module",
+        "versions": {
+            "1.37.0": {
+                "addon_id": 1225937069,
+                "asset_id": 2108936703,
+                "asset_name": "VocabSync.zip",
+                "created": "2026-10-19T16:16:51Z",
+                "download_url": "https://github.com/phumraphee/VocabSync/releases/download/v1.37.0/VocabSync.zip",
+                "downloads": 0,
+                "id": 1937540882,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.37.0",
+                "version": "1.37.0"
+            },
+            "1.38.0": {
+                "addon_id": 1225937069,
+                "asset_id": 3824994738,
+                "asset_name": "VocabSync-1.38.0.zip",
+                "created": "2026-10-20T04:46:27Z",
+                "download_url": "https://github.com/phumraphee/VocabSync/releases/download/v1.38.0/VocabSync-1.38.0.zip",
+                "downloads": 0,
+                "id": 2015412271,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.38.0",
+                "version": "1.38.0"
+            },
+            "1.38.1": {
+                "addon_id": 1225937069,
+                "asset_id": 3384050882,
+                "asset_name": "VocabSync-1.38.1.zip",
+                "created": "2026-10-20T10:03:46Z",
+                "download_url": "https://github.com/phumraphee/VocabSync/releases/download/v1.38.1/VocabSync-1.38.1.zip",
+                "downloads": 1,
+                "id": 254275769,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.38.1",
+                "version": "1.38.1"
+            },
+            "1.38.2": {
+                "addon_id": 1225937069,
+                "asset_id": 3077329746,
+                "asset_name": "VocabSync-1.38.2.zip",
+                "created": "2026-10-20T19:08:09Z",
+                "download_url": "https://github.com/phumraphee/VocabSync/releases/download/v1.38.2/VocabSync-1.38.2.zip",
+                "downloads": 1,
+                "id": 2519638275,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.38.2",
+                "version": "1.38.2"
+            },
+            "1.38.3": {
+                "addon_id": 1225937069,
+                "asset_id": 2636389922,
+                "asset_name": "VocabSync-1.38.3.zip",
+                "created": "2026-10-21T06:54:03Z",
+                "download_url": "https://github.com/phumraphee/VocabSync/releases/download/v1.38.3/VocabSync-1.38.3.zip",
+                "downloads": 1,
+                "id": 3777597845,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v1.38.3",
+                "version": "1.38.3"
+            }
+        }
+    },
     "Vocabulary Addon": {
         "dirname": "VocabularyAddon",
         "id": 2387562257,
@@ -50527,10 +53491,10 @@
         "versions": {
             "0.0.0": {
                 "addon_id": 3352961619,
-                "asset_id": 2482984644,
-                "asset_name": "WebMCP-1.0.2.zip",
+                "asset_id": 1104005525,
+                "asset_name": "WebMCP-1.0.3.zip",
                 "created": "",
-                "download_url": "https://github.com/ateeducacion/omeka-s-WebMCP/releases/download/1.0.2/WebMCP-1.0.2.zip",
+                "download_url": "https://github.com/ateeducacion/omeka-s-WebMCP/releases/download/1.0.3/WebMCP-1.0.3.zip",
                 "downloads": 0,
                 "id": 3533773958,
                 "omeka_version_constraint": "^4.0.0",
@@ -50991,7 +53955,7 @@
     "Zip Download": {
         "dirname": "ZipDownload",
         "id": 1383844721,
-        "latest_version": "3.4.7",
+        "latest_version": "3.4.8",
         "owner": "Daniel-KM",
         "registered": "2026-01-28T08:21:12.629Z",
         "repo": "Omeka-S-module-ZipDownload",
@@ -51080,6 +54044,18 @@
                 "omeka_version_constraint": "^4.1.0",
                 "tag_name": "3.4.7",
                 "version": "3.4.7"
+            },
+            "3.4.8": {
+                "addon_id": 1383844721,
+                "asset_id": 139738695,
+                "asset_name": "ZipDownload-3.4.8.zip",
+                "created": "2026-10-19T00:00:00Z",
+                "download_url": "https://gitlab.com/api/v4/projects/Daniel-KM%2FOmeka-S-module-ZipDownload/packages/generic/ZipDownload/3.4.8/ZipDownload-3.4.8.zip",
+                "downloads": 1,
+                "id": 4276398376,
+                "omeka_version_constraint": "^4.1.0",
+                "tag_name": "3.4.8",
+                "version": "3.4.8"
             }
         }
     },
@@ -51511,7 +54487,7 @@
                 "asset_name": "jQueryUI-1.12.1.zip",
                 "created": "2017-11-09T12:48:46Z",
                 "download_url": "https://github.com/biblibre/omeka-s-module-jQueryUI/releases/download/v1.12.1/jQueryUI-1.12.1.zip",
-                "downloads": 1658,
+                "downloads": 1674,
                 "id": 1222877488,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.12.1",
