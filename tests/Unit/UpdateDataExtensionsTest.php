@@ -547,4 +547,33 @@ class UpdateDataExtensionsTest extends TestCase
         $this->assertTrue($result);
         $this->assertFileExists($this->dataDir . '/test_modules.csv');
     }
+
+    public function testIsUrlForVersion(): void
+    {
+        $github = 'https://github.com/o/r/releases/download/v3.4.15/Shortcode-3.4.15.zip';
+        $gitlab = 'https://gitlab.com/api/v4/projects/o%2Fr/packages/generic/Shortcode/3.4.16/Shortcode-3.4.16.zip';
+        $archive = 'https://gitlab.com/o/r/-/archive/3.4.12/r-3.4.12.zip';
+        $this->assertTrue(UpdateDataExtensions::isUrlForVersion($github, '3.4.15'));
+        $this->assertTrue(UpdateDataExtensions::isUrlForVersion($github, 'v3.4.15'));
+        $this->assertTrue(UpdateDataExtensions::isUrlForVersion($gitlab, '3.4.16'));
+        $this->assertFalse(UpdateDataExtensions::isUrlForVersion($archive, '3.4.15'));
+        $this->assertFalse(UpdateDataExtensions::isUrlForVersion($archive, '3.4.1'));
+        $this->assertFalse(UpdateDataExtensions::isUrlForVersion($archive, '3.4'));
+        $this->assertFalse(UpdateDataExtensions::isUrlForVersion($archive, ''));
+        $this->assertFalse(UpdateDataExtensions::isUrlForVersion('', '3.4.12'));
+    }
+
+    public function testDefaultBranchArchiveUrl(): void
+    {
+        $this->assertSame(
+            'https://github.com/o/Repo/archive/HEAD.zip',
+            UpdateDataExtensions::defaultBranchArchiveUrl('https://github.com/o/Repo', 'Repo')
+        );
+        $this->assertSame(
+            'https://gitlab.com/o/Repo/-/archive/HEAD/Repo-HEAD.zip',
+            UpdateDataExtensions::defaultBranchArchiveUrl('https://gitlab.com/o/Repo/', 'Repo')
+        );
+        $this->assertSame('', UpdateDataExtensions::defaultBranchArchiveUrl('https://example.org/o/Repo', 'Repo'));
+        $this->assertSame('', UpdateDataExtensions::defaultBranchArchiveUrl('https://github.com/o/Repo', ''));
+    }
 }

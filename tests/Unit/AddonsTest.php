@@ -243,6 +243,18 @@ class AddonsTest extends TestCase
         $this->assertSame('1.0.0', $picked['version']);
     }
 
+    public function testPickCompatibleVersionPrefersReleasedZip(): void
+    {
+        $addon = ['versions' => [
+            '2.0.0' => ['version' => '2.0.0', 'omeka_version_constraint' => '^4.0.0', 'download_url' => ''],
+            '1.0.0' => ['version' => '1.0.0', 'omeka_version_constraint' => '^4.0.0', 'download_url' => 'a'],
+        ]];
+        $this->assertSame('1.0.0', $this->invokePick($addon)['version']);
+
+        $addon['versions']['1.0.0']['download_url'] = '';
+        $this->assertSame('2.0.0', $this->invokePick($addon)['version']);
+    }
+
     // =========================================================================
     // = FallbackArchiveUrl Tests (via reflection)
     // =========================================================================
@@ -254,8 +266,11 @@ class AddonsTest extends TestCase
         $method = $reflection->getMethod('fallbackArchiveUrl');
         $method->setAccessible(true);
 
-        $github = $method->invoke($this->addons, 'github.com', 'https://github.com/u/Repo', 'Repo', 'master');
-        $this->assertSame('https://github.com/u/Repo/archive/refs/heads/master.zip', $github);
+        $github = $method->invoke($this->addons, 'github.com', 'https://github.com/u/Repo', 'Repo');
+        $this->assertSame('https://github.com/u/Repo/archive/HEAD.zip', $github);
+
+        $tag = $method->invoke($this->addons, 'github.com', 'https://github.com/u/Repo', 'Repo', '1.0.0');
+        $this->assertSame('https://github.com/u/Repo/archive/1.0.0.zip', $tag);
 
         $gitlab = $method->invoke($this->addons, 'gitlab.com', 'https://gitlab.com/u/Repo', 'Repo', 'main');
         $this->assertSame('https://gitlab.com/u/Repo/-/archive/main/Repo-main.zip', $gitlab);
