@@ -862,10 +862,13 @@ class UpdateDataExtensions
 
             if ($version !== '') {
                 $existingV = $versions[$version] ?? [];
+                $existingUrl = $existingV['download_url'] ?? '';
                 $merged = $buildVersion([
                     'tag_name' => $existingV['tag_name'] ?? $version,
                     'version' => $version,
-                    'download_url' => $downloadUrl !== '' ? $downloadUrl : ($existingV['download_url'] ?? ''),
+                    'download_url' => $existingUrl === '' && self::isUrlForVersion($downloadUrl, $version)
+                        ? $downloadUrl
+                        : $existingUrl,
                     'created' => $existingV['created'] ?? '',
                     'downloads' => $existingV['downloads'] ?? 0,
                     'omeka_version_constraint' => $constraint,
@@ -4006,6 +4009,19 @@ GRAPHQL;
     protected static function cacheJitter(string $url, int $maxDays): int
     {
         return (crc32($url) % ($maxDays + 1)) * 86400;
+    }
+
+    /**
+     * Check if a download url is the one of the specified version.
+     *
+     * The last released zip may be older than the version of the ini file, or
+     * may be a source archive of another tag.
+     */
+    public static function isUrlForVersion(string $url, string $version): bool
+    {
+        $path = rawurldecode((string) parse_url($url, PHP_URL_PATH));
+        return $version !== ''
+            && (bool) preg_match('~(?<![\d.])' . preg_quote(ltrim($version, 'vV'), '~') . '(?!\.?\d)~', $path);
     }
 
     /**

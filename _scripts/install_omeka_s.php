@@ -753,8 +753,8 @@ class Addons
             $url = 'https://' . $host . '/' . $data['owner'] . '/' . $data['repo'];
             // Fallback when no download_url: use a host-specific archive url.
             // The url with the default branch may not include dependencies.
-            $zip = $data['versions'][$version]['download_url']
-                ?? $this->fallbackArchiveUrl($host, $url, $data['repo'], $version);
+            $zip = ($data['versions'][$version]['download_url'] ?? '')
+                ?: $this->fallbackArchiveUrl($host, $url, $data['repo'], $version);
 
             // Build a sorted list of versions with their omeka compatibility
             // constraint (descending, latest first).
@@ -791,6 +791,9 @@ class Addons
      * Pick the latest version compatible with the current Omeka S. Returns null
      * if no version is compatible, or if the addon has no versions metadata.
      *
+     * A version with a released zip is preferred: a version without zip may be
+     * an unreleased one, read from the ini file of the repository.
+     *
      * @param array $addon
      */
     protected function pickCompatibleVersion(array $addon): ?array
@@ -799,15 +802,20 @@ class Addons
             return null;
         }
         $omekaVersion = Utils::OMEKA_VERSION;
+        $first = null;
         foreach ($addon['versions'] as $v => $vData) {
             $constraint = (string) ($vData['omeka_version_constraint'] ?? '');
             if ($constraint === ''
                 || $this->satisfiesConstraint($omekaVersion, $constraint)
             ) {
-                return ['version' => $v] + $vData;
+                $compatible = ['version' => $v] + $vData;
+                if (!empty($vData['download_url'])) {
+                    return $compatible;
+                }
+                $first ??= $compatible;
             }
         }
-        return null;
+        return $first;
     }
 
     /**
