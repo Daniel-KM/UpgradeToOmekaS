@@ -3987,6 +3987,17 @@ GRAPHQL;
     }
 
     /**
+     * Get a stable delay per url to spread the expiration of cached entries.
+     *
+     * Entries checked during the same run would expire on the same day and
+     * would be re-checked all together, making some runs much longer.
+     */
+    protected static function cacheJitter(string $url, int $maxDays): int
+    {
+        return (crc32($url) % ($maxDays + 1)) * 86400;
+    }
+
+    /**
      * Encode a GitLab namespace or project path for the api.
      *
      * The dot is encoded too: else GitLab takes the part after it as a format
@@ -4260,10 +4271,10 @@ GRAPHQL;
             // Determine re-check interval based on age.
             if ($firstTs >= $threeMonthsAgo) {
                 // Known invalid for less than 3 months: re-check monthly.
-                $isExpired = $lastTs < $oneMonthAgo;
+                $isExpired = $lastTs < $oneMonthAgo - self::cacheJitter($url, 10);
             } else {
                 // Known invalid for 3 months or more: re-check yearly.
-                $isExpired = $lastTs < $oneYearAgo;
+                $isExpired = $lastTs < $oneYearAgo - self::cacheJitter($url, 30);
             }
 
             if ($isExpired) {
@@ -4442,7 +4453,7 @@ GRAPHQL;
             }
 
             $lastTs = strtotime($lastCheck);
-            if ($lastTs < $threeMonthsAgo) {
+            if ($lastTs < $threeMonthsAgo - self::cacheJitter($url, 30)) {
                 ++$expired;
                 continue;
             }
