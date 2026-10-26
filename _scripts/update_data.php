@@ -375,6 +375,11 @@ exit($result ? 0 : 'An error occurred.');
 
 class UpdateDataExtensions
 {
+    /**
+     * Repositories per GraphQL request: 50 is twice faster than 10; 100 fails.
+     */
+    const GRAPHQL_BATCH_SIZE = 50;
+
     protected $type = '';
     protected $args = [];
     protected $options = [];
@@ -1418,7 +1423,7 @@ class UpdateDataExtensions
         }
 
         // Prefetch API data in batches of 10 for faster processing
-        $batchSize = 10;
+        $batchSize = self::GRAPHQL_BATCH_SIZE;
         $urlBatches = array_chunk($addonUrlsToProcess, $batchSize, true);
         $totalBatches = count($urlBatches);
         $this->log(sprintf('[Update] Prefetching data in %d batches of %d...', $totalBatches, $batchSize));
@@ -3263,7 +3268,7 @@ class UpdateDataExtensions
             return;
         }
 
-        $batchSize = 10;
+        $batchSize = self::GRAPHQL_BATCH_SIZE;
         $chunks = array_chunk($repos, $batchSize);
         $totalFetched = 0;
 
