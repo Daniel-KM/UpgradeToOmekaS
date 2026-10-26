@@ -1,12 +1,13 @@
 3DMAV	0.4.9
 ATOVisualisation	1.0
-Access	3.4.48
+Access	3.4.49
 ActiveSessions	0.3.0
 ActivityLog	1.0.1
 AdminAddon	0.8.7
-Adminer	3.4.18-p6.1.2
+Adminer	3.4.18-p6.2.0
 AdminLoginStyles	2.0.0
 AdminPlus	3.0.3
+AdvancedMedia	1.0.0
 AdvancedResourceTemplate	3.4.56
 AdvancedSearch	3.4.66
 SearchSolr	3.5.75
@@ -23,8 +24,8 @@ AltText	1.3.0
 AmazonS3	3.4.5
 AmazonS3Storage	1.0.0
 Analytics	3.4.15
-AnalyticsSnippet	3.4.6
-AnalyticsSnippetPiwik	3.4.9
+AnalyticsSnippet	3.4.7
+AnalyticsSnippetPiwik	3.4.10
 Annotate	3.4.13
 Cartography	3.4.4
 AnnotationProfiles	0.1.0
@@ -47,7 +48,7 @@ Banner	1.0
 BannerImage	1.0
 Base	0.1.0
 Basket	3.2.4
-BatchValues	1.0.2
+BatchValues	1.1.0
 Bibliography	999.3.4.12
 BiblionumberSupport	1.0.0
 BienEtreBot	1.0.0
@@ -90,6 +91,7 @@ ContactUs	3.4.33
 ContentReader	1.0.0
 Contribute	3.4.40
 ContributeEnhancements	1.3.4
+Cookiechimp	1.0.0
 CopIdRef	3.4.14
 CopyResources	1.0.2
 Correction	3.0.11
@@ -130,9 +132,9 @@ DocArchive	2.1.0
 DomainManager	2.0.0
 RrchnmDonate	1.0.1
 DRELinkedData	0.5.0
-DRESearch	1.31.0
-DRESEO	0.15.0
-DREVisualizations	2.42.0
+DRESearch	1.32.2
+DRESEO	0.16.0
+DREVisualizations	2.45.0
 DspaceConnector	1.7.1
 DynamicItemSets	3.4.7
 Ead	3.0.4
@@ -165,7 +167,7 @@ FacetedSearch	0.1.0
 Fasti	0.1.0
 Favorite	0.0.1
 FedoraConnector	1.7.1
-Feed	3.4.9
+Feed	3.4.10
 FieldAsTags	1.1.0
 FileGate	0.1.0
 FileSideload	1.7.1
@@ -195,7 +197,7 @@ Group	3.4.8
 GroupEdit	1.0
 Guest	3.4.45
 GuestApi	3.4.5
-GuestPrivate	3.4.8
+GuestPrivate	3.4.9
 GuestRole	0.3.1
 GuestUser	0.1
 Generateur	4.0.2
@@ -253,10 +255,10 @@ ItemSetSelections	0.2.0
 ItemSetsGraph	1.1
 ItemSetsTree	0.8.0
 TotalPages	0.1.0
-IwacSearch	3.25.0
+IwacSearch	3.26.2
 IwacSentiment	1.3.0
-IWACSEO	1.2.1
-IwacVisualizations	1.84.0
+IWACSEO	1.4.1
+IwacVisualizations	1.90.0
 JDC	0.0.11
 JobAddon	1.0.2
 jQueryParallax	1.0
@@ -278,11 +280,11 @@ LiteralTranslator	1.0.0
 LocalContexts	1.1.1
 LocaleSwitch	0.3.0
 LocalMediaIngester	0.3.0
-Locate	3.4.1
+Locate	3.4.2
 LockEdit	3.4.2
 Lockout	3.4.7
 Log	3.4.42
-LogSentry	3.4.2
+LogSentry	3.4.3
 Mailing	1.0.0
 MailTrap	0.1.1
 Maintenance	3.3.3.2
@@ -295,6 +297,7 @@ Markdown	1.0.0
 Mason	0.1.1
 Matomo	0.2.0
 MatomoGroup	0.1.0
+McpServer	1.0.0
 MediaArchive	2.1.0
 MediaOrderFixer	0.1.1
 MediaText	0.2.2
@@ -334,7 +337,7 @@ OaiPmhUnimarc	1.0.0
 MediaViewer	0.10.4
 OERManager	0.0.0
 OhmsEmbed	1.0.1
-Oidc	1.0.15
+Oidc	1.0.16
 OIDC	1.1.0
 ClassicImporter	0.1.0
 2Importer	1.5.1
@@ -394,7 +397,7 @@ ResourceTotals	0.1.2
 ResourceTree	2.1.0
 RestrictedSites	2.3
 ResumeCours	1.0.0
-RevisionHistory	1.0.5
+RevisionHistory	1.0.6
 RightsStatements	1.2.1
 Robots	1.0.1
 RoleBasedNavigation	1.2
@@ -450,6 +453,7 @@ SpecialCharacterSearch	2.1.0
 SplitFiles	0.1.0-alpha
 SruSrwMaker	2.1.0
 StaticSiteExport	1.2.0
+StaticSitemaps	1.0.0
 Statistics	3.4.14
 STest	1.0.0
 AgileStorymap	3.4.4
@@ -481,7 +485,7 @@ UnityAPI
 UniversalViewer	3.6.16-p4.4.4
 UpgradeFromOmekaClassic	3.1.3
 UriDereferencer	1.4.3
-Urify	3.4.3
+Urify	3.4.4
 UserNames	1.2
 UserProfile	3.4.12
 ValueSuggest	1.21.0
@@ -507,7 +511,7 @@ Wikidata	1.6.0
 XmlEmbed	1.0.0
 XmlViewer	3.4.12
 ZenodoExporter	1.0.0
-Zip	3.4.5
+Zip	3.4.6
 ZipDownload	3.4.8
 ZipImport	1.0.0
 FiskRosenwaldZipToBulkImport	0.0.1
@@ -516,3 +520,4 @@ ZoteroImport	1.3.0
 ZoteroImportplus	3.0.1
 ZYXFixer	0.16.2
 Like	3.4.5
+ArkAndNoid	
