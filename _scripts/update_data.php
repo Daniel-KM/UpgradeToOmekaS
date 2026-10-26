@@ -2318,52 +2318,48 @@ class UpdateDataExtensions
     {
         switch ($this->type) {
             case 'plugin':
-                $source = 'https://omeka.org/add-ons/plugins/';
+                $source = 'https://omeka.org/classic/plugins/';
                 break;
             case 'theme':
-                $source = 'https://omeka.org/add-ons/themes/';
+                $source = 'https://omeka.org/classic/themes/';
                 break;
             default:
                 return [];
         }
 
-        $addons = [];
-
         $html = file_get_contents($source);
         if (empty($html)) {
+            $this->log(sprintf('[Update] Unable to fetch %s.', $source));
             return [];
         }
 
         libxml_use_internal_errors(true);
-        $pokemon_doc = new DOMDocument();
-        $pokemon_doc->loadHTML($html);
-        $pokemon_xpath = new DOMXPath($pokemon_doc);
-        $pokemon_row = $pokemon_xpath->query('//a[@class="omeka-addons-button"]/@href');
-        if ($pokemon_row->length > 0) {
-            $matches = [];
-            foreach ($pokemon_row as $row) {
-                $url = $row->nodeValue;
-                $filename = basename(parse_url($url, PHP_URL_PATH));
-                // Some addons have "-" in name; some have letters in version.
-                preg_match('~([^\d]+)\-(\d.*)\.zip~', $filename, $matches);
-                // Manage for example "Select2".
-                if (empty($matches)) {
-                    preg_match('~(.*?)\-(\d.*)\.zip~', $filename, $matches);
-                }
-                $addonName = $matches[1];
-                // Manage a bug.
-                if ($addonName == '-Media') {
-                    $addonName = 'HTML5 Media';
-                }
-                if ($addonName == 'Sitemap') {
-                    $addonName = 'Sitemap 2';
-                }
-                $cleanName = $this->cleanAddonName($addonName);
-                $addons[$cleanName] = [];
-                $addons[$cleanName]['name'] = $addonName;
-                $addons[$cleanName]['url'] = $url;
-                $addons[$cleanName]['version'] = $matches[2];
+        $doc = new DOMDocument();
+        $doc->loadHTML($html);
+        $xpath = new DOMXPath($doc);
+
+        $addons = [];
+        $entries = $xpath->query('//div[contains(concat(" ", normalize-space(@class), " "), " addon-entry ")]');
+        foreach ($entries as $entry) {
+            $addonName = trim($xpath->evaluate('string(.//div[@class="addon-meta"]/h4)', $entry));
+            if ($addonName === '') {
+                continue;
             }
+            $version = trim(preg_replace(
+                '~^.*?:\s*~',
+                '',
+                $xpath->evaluate('string(.//div[@class="download"]/span[@class="version"])', $entry)
+            ));
+            $cleanName = $this->cleanAddonName($addonName);
+            $addons[$cleanName] = [
+                'name' => $addonName,
+                'url' => trim($xpath->evaluate('string(.//div[@class="download"]/a/@href)', $entry)),
+                'version' => $version,
+            ];
+        }
+
+        if (!$addons) {
+            $this->log(sprintf('[Update] No addon found on %s: check the page format.', $source));
         }
 
         return $addons;
@@ -3219,23 +3215,28 @@ class UpdateDataExtensions
         $totalDownloads = 0;
         $lastReleasedZip = '';
         foreach ($releases as $i => $release) {
-            $version = $release->tagName;
-            foreach ($release->releaseAssets->nodes ?? [] as $asset) {
+            // GraphQL may return null nodes on partial errors.
+            if (!$release) {
+                continue;
+            }
+            $version = (string) ($release->tagName ?? '');
+            $assets = array_values(array_filter($release->releaseAssets->nodes ?? []));
+            foreach ($assets as $asset) {
                 if (preg_match(
                     '~' . preg_quote($namespace, '~')
                     . '[ ._-]?(?:(?:' . preg_quote($version, '~') . ')?|(?:'
                     . preg_quote($version, '~') . ')?[ ._-]?php[\d ._-]?)\.zip$~',
-                    $asset->name
+                    (string) ($asset->name ?? '')
                 )) {
-                    $totalDownloads += $asset->downloadCount;
+                    $totalDownloads += (int) ($asset->downloadCount ?? 0);
                     if ($i === 0 && empty($lastReleasedZip)) {
                         $lastReleasedZip = $asset->downloadUrl;
                     }
                 }
             }
             // Fallback: use first asset of latest release if no name match.
-            if ($i === 0 && empty($lastReleasedZip) && !empty($release->releaseAssets->nodes)) {
-                $lastReleasedZip = $release->releaseAssets->nodes[0]->downloadUrl;
+            if ($i === 0 && empty($lastReleasedZip) && $assets) {
+                $lastReleasedZip = (string) ($assets[0]->downloadUrl ?? '');
             }
         }
         $result['Total downloads'] = $totalDownloads;
