@@ -827,7 +827,8 @@ class UpdateDataExtensions
             }
 
             $isIncomplete = function (array $v): bool {
-                return empty($v['download_url']) || empty($v['omeka_version_constraint']);
+                return empty($v['omeka_version_constraint'])
+                    || !self::isUrlForVersion((string) ($v['download_url'] ?? ''), (string) ($v['version'] ?? ''));
             };
             $hasIncomplete = false;
             foreach ($versions as $v) {
@@ -863,12 +864,27 @@ class UpdateDataExtensions
             if ($version !== '') {
                 $existingV = $versions[$version] ?? [];
                 $existingUrl = $existingV['download_url'] ?? '';
+                // Without zip for the version, use the last released zip when it
+                // has the same constraint, else the archive of the default
+                // branch, required by old installers.
+                $versionUrl = self::isUrlForVersion($existingUrl, $version)
+                    ? $existingUrl
+                    : (self::isUrlForVersion($downloadUrl, $version) ? $downloadUrl : '');
+                if ($versionUrl === '' && $downloadUrl !== '') {
+                    foreach ($versions as $k => $v) {
+                        if ((string) $k !== $version
+                            && ($v['download_url'] ?? '') === $downloadUrl
+                            && ($v['omeka_version_constraint'] ?? '') === $constraint
+                        ) {
+                            $versionUrl = $downloadUrl;
+                            break;
+                        }
+                    }
+                }
                 $merged = $buildVersion([
                     'tag_name' => $existingV['tag_name'] ?? $version,
                     'version' => $version,
-                    'download_url' => $existingUrl === '' && self::isUrlForVersion($downloadUrl, $version)
-                        ? $downloadUrl
-                        : $existingUrl,
+                    'download_url' => $versionUrl ?: self::defaultBranchArchiveUrl($url, $repo),
                     'created' => $existingV['created'] ?? '',
                     'downloads' => $existingV['downloads'] ?? 0,
                     'omeka_version_constraint' => $constraint,
@@ -4022,6 +4038,23 @@ GRAPHQL;
         $path = rawurldecode((string) parse_url($url, PHP_URL_PATH));
         return $version !== ''
             && (bool) preg_match('~(?<![\d.])' . preg_quote(ltrim($version, 'vV'), '~') . '(?!\.?\d)~', $path);
+    }
+
+    /**
+     * Get the archive url of the default branch of a GitHub or GitLab repo.
+     */
+    public static function defaultBranchArchiveUrl(string $url, string $repo): string
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        $url = rtrim($url, '/');
+        if ($repo === '') {
+            return '';
+        } elseif ($host === 'github.com') {
+            return $url . '/archive/HEAD.zip';
+        } elseif ($host === 'gitlab.com') {
+            return $url . '/-/archive/HEAD/' . $repo . '-HEAD.zip';
+        }
+        return '';
     }
 
     /**

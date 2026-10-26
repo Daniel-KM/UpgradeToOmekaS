@@ -751,10 +751,10 @@ class Addons
             $version = $data['latest_version'];
             $host = $data['host'] ?? 'github.com';
             $url = 'https://' . $host . '/' . $data['owner'] . '/' . $data['repo'];
-            // Fallback when no download_url: use a host-specific archive url.
-            // The url with the default branch may not include dependencies.
-            $zip = ($data['versions'][$version]['download_url'] ?? '')
-                ?: $this->fallbackArchiveUrl($host, $url, $data['repo'], $version);
+            // Fallback when no download_url: use the archive of the default
+            // branch, that may not include dependencies.
+            $archive = $this->fallbackArchiveUrl($host, $url, $data['repo']);
+            $zip = ($data['versions'][$version]['download_url'] ?? '') ?: $archive;
 
             // Build a sorted list of versions with their omeka compatibility
             // constraint (descending, latest first).
@@ -779,6 +779,7 @@ class Addons
             $addon['versions'] = $versions;
             $addon['url'] = $url;
             $addon['zip'] = $zip;
+            $addon['archive'] = $archive;
             $addon['dependencies'] = [];
 
             $list[$url] = $addon;
@@ -885,21 +886,15 @@ class Addons
      * @param string $host
      * @param string $url
      * @param string $repo
-     * @param string $version
+     * @param string $ref Branch or tag, the default branch when HEAD.
      */
-    protected function fallbackArchiveUrl(string $host, string $url, string $repo, string $version = 'master'): string
+    protected function fallbackArchiveUrl(string $host, string $url, string $repo, string $ref = 'HEAD'): string
     {
-        $branch = $version ?: 'master';
-        switch (strtolower($host)) {
-            case 'github.com':
-                return $url . '/archive/refs/heads/' . $branch . '.zip';
-            case 'gitlab.com':
-            default:
-                if (strpos($host, 'gitlab') !== false) {
-                    return $url . '/-/archive/' . $branch . '/' . $repo . '-' . $branch . '.zip';
-                }
-                return $url . '/archive/' . $branch . '.zip';
+        $ref = $ref ?: 'HEAD';
+        if (strpos(strtolower($host), 'gitlab') !== false) {
+            return $url . '/-/archive/' . $ref . '/' . $repo . '-' . $ref . '.zip';
         }
+        return $url . '/archive/' . $ref . '.zip';
     }
 
     /**
@@ -931,7 +926,7 @@ class Addons
         $compatible = $this->pickCompatibleVersion($addon);
         if ($compatible) {
             $addon['version'] = $compatible['version'];
-            $addon['zip'] = $compatible['download_url'] ?: $addon['zip'];
+            $addon['zip'] = $compatible['download_url'] ?: ($addon['archive'] ?? $addon['zip']);
         } elseif (!empty($addon['versions'])) {
             $this->utils->psrLog(
                 'Aucune version du {type} "{name}" n’est compatible avec cette version d’Omeka S.', // @translate
