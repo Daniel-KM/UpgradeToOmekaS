@@ -837,8 +837,16 @@ class UpdateDataExtensions
                 }
             }
 
+            // Re-fetch only when the repository changed since the last check:
+            // incomplete versions are often definitive (no release asset, no
+            // constraint for Omeka Classic) and the count of versions sums the
+            // releases of synced mirrors, so it may never be reached.
+            $lastUpdate = $get($row, 'Last update');
+            $releasesChecked = (string) ($existingEntry['releases_checked'] ?? '');
             $countVersions = (int) $get($row, 'Count versions');
-            if (count($versions) < $countVersions || $hasIncomplete) {
+            $isChanged = $lastUpdate === '' || $releasesChecked !== $lastUpdate;
+            if ($isChanged && (count($versions) < $countVersions || $hasIncomplete)) {
+                $releasesChecked = $lastUpdate;
                 foreach ($this->fetchAllReleases($fetchUrl) as $rel) {
                     $v = $rel['version'];
                     if ($v === '') {
@@ -872,6 +880,7 @@ class UpdateDataExtensions
                 'latest_version' => $version !== '' ? $version : ($existingEntry['latest_version'] ?? ''),
                 'owner' => $owner !== '' ? $owner : ($existingEntry['owner'] ?? ''),
                 'registered' => $registered !== '' ? $registered : ($existingEntry['registered'] ?? ''),
+                'releases_checked' => $releasesChecked,
                 'repo' => $repo !== '' ? $repo : ($existingEntry['repo'] ?? ''),
                 'type' => $jsonType,
                 'versions' => $versions,
