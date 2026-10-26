@@ -845,7 +845,8 @@ class UpdateDataExtensions
             $releasesChecked = (string) ($existingEntry['releases_checked'] ?? '');
             $countVersions = (int) $get($row, 'Count versions');
             $isChanged = $lastUpdate === '' || $releasesChecked !== $lastUpdate;
-            if ($isChanged && (count($versions) < $countVersions || $hasIncomplete)) {
+            $isFetched = $isChanged && (count($versions) < $countVersions || $hasIncomplete);
+            if ($isFetched) {
                 $releasesChecked = $lastUpdate;
                 foreach ($this->fetchAllReleases($fetchUrl) as $rel) {
                     $v = $rel['version'];
@@ -886,7 +887,8 @@ class UpdateDataExtensions
                 'versions' => $versions,
             ];
 
-            if (!($this->options['debug'] && !$this->options['debugOutput'])) {
+            // Save after each fetch only, to keep remote data on interruption.
+            if ($isFetched && !($this->options['debug'] && !$this->options['debugOutput'])) {
                 $sorted = $output;
                 ksort($sorted);
                 $this->saveToJsonFile($destination, $sorted);
