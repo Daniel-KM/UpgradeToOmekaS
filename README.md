@@ -87,6 +87,50 @@ for example _includes/header.html, just copy it under the same hierarchy in the
 current directory.
 
 
+Tests
+-----
+
+The tests require PHP 8.1+ and the dependencies installed with composer:
+
+```sh
+composer install
+```
+
+Run all the tests (suites Unit and Functional), or a single suite, or a filter:
+
+```sh
+composer test
+vendor/bin/phpunit --testsuite Unit
+vendor/bin/phpunit --testsuite Functional
+vendor/bin/phpunit --filter testPickCompatibleVersion
+```
+
+Some functional tests call the GitHub and GitLab apis, so they need a network
+access and may fail when the api limit is reached (HTTP 429).
+
+The coverage report is generated in the directory `coverage/` (requires Xdebug
+or PCOV):
+
+```sh
+composer test-coverage
+```
+
+An end-to-end test runs the full installer with a selection: it serves the
+script with `php -S`, installs Omeka S and the modules of the selection in a
+temporary directory and a temporary database, then removes them. The database
+is set with the environment variables `DB_HOST`, `DB_PORT`, `DB_USER` and
+`DB_PASSWORD`. The test is skipped when the database or the network is not
+available.
+
+```sh
+composer test-install
+DB_HOST=database DB_USER=root DB_PASSWORD=xxx php tests/full_install_test.php "Database for researcher"
+```
+
+Note that the installer and this test fetch the lists of addons published on the
+branch master on GitHub, not the local files.
+
+
 TODO
 ----
 
