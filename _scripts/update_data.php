@@ -380,6 +380,11 @@ class UpdateDataExtensions
      */
     const GRAPHQL_BATCH_SIZE = 50;
 
+    const STAT_FIELDS = [
+        'Stars', 'Forks', 'Watchers', 'Open issues', 'Total issues',
+        'Open PRs', 'Total PRs', 'Count versions', 'Count tags', 'Total downloads',
+    ];
+
     protected $type = '';
     protected $args = [];
     protected $options = [];
@@ -1574,6 +1579,14 @@ class UpdateDataExtensions
         $addonUrl = trim($addon[$headers['Url']], '/ ');
         $addonName = $addon[$headers['Name']] ?: basename($addonUrl);
 
+        // Clear the stats, that may include the stats of mirrors, so a stat
+        // that cannot be fetched is not summed again with the mirrors.
+        foreach (self::STAT_FIELDS as $field) {
+            if (isset($headers[$field])) {
+                $addon[$headers[$field]] = '';
+            }
+        }
+
         // Try GraphQL first (single request for all data), fall back to REST.
         $graphqlData = $this->fetchAddonGraphQL($addonUrl);
 
@@ -1631,7 +1644,7 @@ class UpdateDataExtensions
             }
 
             $value = $this->findData($addonUrl, 'count versions');
-            if ($value) {
+            if ($value !== '' && $value !== null) {
                 $addon[$headers['Count versions']] = $value;
             }
 
@@ -1641,7 +1654,7 @@ class UpdateDataExtensions
             }
 
             $value = $this->findData($addonUrl, 'total downloads');
-            if ($value) {
+            if ($value !== '' && $value !== null) {
                 $addon[$headers['Total downloads']] = $value;
             }
 
@@ -1694,6 +1707,13 @@ class UpdateDataExtensions
         }
         if (!empty($alternateUrls)) {
             $this->sumMirrorStats($addon, $alternateUrls);
+        }
+
+        // Keep the previous stats that were not fetched.
+        foreach (self::STAT_FIELDS as $field) {
+            if (isset($headers[$field]) && $addon[$headers[$field]] === '') {
+                $addon[$headers[$field]] = $currentAddon[$headers[$field]] ?? '';
+            }
         }
 
         if (empty($ini) && empty($addon[$headers['Ini path']])) {
@@ -2043,8 +2063,7 @@ class UpdateDataExtensions
             return $addons;
         }
 
-        $statFields = ['Stars', 'Forks', 'Watchers', 'Open issues', 'Total issues',
-            'Open PRs', 'Total PRs', 'Count versions', 'Count tags', 'Total downloads'];
+        $statFields = self::STAT_FIELDS;
 
         // Group by name.
         $byName = [];
@@ -2228,8 +2247,7 @@ class UpdateDataExtensions
     protected function sumMirrorStats(array &$addon, string $alternateUrls): void
     {
         $headers = $this->headers;
-        $statFields = ['Stars', 'Forks', 'Watchers', 'Open issues', 'Total issues',
-            'Open PRs', 'Total PRs', 'Count versions', 'Count tags', 'Total downloads'];
+        $statFields = self::STAT_FIELDS;
 
         foreach (explode(',', $alternateUrls) as $mirrorUrl) {
             $mirrorUrl = trim($mirrorUrl);
@@ -2267,9 +2285,11 @@ class UpdateDataExtensions
                 }
             }
 
-            // Sum stats into the addon row.
+            // Sum stats into the addon row, only when the stat of the main repo
+            // was fetched.
             foreach ($statFields as $field) {
                 if (!isset($headers[$field]) || !isset($mirrorStats[$field])) continue;
+                if (($addon[$headers[$field]] ?? '') === '') continue;
                 $current = (int) ($addon[$headers[$field]] ?? 0);
                 $mirror = (int) ($mirrorStats[$field] ?? 0);
                 if ($mirror > 0) {
