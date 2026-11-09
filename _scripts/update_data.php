@@ -434,6 +434,11 @@ class UpdateDataExtensions
 
     protected $headers;
     protected $omekaAddons;
+
+    /**
+     * @var int Last HTTP code of a raw file fetch.
+     */
+    protected $lastRawHttpCode = 0;
     protected $updatedAddons;
 
     /**
@@ -3882,7 +3887,8 @@ GRAPHQL;
         static $cache = [];
 
         if (isset($cache[$url])) {
-            return $cache[$url];
+            [$content, $this->lastRawHttpCode] = $cache[$url];
+            return $content;
         }
 
         $content = false;
@@ -3906,16 +3912,16 @@ GRAPHQL;
 
             $content = @file_get_contents($url, false, $context);
 
-            // Check HTTP response code from headers.
+            // Check the last HTTP response code, after redirects.
             $httpCode = 0;
             if (isset($http_response_header) && is_array($http_response_header)) {
                 foreach ($http_response_header as $header) {
-                    if (preg_match('/^HTTP\/\d+\.\d+\s+(\d+)/', $header, $matches)) {
+                    if (preg_match('/^HTTP\/[\d.]+\s+(\d+)/', $header, $matches)) {
                         $httpCode = (int) $matches[1];
-                        break;
                     }
                 }
             }
+            $this->lastRawHttpCode = $httpCode;
 
             // 404 (file doesn't exist) - discard error page body, don't retry.
             if ($httpCode === 404) {
@@ -3923,9 +3929,11 @@ GRAPHQL;
                 break;
             }
             // Success - don't retry.
-            if ($content !== false) {
+            if ($content !== false && $httpCode >= 200 && $httpCode < 300) {
                 break;
             }
+            // Error page (rate limit, server error), not the file.
+            $content = false;
 
             // Network error or server error - retry with backoff.
             if ($attempt < $maxRetries) {
@@ -3944,8 +3952,10 @@ GRAPHQL;
             }
         }
 
-        // Cache both successful and failed fetches to avoid retrying.
-        $cache[$url] = $content;
+        // Cache successful and missing files only: other errors are temporary.
+        if ($content !== false || $this->lastRawHttpCode === 404) {
+            $cache[$url] = [$content, $this->lastRawHttpCode];
+        }
 
         return $content;
     }
@@ -4010,10 +4020,15 @@ GRAPHQL;
         $addonIni = $addonIniBase . '/' . $addonIni;
         $ini = $this->fetchRawFile($addonIni);
         if (empty($ini)) {
+            $httpCodeMaster = $this->lastRawHttpCode;
             $addonIni = $iniPath ?: ('main/' . $this->args['ini']);
             $addonIni = $addonIniBase . '/' . $addonIni;
             $ini = $this->fetchRawFile($addonIni);
             if (empty($ini)) {
+                if ($this->lastRawHttpCode !== 404 || $httpCodeMaster !== 404) {
+                    $this->log(sprintf('[Unavailable   ] %s (HTTP %d)', $addonUrl, $this->lastRawHttpCode));
+                    return '';
+                }
                 $this->log('[No config ini ]' . ' ' . $addonUrl);
                 if ($this->options['debug']) {
                     $this->log(' Addon ini: ' . $addonIni);
