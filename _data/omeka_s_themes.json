@@ -197,7 +197,7 @@
         "latest_version": "2.47.1",
         "owner": "AM-Digital-Research-Environment",
         "registered": "2026-05-29T05:43:43Z",
-        "releases_checked": "2026-10-29T14:40:46Z",
+        "releases_checked": "2026-11-02T06:17:32Z",
         "repo": "DRE-theme",
         "type": "s_theme",
         "versions": {
@@ -699,7 +699,7 @@
                 "asset_name": "DRE-theme.zip",
                 "created": "2026-10-29T14:40:41Z",
                 "download_url": "https://github.com/AM-Digital-Research-Environment/DRE-theme/releases/download/v2.47.1/DRE-theme.zip",
-                "downloads": 4,
+                "downloads": 12,
                 "id": 737537652,
                 "omeka_version_constraint": "",
                 "tag_name": "v2.47.1",
@@ -2884,7 +2884,7 @@
         "latest_version": "1.6.0",
         "owner": "dartmouth-dltg",
         "registered": "2021-09-09T15:26:35Z",
-        "releases_checked": "2026-10-07T15:23:46Z",
+        "releases_checked": "2026-11-03T20:36:30Z",
         "repo": "basic-dartmouth-theme",
         "type": "s_theme",
         "versions": {
@@ -3196,7 +3196,7 @@
         "latest_version": "3.2.1",
         "owner": "dartmouth-dltg",
         "registered": "2020-02-04T18:33:23Z",
-        "releases_checked": "2026-09-01T16:00:33Z",
+        "releases_checked": "2026-11-03T12:34:37Z",
         "repo": "historical-accountabiity",
         "type": "s_theme",
         "versions": {
@@ -4909,10 +4909,10 @@
     "IJA": {
         "dirname": "Ija",
         "id": 2650649890,
-        "latest_version": "2.0.0",
+        "latest_version": "2.1.0",
         "owner": "waynegraham",
         "registered": "2021-08-02T20:34:57Z",
-        "releases_checked": "2026-10-26T19:32:11Z",
+        "releases_checked": "2026-11-03T18:48:09Z",
         "repo": "ija-omeka-s",
         "type": "s_theme",
         "versions": {
@@ -4939,6 +4939,30 @@
                 "omeka_version_constraint": "",
                 "tag_name": "2.0.0",
                 "version": "2.0.0"
+            },
+            "2.0.1": {
+                "addon_id": 2650649890,
+                "asset_id": 3272356595,
+                "asset_name": "v2.0.1.zip",
+                "created": "2026-11-03T02:54:34Z",
+                "download_url": "https://github.com/waynegraham/ija-omeka-s/archive/refs/tags/v2.0.1.zip",
+                "downloads": 0,
+                "id": 2504328849,
+                "omeka_version_constraint": "^4.0.0",
+                "tag_name": "v2.0.1",
+                "version": "2.0.1"
+            },
+            "2.1.0": {
+                "addon_id": 2650649890,
+                "asset_id": 1478168823,
+                "asset_name": "v2.1.0.zip",
+                "created": "2026-11-03T18:45:25Z",
+                "download_url": "https://github.com/waynegraham/ija-omeka-s/archive/refs/tags/v2.1.0.zip",
+                "downloads": 0,
+                "id": 3816840240,
+                "omeka_version_constraint": "",
+                "tag_name": "v2.1.0",
+                "version": "2.1.0"
             }
         }
     },

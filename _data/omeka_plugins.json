@@ -4397,7 +4397,7 @@
         "latest_version": "2.2",
         "owner": "omeka",
         "registered": "2011-07-21T16:13:23Z",
-        "releases_checked": "2026-10-01T18:27:53Z",
+        "releases_checked": "2026-11-02T22:31:32Z",
         "repo": "plugin-CollectionTree",
         "type": "classic_plugin",
         "versions": {
@@ -4419,7 +4419,7 @@
                 "asset_name": "CollectionTree-2.2.zip",
                 "created": "2026-10-01T18:27:49Z",
                 "download_url": "https://github.com/omeka/plugin-CollectionTree/releases/download/v2.2/CollectionTree-2.2.zip",
-                "downloads": 49,
+                "downloads": 61,
                 "id": 3314560684,
                 "omeka_version_constraint": "",
                 "tag_name": "v2.2",
@@ -8249,7 +8249,7 @@
         "latest_version": "3.11.1",
         "owner": "omeka",
         "registered": "2011-07-06T13:17:55Z",
-        "releases_checked": "2026-10-10T03:52:58Z",
+        "releases_checked": "2026-10-31T02:32:46Z",
         "repo": "plugin-ExhibitBuilder",
         "type": "classic_plugin",
         "versions": {
@@ -9005,7 +9005,7 @@
         "latest_version": "1.0",
         "owner": "omeka",
         "registered": "2026-02-09T20:42:04Z",
-        "releases_checked": "2026-03-16T19:50:59Z",
+        "releases_checked": "2026-10-30T21:34:50Z",
         "repo": "plugin-Exports",
         "type": "classic_plugin",
         "versions": {
@@ -9015,7 +9015,7 @@
                 "asset_name": "Exports-1.0.zip",
                 "created": "2026-03-16T19:50:54Z",
                 "download_url": "https://github.com/omeka/plugin-Exports/releases/download/v1.0/Exports-1.0.zip",
-                "downloads": 143,
+                "downloads": 154,
                 "id": 2511651733,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.0",
@@ -18915,7 +18915,7 @@
         "latest_version": "2.1",
         "owner": "omeka",
         "registered": "2011-06-13T18:21:08Z",
-        "releases_checked": "2026-10-26T13:15:55Z",
+        "releases_checked": "2026-11-02T22:01:00Z",
         "repo": "plugin-Reports",
         "type": "classic_plugin",
         "versions": {
