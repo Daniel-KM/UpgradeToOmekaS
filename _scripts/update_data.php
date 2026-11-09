@@ -4274,7 +4274,7 @@ GRAPHQL;
         if ($handle === false) {
             return $rows;
         }
-        while (($row = fgetcsv($handle)) !== false) {
+        while (($row = fgetcsv($handle, null, ',', '"', '')) !== false) {
             $rows[] = $row;
         }
         fclose($handle);
@@ -4299,7 +4299,7 @@ GRAPHQL;
             // insertion order, and new keys created out of sequence
             // (e.g. key 28 before 26) would produce swapped CSV columns.
             ksort($row);
-            fputcsv($handle, $row);
+            fputcsv($handle, $row, ',', '"', '');
         }
         return fclose($handle);
     }
@@ -4318,7 +4318,7 @@ GRAPHQL;
             return false;
         }
         foreach ($array as $row) {
-            fputcsv($handle, $row, "\t", chr(0));
+            fputcsv($handle, $row, "\t", "\0", '');
         }
         return fclose($handle);
     }
