@@ -576,4 +576,25 @@ class UpdateDataExtensionsTest extends TestCase
         $this->assertSame('', UpdateDataExtensions::defaultBranchArchiveUrl('https://example.org/o/Repo', 'Repo'));
         $this->assertSame('', UpdateDataExtensions::defaultBranchArchiveUrl('https://github.com/o/Repo', ''));
     }
+
+    public function testRetryAfter(): void
+    {
+        $this->assertSame(30, UpdateDataExtensions::retryAfter(["HTTP/2 429\r\n", "Retry-After: 30\r\n"]));
+        $date = gmdate('D, d M Y H:i:s', time() + 120) . ' GMT';
+        $delay = UpdateDataExtensions::retryAfter(['retry-after: ' . $date]);
+        $this->assertGreaterThanOrEqual(118, $delay);
+        $this->assertLessThanOrEqual(120, $delay);
+        $reset = (string) (time() + 60);
+        $this->assertGreaterThanOrEqual(59, UpdateDataExtensions::retryAfter(['x-ratelimit-remaining: 0', 'x-ratelimit-reset: ' . $reset]));
+        $this->assertGreaterThanOrEqual(59, UpdateDataExtensions::retryAfter(['RateLimit-Remaining: 0', 'RateLimit-Reset: ' . $reset]));
+        $this->assertNull(UpdateDataExtensions::retryAfter(['x-ratelimit-remaining: 10', 'x-ratelimit-reset: ' . $reset]));
+        $this->assertNull(UpdateDataExtensions::retryAfter(['Content-Type: text/plain']));
+    }
+
+    public function testRateLimitScope(): void
+    {
+        $this->assertSame('gitlab.com/api', UpdateDataExtensions::rateLimitScope('https://gitlab.com/api/v4/projects/a%2Fb'));
+        $this->assertSame('gitlab.com', UpdateDataExtensions::rateLimitScope('https://gitlab.com/a/b/-/raw/master/config/module.ini'));
+        $this->assertSame('raw.githubusercontent.com', UpdateDataExtensions::rateLimitScope('https://raw.githubusercontent.com/a/b/master/plugin.ini'));
+    }
 }
