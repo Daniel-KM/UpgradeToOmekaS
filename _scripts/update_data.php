@@ -444,6 +444,11 @@ class UpdateDataExtensions
      * @var int Last HTTP code of a raw file fetch.
      */
     protected $lastRawHttpCode = 0;
+
+    /**
+     * @var int[] Timestamp until which a host is rate limited, by host.
+     */
+    protected $rateLimitedUntil = [];
     protected $updatedAddons;
 
     /**
@@ -2788,6 +2793,10 @@ class UpdateDataExtensions
             return $data[$url];
         }
 
+        if ($this->isRateLimited($url)) {
+            return [];
+        }
+
         // Avoid processing multiple times the same url with the same issue.
         $data[$url] = [];
 
@@ -2863,7 +2872,7 @@ class UpdateDataExtensions
             $retryAfter = in_array($httpCode, [403, 429], true) ? self::retryAfter($responseHeaders) : null;
             if ($retryAfter !== null) {
                 if ($retryAfter > self::MAX_RETRY_AFTER || $attempt >= $maxRetries) {
-                    $this->log(sprintf('[Rate limit   ] %s (HTTP %d, retry after %ds): skipped.', $url, $httpCode, $retryAfter));
+                    $this->setRateLimited($url, $retryAfter, $httpCode);
                     break;
                 }
                 $this->log(sprintf('[Rate limit   ] %s (HTTP %d): pause %ds.', $url, $httpCode, $retryAfter));
@@ -2977,6 +2986,10 @@ class UpdateDataExtensions
             return $data[$url];
         }
 
+        if ($this->isRateLimited($url)) {
+            return '';
+        }
+
         $data[$url] = '';
 
         $server = strtolower(parse_url($url, PHP_URL_HOST));
@@ -3036,7 +3049,7 @@ class UpdateDataExtensions
                 break;
             }
             if ($retryAfter > self::MAX_RETRY_AFTER || $attempt >= $maxRetries) {
-                $this->log(sprintf('[Rate limit   ] %s (HTTP %d, retry after %ds): skipped.', $url, $httpCode, $retryAfter));
+                $this->setRateLimited($url, $retryAfter, $httpCode);
                 break;
             }
             $this->log(sprintf('[Rate limit   ] %s (HTTP %d): pause %ds.', $url, $httpCode, $retryAfter));
@@ -3931,6 +3944,19 @@ GRAPHQL;
             return $content;
         }
 
+        if ($this->isRateLimited($url)) {
+            $this->lastRawHttpCode = 429;
+            return false;
+        }
+
+        // The token is sent to the GitLab api only, without redirect.
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        $httpHeaders = [];
+        $isGitLabApi = $host === 'gitlab.com' && strpos((string) parse_url($url, PHP_URL_PATH), '/api/') === 0;
+        if ($isGitLabApi && !empty($this->options['token']['gitlab.com'])) {
+            $httpHeaders[] = 'PRIVATE-TOKEN: ' . $this->options['token']['gitlab.com'];
+        }
+
         $content = false;
         $attempt = 0;
 
@@ -3943,6 +3969,8 @@ GRAPHQL;
                     'timeout' => 30,
                     'ignore_errors' => true,
                     'user_agent' => 'Daniel-KM/UpgradeToOmekaS',
+                    'header' => $httpHeaders,
+                    'follow_location' => $httpHeaders ? 0 : 1,
                 ],
                 'ssl' => [
                     'verify_peer' => true,
@@ -3979,7 +4007,7 @@ GRAPHQL;
             $retryAfter = in_array($httpCode, [403, 429], true) ? self::retryAfter($http_response_header ?? []) : null;
             if ($retryAfter !== null) {
                 if ($retryAfter > self::MAX_RETRY_AFTER || $attempt >= $maxRetries) {
-                    $this->log(sprintf('[Rate limit   ] %s (HTTP %d, retry after %ds): skipped.', $url, $httpCode, $retryAfter));
+                    $this->setRateLimited($url, $retryAfter, $httpCode);
                     break;
                 }
                 $this->log(sprintf('[Rate limit   ] %s (HTTP %d): pause %ds.', $url, $httpCode, $retryAfter));
@@ -4068,13 +4096,23 @@ GRAPHQL;
                 break;
         }
 
-        $addonIni = $iniPath ?: ('master/' . $this->args['ini']);
-        $addonIni = $addonIniBase . '/' . $addonIni;
+        // On GitLab, the api uses the token, so the limit is not the one of the
+        // anonymous traffic per ip.
+        $buildIniUrl = function (string $branch) use ($server, $addonUrl, $addonIniBase, $iniPath): string {
+            if ($server === 'gitlab.com' && !$iniPath) {
+                return 'https://gitlab.com/api/v4/projects/'
+                    . self::encodeGitLabPath(trim((string) parse_url($addonUrl, PHP_URL_PATH), '/'))
+                    . '/repository/files/' . rawurlencode(str_replace(DIRECTORY_SEPARATOR, '/', $this->args['ini']))
+                    . '/raw?ref=' . $branch;
+            }
+            return $addonIniBase . '/' . ($iniPath ?: ($branch . '/' . $this->args['ini']));
+        };
+
+        $addonIni = $buildIniUrl('master');
         $ini = $this->fetchRawFile($addonIni);
         if (empty($ini)) {
             $httpCodeMaster = $this->lastRawHttpCode;
-            $addonIni = $iniPath ?: ('main/' . $this->args['ini']);
-            $addonIni = $addonIniBase . '/' . $addonIni;
+            $addonIni = $buildIniUrl('main');
             $ini = $this->fetchRawFile($addonIni);
             if (empty($ini)) {
                 if ($this->lastRawHttpCode !== 404 || $httpCodeMaster !== 404) {
@@ -4102,6 +4140,38 @@ GRAPHQL;
         $addonTypes[$keyAddon] = $this->type;
 
         return $ini;
+    }
+
+    /**
+     * Check if the host of a url is rate limited for a long time.
+     */
+    protected function isRateLimited(string $url): bool
+    {
+        return ($this->rateLimitedUntil[self::rateLimitScope($url)] ?? 0) > time();
+    }
+
+    /**
+     * Skip all next requests to the host of a url until the end of the delay.
+     */
+    protected function setRateLimited(string $url, int $delay, int $httpCode): void
+    {
+        $scope = self::rateLimitScope($url);
+        $this->rateLimitedUntil[$scope] = time() + $delay;
+        $this->log(sprintf(
+            '[Rate limit   ] %s (HTTP %d): requests to %s skipped until %s.',
+            $url, $httpCode, $scope, date('H:i:s', $this->rateLimitedUntil[$scope])
+        ));
+    }
+
+    /**
+     * Get the scope of a rate limit: the api and the site of a host have
+     * different limits (authenticated or not).
+     */
+    public static function rateLimitScope(string $url): string
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        $isApi = strpos((string) parse_url($url, PHP_URL_PATH), '/api/') === 0;
+        return $host . ($isApi ? '/api' : '');
     }
 
     /**
