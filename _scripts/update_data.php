@@ -380,6 +380,11 @@ class UpdateDataExtensions
      */
     const GRAPHQL_BATCH_SIZE = 50;
 
+    /**
+     * Max pause in seconds requested by a server on rate limit (http 429).
+     */
+    const MAX_RETRY_AFTER = 300;
+
     const STAT_FIELDS = [
         'Stars', 'Forks', 'Watchers', 'Open issues', 'Total issues',
         'Open PRs', 'Total PRs', 'Count versions', 'Count tags', 'Total downloads',
@@ -2833,6 +2838,12 @@ class UpdateDataExtensions
                     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
                 }
 
+                $responseHeaders = [];
+                curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($curl, $line) use (&$responseHeaders) {
+                    $responseHeaders[] = $line;
+                    return strlen($line);
+                });
+
                 $response = curl_exec($curl);
                 $curlError = curl_error($curl);
                 $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -2848,8 +2859,20 @@ class UpdateDataExtensions
                 }
             } while ($isRedirect && ++$redirects <= 5);
 
+            // Rate limit: pause as requested by the server, if not too long.
+            $retryAfter = in_array($httpCode, [403, 429], true) ? self::retryAfter($responseHeaders) : null;
+            if ($retryAfter !== null) {
+                if ($retryAfter > self::MAX_RETRY_AFTER || $attempt >= $maxRetries) {
+                    $this->log(sprintf('[Rate limit   ] %s (HTTP %d, retry after %ds): skipped.', $url, $httpCode, $retryAfter));
+                    break;
+                }
+                $this->log(sprintf('[Rate limit   ] %s (HTTP %d): pause %ds.', $url, $httpCode, $retryAfter));
+                sleep($retryAfter);
+                continue;
+            }
+
             // Success - break out of retry loop.
-            if ($response !== false && empty($curlError) && $httpCode >= 200 && $httpCode < 500) {
+            if ($response !== false && empty($curlError) && $httpCode >= 200 && $httpCode < 500 && $httpCode !== 429) {
                 break;
             }
 
@@ -2978,30 +3001,47 @@ class UpdateDataExtensions
             $headers = [];
         }
 
-        $responseHeaders = [];
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-        if ($headers) {
-            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        }
-        // Capture response headers.
-        curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($ch, $header) use (&$responseHeaders) {
-            $len = strlen($header);
-            $parts = explode(':', $header, 2);
-            if (count($parts) === 2) {
-                $responseHeaders[strtolower(trim($parts[0]))] = trim($parts[1]);
+        $maxRetries = 3;
+        for ($attempt = 1; $attempt <= $maxRetries; $attempt++) {
+            $responseHeaders = [];
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+            if ($headers) {
+                curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
             }
-            return $len;
-        });
+            // Capture response headers.
+            curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($ch, $header) use (&$responseHeaders) {
+                $len = strlen($header);
+                $parts = explode(':', $header, 2);
+                if (count($parts) === 2) {
+                    $responseHeaders[strtolower(trim($parts[0]))] = trim($parts[1]);
+                }
+                return $len;
+            });
 
-        $response = curl_exec($curl);
-        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $curlError = curl_error($curl);
-        curl_close($curl);
+            $response = curl_exec($curl);
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($curl);
+            curl_close($curl);
+
+            // Rate limit: pause as requested by the server, if not too long.
+            $retryAfter = in_array($httpCode, [403, 429], true)
+                ? self::retryAfter(array_map(fn ($k, $v) => $k . ': ' . $v, array_keys($responseHeaders), $responseHeaders))
+                : null;
+            if ($retryAfter === null) {
+                break;
+            }
+            if ($retryAfter > self::MAX_RETRY_AFTER || $attempt >= $maxRetries) {
+                $this->log(sprintf('[Rate limit   ] %s (HTTP %d, retry after %ds): skipped.', $url, $httpCode, $retryAfter));
+                break;
+            }
+            $this->log(sprintf('[Rate limit   ] %s (HTTP %d): pause %ds.', $url, $httpCode, $retryAfter));
+            sleep($retryAfter);
+        }
 
         if ($curlError || $httpCode < 200 || $httpCode >= 400) {
             return '';
@@ -3935,6 +3975,18 @@ GRAPHQL;
             // Error page (rate limit, server error), not the file.
             $content = false;
 
+            // Rate limit: pause as requested by the server, if not too long.
+            $retryAfter = in_array($httpCode, [403, 429], true) ? self::retryAfter($http_response_header ?? []) : null;
+            if ($retryAfter !== null) {
+                if ($retryAfter > self::MAX_RETRY_AFTER || $attempt >= $maxRetries) {
+                    $this->log(sprintf('[Rate limit   ] %s (HTTP %d, retry after %ds): skipped.', $url, $httpCode, $retryAfter));
+                    break;
+                }
+                $this->log(sprintf('[Rate limit   ] %s (HTTP %d): pause %ds.', $url, $httpCode, $retryAfter));
+                sleep($retryAfter);
+                continue;
+            }
+
             // Network error or server error - retry with backoff.
             if ($attempt < $maxRetries) {
                 $sleepTime = pow(2, $attempt);
@@ -4050,6 +4102,39 @@ GRAPHQL;
         $addonTypes[$keyAddon] = $this->type;
 
         return $ini;
+    }
+
+    /**
+     * Get the delay in seconds requested by a server to retry, if any.
+     *
+     * Manage the standard header Retry-After (seconds or http date) and the
+     * rate limit headers of GitHub and GitLab when the limit is reached.
+     *
+     * @param string[] $headerLines Raw http header lines.
+     */
+    public static function retryAfter(array $headerLines): ?int
+    {
+        $headers = [];
+        foreach ($headerLines as $line) {
+            $pos = strpos($line, ':');
+            if ($pos) {
+                $headers[strtolower(trim(substr($line, 0, $pos)))] = trim(substr($line, $pos + 1));
+            }
+        }
+
+        $value = $headers['retry-after'] ?? null;
+        if ($value !== null && $value !== '') {
+            $delay = ctype_digit($value) ? (int) $value : (int) strtotime($value) - time();
+            return max(1, $delay);
+        }
+
+        $remaining = $headers['x-ratelimit-remaining'] ?? $headers['ratelimit-remaining'] ?? null;
+        $reset = $headers['x-ratelimit-reset'] ?? $headers['ratelimit-reset'] ?? null;
+        if ($remaining === '0' && $reset !== null && ctype_digit($reset)) {
+            return max(1, (int) $reset - time());
+        }
+
+        return null;
     }
 
     /**
