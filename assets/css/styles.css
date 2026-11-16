@@ -46,6 +46,9 @@
     .page-link {
         display: inline-block;
     }
+    .page-link.active {
+        font-weight: bold;
+    }
     .sort {
         cursor: pointer;
         white-space: nowrap;
