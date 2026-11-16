@@ -33,9 +33,12 @@
     };
     filter.addEventListener('change', applyFilter);
 
-    // Same width as the column of stats.
+    // Same width as the column of stats. The headers of the table are kept
+    // under the filters when scrolling.
+    var filtersRow = container.querySelector('.addon-filters');
     var resize = function () {
         filter.style.width = header.getBoundingClientRect().width + 'px';
+        container.style.setProperty('--addon-filters-height', filtersRow.getBoundingClientRect().height + 'px');
     };
     resize();
     window.addEventListener('resize', resize);
