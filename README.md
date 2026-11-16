@@ -4,6 +4,8 @@ Upgrade to Omeka Semantic
 This repository contains the sources to build the [pages that list the plugins,
 modules and themes] of [Omeka Classic] and [Omeka S].
 
+The site is published on GitLab Pages, with a copy on [GitHub Pages].
+
 To get the plugin that allows to upgrade automatically an Omeka Classic
 installation into Omeka Semantic, go to [this page].
 
@@ -45,8 +47,10 @@ the process is significantly faster (about 2 hours instead of 8+ hours).
 Installation and development for Jekyll with theme Minima
 ---------------------------------------------------------
 
-For more info on local testing, see [documentation on github pages].
-Github pages use currently [these versions] of Jekyll and Ruby.
+The site is built on GitLab Pages by the file `.gitlab-ci.yml` and on GitHub
+Pages with the gem `github-pages`, so the versions of Jekyll and Ruby are the
+ones of GitHub Pages: see [these versions]. For more info on local testing, see
+[documentation on github pages].
 
 For Debian 13:
 
@@ -193,7 +197,8 @@ Copyright
 * Copyright Daniel Berthereau, 2017-2026 (see [Daniel-KM] on GitLab)
 
 
-[pages that list the plugins, modules and themes]: https://daniel-km.github.io/UpgradeToOmekaS/
+[pages that list the plugins, modules and themes]: https://daniel-km.gitlab.io/UpgradeToOmekaS/
+[GitHub Pages]: https://daniel-km.github.io/UpgradeToOmekaS/
 [Omeka Classic]: https://omeka.org/classic
 [Omeka S]: https://omeka.org/s
 [this page]: https://github.com/Daniel-KM/Omeka-plugin-UpgradeToOmekaS

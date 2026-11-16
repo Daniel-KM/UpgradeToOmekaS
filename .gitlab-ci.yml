@@ -1,0 +1,25 @@
+# Build and publish the site on GitLab Pages.
+# @see https://docs.gitlab.com/user/project/pages/
+
+pages:
+  image: ruby:3.3
+  variables:
+    JEKYLL_ENV: production
+    LC_ALL: C.UTF-8
+  cache:
+    key:
+      files:
+        - Gemfile.lock
+    paths:
+      - vendor/bundle
+  before_script:
+    - gem install bundler -v "$(tail -1 Gemfile.lock | tr -d ' ')"
+    - bundle config set --local path vendor/bundle
+    - bundle install --jobs 4
+  script:
+    - bundle exec jekyll build -d public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
