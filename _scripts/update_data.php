@@ -2678,10 +2678,10 @@ class UpdateDataExtensions
                         foreach ($allReleases as $release) {
                             // The function array_column() supports objects.
                             // $counts[$release->name] = array_sum(array_column($release->assets, 'download_count'));
-                            $version = $release->tag_name;
-                            $counts[$release->name] = array_sum(array_column(array_filter($release->assets, function ($as) use ($namespace, $version) {
-                                return preg_match('~' . preg_quote($namespace, '~') . '[ ._-]?(?:(?:' . preg_quote($version, '~') . ')?|(?:' . preg_quote($version, '~') . ')?[ ._-]?php[\d ._-]?)\.zip$~', $as->name);
-                            }), 'download_count'));
+                            $counts[$release->name] = array_sum(array_column(
+                                self::filterReleaseZips($namespace, (string) $release->tag_name, $release->assets ?? []),
+                                'download_count'
+                            ));
                         }
                         return array_sum($counts);
 
@@ -3349,17 +3349,10 @@ class UpdateDataExtensions
             }
             $version = (string) ($release->tagName ?? '');
             $assets = array_values(array_filter($release->releaseAssets->nodes ?? []));
-            foreach ($assets as $asset) {
-                if (preg_match(
-                    '~' . preg_quote($namespace, '~')
-                    . '[ ._-]?(?:(?:' . preg_quote($version, '~') . ')?|(?:'
-                    . preg_quote($version, '~') . ')?[ ._-]?php[\d ._-]?)\.zip$~',
-                    (string) ($asset->name ?? '')
-                )) {
-                    $totalDownloads += (int) ($asset->downloadCount ?? 0);
-                    if ($i === 0 && empty($lastReleasedZip)) {
-                        $lastReleasedZip = $asset->downloadUrl;
-                    }
+            foreach (self::filterReleaseZips($namespace, $version, $assets) as $asset) {
+                $totalDownloads += (int) ($asset->downloadCount ?? 0);
+                if ($i === 0 && empty($lastReleasedZip)) {
+                    $lastReleasedZip = $asset->downloadUrl;
                 }
             }
             // Fallback: use first asset of latest release if no name match.
@@ -4294,6 +4287,27 @@ GRAPHQL;
         }
 
         return null;
+    }
+
+    /**
+     * Get the zip files of the addon in the assets of a release.
+     *
+     * Some addons, like Mirador, include some dependencies zipped in some
+     * releases, and some other ones, like Log, have files for some versions
+     * of php. So the files are filtered with the name of the addon, an
+     * optional version (with or without "v") and an optional php suffix. When
+     * no file matches, the single zip of the release is used.
+     *
+     * @param array $assets Objects with a property "name".
+     */
+    public static function filterReleaseZips(string $namespace, string $tag, array $assets): array
+    {
+        $versions = array_unique(array_filter([$tag, ltrim($tag, 'vV')]));
+        $version = $versions ? '(?:' . implode('|', array_map(fn ($v) => preg_quote($v, '~'), $versions)) . ')?' : '';
+        $regex = '~' . preg_quote($namespace, '~') . '[ ._-]?' . $version . '(?:[ ._-]?php[\d ._-]*)?\.zip$~i';
+        $zips = array_values(array_filter($assets, fn ($asset) => substr(strtolower((string) ($asset->name ?? '')), -4) === '.zip'));
+        $matches = array_values(array_filter($zips, fn ($asset) => (bool) preg_match($regex, (string) $asset->name)));
+        return $matches ?: (count($zips) === 1 ? $zips : []);
     }
 
     /**
