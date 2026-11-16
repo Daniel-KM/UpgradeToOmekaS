@@ -3430,8 +3430,11 @@ class UpdateDataExtensions
         $batchSize = self::GRAPHQL_BATCH_SIZE;
         $chunks = array_chunk($repos, $batchSize);
         $totalFetched = 0;
+        $totalRequests = 0;
 
-        foreach ($chunks as $chunk) {
+        while ($chunks) {
+            $chunk = array_shift($chunks);
+            ++$totalRequests;
             // Build batched query with aliases.
             $fields = <<<'GRAPHQL'
                 createdAt
@@ -3477,6 +3480,28 @@ GRAPHQL;
             $query = "{\n" . implode("\n", $parts) . "\n}";
 
             $response = $this->curlGraphQL($query, true);
+
+            // When the query is too big, the data are truncated without other
+            // notice (no release asset, so no download), so split the batch.
+            $isTruncated = false;
+            foreach ($response->errors ?? [] as $error) {
+                if (($error->type ?? '') === 'RESOURCE_LIMITS_EXCEEDED') {
+                    $isTruncated = true;
+                    break;
+                }
+            }
+            if ($isTruncated && count($chunk) > 1) {
+                $half = (int) ceil(count($chunk) / 2);
+                array_unshift($chunks, array_slice($chunk, 0, $half), array_slice($chunk, $half));
+                $this->log(sprintf('[GraphQL] Batch of %d repos too big: split in two.', count($chunk)));
+                continue;
+            }
+            if ($isTruncated) {
+                // A single repo that is too big is fetched without batch.
+                $this->graphqlCache[$chunk[0]['url']] = null;
+                continue;
+            }
+
             if (empty($response) || empty($response->data)) {
                 // Mark all as null so individual calls don't retry.
                 foreach ($chunk as $repo) {
@@ -3503,7 +3528,7 @@ GRAPHQL;
             $this->log(sprintf(
                 '[GraphQL] Batch prefetched %d repos in %d request(s).',
                 $totalFetched,
-                count($chunks)
+                $totalRequests
             ));
         }
     }
