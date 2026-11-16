@@ -6,6 +6,9 @@ pages:
   variables:
     JEKYLL_ENV: production
     LC_ALL: C.UTF-8
+    # Required by jekyll-github-metadata (included by the gem github-pages),
+    # because the remote "origin" is not on github.
+    PAGES_REPO_NWO: Daniel-KM/UpgradeToOmekaS
   cache:
     key:
       files:
@@ -17,7 +20,9 @@ pages:
     - bundle config set --local path vendor/bundle
     - bundle install --jobs 4
   script:
-    - bundle exec jekyll build -d public
+    # The url of the site is the one of GitLab Pages, not of GitHub Pages.
+    - 'echo "url: https://daniel-km.gitlab.io" > _config_gitlab.yml'
+    - bundle exec jekyll build --config _config.yml,_config_gitlab.yml -d public
   artifacts:
     paths:
       - public
