@@ -384,4 +384,21 @@ class AddonsTest extends TestCase
             }
         }
     }
+
+    public function testDataFromNamespaceWithOwner(): void
+    {
+        $addons = new class() extends \Addons {
+            public function getAddons(bool $refresh = false): array
+            {
+                return ['module' => [
+                    'https://github.com/smachefert/Omeka-S-module-IiifSearch' => ['dir' => 'IiifSearch', 'name' => 'IIIF Search', 'url' => 'https://github.com/smachefert/Omeka-S-module-IiifSearch'],
+                    'https://gitlab.com/Daniel-KM/Omeka-S-module-IiifSearch' => ['dir' => 'IiifSearch', 'name' => 'IIIF Search_Daniel-KM', 'url' => 'https://gitlab.com/Daniel-KM/Omeka-S-module-IiifSearch'],
+                ]];
+            }
+        };
+        $this->assertSame('IIIF Search_Daniel-KM', $addons->dataFromNamespace('Daniel-KM/IiifSearch')['name']);
+        $this->assertSame('IIIF Search_Daniel-KM', $addons->dataFromNamespace('daniel-km/IiifSearch')['name']);
+        $this->assertSame([], $addons->dataFromNamespace('Unknown/IiifSearch'));
+        $this->assertNotEmpty($addons->dataFromNamespace('IiifSearch'));
+    }
 }

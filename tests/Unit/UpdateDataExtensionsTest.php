@@ -597,4 +597,89 @@ class UpdateDataExtensionsTest extends TestCase
         $this->assertSame('gitlab.com', UpdateDataExtensions::rateLimitScope('https://gitlab.com/a/b/-/raw/master/config/module.ini'));
         $this->assertSame('raw.githubusercontent.com', UpdateDataExtensions::rateLimitScope('https://raw.githubusercontent.com/a/b/master/plugin.ini'));
     }
+
+    public function testIsMirrorUrl(): void
+    {
+        $this->assertTrue(UpdateDataExtensions::isMirrorUrl('https://gitlab.com/Daniel-KM/Omeka-S-module-A', 'https://github.com/daniel-km/Omeka-S-module-A'));
+        $this->assertFalse(UpdateDataExtensions::isMirrorUrl('https://gitlab.com/Daniel-KM/Omeka-S-module-CSVImport', 'https://github.com/omeka-s-modules/CSVImport'));
+        $this->assertFalse(UpdateDataExtensions::isMirrorUrl('https://github.com/Daniel-KM/A', 'https://github.com/Daniel-KM/B'));
+    }
+
+    private function invokeProtected(UpdateDataExtensions $updater, string $name, array $addons): array
+    {
+        $method = new \ReflectionMethod($updater, $name);
+        $method->setAccessible(true);
+        ob_start();
+        $result = $method->invoke($updater, $addons);
+        ob_end_clean();
+        return $result;
+    }
+
+    public function testFilterDuplicatesKeepsForksWithNewerVersionOrEnoughOwnCommits(): void
+    {
+        $options = $this->getDefaultOptions();
+        $options['filterDuplicates'] = true;
+        $options['filterFalseForks'] = true;
+        $updater = new UpdateDataExtensions('module', $this->getModuleArgs(), $options);
+
+        $header = ['Name', 'Url', 'Alternate urls', 'Fork source', 'Fork commits', 'Creation date', 'Last update', 'Last version'];
+        $source = 'https://github.com/omeka-s-modules/A';
+        $addons = [
+            $header,
+            ['A', $source, '', '', '', '2015-01-01', '2026-01-01', '1.0.0'],
+            ['A', 'https://github.com/u1/A', '', $source, '10', '2020-01-01', '2026-02-01', '1.0.0'],
+            ['A', 'https://github.com/u2/A', '', $source, '2', '2020-01-01', '2026-03-01', '1.0.0'],
+            ['A', 'https://github.com/u3/A', '', $source, '1', '2020-01-01', '2026-04-01', '2.0.0'],
+            ['A', 'https://github.com/u4/A', '', $source, '0', '2020-01-01', '2026-05-01', '1.0.0'],
+        ];
+
+        $result = $this->invokeProtected($updater, 'filterDuplicates', $addons);
+        $urls = array_column(array_slice($result, 1), 1);
+
+        // The original, the fork with 10 commits, the fork with a newer version.
+        $this->assertSame([$source, 'https://github.com/u1/A', 'https://github.com/u3/A'], $urls);
+        // The fork with 2 commits is stored as alternate of the previous row.
+        $this->assertStringContainsString('https://github.com/u2/A', $result[2][2]);
+        $this->assertStringContainsString('https://github.com/u4/A', $result[3][2]);
+    }
+
+    public function testMergeSyncedReposMergesOnlyMirrorsOfTheSameOwner(): void
+    {
+        $updater = new UpdateDataExtensions('module', $this->getModuleArgs(), $this->getDefaultOptions());
+        $header = ['Name', 'Url', 'Alternate urls', 'Last update', 'Last version', 'Stars'];
+        $headers = new \ReflectionProperty($updater, 'headers');
+        $headers->setAccessible(true);
+        $headers->setValue($updater, array_flip($header));
+
+        $addons = [
+            $header,
+            ['A', 'https://github.com/omeka-s-modules/A', '', '2026-01-01', '1.0.0', '4'],
+            ['A', 'https://gitlab.com/Daniel-KM/A', '', '2026-03-01', '1.1.0', '2'],
+            ['A', 'https://github.com/Daniel-KM/A', '', '2026-02-01', '1.1.0', '1'],
+        ];
+
+        $result = $this->invokeProtected($updater, 'mergeSyncedRepos', $addons);
+        $urls = array_column(array_slice($result, 1), 1);
+
+        // The original is kept; the mirrors of Daniel-KM are merged.
+        $this->assertSame(['https://github.com/omeka-s-modules/A', 'https://gitlab.com/Daniel-KM/A'], $urls);
+        $this->assertSame('https://github.com/Daniel-KM/A', $result[2][2]);
+    }
+
+    public function testFilterReleaseZips(): void
+    {
+        $names = fn (array $list) => array_map(fn ($o) => $o->name, UpdateDataExtensions::filterReleaseZips(...$list));
+        $asset = fn (string $name) => (object) ['name' => $name];
+
+        // Tag with "v", unlike the file name.
+        $this->assertSame(['ActivityLog-1.0.1.zip'], $names(['ActivityLog', 'v1.0.1', [$asset('ActivityLog-1.0.1.zip')]]));
+        // Dependencies zipped in the release are skipped.
+        $this->assertSame(['Mirador-3.4.1.zip'], $names(['Mirador', '3.4.1', [$asset('Mirador-3.4.1.zip'), $asset('mirador-plugins.zip'), $asset('readme.md')]]));
+        // Files for some versions of php.
+        $this->assertSame(['Log-3.4.20.zip', 'Log-3.4.20-php74.zip'], $names(['Log', '3.4.20', [$asset('Log-3.4.20.zip'), $asset('Log-3.4.20-php74.zip')]]));
+        // A single zip with another name is used.
+        $this->assertSame(['AllinOneAccessibility.zip'], $names(['omeka-s-all-in-one-accessibility', '1.0.0', [$asset('AllinOneAccessibility.zip')]]));
+        // No zip.
+        $this->assertSame([], $names(['A', '1.0', [$asset('A-1.0.tar.gz')]]));
+    }
 }
