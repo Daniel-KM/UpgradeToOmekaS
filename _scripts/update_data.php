@@ -1731,6 +1731,19 @@ class UpdateDataExtensions
             }
         }
 
+        // Count the own commits of a fork, only when it changed.
+        if (isset($headers['Fork commits'])) {
+            $forkSource = $addon[$headers['Fork source']] ?? '';
+            if ($forkSource === '') {
+                $addon[$headers['Fork commits']] = '';
+            } elseif (($currentAddon[$headers['Fork commits']] ?? '') === ''
+                || ($currentAddon[$headers['Last update']] ?? '') !== ($addon[$headers['Last update']] ?? '')
+            ) {
+                $forkCommits = $this->countForkCommits($addonUrl, $forkSource, $alternateUrls);
+                $addon[$headers['Fork commits']] = $forkCommits ?? ($currentAddon[$headers['Fork commits']] ?? '');
+            }
+        }
+
         if (empty($ini) && empty($addon[$headers['Ini path']])) {
             return $addon;
         }
@@ -2012,7 +2025,20 @@ class UpdateDataExtensions
             $forkSource = $addon[$headers['Fork source']] ?? '';
 
             if ($name !== '' && $name === $previousName) {
-                if ($lastUpdate === $previousLastUpdate || $version === $previousVersion) {
+                // A fork with own commits is kept, a simple copy is removed.
+                $forkCommits = $forkSource === '' ? '' : (string) ($addon[$headers['Fork commits']] ?? '');
+                if ($forkCommits === '0') {
+                    ++$duplicates;
+                    $this->log(sprintf('Duplicate fork removed (no own commit): %1$s (%2$s)', $name, $url));
+                    if ($hasAlternateUrl && $previousKey >= 0) {
+                        $this->appendAlternateUrl($addons[$previousKey], $headers, $url);
+                    }
+                    unset($addons[$key]);
+                    continue;
+                } elseif ($forkCommits !== '') {
+                    ++$updatedForks;
+                    $this->log(sprintf('Duplicate fork kept (%3$s own commits): %1$s (%2$s)', $name, $url, $forkCommits));
+                } elseif ($lastUpdate === $previousLastUpdate || $version === $previousVersion) {
                     ++$duplicates;
                     $this->log(sprintf('Duplicate fork removed (identical): %1$s (%2$s)', $name, $url));
                     // Store removed fork url as alternate of the kept addon.
@@ -2080,19 +2106,23 @@ class UpdateDataExtensions
 
         $statFields = self::STAT_FIELDS;
 
-        // Group by name.
+        // Group by name and owner: a repository with the same name on another
+        // platform is a mirror only when the owner is the same, else it may be
+        // a fork or the original repository.
         $byName = [];
         foreach ($addons as $key => $addon) {
             if ($key === 0) continue;
             $name = $addon[$headers['Name']] ?? '';
             if ($name) {
-                $byName[$name][] = $key;
+                $owner = strtolower(explode('/', trim((string) parse_url($addon[$headers['Url']] ?? '', PHP_URL_PATH), '/'))[0]);
+                $byName[$name . '|' . $owner][] = $key;
             }
         }
 
         $merged = 0;
-        foreach ($byName as $name => $keys) {
+        foreach ($byName as $nameOwner => $keys) {
             if (count($keys) < 2) continue;
+            $name = strtok($nameOwner, '|');
 
             // Check if entries are on different platforms.
             $byPlatform = [];
@@ -2301,6 +2331,15 @@ class UpdateDataExtensions
                     $mirrorStats['Forks'] = $response->forks_count ?? 0;
                     $mirrorStats['Open issues'] = $response->open_issues_count ?? 0;
                 }
+            }
+
+            // A copy of a fork on another platform is not declared as a fork,
+            // but its mirror may be.
+            if (isset($headers['Fork source'])
+                && ($addon[$headers['Fork source']] ?? '') === ''
+                && !empty($mirrorStats['Fork source'])
+            ) {
+                $addon[$headers['Fork source']] = $mirrorStats['Fork source'];
             }
 
             // Sum stats into the addon row, only when the stat of the main repo
@@ -4176,6 +4215,53 @@ GRAPHQL;
         $host = strtolower((string) parse_url($url, PHP_URL_HOST));
         $isApi = strpos((string) parse_url($url, PHP_URL_PATH), '/api/') === 0;
         return $host . ($isApi ? '/api' : '');
+    }
+
+    /**
+     * Count the commits of a fork that are not in its source repository.
+     *
+     * The comparison is done on GitHub, with the repository or its mirror, or
+     * on GitLab for a fork declared on GitLab. Return null when unknown.
+     */
+    protected function countForkCommits(string $addonUrl, string $forkSource, string $alternateUrls): ?int
+    {
+        $path = fn (string $u): string => trim((string) parse_url($u, PHP_URL_PATH), '/');
+        $host = fn (string $u): string => strtolower((string) parse_url($u, PHP_URL_HOST));
+
+        $urls = [$addonUrl];
+        foreach (array_filter(array_map('trim', explode(',', $alternateUrls))) as $url) {
+            if (self::isMirrorUrl($addonUrl, $url)) {
+                $urls[] = $url;
+            }
+        }
+
+        foreach ($urls as $url) {
+            if ($host($url) !== $host($forkSource)) {
+                continue;
+            }
+            if ($host($url) === 'github.com') {
+                [$owner, $repo] = explode('/', $path($url)) + [1 => ''];
+                $response = $this->curl('https://api.github.com/repos/' . $path($forkSource)
+                    . '/compare/HEAD...' . $owner . ':' . $repo . ':HEAD?per_page=1', [], false);
+                if (isset($response->ahead_by)) {
+                    return (int) $response->ahead_by;
+                }
+            } elseif ($host($url) === 'gitlab.com') {
+                $api = 'https://gitlab.com/api/v4/projects/';
+                $fork = $this->curl($api . self::encodeGitLabPath($path($url)), [], false);
+                $source = $this->curl($api . self::encodeGitLabPath($path($forkSource)), [], false);
+                if (empty($fork->id) || empty($source->id) || empty($fork->default_branch) || empty($source->default_branch)) {
+                    continue;
+                }
+                $response = $this->curl($api . $fork->id . '/repository/compare?from=' . rawurlencode($source->default_branch)
+                    . '&to=' . rawurlencode($fork->default_branch) . '&from_project_id=' . $source->id, [], false);
+                if (isset($response->commits) && is_array($response->commits)) {
+                    return count($response->commits);
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
