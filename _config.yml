@@ -26,7 +26,9 @@ description: > # this means to ignore newlines until "baseurl:"
   For missing or new plugins or any other need on Omeka and digital collections,
   don’t hesitate to contact us!
 baseurl: "/UpgradeToOmekaS"
-# url: "https://daniel-km.github.com"
+# The official site is on GitLab Pages, the site on GitHub Pages is a copy, so
+# the canonical urls of both sites target GitLab (seo).
+url: "https://daniel-km.gitlab.io"
 # permalink: /UpgradeToOmekaS/:file:output_ext
 twitter_username:
 github_username:  Daniel-KM

@@ -46,11 +46,11 @@
   {% endcomment %}
   {%- if page.lang -%}
     {% for lang in site.languages %}
-    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.baseurl }}{{ page.url | replace_first: active_lang, lang }}" />
+    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.url }}{{ site.baseurl }}{{ page.url | replace_first: active_lang, lang }}" />
     {% endfor %}
   {%- else -%}
     {% for lang in site.languages %}
-    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.baseurl }}/{{ lang }}{{ page.url }}" />
+    <link rel="alternate" hreflang="{{ lang }}" href="{{ site.url }}{{ site.baseurl }}/{{ lang }}{{ page.url }}" />
     {% endfor %}
   {%- endif -%}
 
