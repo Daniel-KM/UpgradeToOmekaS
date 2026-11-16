@@ -9,7 +9,7 @@ AddThis	0.1
 AdminAnalytics	1.0
 AdminImages	1.6
 adminMessage	0.0.0
-AdminTools	2.4
+AdminTools	2.5
 AdminUserManagement	1.0
 AdvSearchElementOrder	1.0
 AjaxCreate	0.1
@@ -23,6 +23,7 @@ Annotator	1.0.1
 ArchitectureAnalyse	0.1
 ArchiveDocument	2.4.1
 ArchiveFolder	2.7
+Archivematica	1.0.0
 ArchiveRepertory	2.15.8
 Archiviz	1.0.0
 ArkAndNoid	2.5.2
@@ -67,7 +68,7 @@ Bookmarks	0.1
 Bookmeka	0.1
 BookReader	2.7
 BookReaderGalleryLayout	1.0
-BotChallenge	2.3.4
+BotChallenge	2.3.9
 BrowseValues	1.0.0
 BulkImportFiles	2.0.4.1
 BulkMetadataEditor	2.9.1
@@ -95,13 +96,14 @@ Collaborate	0.1
 CollationBuilder	0.1
 CollectionFiles	0.7.1
 CollectionHelpers	0.0.1
+CollectionList	0.1
 CollectionRelations	0.1
 Collections	1.0
 CollectionBrowseResults	0.0.0
 Colsort	2.0.2
 CollectionSpaceImport	-
 CollectionsPlus	1.5
-CollectionTree	2.2
+CollectionTree	2.2.0
 CollectionTreeSelect	1.4
 ColorCodeSyntaxHighlighter	0.1
 Commenting	2.5
@@ -200,14 +202,14 @@ Europeana4dExport	0.1
 EuropeanaElementSet	2.1
 ExhibitAccess	-
 ExhibitBuilder	3.11.1
-ExhibitImageAnnotation	1.3
+ExhibitImageAnnotation	1.3.1
 ExhibitMicrosite	0.9
 ExhibitBuilderTinyMceCustomizer	1.1.0
 ExperimentalBeijing	0.1.0
 Export	0.1
 Export20	2.0
 ExportEacCpf	0.1
-Exports	1.0
+Exports	1.1
 ExportSpokeJson	0.0.20
 ExternalFeed	1.0
 Extractocr	1.0.1
@@ -231,6 +233,7 @@ FirePhp	1.0
 FlickrImport	1.3
 Foo	0.1.0
 purchaseForm	0.1
+Gallery	0.1
 GDriveLinks	1.0.0
 GenerateThumbnails	0.0.1
 GeoBlacklightMetadataJSON	1.5.1
@@ -249,7 +252,7 @@ GoogleTagmanager	0.1.0
 GoogleTranslate	1.0
 Graph	0.2
 Groups	1.1
-GuestUser	1.2
+GuestUser	1.2.1
 HarvardKey	1.0.1
 Headless	0.1.0
 Headsup	0.3
@@ -337,7 +340,7 @@ Locale	1.0
 LocaleSwitcher	0.3.0
 LoggedInLinks	1.0
 LoginHome	0.1
-Maintenance	0.1.0
+Maintenance	0.2.0
 MallExtensions	0.1
 MallMap	1.0-dev
 MapFig	2.0.1
@@ -351,8 +354,8 @@ MediaRss	1.0
 MerrittLink	1.9
 MetadataBrowser	2.11
 MetaMetaData	0.1
-METSExport	1.1
 MetsExport	2.3
+METSExport	1.1
 MLMPContribution	1.2
 Mirador	2.2
 MirrorExhibitPage	1.0
@@ -397,8 +400,8 @@ Ngram	1.2
 NKAAWikiLookup	0.0.0
 NuxeoLink	1.1.12
 OaiPmhGateway	2.3.1
-OaipmhHarvester	2.0.4
-OaiPmhRepository	2.2
+OaipmhHarvester	2.2.2.1
+OaiPmhRepository	2.3.4
 OaiPmhStaticRepository	2.6
 OaiDcGallica	0.1.0
 OaiQdc	1.0
@@ -490,7 +493,7 @@ eo	0.1
 hadowpage	0.1
 ForumLink	1.0
 Shibboleth	2.0.2
-ShortcodeCarousel	1.0.2
+ShortcodeCarousel	1.0.3
 ShortcodeVideo	1.0
 ideAuth	1.0
 SimpleCart	1.0
@@ -508,7 +511,7 @@ Sitemap	2.3
 SiteMessage	1.0
 SiteNotes	1.0.1
 Sites	1.2
-SocialBookmarking	2.1.1
+SocialBookmarking	2.3
 SocialMediaElementSet	1.0
 SolrSearch	2.3.0
 olr3	3.0.0
@@ -532,7 +535,7 @@ TagInfo	0.0.1
 TM	1.0
 Tagroups	0.0.1
 TagsInCollection	1.0
-TagsPlus	1.2
+TagsPlus	1.3
 TakebackCustomizations	0.0.1
 Taxonomy	0.3.0
 TCsDialogue	0.3
@@ -574,7 +577,7 @@ Visuals	0.1
 Vocatroll	0.0.7
 VoiceCommenting	2.0
 VoicesHelpers	1.0
-VraCoreElementSet	1.3
+VraCoreElementSet	1.3.1
 WaterfallGalleryLayout	0.3
 WebServicesShortcodes	0.1
 AddLinks	0.5

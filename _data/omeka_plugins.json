@@ -314,10 +314,10 @@
     "Admin Tools": {
         "dirname": "AdminTools",
         "id": 3814129378,
-        "latest_version": "2.4",
+        "latest_version": "2.5",
         "owner": "DBinaghi",
         "registered": "2022-10-01T16:21:33Z",
-        "releases_checked": "2026-03-18T09:10:53Z",
+        "releases_checked": "2026-11-13T04:34:09Z",
         "repo": "plugin-AdminTools",
         "type": "classic_plugin",
         "versions": {
@@ -483,11 +483,23 @@
                 "asset_name": "AdminTools.zip",
                 "created": "2026-03-13T09:19:21Z",
                 "download_url": "https://github.com/DBinaghi/plugin-AdminTools/releases/download/v2.4/AdminTools.zip",
-                "downloads": 246,
+                "downloads": 271,
                 "id": 1814922693,
-                "omeka_version_constraint": "",
+                "omeka_version_constraint": "3.0",
                 "tag_name": "v2.4",
                 "version": "2.4"
+            },
+            "2.5": {
+                "addon_id": 3814129378,
+                "asset_id": 4265506587,
+                "asset_name": "AdminTools.zip",
+                "created": "2026-11-06T14:20:50Z",
+                "download_url": "https://github.com/DBinaghi/plugin-AdminTools/releases/download/v2.5/AdminTools.zip",
+                "downloads": 4,
+                "id": 455783763,
+                "omeka_version_constraint": "",
+                "tag_name": "v2.5",
+                "version": "2.5"
             }
         }
     },
@@ -1100,6 +1112,30 @@
                 "omeka_version_constraint": "",
                 "tag_name": "2.15.8",
                 "version": "2.15.8"
+            }
+        }
+    },
+    "Archivematica": {
+        "dirname": "Archivematica",
+        "id": 2234944184,
+        "latest_version": "1.0.0",
+        "owner": "omeka",
+        "registered": "2026-11-16T22:26:08Z",
+        "releases_checked": "2026-11-16T22:27:50Z",
+        "repo": "plugin-Archivematica",
+        "type": "classic_plugin",
+        "versions": {
+            "1.0.0": {
+                "addon_id": 2234944184,
+                "asset_id": 1598435229,
+                "asset_name": "HEAD.zip",
+                "created": "",
+                "download_url": "https://github.com/omeka/plugin-Archivematica/archive/HEAD.zip",
+                "downloads": 0,
+                "id": 80318083,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.0",
+                "version": "1.0.0"
             }
         }
     },
@@ -2135,6 +2171,66 @@
             }
         }
     },
+    "Beam Me Up to Internet Archive_Daniel-KM": {
+        "dirname": "BeamMeUpToInternetArchive",
+        "id": 41277714,
+        "latest_version": "2.3",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-16T06:22:06.320Z",
+        "releases_checked": "2020-08-16T06:22:06.320Z",
+        "repo": "Omeka-plugin-BeamMeUpToInternetArchive",
+        "type": "classic_plugin",
+        "versions": {
+            "0.1": {
+                "addon_id": 41277714,
+                "asset_id": 4024625504,
+                "asset_name": "0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-BeamMeUpToInternetArchive/archive/refs/tags/0.1.zip",
+                "downloads": 0,
+                "id": 2237159554,
+                "omeka_version_constraint": "",
+                "tag_name": "0.1",
+                "version": "0.1"
+            },
+            "1.2": {
+                "addon_id": 41277714,
+                "asset_id": 238393348,
+                "asset_name": "1.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-BeamMeUpToInternetArchive/archive/refs/tags/1.2.zip",
+                "downloads": 0,
+                "id": 496198415,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "1.2",
+                "version": "1.2"
+            },
+            "2.2": {
+                "addon_id": 41277714,
+                "asset_id": 1071481497,
+                "asset_name": "2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-BeamMeUpToInternetArchive/archive/refs/tags/2.2.zip",
+                "downloads": 0,
+                "id": 534109526,
+                "omeka_version_constraint": "2.0-dev",
+                "tag_name": "2.2",
+                "version": "2.2"
+            },
+            "2.3": {
+                "addon_id": 41277714,
+                "asset_id": 45984553,
+                "asset_name": "2.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-BeamMeUpToInternetArchive/archive/refs/tags/2.3.zip",
+                "downloads": 0,
+                "id": 1758653888,
+                "omeka_version_constraint": "",
+                "tag_name": "2.3",
+                "version": "2.3"
+            }
+        }
+    },
     "Beam Me Up to SoundCloud": {
         "dirname": "BeamMeUpToSoundCloud",
         "id": 1273482605,
@@ -2264,6 +2360,30 @@
                 "omeka_version_constraint": "",
                 "tag_name": "2.3",
                 "version": "2.3"
+            }
+        }
+    },
+    "Blocks_omeka": {
+        "dirname": "Blocks",
+        "id": 1619762662,
+        "latest_version": "0.3",
+        "owner": "omeka",
+        "registered": "2011-11-29T15:23:37Z",
+        "releases_checked": "2015-12-14T15:47:48Z",
+        "repo": "plugin-Blocks",
+        "type": "classic_plugin",
+        "versions": {
+            "0.3": {
+                "addon_id": 1619762662,
+                "asset_id": 3366437163,
+                "asset_name": "HEAD.zip",
+                "created": "",
+                "download_url": "https://github.com/omeka/plugin-Blocks/archive/HEAD.zip",
+                "downloads": 0,
+                "id": 4288518316,
+                "omeka_version_constraint": "",
+                "tag_name": "0.3",
+                "version": "0.3"
             }
         }
     },
@@ -2462,10 +2582,10 @@
     "Bot Challenge": {
         "dirname": "BotChallenge",
         "id": 684691611,
-        "latest_version": "2.3.4",
+        "latest_version": "2.3.9",
         "owner": "Daniel-KM",
         "registered": "2026-02-23T05:44:03.047Z",
-        "releases_checked": "2026-09-02T13:17:57.424Z",
+        "releases_checked": "2026-11-16T14:41:30.577Z",
         "repo": "Omeka-plugin-BotChallenge",
         "type": "classic_plugin",
         "versions": {
@@ -2483,13 +2603,13 @@
             },
             "2.3.1": {
                 "addon_id": 684691611,
-                "asset_id": 2229938896,
-                "asset_name": "2.3.1.zip",
-                "created": "",
-                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-BotChallenge/archive/refs/tags/2.3.1.zip",
-                "downloads": 0,
+                "asset_id": 3148963696,
+                "asset_name": "BotChallenge-2.3.1.zip",
+                "created": "2026-04-06T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-BotChallenge/releases/download/2.3.1/BotChallenge-2.3.1.zip",
+                "downloads": 2,
                 "id": 3364047959,
-                "omeka_version_constraint": "",
+                "omeka_version_constraint": "3.0",
                 "tag_name": "2.3.1",
                 "version": "2.3.1"
             },
@@ -2507,15 +2627,39 @@
             },
             "2.3.4": {
                 "addon_id": 684691611,
-                "asset_id": 3516641475,
-                "asset_name": "Omeka-plugin-BotChallenge-2.3.4.zip",
+                "asset_id": 2607950712,
+                "asset_name": "BotChallenge-2.3.4.zip",
                 "created": "2026-08-31T00:00:00Z",
-                "download_url": "https://gitlab.com/Daniel-KM/Omeka-plugin-BotChallenge/-/archive/2.3.4/Omeka-plugin-BotChallenge-2.3.4.zip",
-                "downloads": 0,
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-BotChallenge/releases/download/2.3.4/BotChallenge-2.3.4.zip",
+                "downloads": 2,
                 "id": 3102324952,
-                "omeka_version_constraint": "",
+                "omeka_version_constraint": "3.0",
                 "tag_name": "2.3.4",
                 "version": "2.3.4"
+            },
+            "2.3.8": {
+                "addon_id": 684691611,
+                "asset_id": 3850986648,
+                "asset_name": "BotChallenge-2.3.8.zip",
+                "created": "2026-11-09T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-BotChallenge/releases/download/2.3.8/BotChallenge-2.3.8.zip",
+                "downloads": 4,
+                "id": 2975855859,
+                "omeka_version_constraint": "3.0",
+                "tag_name": "2.3.8",
+                "version": "2.3.8"
+            },
+            "2.3.9": {
+                "addon_id": 684691611,
+                "asset_id": 1506551823,
+                "asset_name": "BotChallenge-2.3.9.zip",
+                "created": "2026-11-16T00:00:00Z",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-BotChallenge/releases/download/2.3.9/BotChallenge-2.3.9.zip",
+                "downloads": 2,
+                "id": 3327706213,
+                "omeka_version_constraint": "",
+                "tag_name": "2.3.9",
+                "version": "2.3.9"
             }
         }
     },
@@ -3311,13 +3455,361 @@
             }
         }
     },
+    "CSV Import+_Daniel-KM": {
+        "dirname": "CsvImportPlus",
+        "id": 1340597753,
+        "latest_version": "2.3.3",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-16T06:33:20.003Z",
+        "releases_checked": "2020-08-16T06:33:20.003Z",
+        "repo": "Omeka-plugin-CsvImportPlus",
+        "type": "classic_plugin",
+        "versions": {
+            "1.0-1.0alpha": {
+                "addon_id": 1340597753,
+                "asset_id": 1815658394,
+                "asset_name": "1.0-1.0alpha.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.0-1.0alpha.zip",
+                "downloads": 0,
+                "id": 3745510872,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0-1.0alpha",
+                "version": "1.0-1.0alpha"
+            },
+            "1.0-1.0": {
+                "addon_id": 1340597753,
+                "asset_id": 897262521,
+                "asset_name": "1.0-1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.0-1.0.zip",
+                "downloads": 0,
+                "id": 471206766,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.0",
+                "version": "1.0-1.0"
+            },
+            "1.0-1.1": {
+                "addon_id": 1340597753,
+                "asset_id": 135989769,
+                "asset_name": "1.0-1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.0-1.1.zip",
+                "downloads": 0,
+                "id": 1796291576,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.1",
+                "version": "1.0-1.1"
+            },
+            "1.1-1.1": {
+                "addon_id": 1340597753,
+                "asset_id": 526392906,
+                "asset_name": "1.1-1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.1-1.1.zip",
+                "downloads": 0,
+                "id": 1450250824,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.1-1.1",
+                "version": "1.1-1.1"
+            },
+            "1.1-1.1.1": {
+                "addon_id": 1340597753,
+                "asset_id": 1896725163,
+                "asset_name": "1.1-1.1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.1-1.1.1.zip",
+                "downloads": 0,
+                "id": 3491363293,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.1-1.1.1",
+                "version": "1.1-1.1.1"
+            },
+            "1.1-1.2": {
+                "addon_id": 1340597753,
+                "asset_id": 1489003674,
+                "asset_name": "1.1-1.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.1-1.2.zip",
+                "downloads": 0,
+                "id": 3480765426,
+                "omeka_version_constraint": "1.1",
+                "tag_name": "1.1-1.2",
+                "version": "1.1-1.2"
+            },
+            "1.3-1.3": {
+                "addon_id": 1340597753,
+                "asset_id": 1263953324,
+                "asset_name": "1.3-1.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.3-1.3.zip",
+                "downloads": 0,
+                "id": 3267305476,
+                "omeka_version_constraint": "1.3",
+                "tag_name": "1.3-1.3",
+                "version": "1.3-1.3"
+            },
+            "1.3.3": {
+                "addon_id": 1340597753,
+                "asset_id": 606718562,
+                "asset_name": "v1.3.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/v1.3.3.zip",
+                "downloads": 0,
+                "id": 2731550588,
+                "omeka_version_constraint": "1.4",
+                "tag_name": "v1.3.3",
+                "version": "1.3.3"
+            },
+            "1.3.4-fork-1.5-files_metadata": {
+                "addon_id": 1340597753,
+                "asset_id": 2548210860,
+                "asset_name": "1.3.4-fork-1.5-files_metadata.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.3.4-fork-1.5-files_metadata.zip",
+                "downloads": 0,
+                "id": 2138174311,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "1.3.4-fork-1.5-files_metadata",
+                "version": "1.3.4-fork-1.5-files_metadata"
+            },
+            "1.3.4-fork-1.6-xml_output": {
+                "addon_id": 1340597753,
+                "asset_id": 934487427,
+                "asset_name": "1.3.4-fork-1.6-xml_output.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.3.4-fork-1.6-xml_output.zip",
+                "downloads": 0,
+                "id": 781235043,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "1.3.4-fork-1.6-xml_output",
+                "version": "1.3.4-fork-1.6-xml_output"
+            },
+            "1.3.4-fork-1.8-xml_output": {
+                "addon_id": 1340597753,
+                "asset_id": 389141288,
+                "asset_name": "1.3.4-fork-1.8-xml_output.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/1.3.4-fork-1.8-xml_output.zip",
+                "downloads": 0,
+                "id": 3349241981,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "1.3.4-fork-1.8-xml_output",
+                "version": "1.3.4-fork-1.8-xml_output"
+            },
+            "1.3.4": {
+                "addon_id": 1340597753,
+                "asset_id": 2517177970,
+                "asset_name": "v1.3.4.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/v1.3.4.zip",
+                "downloads": 0,
+                "id": 1018475231,
+                "omeka_version_constraint": "1.4",
+                "tag_name": "v1.3.4",
+                "version": "1.3.4"
+            },
+            "2.0": {
+                "addon_id": 1340597753,
+                "asset_id": 2294196317,
+                "asset_name": "v2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/v2.0.zip",
+                "downloads": 0,
+                "id": 369010396,
+                "omeka_version_constraint": "2.0-dev",
+                "tag_name": "v2.0",
+                "version": "2.0"
+            },
+            "2.0.1": {
+                "addon_id": 1340597753,
+                "asset_id": 1452064602,
+                "asset_name": "v2.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/v2.0.1.zip",
+                "downloads": 0,
+                "id": 154698457,
+                "omeka_version_constraint": "2.0-dev",
+                "tag_name": "v2.0.1",
+                "version": "2.0.1"
+            },
+            "2.0.2": {
+                "addon_id": 1340597753,
+                "asset_id": 288146826,
+                "asset_name": "v2.0.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/v2.0.2.zip",
+                "downloads": 0,
+                "id": 2419184483,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0.2",
+                "version": "2.0.2"
+            },
+            "2.0.3": {
+                "addon_id": 1340597753,
+                "asset_id": 743238714,
+                "asset_name": "v2.0.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/v2.0.3.zip",
+                "downloads": 0,
+                "id": 3879134197,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0.3",
+                "version": "2.0.3"
+            },
+            "2.0.4": {
+                "addon_id": 1340597753,
+                "asset_id": 2657890346,
+                "asset_name": "v2.0.4.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/v2.0.4.zip",
+                "downloads": 0,
+                "id": 2035447382,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0.4",
+                "version": "2.0.4"
+            },
+            "2.1-full": {
+                "addon_id": 1340597753,
+                "asset_id": 1318256519,
+                "asset_name": "2.1-full.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.1-full.zip",
+                "downloads": 0,
+                "id": 1509861630,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.1-full",
+                "version": "2.1-full"
+            },
+            "2.1.1-full": {
+                "addon_id": 1340597753,
+                "asset_id": 845278498,
+                "asset_name": "2.1.1-full.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.1.1-full.zip",
+                "downloads": 0,
+                "id": 3404561267,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.1.1-full",
+                "version": "2.1.1-full"
+            },
+            "2.1.2-full": {
+                "addon_id": 1340597753,
+                "asset_id": 3646314017,
+                "asset_name": "2.1.2-full.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.1.2-full.zip",
+                "downloads": 0,
+                "id": 1283000797,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.1.2-full",
+                "version": "2.1.2-full"
+            },
+            "2.1.3-full": {
+                "addon_id": 1340597753,
+                "asset_id": 915684639,
+                "asset_name": "2.1.3-full.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.1.3-full.zip",
+                "downloads": 0,
+                "id": 2267404920,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.1.3-full",
+                "version": "2.1.3-full"
+            },
+            "2.1.4-full": {
+                "addon_id": 1340597753,
+                "asset_id": 3561498214,
+                "asset_name": "2.1.4-full.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.1.4-full.zip",
+                "downloads": 0,
+                "id": 2585848512,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.1.4-full",
+                "version": "2.1.4-full"
+            },
+            "2.1.5-full": {
+                "addon_id": 1340597753,
+                "asset_id": 998919512,
+                "asset_name": "2.1.5-full.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.1.5-full.zip",
+                "downloads": 0,
+                "id": 1367095653,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.1.5-full",
+                "version": "2.1.5-full"
+            },
+            "2.2-full": {
+                "addon_id": 1340597753,
+                "asset_id": 2779071620,
+                "asset_name": "2.2-full.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.2-full.zip",
+                "downloads": 0,
+                "id": 3748321872,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.2-full",
+                "version": "2.2-full"
+            },
+            "2.2.1-full": {
+                "addon_id": 1340597753,
+                "asset_id": 1174355922,
+                "asset_name": "2.2.1-full.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.2.1-full.zip",
+                "downloads": 0,
+                "id": 1147305104,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.2.1-full",
+                "version": "2.2.1-full"
+            },
+            "2.3": {
+                "addon_id": 1340597753,
+                "asset_id": 995050661,
+                "asset_name": "2.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.3.zip",
+                "downloads": 0,
+                "id": 2365060966,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.3",
+                "version": "2.3"
+            },
+            "2.3.2": {
+                "addon_id": 1340597753,
+                "asset_id": 1693823901,
+                "asset_name": "2.3.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.3.2.zip",
+                "downloads": 0,
+                "id": 2457300282,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.3.2",
+                "version": "2.3.2"
+            },
+            "2.3.3": {
+                "addon_id": 1340597753,
+                "asset_id": 1502976557,
+                "asset_name": "2.3.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CsvImportPlus/archive/refs/tags/2.3.3.zip",
+                "downloads": 0,
+                "id": 3849346476,
+                "omeka_version_constraint": "",
+                "tag_name": "2.3.3",
+                "version": "2.3.3"
+            }
+        }
+    },
     "CSV Import_omeka": {
         "dirname": "CsvImport",
         "id": 2411673906,
         "latest_version": "2.0.7",
         "owner": "omeka",
         "registered": "2011-07-05T20:11:22Z",
-        "releases_checked": "2026-04-03T22:56:59Z",
+        "releases_checked": "2026-11-04T19:30:50Z",
         "repo": "plugin-CsvImport",
         "type": "classic_plugin",
         "versions": {
@@ -3363,7 +3855,7 @@
                 "asset_name": "CsvImport-2.0.7.zip",
                 "created": "2022-12-21T20:46:40Z",
                 "download_url": "https://github.com/omeka/plugin-CsvImport/releases/download/v2.0.7/CsvImport-2.0.7.zip",
-                "downloads": 3168,
+                "downloads": 3246,
                 "id": 4122904625,
                 "omeka_version_constraint": "",
                 "tag_name": "v2.0.7",
@@ -3392,6 +3884,30 @@
                 "omeka_version_constraint": "",
                 "tag_name": "1.3",
                 "version": "1.3"
+            }
+        }
+    },
+    "CSVExport_adehner": {
+        "dirname": "CSVExport",
+        "id": 3335921209,
+        "latest_version": "1.1",
+        "owner": "adehner",
+        "registered": "2017-02-02T22:14:46Z",
+        "releases_checked": "2019-12-16T07:13:03Z",
+        "repo": "CSVExport",
+        "type": "classic_plugin",
+        "versions": {
+            "1.1": {
+                "addon_id": 3335921209,
+                "asset_id": 4249568678,
+                "asset_name": "HEAD.zip",
+                "created": "",
+                "download_url": "https://github.com/adehner/CSVExport/archive/HEAD.zip",
+                "downloads": 0,
+                "id": 2455599122,
+                "omeka_version_constraint": "",
+                "tag_name": "1.1",
+                "version": "1.1"
             }
         }
     },
@@ -4463,6 +4979,114 @@
             }
         }
     },
+    "Collection Tree_Daniel-KM": {
+        "dirname": "CollectionTree",
+        "id": 2804217966,
+        "latest_version": "2.2.0",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-16T06:22:06.334Z",
+        "releases_checked": "2020-08-16T06:22:06.334Z",
+        "repo": "Omeka-plugin-CollectionTree",
+        "type": "classic_plugin",
+        "versions": {
+            "0.1": {
+                "addon_id": 2804217966,
+                "asset_id": 3829753461,
+                "asset_name": "v0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CollectionTree/archive/refs/tags/v0.1.zip",
+                "downloads": 0,
+                "id": 239447875,
+                "omeka_version_constraint": "1.2.1",
+                "tag_name": "v0.1",
+                "version": "0.1"
+            },
+            "1.0": {
+                "addon_id": 2804217966,
+                "asset_id": 2136097905,
+                "asset_name": "v1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CollectionTree/archive/refs/tags/v1.0.zip",
+                "downloads": 0,
+                "id": 2021717474,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.0",
+                "version": "1.0"
+            },
+            "1.1": {
+                "addon_id": 2804217966,
+                "asset_id": 1110601153,
+                "asset_name": "v1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CollectionTree/archive/refs/tags/v1.1.zip",
+                "downloads": 0,
+                "id": 260556148,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.1",
+                "version": "1.1"
+            },
+            "1.1.1": {
+                "addon_id": 2804217966,
+                "asset_id": 1618380543,
+                "asset_name": "v1.1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CollectionTree/archive/refs/tags/v1.1.1.zip",
+                "downloads": 0,
+                "id": 3143474851,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.1.1",
+                "version": "1.1.1"
+            },
+            "2.0": {
+                "addon_id": 2804217966,
+                "asset_id": 1320836844,
+                "asset_name": "v2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CollectionTree/archive/refs/tags/v2.0.zip",
+                "downloads": 0,
+                "id": 2059815867,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0",
+                "version": "2.0"
+            },
+            "2.2.0": {
+                "addon_id": 2804217966,
+                "asset_id": 81947813,
+                "asset_name": "2.2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-CollectionTree/archive/refs/tags/2.2.0.zip",
+                "downloads": 0,
+                "id": 2310826684,
+                "omeka_version_constraint": "",
+                "tag_name": "2.2.0",
+                "version": "2.2.0"
+            }
+        }
+    },
+    "CollectionList": {
+        "dirname": "CollectionList",
+        "id": 3124630340,
+        "latest_version": "0.1",
+        "owner": "iao",
+        "registered": "2026-11-09T15:30:04Z",
+        "releases_checked": "2026-11-09T16:04:09Z",
+        "repo": "CollectionList",
+        "type": "classic_plugin",
+        "versions": {
+            "0.1": {
+                "addon_id": 3124630340,
+                "asset_id": 4293015941,
+                "asset_name": "HEAD.zip",
+                "created": "",
+                "download_url": "https://github.com/iao/CollectionList/archive/HEAD.zip",
+                "downloads": 0,
+                "id": 3015987266,
+                "omeka_version_constraint": "",
+                "tag_name": "0.1",
+                "version": "0.1"
+            }
+        }
+    },
     "CollectionSpace Importer": {
         "dirname": "CollectionSpaceImport",
         "id": 3996876161,
@@ -4799,6 +5423,78 @@
             }
         }
     },
+    "Commenting_Daniel-KM": {
+        "dirname": "Commenting",
+        "id": 478058146,
+        "latest_version": "2.2.0.4.2",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-16T06:33:20.050Z",
+        "releases_checked": "2020-08-16T06:33:20.050Z",
+        "repo": "Omeka-plugin-Commenting",
+        "type": "classic_plugin",
+        "versions": {
+            "1.0": {
+                "addon_id": 478058146,
+                "asset_id": 1718922328,
+                "asset_name": "v1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Commenting/archive/refs/tags/v1.0.zip",
+                "downloads": 0,
+                "id": 4140954876,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.0",
+                "version": "1.0"
+            },
+            "2.0": {
+                "addon_id": 478058146,
+                "asset_id": 1469888197,
+                "asset_name": "v2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Commenting/archive/refs/tags/v2.0.zip",
+                "downloads": 0,
+                "id": 4103555749,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0",
+                "version": "2.0"
+            },
+            "2.1-rc": {
+                "addon_id": 478058146,
+                "asset_id": 3995922357,
+                "asset_name": "v2.1-rc.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Commenting/archive/refs/tags/v2.1-rc.zip",
+                "downloads": 0,
+                "id": 93617733,
+                "omeka_version_constraint": "2.1-dev",
+                "tag_name": "v2.1-rc",
+                "version": "2.1-rc"
+            },
+            "2.2": {
+                "addon_id": 478058146,
+                "asset_id": 761062821,
+                "asset_name": "v2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Commenting/archive/refs/tags/v2.2.zip",
+                "downloads": 0,
+                "id": 446245769,
+                "omeka_version_constraint": "2.6",
+                "tag_name": "v2.2",
+                "version": "2.2"
+            },
+            "2.2.0.4.2": {
+                "addon_id": 478058146,
+                "asset_id": 3492302192,
+                "asset_name": "2.2.0.4.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Commenting/archive/refs/tags/2.2.0.4.2.zip",
+                "downloads": 0,
+                "id": 3545064195,
+                "omeka_version_constraint": "",
+                "tag_name": "2.2.0.4.2",
+                "version": "2.2.0.4.2"
+            }
+        }
+    },
     "Commons": {
         "dirname": "Commons",
         "id": 4114800229,
@@ -5099,6 +5795,210 @@
             }
         }
     },
+    "Contribution_Daniel-KM": {
+        "dirname": "Contribution",
+        "id": 2677481515,
+        "latest_version": "3.2.0.5.0",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-18T05:27:48.088Z",
+        "releases_checked": "2020-08-18T05:27:48.088Z",
+        "repo": "Omeka-plugin-Contribution",
+        "type": "classic_plugin",
+        "versions": {
+            "0.9rc4-0.1": {
+                "addon_id": 2677481515,
+                "asset_id": 82118724,
+                "asset_name": "0.9rc4-0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/0.9rc4-0.1.zip",
+                "downloads": 0,
+                "id": 4024280100,
+                "omeka_version_constraint": "",
+                "tag_name": "0.9rc4-0.1",
+                "version": "0.9rc4-0.1"
+            },
+            "0.9-0.1": {
+                "addon_id": 2677481515,
+                "asset_id": 424900031,
+                "asset_name": "0.9-0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/0.9-0.1.zip",
+                "downloads": 0,
+                "id": 3765194542,
+                "omeka_version_constraint": "",
+                "tag_name": "0.9-0.1",
+                "version": "0.9-0.1"
+            },
+            "0.9.1-0.1": {
+                "addon_id": 2677481515,
+                "asset_id": 370324135,
+                "asset_name": "0.9.1-0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/0.9.1-0.1.zip",
+                "downloads": 0,
+                "id": 1592209519,
+                "omeka_version_constraint": "",
+                "tag_name": "0.9.1-0.1",
+                "version": "0.9.1-0.1"
+            },
+            "1.0-1.0": {
+                "addon_id": 2677481515,
+                "asset_id": 4016651808,
+                "asset_name": "1.0-1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/1.0-1.0.zip",
+                "downloads": 0,
+                "id": 1036942410,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.0",
+                "version": "1.0-1.0"
+            },
+            "1.0-1.1": {
+                "addon_id": 2677481515,
+                "asset_id": 3523811216,
+                "asset_name": "1.0-1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/1.0-1.1.zip",
+                "downloads": 0,
+                "id": 1254706396,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.1",
+                "version": "1.0-1.1"
+            },
+            "1.3-2.0": {
+                "addon_id": 2677481515,
+                "asset_id": 3876329592,
+                "asset_name": "1.3-2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/1.3-2.0.zip",
+                "downloads": 0,
+                "id": 2015934659,
+                "omeka_version_constraint": "1.3",
+                "tag_name": "1.3-2.0",
+                "version": "1.3-2.0"
+            },
+            "1.3-2.1": {
+                "addon_id": 2677481515,
+                "asset_id": 3664523720,
+                "asset_name": "1.3-2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/1.3-2.1.zip",
+                "downloads": 0,
+                "id": 254773333,
+                "omeka_version_constraint": "1.3",
+                "tag_name": "1.3-2.1",
+                "version": "1.3-2.1"
+            },
+            "1.3-2.1.1": {
+                "addon_id": 2677481515,
+                "asset_id": 3546921015,
+                "asset_name": "1.3-2.1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/1.3-2.1.1.zip",
+                "downloads": 0,
+                "id": 1068480197,
+                "omeka_version_constraint": "1.3",
+                "tag_name": "1.3-2.1.1",
+                "version": "1.3-2.1.1"
+            },
+            "2.2": {
+                "addon_id": 2677481515,
+                "asset_id": 3152105246,
+                "asset_name": "v2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/v2.2.zip",
+                "downloads": 0,
+                "id": 2038646318,
+                "omeka_version_constraint": "1.3",
+                "tag_name": "v2.2",
+                "version": "2.2"
+            },
+            "2.2.1": {
+                "addon_id": 2677481515,
+                "asset_id": 3015108376,
+                "asset_name": "v2.2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/v2.2.1.zip",
+                "downloads": 0,
+                "id": 2411237347,
+                "omeka_version_constraint": "1.4",
+                "tag_name": "v2.2.1",
+                "version": "2.2.1"
+            },
+            "2.2.2": {
+                "addon_id": 2677481515,
+                "asset_id": 4095122888,
+                "asset_name": "v2.2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/v2.2.2.zip",
+                "downloads": 0,
+                "id": 380755545,
+                "omeka_version_constraint": "1.4",
+                "tag_name": "v2.2.2",
+                "version": "2.2.2"
+            },
+            "3.0": {
+                "addon_id": 2677481515,
+                "asset_id": 1733695434,
+                "asset_name": "v3.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/v3.0.zip",
+                "downloads": 0,
+                "id": 2521779509,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v3.0",
+                "version": "3.0"
+            },
+            "3.0.1": {
+                "addon_id": 2677481515,
+                "asset_id": 861069938,
+                "asset_name": "v3.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/v3.0.1.zip",
+                "downloads": 0,
+                "id": 2975625789,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "v3.0.1",
+                "version": "3.0.1"
+            },
+            "3.1": {
+                "addon_id": 2677481515,
+                "asset_id": 285962903,
+                "asset_name": "3.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/3.1.zip",
+                "downloads": 0,
+                "id": 3779624355,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "3.1",
+                "version": "3.1"
+            },
+            "3.2": {
+                "addon_id": 2677481515,
+                "asset_id": 496387242,
+                "asset_name": "v3.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/v3.2.zip",
+                "downloads": 0,
+                "id": 2017537049,
+                "omeka_version_constraint": "2.6",
+                "tag_name": "v3.2",
+                "version": "3.2"
+            },
+            "3.2.0.5.0": {
+                "addon_id": 2677481515,
+                "asset_id": 2119519386,
+                "asset_name": "3.2.0.5.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Contribution/archive/refs/tags/3.2.0.5.0.zip",
+                "downloads": 0,
+                "id": 997469299,
+                "omeka_version_constraint": "",
+                "tag_name": "3.2.0.5.0",
+                "version": "3.2.0.5.0"
+            }
+        }
+    },
     "Contributor Contact": {
         "dirname": "ContributorContact",
         "id": 3797743550,
@@ -5302,6 +6202,17 @@
                 "version": "2.3.1"
             }
         }
+    },
+    "CreativeCommonsChooser_zerocrates": {
+        "dirname": "CreativeCommonsChooser",
+        "id": 3055087940,
+        "latest_version": "",
+        "owner": "zerocrates",
+        "registered": "2015-01-06T22:25:18Z",
+        "releases_checked": "",
+        "repo": "CreativeCommonsChooser",
+        "type": "classic_plugin",
+        "versions": []
     },
     "CrowdEd": {
         "dirname": "CrowdEd",
@@ -7127,6 +8038,78 @@
             }
         }
     },
+    "Dublin Core Extended_Daniel-KM": {
+        "dirname": "DublinCoreExtended",
+        "id": 2863182813,
+        "latest_version": "2.2",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-18T05:27:48.121Z",
+        "releases_checked": "2020-08-18T05:27:48.121Z",
+        "repo": "Omeka-plugin-DublinCoreExtended",
+        "type": "classic_plugin",
+        "versions": {
+            "1.0-1.0": {
+                "addon_id": 2863182813,
+                "asset_id": 4078610527,
+                "asset_name": "1.0-1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-DublinCoreExtended/archive/refs/tags/1.0-1.0.zip",
+                "downloads": 0,
+                "id": 323876926,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.0",
+                "version": "1.0-1.0"
+            },
+            "1.2-1.1": {
+                "addon_id": 2863182813,
+                "asset_id": 3767314793,
+                "asset_name": "1.2-1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-DublinCoreExtended/archive/refs/tags/1.2-1.1.zip",
+                "downloads": 0,
+                "id": 512400328,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.2-1.1",
+                "version": "1.2-1.1"
+            },
+            "2.0": {
+                "addon_id": 2863182813,
+                "asset_id": 1576092289,
+                "asset_name": "v2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-DublinCoreExtended/archive/refs/tags/v2.0.zip",
+                "downloads": 0,
+                "id": 3223735448,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0",
+                "version": "2.0"
+            },
+            "2.1": {
+                "addon_id": 2863182813,
+                "asset_id": 1847865319,
+                "asset_name": "2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-DublinCoreExtended/archive/refs/tags/2.1.zip",
+                "downloads": 0,
+                "id": 3072424974,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.1",
+                "version": "2.1"
+            },
+            "2.2": {
+                "addon_id": 2863182813,
+                "asset_id": 1367864134,
+                "asset_name": "Omeka-plugin-DublinCoreExtended-HEAD.zip",
+                "created": "",
+                "download_url": "https://gitlab.com/Daniel-KM/Omeka-plugin-DublinCoreExtended/-/archive/HEAD/Omeka-plugin-DublinCoreExtended-HEAD.zip",
+                "downloads": 0,
+                "id": 774385076,
+                "omeka_version_constraint": "",
+                "tag_name": "2.2",
+                "version": "2.2"
+            }
+        }
+    },
     "Duplicate Item": {
         "dirname": "DuplicateItem",
         "id": 4224490684,
@@ -8249,7 +9232,7 @@
         "latest_version": "3.11.1",
         "owner": "omeka",
         "registered": "2011-07-06T13:17:55Z",
-        "releases_checked": "2026-10-31T02:32:46Z",
+        "releases_checked": "2026-11-09T21:18:37Z",
         "repo": "plugin-ExhibitBuilder",
         "type": "classic_plugin",
         "versions": {
@@ -8507,14 +9490,14 @@
             },
             "3.11.1": {
                 "addon_id": 3577824512,
-                "asset_id": 443883995,
-                "asset_name": "HEAD.zip",
-                "created": "",
-                "download_url": "https://github.com/omeka/plugin-ExhibitBuilder/archive/HEAD.zip",
-                "downloads": 0,
+                "asset_id": 327933123,
+                "asset_name": "ExhibitBuilder-3.11.1.zip",
+                "created": "2026-11-09T21:18:31Z",
+                "download_url": "https://github.com/omeka/plugin-ExhibitBuilder/releases/download/v3.11.1/ExhibitBuilder-3.11.1.zip",
+                "downloads": 20,
                 "id": 485030162,
                 "omeka_version_constraint": "",
-                "tag_name": "3.11.1",
+                "tag_name": "v3.11.1",
                 "version": "3.11.1"
             }
         }
@@ -8522,10 +9505,10 @@
     "Exhibit Image Annotation": {
         "dirname": "ExhibitImageAnnotation",
         "id": 495035420,
-        "latest_version": "1.3",
+        "latest_version": "1.3.1",
         "owner": "omeka",
         "registered": "2017-01-31T21:53:27Z",
-        "releases_checked": "2026-09-02T00:50:13Z",
+        "releases_checked": "2026-11-05T02:09:01Z",
         "repo": "plugin-ExhibitImageAnnotation",
         "type": "classic_plugin",
         "versions": {
@@ -8583,11 +9566,23 @@
                 "asset_name": "ExhibitImageAnnotation-1.3.zip",
                 "created": "2025-09-18T20:38:30Z",
                 "download_url": "https://github.com/omeka/plugin-ExhibitImageAnnotation/releases/download/v1.3/ExhibitImageAnnotation-1.3.zip",
-                "downloads": 250,
+                "downloads": 259,
                 "id": 2923654686,
-                "omeka_version_constraint": "",
+                "omeka_version_constraint": "3.2",
                 "tag_name": "v1.3",
                 "version": "1.3"
+            },
+            "1.3.1": {
+                "addon_id": 495035420,
+                "asset_id": 236605491,
+                "asset_name": "ExhibitImageAnnotation-1.3.1.zip",
+                "created": "2026-11-05T02:08:50Z",
+                "download_url": "https://github.com/omeka/plugin-ExhibitImageAnnotation/releases/download/v1.3.1/ExhibitImageAnnotation-1.3.1.zip",
+                "downloads": 9,
+                "id": 1699464746,
+                "omeka_version_constraint": "",
+                "tag_name": "v1.3.1",
+                "version": "1.3.1"
             }
         }
     },
@@ -9002,10 +9997,10 @@
     "Exports": {
         "dirname": "Exports",
         "id": 1972374196,
-        "latest_version": "1.0",
+        "latest_version": "1.1",
         "owner": "omeka",
         "registered": "2026-02-09T20:42:04Z",
-        "releases_checked": "2026-10-30T21:34:50Z",
+        "releases_checked": "2026-11-05T19:26:44Z",
         "repo": "plugin-Exports",
         "type": "classic_plugin",
         "versions": {
@@ -9015,11 +10010,23 @@
                 "asset_name": "Exports-1.0.zip",
                 "created": "2026-03-16T19:50:54Z",
                 "download_url": "https://github.com/omeka/plugin-Exports/releases/download/v1.0/Exports-1.0.zip",
-                "downloads": 154,
+                "downloads": 157,
                 "id": 2511651733,
-                "omeka_version_constraint": "",
+                "omeka_version_constraint": "3.2",
                 "tag_name": "v1.0",
                 "version": "1.0"
+            },
+            "1.1": {
+                "addon_id": 1972374196,
+                "asset_id": 3782903472,
+                "asset_name": "Exports-1.1.zip",
+                "created": "2026-11-05T19:26:43Z",
+                "download_url": "https://github.com/omeka/plugin-Exports/releases/download/v1.1/Exports-1.1.zip",
+                "downloads": 8,
+                "id": 3803443971,
+                "omeka_version_constraint": "",
+                "tag_name": "v1.1",
+                "version": "1.1"
             }
         }
     },
@@ -9581,7 +10588,7 @@
         "latest_version": "1.1",
         "owner": "omeka",
         "registered": "2018-12-19T04:48:47Z",
-        "releases_checked": "2026-03-25T13:51:33Z",
+        "releases_checked": "2026-11-05T19:09:42Z",
         "repo": "plugin-FilePaginator",
         "type": "classic_plugin",
         "versions": {
@@ -9603,7 +10610,7 @@
                 "asset_name": "FilePaginator-1.1.zip",
                 "created": "2026-03-25T13:51:05Z",
                 "download_url": "https://github.com/omeka/plugin-FilePaginator/releases/download/v1.1/FilePaginator-1.1.zip",
-                "downloads": 84,
+                "downloads": 86,
                 "id": 1973578777,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.1",
@@ -9839,6 +10846,30 @@
             }
         }
     },
+    "Gallery": {
+        "dirname": "Gallery",
+        "id": 3954771733,
+        "latest_version": "0.1",
+        "owner": "iao",
+        "registered": "2026-11-09T15:32:33Z",
+        "releases_checked": "2026-11-09T16:16:15Z",
+        "repo": "Gallery",
+        "type": "classic_plugin",
+        "versions": {
+            "0.1": {
+                "addon_id": 3954771733,
+                "asset_id": 4162012343,
+                "asset_name": "HEAD.zip",
+                "created": "",
+                "download_url": "https://github.com/iao/Gallery/archive/HEAD.zip",
+                "downloads": 0,
+                "id": 1295072887,
+                "omeka_version_constraint": "",
+                "tag_name": "0.1",
+                "version": "0.1"
+            }
+        }
+    },
     "GenerateThumbnails": {
         "dirname": "GenerateThumbnails",
         "id": 2447988056,
@@ -9929,7 +10960,7 @@
         "latest_version": "4.0",
         "owner": "omeka",
         "registered": "2011-07-06T13:31:13Z",
-        "releases_checked": "2026-10-26T21:36:51Z",
+        "releases_checked": "2026-11-06T19:00:09Z",
         "repo": "plugin-Geolocation",
         "type": "classic_plugin",
         "versions": {
@@ -10136,6 +11167,270 @@
                 "omeka_version_constraint": "",
                 "tag_name": "0.1",
                 "version": "0.1"
+            }
+        }
+    },
+    "Geolocation_Daniel-KM": {
+        "dirname": "Geolocation",
+        "id": 2705992329,
+        "latest_version": "2.3.3-2.2.5",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-18T05:38:18.748Z",
+        "releases_checked": "2020-08-18T05:38:18.748Z",
+        "repo": "Omeka-plugin-Geolocation",
+        "type": "classic_plugin",
+        "versions": {
+            "0.9.0": {
+                "addon_id": 2705992329,
+                "asset_id": 1002487359,
+                "asset_name": "0.9.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/0.9.0.zip",
+                "downloads": 0,
+                "id": 3160651431,
+                "omeka_version_constraint": "",
+                "tag_name": "0.9.0",
+                "version": "0.9.0"
+            },
+            "0.9-1.0.1": {
+                "addon_id": 2705992329,
+                "asset_id": 2859827352,
+                "asset_name": "0.9-1.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/0.9-1.0.1.zip",
+                "downloads": 0,
+                "id": 965203028,
+                "omeka_version_constraint": "",
+                "tag_name": "0.9-1.0.1",
+                "version": "0.9-1.0.1"
+            },
+            "0.10.x-1.0.2": {
+                "addon_id": 2705992329,
+                "asset_id": 1146704738,
+                "asset_name": "0.10.x-1.0.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/0.10.x-1.0.2.zip",
+                "downloads": 0,
+                "id": 461617380,
+                "omeka_version_constraint": "",
+                "tag_name": "0.10.x-1.0.2",
+                "version": "0.10.x-1.0.2"
+            },
+            "1.0-1.1": {
+                "addon_id": 2705992329,
+                "asset_id": 2957432220,
+                "asset_name": "1.0-1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/1.0-1.1.zip",
+                "downloads": 0,
+                "id": 1616131841,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.1",
+                "version": "1.0-1.1"
+            },
+            "1.0-1.1.1": {
+                "addon_id": 2705992329,
+                "asset_id": 2866375724,
+                "asset_name": "1.0-1.1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/1.0-1.1.1.zip",
+                "downloads": 0,
+                "id": 3131502579,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.1.1",
+                "version": "1.0-1.1.1"
+            },
+            "1.3-1.2": {
+                "addon_id": 2705992329,
+                "asset_id": 3463156617,
+                "asset_name": "1.3-1.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/1.3-1.2.zip",
+                "downloads": 0,
+                "id": 3204258923,
+                "omeka_version_constraint": "1.3",
+                "tag_name": "1.3-1.2",
+                "version": "1.3-1.2"
+            },
+            "2.0": {
+                "addon_id": 2705992329,
+                "asset_id": 4052545268,
+                "asset_name": "v2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.0.zip",
+                "downloads": 0,
+                "id": 709991500,
+                "omeka_version_constraint": "2.0.2",
+                "tag_name": "v2.0",
+                "version": "2.0"
+            },
+            "2.0.1": {
+                "addon_id": 2705992329,
+                "asset_id": 3069584749,
+                "asset_name": "v2.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.0.1.zip",
+                "downloads": 0,
+                "id": 3195399902,
+                "omeka_version_constraint": "2.0.3",
+                "tag_name": "v2.0.1",
+                "version": "2.0.1"
+            },
+            "2.1-beta": {
+                "addon_id": 2705992329,
+                "asset_id": 3565001264,
+                "asset_name": "v2.1-beta.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.1-beta.zip",
+                "downloads": 0,
+                "id": 4068112265,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "v2.1-beta",
+                "version": "2.1-beta"
+            },
+            "2.1-rc": {
+                "addon_id": 2705992329,
+                "asset_id": 2756749196,
+                "asset_name": "v2.1-rc.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.1-rc.zip",
+                "downloads": 0,
+                "id": 113414312,
+                "omeka_version_constraint": "2.1-dev",
+                "tag_name": "v2.1-rc",
+                "version": "2.1-rc"
+            },
+            "2.1": {
+                "addon_id": 2705992329,
+                "asset_id": 3438069572,
+                "asset_name": "v2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.1.zip",
+                "downloads": 0,
+                "id": 1565961434,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "v2.1",
+                "version": "2.1"
+            },
+            "2.2": {
+                "addon_id": 2705992329,
+                "asset_id": 2337062292,
+                "asset_name": "v2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.2.zip",
+                "downloads": 0,
+                "id": 3294625120,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v2.2",
+                "version": "2.2"
+            },
+            "2.2.1": {
+                "addon_id": 2705992329,
+                "asset_id": 560542788,
+                "asset_name": "v2.2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.2.1.zip",
+                "downloads": 0,
+                "id": 3186703024,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v2.2.1",
+                "version": "2.2.1"
+            },
+            "2.2.2": {
+                "addon_id": 2705992329,
+                "asset_id": 1724468884,
+                "asset_name": "v2.2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.2.2.zip",
+                "downloads": 0,
+                "id": 620260106,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v2.2.2",
+                "version": "2.2.2"
+            },
+            "2.2.3": {
+                "addon_id": 2705992329,
+                "asset_id": 1537828644,
+                "asset_name": "v2.2.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.2.3.zip",
+                "downloads": 0,
+                "id": 1409244060,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v2.2.3",
+                "version": "2.2.3"
+            },
+            "2.2.4": {
+                "addon_id": 2705992329,
+                "asset_id": 3918117684,
+                "asset_name": "v2.2.4.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.2.4.zip",
+                "downloads": 0,
+                "id": 3449540159,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v2.2.4",
+                "version": "2.2.4"
+            },
+            "2.2.5": {
+                "addon_id": 2705992329,
+                "asset_id": 3572077188,
+                "asset_name": "v2.2.5.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/v2.2.5.zip",
+                "downloads": 0,
+                "id": 3130850985,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v2.2.5",
+                "version": "2.2.5"
+            },
+            "2.3": {
+                "addon_id": 2705992329,
+                "asset_id": 3585165740,
+                "asset_name": "2.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/2.3.zip",
+                "downloads": 0,
+                "id": 3008941558,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.3",
+                "version": "2.3"
+            },
+            "2.3.2-2.2.5": {
+                "addon_id": 2705992329,
+                "asset_id": 2830654206,
+                "asset_name": "2.3.2-2.2.5.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/2.3.2-2.2.5.zip",
+                "downloads": 0,
+                "id": 3476281692,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.3.2-2.2.5",
+                "version": "2.3.2-2.2.5"
+            },
+            "2.3.3-2.2.5": {
+                "addon_id": 2705992329,
+                "asset_id": 1765180734,
+                "asset_name": "2.3.3-2.2.5.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/2.3.3-2.2.5.zip",
+                "downloads": 0,
+                "id": 1766118120,
+                "omeka_version_constraint": "",
+                "tag_name": "2.3.3-2.2.5",
+                "version": "2.3.3-2.2.5"
+            },
+            "3.2.1-3.2": {
+                "addon_id": 2705992329,
+                "asset_id": 661567423,
+                "asset_name": "3.2.1-3.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Geolocation/archive/refs/tags/3.2.1-3.2.zip",
+                "downloads": 0,
+                "id": 224628424,
+                "omeka_version_constraint": "2.5",
+                "tag_name": "3.2.1-3.2",
+                "version": "3.2.1-3.2"
             }
         }
     },
@@ -10531,6 +11826,66 @@
                 "omeka_version_constraint": "",
                 "tag_name": "v1.2",
                 "version": "1.2"
+            }
+        }
+    },
+    "Guest User_Daniel-KM": {
+        "dirname": "GuestUser",
+        "id": 3899565167,
+        "latest_version": "1.2.1",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-18T05:38:18.800Z",
+        "releases_checked": "2020-08-18T05:38:18.800Z",
+        "repo": "Omeka-plugin-GuestUser",
+        "type": "classic_plugin",
+        "versions": {
+            "1.0": {
+                "addon_id": 3899565167,
+                "asset_id": 305814349,
+                "asset_name": "v1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-GuestUser/archive/refs/tags/v1.0.zip",
+                "downloads": 0,
+                "id": 2040886552,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v1.0",
+                "version": "1.0"
+            },
+            "1.0.1": {
+                "addon_id": 3899565167,
+                "asset_id": 955946025,
+                "asset_name": "v1.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-GuestUser/archive/refs/tags/v1.0.1.zip",
+                "downloads": 0,
+                "id": 3111419814,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v1.0.1",
+                "version": "1.0.1"
+            },
+            "1.1.1": {
+                "addon_id": 3899565167,
+                "asset_id": 2660081565,
+                "asset_name": "v1.1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-GuestUser/archive/refs/tags/v1.1.1.zip",
+                "downloads": 0,
+                "id": 3098940817,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v1.1.1",
+                "version": "1.1.1"
+            },
+            "1.2.1": {
+                "addon_id": 3899565167,
+                "asset_id": 3003115639,
+                "asset_name": "Omeka-plugin-GuestUser-HEAD.zip",
+                "created": "",
+                "download_url": "https://gitlab.com/Daniel-KM/Omeka-plugin-GuestUser/-/archive/HEAD/Omeka-plugin-GuestUser-HEAD.zip",
+                "downloads": 0,
+                "id": 3136334792,
+                "omeka_version_constraint": "",
+                "tag_name": "1.2.1",
+                "version": "1.2.1"
             }
         }
     },
@@ -11092,6 +12447,126 @@
                 "download_url": "https://github.com/UCSCLibrary/HistoryLog/releases/download/2.10/HistoryLog.zip",
                 "downloads": 1821,
                 "id": 3273226962,
+                "omeka_version_constraint": "",
+                "tag_name": "2.10",
+                "version": "2.10"
+            }
+        }
+    },
+    "History Log_Daniel-KM": {
+        "dirname": "HistoryLog",
+        "id": 1302932147,
+        "latest_version": "2.10",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-19T06:22:42.072Z",
+        "releases_checked": "2023-06-26T12:19:52.166Z",
+        "repo": "Omeka-plugin-HistoryLog",
+        "type": "classic_plugin",
+        "versions": {
+            "2.4": {
+                "addon_id": 1302932147,
+                "asset_id": 4272647123,
+                "asset_name": "2.4.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-HistoryLog/archive/refs/tags/2.4.zip",
+                "downloads": 0,
+                "id": 3540501584,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "2.4",
+                "version": "2.4"
+            },
+            "2.5": {
+                "addon_id": 1302932147,
+                "asset_id": 3284877923,
+                "asset_name": "2.5.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-HistoryLog/archive/refs/tags/2.5.zip",
+                "downloads": 0,
+                "id": 2751526086,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "2.5",
+                "version": "2.5"
+            },
+            "2.5.1": {
+                "addon_id": 1302932147,
+                "asset_id": 1469506612,
+                "asset_name": "2.5.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-HistoryLog/archive/refs/tags/2.5.1.zip",
+                "downloads": 0,
+                "id": 1014036772,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "2.5.1",
+                "version": "2.5.1"
+            },
+            "2.6": {
+                "addon_id": 1302932147,
+                "asset_id": 2221619379,
+                "asset_name": "2.6.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-HistoryLog/archive/refs/tags/2.6.zip",
+                "downloads": 0,
+                "id": 1024042364,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "2.6",
+                "version": "2.6"
+            },
+            "2.7": {
+                "addon_id": 1302932147,
+                "asset_id": 3104510211,
+                "asset_name": "2.7.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-HistoryLog/archive/refs/tags/2.7.zip",
+                "downloads": 0,
+                "id": 1242469866,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "2.7",
+                "version": "2.7"
+            },
+            "2.8": {
+                "addon_id": 1302932147,
+                "asset_id": 995854034,
+                "asset_name": "2.8.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-HistoryLog/archive/refs/tags/2.8.zip",
+                "downloads": 0,
+                "id": 3669067899,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "2.8",
+                "version": "2.8"
+            },
+            "2.9": {
+                "addon_id": 1302932147,
+                "asset_id": 104574818,
+                "asset_name": "2.9.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-HistoryLog/archive/refs/tags/2.9.zip",
+                "downloads": 0,
+                "id": 2914433261,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "2.9",
+                "version": "2.9"
+            },
+            "2.9.1": {
+                "addon_id": 1302932147,
+                "asset_id": 2419494464,
+                "asset_name": "2.9.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-HistoryLog/archive/refs/tags/2.9.1.zip",
+                "downloads": 0,
+                "id": 896139328,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "2.9.1",
+                "version": "2.9.1"
+            },
+            "2.10": {
+                "addon_id": 1302932147,
+                "asset_id": 3358116526,
+                "asset_name": "Omeka-plugin-HistoryLog-HEAD.zip",
+                "created": "",
+                "download_url": "https://gitlab.com/Daniel-KM/Omeka-plugin-HistoryLog/-/archive/HEAD/Omeka-plugin-HistoryLog-HEAD.zip",
+                "downloads": 0,
+                "id": 3792993620,
                 "omeka_version_constraint": "",
                 "tag_name": "2.10",
                 "version": "2.10"
@@ -13713,6 +15188,78 @@
             }
         }
     },
+    "Locale Switcher_biblibre": {
+        "dirname": "LocaleSwitcher",
+        "id": 3204667316,
+        "latest_version": "0.2.1",
+        "owner": "biblibre",
+        "registered": "2017-06-05T14:15:22Z",
+        "releases_checked": "2018-07-10T09:35:41Z",
+        "repo": "omeka-plugin-LocaleSwitcher",
+        "type": "classic_plugin",
+        "versions": {
+            "0.1": {
+                "addon_id": 3204667316,
+                "asset_id": 1954766384,
+                "asset_name": "LocaleSwitcher-0.1.zip",
+                "created": "2017-06-06T10:28:28Z",
+                "download_url": "https://github.com/biblibre/omeka-plugin-LocaleSwitcher/releases/download/v0.1/LocaleSwitcher-0.1.zip",
+                "downloads": 5,
+                "id": 2112522838,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v0.1",
+                "version": "0.1"
+            },
+            "0.1.1": {
+                "addon_id": 3204667316,
+                "asset_id": 3127339156,
+                "asset_name": "LocaleSwitcher-0.1.1.zip",
+                "created": "2017-06-07T07:24:55Z",
+                "download_url": "https://github.com/biblibre/omeka-plugin-LocaleSwitcher/releases/download/v0.1.1/LocaleSwitcher-0.1.1.zip",
+                "downloads": 6,
+                "id": 4203542255,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v0.1.1",
+                "version": "0.1.1"
+            },
+            "0.1.2": {
+                "addon_id": 3204667316,
+                "asset_id": 261160892,
+                "asset_name": "LocaleSwitcher-0.1.2.zip",
+                "created": "2017-06-20T08:15:11Z",
+                "download_url": "https://github.com/biblibre/omeka-plugin-LocaleSwitcher/releases/download/v0.1.2/LocaleSwitcher-0.1.2.zip",
+                "downloads": 11,
+                "id": 1669703509,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v0.1.2",
+                "version": "0.1.2"
+            },
+            "0.2.0": {
+                "addon_id": 3204667316,
+                "asset_id": 1395456521,
+                "asset_name": "LocaleSwitcher-0.2.0.zip",
+                "created": "2017-08-28T09:51:59Z",
+                "download_url": "https://github.com/biblibre/omeka-plugin-LocaleSwitcher/releases/download/v0.2.0/LocaleSwitcher-0.2.0.zip",
+                "downloads": 34,
+                "id": 2412607520,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v0.2.0",
+                "version": "0.2.0"
+            },
+            "0.2.1": {
+                "addon_id": 3204667316,
+                "asset_id": 2303817006,
+                "asset_name": "LocaleSwitcher-0.2.1.zip",
+                "created": "2017-08-28T09:52:09Z",
+                "download_url": "https://github.com/biblibre/omeka-plugin-LocaleSwitcher/releases/download/v0.2.1/LocaleSwitcher-0.2.1.zip",
+                "downloads": 1809,
+                "id": 4174006454,
+                "omeka_version_constraint": "",
+                "tag_name": "v0.2.1",
+                "version": "0.2.1"
+            }
+        }
+    },
     "LoggedInLinks": {
         "dirname": "LoggedInLinks",
         "id": 3805911120,
@@ -13782,6 +15329,42 @@
                 "omeka_version_constraint": "",
                 "tag_name": "2.3",
                 "version": "2.3"
+            }
+        }
+    },
+    "METS Export_UCSCLibrary": {
+        "dirname": "MetsExport",
+        "id": 1709342498,
+        "latest_version": "1.3",
+        "owner": "UCSCLibrary",
+        "registered": "2014-05-06T15:51:29Z",
+        "releases_checked": "2017-11-28T18:50:57Z",
+        "repo": "MetsExport",
+        "type": "classic_plugin",
+        "versions": {
+            "1.2": {
+                "addon_id": 1709342498,
+                "asset_id": 1952314216,
+                "asset_name": "1.2.zip",
+                "created": "2016-06-09T21:17:07Z",
+                "download_url": "https://github.com/UCSCLibrary/MetsExport/archive/refs/tags/1.2.zip",
+                "downloads": 0,
+                "id": 3289343046,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "1.2",
+                "version": "1.2"
+            },
+            "1.3": {
+                "addon_id": 1709342498,
+                "asset_id": 4110685757,
+                "asset_name": "MetsExport.zip",
+                "created": "2017-11-28T18:21:26Z",
+                "download_url": "https://github.com/UCSCLibrary/MetsExport/releases/download/1.3/MetsExport.zip",
+                "downloads": 1126,
+                "id": 3003667664,
+                "omeka_version_constraint": "",
+                "tag_name": "1.3",
+                "version": "1.3"
             }
         }
     },
@@ -14106,6 +15689,42 @@
                 "omeka_version_constraint": "",
                 "tag_name": "v0.1.0",
                 "version": "0.1.0"
+            }
+        }
+    },
+    "Maintenance_Daniel-KM": {
+        "dirname": "Maintenance",
+        "id": 1015572674,
+        "latest_version": "0.2.0",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-19T12:40:03.727Z",
+        "releases_checked": "2020-08-19T12:40:03.727Z",
+        "repo": "omeka-plugin-Maintenance",
+        "type": "classic_plugin",
+        "versions": {
+            "0.1.0": {
+                "addon_id": 1015572674,
+                "asset_id": 38553251,
+                "asset_name": "v0.1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/omeka-plugin-Maintenance/archive/refs/tags/v0.1.0.zip",
+                "downloads": 0,
+                "id": 2842358253,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v0.1.0",
+                "version": "0.1.0"
+            },
+            "0.2.0": {
+                "addon_id": 1015572674,
+                "asset_id": 3118440580,
+                "asset_name": "0.2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/omeka-plugin-Maintenance/archive/refs/tags/0.2.0.zip",
+                "downloads": 0,
+                "id": 2871807924,
+                "omeka_version_constraint": "",
+                "tag_name": "0.2.0",
+                "version": "0.2.0"
             }
         }
     },
@@ -14865,6 +16484,30 @@
             }
         }
     },
+    "Multimedia Display_Daniel-KM": {
+        "dirname": "MultimediaDisplay",
+        "id": 1231321976,
+        "latest_version": "1.3",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-19T12:40:03.760Z",
+        "releases_checked": "2020-08-19T12:40:03.760Z",
+        "repo": "Omeka-plugin-MultimediaDisplay",
+        "type": "classic_plugin",
+        "versions": {
+            "1.3": {
+                "addon_id": 1231321976,
+                "asset_id": 538514698,
+                "asset_name": "Omeka-plugin-MultimediaDisplay-HEAD.zip",
+                "created": "",
+                "download_url": "https://gitlab.com/Daniel-KM/Omeka-plugin-MultimediaDisplay/-/archive/HEAD/Omeka-plugin-MultimediaDisplay-HEAD.zip",
+                "downloads": 0,
+                "id": 2046956750,
+                "omeka_version_constraint": "",
+                "tag_name": "1.3",
+                "version": "1.3"
+            }
+        }
+    },
     "Multiple Collections": {
         "dirname": "MultiCollections",
         "id": 3561767265,
@@ -14886,6 +16529,30 @@
                 "omeka_version_constraint": "",
                 "tag_name": "2.1",
                 "version": "2.1"
+            }
+        }
+    },
+    "Multiple Collections_omeka": {
+        "dirname": "MultiCollections",
+        "id": 1219017142,
+        "latest_version": "1.0",
+        "owner": "omeka",
+        "registered": "2011-10-05T17:08:16Z",
+        "releases_checked": "2012-12-11T16:56:43Z",
+        "repo": "plugin-MultiCollections",
+        "type": "classic_plugin",
+        "versions": {
+            "1.0": {
+                "addon_id": 1219017142,
+                "asset_id": 3875441010,
+                "asset_name": "HEAD.zip",
+                "created": "",
+                "download_url": "https://github.com/omeka/plugin-MultiCollections/archive/HEAD.zip",
+                "downloads": 0,
+                "id": 3789369062,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0",
+                "version": "1.0"
             }
         }
     },
@@ -15693,6 +17360,54 @@
             }
         }
     },
+    "Neatline Time_scholarslab": {
+        "dirname": "NeatlineTime",
+        "id": 941457131,
+        "latest_version": "2.1.2",
+        "owner": "scholarslab",
+        "registered": "2011-06-10T22:23:57Z",
+        "releases_checked": "2020-07-29T20:07:25Z",
+        "repo": "NeatlineTime",
+        "type": "classic_plugin",
+        "versions": {
+            "2.0.4": {
+                "addon_id": 941457131,
+                "asset_id": 4036763580,
+                "asset_name": "2.0.4.zip",
+                "created": "2014-12-16T20:41:20Z",
+                "download_url": "https://github.com/scholarslab/NeatlineTime/archive/refs/tags/2.0.4.zip",
+                "downloads": 0,
+                "id": 344387977,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.0.4",
+                "version": "2.0.4"
+            },
+            "2.1.1": {
+                "addon_id": 941457131,
+                "asset_id": 1834262939,
+                "asset_name": "NeatlineTime.zip",
+                "created": "2019-04-08T18:12:29Z",
+                "download_url": "https://github.com/scholarslab/NeatlineTime/releases/download/v2.1.1/NeatlineTime.zip",
+                "downloads": 888,
+                "id": 1697541937,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.1.1",
+                "version": "2.1.1"
+            },
+            "2.1.2": {
+                "addon_id": 941457131,
+                "asset_id": 3316951092,
+                "asset_name": "NeatlineTime-2.1.2.zip",
+                "created": "2020-07-29T20:06:52Z",
+                "download_url": "https://github.com/scholarslab/NeatlineTime/releases/download/2.1.2/NeatlineTime-2.1.2.zip",
+                "downloads": 2205,
+                "id": 4230430347,
+                "omeka_version_constraint": "",
+                "tag_name": "2.1.2",
+                "version": "2.1.2"
+            }
+        }
+    },
     "Neatline Web Service": {
         "dirname": "NeatlineWebService",
         "id": 1009612207,
@@ -16185,6 +17900,102 @@
             }
         }
     },
+    "OAI-PMH Harvester_Daniel-KM": {
+        "dirname": "OaipmhHarvester",
+        "id": 2706384608,
+        "latest_version": "2.2.2.1",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-19T15:05:57.120Z",
+        "releases_checked": "2021-03-11T06:26:21.971Z",
+        "repo": "Omeka-plugin-OaipmhHarvester",
+        "type": "classic_plugin",
+        "versions": {
+            "2.0": {
+                "addon_id": 2706384608,
+                "asset_id": 3221186169,
+                "asset_name": "v2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaipmhHarvester/archive/refs/tags/v2.0.zip",
+                "downloads": 0,
+                "id": 1461047388,
+                "omeka_version_constraint": "2.0-dev",
+                "tag_name": "v2.0",
+                "version": "2.0"
+            },
+            "2.0.1a": {
+                "addon_id": 2706384608,
+                "asset_id": 2040867957,
+                "asset_name": "v2.0.1a.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaipmhHarvester/archive/refs/tags/v2.0.1a.zip",
+                "downloads": 0,
+                "id": 3090748147,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0.1a",
+                "version": "2.0.1a"
+            },
+            "2.0.1": {
+                "addon_id": 2706384608,
+                "asset_id": 3686303242,
+                "asset_name": "v2.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaipmhHarvester/archive/refs/tags/v2.0.1.zip",
+                "downloads": 0,
+                "id": 2346552432,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0.1",
+                "version": "2.0.1"
+            },
+            "2.1": {
+                "addon_id": 2706384608,
+                "asset_id": 3631924014,
+                "asset_name": "2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaipmhHarvester/archive/refs/tags/2.1.zip",
+                "downloads": 0,
+                "id": 538108106,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.1",
+                "version": "2.1"
+            },
+            "2.2": {
+                "addon_id": 2706384608,
+                "asset_id": 2681911806,
+                "asset_name": "2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaipmhHarvester/archive/refs/tags/2.2.zip",
+                "downloads": 0,
+                "id": 3105599856,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.2",
+                "version": "2.2"
+            },
+            "2.2.2": {
+                "addon_id": 2706384608,
+                "asset_id": 4273347894,
+                "asset_name": "2.2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaipmhHarvester/archive/refs/tags/2.2.2.zip",
+                "downloads": 0,
+                "id": 290458020,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.2.2",
+                "version": "2.2.2"
+            },
+            "2.2.2.1": {
+                "addon_id": 2706384608,
+                "asset_id": 1804483645,
+                "asset_name": "2.2.2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaipmhHarvester/archive/refs/tags/2.2.2.1.zip",
+                "downloads": 0,
+                "id": 2830617584,
+                "omeka_version_constraint": "",
+                "tag_name": "2.2.2.1",
+                "version": "2.2.2.1"
+            }
+        }
+    },
     "OAI-PMH Repository": {
         "dirname": "OaiPmhRepository",
         "id": 604687376,
@@ -16278,6 +18089,162 @@
                 "omeka_version_constraint": "",
                 "tag_name": "v2.2",
                 "version": "2.2"
+            }
+        }
+    },
+    "OAI-PMH Repository_Daniel-KM": {
+        "dirname": "OaiPmhRepository",
+        "id": 3888985674,
+        "latest_version": "2.3.4",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-19T12:40:03.808Z",
+        "releases_checked": "2020-08-19T12:40:03.808Z",
+        "repo": "Omeka-plugin-OaiPmhRepository",
+        "type": "classic_plugin",
+        "versions": {
+            "1.0-1.0RC": {
+                "addon_id": 3888985674,
+                "asset_id": 1501298088,
+                "asset_name": "1.0-1.0RC.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/1.0-1.0RC.zip",
+                "downloads": 0,
+                "id": 937229204,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.0RC",
+                "version": "1.0-1.0RC"
+            },
+            "1.2": {
+                "addon_id": 3888985674,
+                "asset_id": 605404051,
+                "asset_name": "v1.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/v1.2.zip",
+                "downloads": 0,
+                "id": 1445276540,
+                "omeka_version_constraint": "1.3",
+                "tag_name": "v1.2",
+                "version": "1.2"
+            },
+            "1.3-1.0": {
+                "addon_id": 3888985674,
+                "asset_id": 507388694,
+                "asset_name": "1.3-1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/1.3-1.0.zip",
+                "downloads": 0,
+                "id": 956409195,
+                "omeka_version_constraint": "1.3",
+                "tag_name": "1.3-1.0",
+                "version": "1.3-1.0"
+            },
+            "2.0.4-1.2.1": {
+                "addon_id": 3888985674,
+                "asset_id": 2784269758,
+                "asset_name": "v2.0.4-1.2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/v2.0.4-1.2.1.zip",
+                "downloads": 0,
+                "id": 2922987687,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0.4-1.2.1",
+                "version": "2.0.4-1.2.1"
+            },
+            "2.1": {
+                "addon_id": 3888985674,
+                "asset_id": 1381882846,
+                "asset_name": "v2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/v2.1.zip",
+                "downloads": 0,
+                "id": 3446326431,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.1",
+                "version": "2.1"
+            },
+            "2.1.1": {
+                "addon_id": 3888985674,
+                "asset_id": 2402193079,
+                "asset_name": "v2.1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/v2.1.1.zip",
+                "downloads": 0,
+                "id": 1909475071,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.1.1",
+                "version": "2.1.1"
+            },
+            "2.2": {
+                "addon_id": 3888985674,
+                "asset_id": 1029200155,
+                "asset_name": "2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/2.2.zip",
+                "downloads": 0,
+                "id": 1415812389,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.2",
+                "version": "2.2"
+            },
+            "2.2.1": {
+                "addon_id": 3888985674,
+                "asset_id": 974463157,
+                "asset_name": "2.2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/2.2.1.zip",
+                "downloads": 0,
+                "id": 1939273894,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.2.1",
+                "version": "2.2.1"
+            },
+            "2.3.0": {
+                "addon_id": 3888985674,
+                "asset_id": 2701263537,
+                "asset_name": "2.3.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/2.3.0.zip",
+                "downloads": 0,
+                "id": 89367047,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.3.0",
+                "version": "2.3.0"
+            },
+            "2.3.2": {
+                "addon_id": 3888985674,
+                "asset_id": 3686945233,
+                "asset_name": "2.3.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/2.3.2.zip",
+                "downloads": 0,
+                "id": 3948790571,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.3.2",
+                "version": "2.3.2"
+            },
+            "2.3.3": {
+                "addon_id": 3888985674,
+                "asset_id": 3869407329,
+                "asset_name": "2.3.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/2.3.3.zip",
+                "downloads": 0,
+                "id": 2623206333,
+                "omeka_version_constraint": "2.2.2",
+                "tag_name": "2.3.3",
+                "version": "2.3.3"
+            },
+            "2.3.4": {
+                "addon_id": 3888985674,
+                "asset_id": 1417847921,
+                "asset_name": "2.3.4.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-OaiPmhRepository/archive/refs/tags/2.3.4.zip",
+                "downloads": 0,
+                "id": 37643806,
+                "omeka_version_constraint": "",
+                "tag_name": "2.3.4",
+                "version": "2.3.4"
             }
         }
     },
@@ -17283,6 +19250,30 @@
                 "download_url": "https://gitlab.com/Daniel-KM/OpenLayers-Omeka-Zoom-Plugin/-/archive/HEAD/OpenLayers-Omeka-Zoom-Plugin-HEAD.zip",
                 "downloads": 0,
                 "id": 3895859021,
+                "omeka_version_constraint": "",
+                "tag_name": "2.3",
+                "version": "2.3"
+            }
+        }
+    },
+    "OpenLayersZoom_thisismattmiller": {
+        "dirname": "OpenLayersZoom",
+        "id": 4008176738,
+        "latest_version": "2.3",
+        "owner": "thisismattmiller",
+        "registered": "2012-01-17T19:43:28Z",
+        "releases_checked": "2013-09-30T15:38:37Z",
+        "repo": "OpenLayers-Omeka-Zoom-Plugin",
+        "type": "classic_plugin",
+        "versions": {
+            "2.3": {
+                "addon_id": 4008176738,
+                "asset_id": 879210106,
+                "asset_name": "HEAD.zip",
+                "created": "",
+                "download_url": "https://github.com/thisismattmiller/OpenLayers-Omeka-Zoom-Plugin/archive/HEAD.zip",
+                "downloads": 0,
+                "id": 2689697413,
                 "omeka_version_constraint": "",
                 "tag_name": "2.3",
                 "version": "2.3"
@@ -19233,6 +21224,174 @@
             }
         }
     },
+    "Scripto_Daniel-KM": {
+        "dirname": "Scripto",
+        "id": 4285300039,
+        "latest_version": "2.3.2",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-21T19:27:14.216Z",
+        "releases_checked": "2020-08-21T19:27:14.216Z",
+        "repo": "Omeka-plugin-Scripto",
+        "type": "classic_plugin",
+        "versions": {
+            "0.1": {
+                "addon_id": 4285300039,
+                "asset_id": 1596566702,
+                "asset_name": "0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/0.1.zip",
+                "downloads": 0,
+                "id": 3189972536,
+                "omeka_version_constraint": "1.4",
+                "tag_name": "0.1",
+                "version": "0.1"
+            },
+            "1.0.1": {
+                "addon_id": 4285300039,
+                "asset_id": 401737427,
+                "asset_name": "v1.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/v1.0.1.zip",
+                "downloads": 0,
+                "id": 3392301013,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.0.1",
+                "version": "1.0.1"
+            },
+            "1.1": {
+                "addon_id": 4285300039,
+                "asset_id": 476938854,
+                "asset_name": "v1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/v1.1.zip",
+                "downloads": 0,
+                "id": 3219223567,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.1",
+                "version": "1.1"
+            },
+            "1.2": {
+                "addon_id": 4285300039,
+                "asset_id": 1540225206,
+                "asset_name": "v1.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/v1.2.zip",
+                "downloads": 0,
+                "id": 652748213,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.2",
+                "version": "1.2"
+            },
+            "1.2.1": {
+                "addon_id": 4285300039,
+                "asset_id": 2154633210,
+                "asset_name": "v1.2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/v1.2.1.zip",
+                "downloads": 0,
+                "id": 3384193979,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.2.1",
+                "version": "1.2.1"
+            },
+            "1.3": {
+                "addon_id": 4285300039,
+                "asset_id": 1722667270,
+                "asset_name": "v1.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/v1.3.zip",
+                "downloads": 0,
+                "id": 1374623011,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.3",
+                "version": "1.3"
+            },
+            "1.3.1": {
+                "addon_id": 4285300039,
+                "asset_id": 639245390,
+                "asset_name": "v1.3.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/v1.3.1.zip",
+                "downloads": 0,
+                "id": 3363101068,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.3.1",
+                "version": "1.3.1"
+            },
+            "2.0": {
+                "addon_id": 4285300039,
+                "asset_id": 283488587,
+                "asset_name": "v2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/v2.0.zip",
+                "downloads": 0,
+                "id": 3399547584,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0",
+                "version": "2.0"
+            },
+            "2.1": {
+                "addon_id": 4285300039,
+                "asset_id": 3367419271,
+                "asset_name": "2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/2.1.zip",
+                "downloads": 0,
+                "id": 3181890134,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.1",
+                "version": "2.1"
+            },
+            "2.2": {
+                "addon_id": 4285300039,
+                "asset_id": 2400634711,
+                "asset_name": "2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/2.2.zip",
+                "downloads": 0,
+                "id": 615422956,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.2",
+                "version": "2.2"
+            },
+            "2.3": {
+                "addon_id": 4285300039,
+                "asset_id": 2994138855,
+                "asset_name": "2.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/2.3.zip",
+                "downloads": 0,
+                "id": 1403628410,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.3",
+                "version": "2.3"
+            },
+            "2.3.1": {
+                "addon_id": 4285300039,
+                "asset_id": 3608749829,
+                "asset_name": "2.3.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/2.3.1.zip",
+                "downloads": 0,
+                "id": 2413077340,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.3.1",
+                "version": "2.3.1"
+            },
+            "2.3.2": {
+                "addon_id": 4285300039,
+                "asset_id": 2428067285,
+                "asset_name": "2.3.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-Scripto/archive/refs/tags/2.3.2.zip",
+                "downloads": 0,
+                "id": 383644390,
+                "omeka_version_constraint": "",
+                "tag_name": "2.3.2",
+                "version": "2.3.2"
+            }
+        }
+    },
     "Scriptus": {
         "dirname": "Scriptus",
         "id": 2181730042,
@@ -19725,6 +21884,66 @@
             }
         }
     },
+    "Shortcode Carousel_Daniel-KM": {
+        "dirname": "ShortcodeCarousel",
+        "id": 2328249622,
+        "latest_version": "1.0.3",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-18T14:30:09.466Z",
+        "releases_checked": "2020-08-18T14:30:09.466Z",
+        "repo": "Omeka-plugin-ShortcodeCarousel",
+        "type": "classic_plugin",
+        "versions": {
+            "1.0": {
+                "addon_id": 2328249622,
+                "asset_id": 553807212,
+                "asset_name": "v1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-ShortcodeCarousel/archive/refs/tags/v1.0.zip",
+                "downloads": 0,
+                "id": 3190588763,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v1.0",
+                "version": "1.0"
+            },
+            "1.0.1": {
+                "addon_id": 2328249622,
+                "asset_id": 2078222187,
+                "asset_name": "v1.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-ShortcodeCarousel/archive/refs/tags/v1.0.1.zip",
+                "downloads": 0,
+                "id": 3751630581,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v1.0.1",
+                "version": "1.0.1"
+            },
+            "1.0.2": {
+                "addon_id": 2328249622,
+                "asset_id": 1014980027,
+                "asset_name": "v1.0.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-ShortcodeCarousel/archive/refs/tags/v1.0.2.zip",
+                "downloads": 0,
+                "id": 1184106319,
+                "omeka_version_constraint": "2.2",
+                "tag_name": "v1.0.2",
+                "version": "1.0.2"
+            },
+            "1.0.3": {
+                "addon_id": 2328249622,
+                "asset_id": 2382890857,
+                "asset_name": "1.0.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-ShortcodeCarousel/archive/refs/tags/1.0.3.zip",
+                "downloads": 0,
+                "id": 831731673,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0.3",
+                "version": "1.0.3"
+            }
+        }
+    },
     "ShortcodeVideo": {
         "dirname": "ShortcodeVideo",
         "id": 1616504146,
@@ -19995,7 +22214,7 @@
         "latest_version": "3.3.1",
         "owner": "omeka",
         "registered": "2011-07-06T14:14:57Z",
-        "releases_checked": "2026-07-10T20:25:27Z",
+        "releases_checked": "2026-11-09T19:46:11Z",
         "repo": "plugin-SimplePages",
         "type": "classic_plugin",
         "versions": {
@@ -20101,11 +22320,263 @@
                 "asset_name": "SimplePages-3.3.1.zip",
                 "created": "2026-06-17T21:37:10Z",
                 "download_url": "https://github.com/omeka/plugin-SimplePages/releases/download/v3.3.1/SimplePages-3.3.1.zip",
-                "downloads": 217,
+                "downloads": 258,
                 "id": 1379609852,
                 "omeka_version_constraint": "",
                 "tag_name": "v3.3.1",
                 "version": "3.3.1"
+            }
+        }
+    },
+    "Simple Pages_Daniel-KM": {
+        "dirname": "SimplePages",
+        "id": 1600958376,
+        "latest_version": "3.1.1.1.1",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-21T19:27:14.679Z",
+        "releases_checked": "2020-08-21T19:27:14.679Z",
+        "repo": "Omeka-plugin-SimplePages",
+        "type": "classic_plugin",
+        "versions": {
+            "0.10.x-0.2": {
+                "addon_id": 1600958376,
+                "asset_id": 2331185490,
+                "asset_name": "0.10.x-0.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/0.10.x-0.2.zip",
+                "downloads": 0,
+                "id": 3394344434,
+                "omeka_version_constraint": "",
+                "tag_name": "0.10.x-0.2",
+                "version": "0.10.x-0.2"
+            },
+            "0.10.x-0.2.1": {
+                "addon_id": 1600958376,
+                "asset_id": 1672063728,
+                "asset_name": "0.10.x-0.2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/0.10.x-0.2.1.zip",
+                "downloads": 0,
+                "id": 3186570572,
+                "omeka_version_constraint": "",
+                "tag_name": "0.10.x-0.2.1",
+                "version": "0.10.x-0.2.1"
+            },
+            "0.10.x-0.2.2": {
+                "addon_id": 1600958376,
+                "asset_id": 604622880,
+                "asset_name": "0.10.x-0.2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/0.10.x-0.2.2.zip",
+                "downloads": 0,
+                "id": 619078902,
+                "omeka_version_constraint": "",
+                "tag_name": "0.10.x-0.2.2",
+                "version": "0.10.x-0.2.2"
+            },
+            "1.0alpha-0.2.2": {
+                "addon_id": 1600958376,
+                "asset_id": 2380152466,
+                "asset_name": "1.0alpha-0.2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/1.0alpha-0.2.2.zip",
+                "downloads": 0,
+                "id": 213276915,
+                "omeka_version_constraint": "",
+                "tag_name": "1.0alpha-0.2.2",
+                "version": "1.0alpha-0.2.2"
+            },
+            "1.0-0.2.2": {
+                "addon_id": 1600958376,
+                "asset_id": 3642086308,
+                "asset_name": "1.0-0.2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/1.0-0.2.2.zip",
+                "downloads": 0,
+                "id": 217446423,
+                "omeka_version_constraint": "0.10",
+                "tag_name": "1.0-0.2.2",
+                "version": "1.0-0.2.2"
+            },
+            "1.1-0.2.3": {
+                "addon_id": 1600958376,
+                "asset_id": 637216212,
+                "asset_name": "1.1-0.2.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/1.1-0.2.3.zip",
+                "downloads": 0,
+                "id": 3716530997,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.1-0.2.3",
+                "version": "1.1-0.2.3"
+            },
+            "1.2": {
+                "addon_id": 1600958376,
+                "asset_id": 68008327,
+                "asset_name": "v1.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/v1.2.zip",
+                "downloads": 0,
+                "id": 3016817307,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.2",
+                "version": "1.2"
+            },
+            "1.2-0.2.3": {
+                "addon_id": 1600958376,
+                "asset_id": 3155772373,
+                "asset_name": "1.2-0.2.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/1.2-0.2.3.zip",
+                "downloads": 0,
+                "id": 3966622120,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.2-0.2.3",
+                "version": "1.2-0.2.3"
+            },
+            "1.2.1": {
+                "addon_id": 1600958376,
+                "asset_id": 1206599310,
+                "asset_name": "v1.2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/v1.2.1.zip",
+                "downloads": 0,
+                "id": 3571310826,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.2.1",
+                "version": "1.2.1"
+            },
+            "1.3": {
+                "addon_id": 1600958376,
+                "asset_id": 963481655,
+                "asset_name": "v1.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/v1.3.zip",
+                "downloads": 0,
+                "id": 3302476301,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.3",
+                "version": "1.3"
+            },
+            "1.3.1": {
+                "addon_id": 1600958376,
+                "asset_id": 3785110842,
+                "asset_name": "v1.3.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/v1.3.1.zip",
+                "downloads": 0,
+                "id": 3575614173,
+                "omeka_version_constraint": "1.5",
+                "tag_name": "v1.3.1",
+                "version": "1.3.1"
+            },
+            "1.3-1.0": {
+                "addon_id": 1600958376,
+                "asset_id": 608948814,
+                "asset_name": "1.3-1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/1.3-1.0.zip",
+                "downloads": 0,
+                "id": 1195999458,
+                "omeka_version_constraint": "1.3",
+                "tag_name": "1.3-1.0",
+                "version": "1.3-1.0"
+            },
+            "1.4-1.1": {
+                "addon_id": 1600958376,
+                "asset_id": 2102040119,
+                "asset_name": "1.4-1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/1.4-1.1.zip",
+                "downloads": 0,
+                "id": 2188274788,
+                "omeka_version_constraint": "1.4",
+                "tag_name": "1.4-1.1",
+                "version": "1.4-1.1"
+            },
+            "2.0": {
+                "addon_id": 1600958376,
+                "asset_id": 1327886458,
+                "asset_name": "v2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/v2.0.zip",
+                "downloads": 0,
+                "id": 1603806702,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0",
+                "version": "2.0"
+            },
+            "2.0.1": {
+                "addon_id": 1600958376,
+                "asset_id": 3925414754,
+                "asset_name": "v2.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/v2.0.1.zip",
+                "downloads": 0,
+                "id": 2432257620,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0.1",
+                "version": "2.0.1"
+            },
+            "2.1-rc": {
+                "addon_id": 1600958376,
+                "asset_id": 883995947,
+                "asset_name": "v2.1-rc.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/v2.1-rc.zip",
+                "downloads": 0,
+                "id": 193033782,
+                "omeka_version_constraint": "2.1-dev",
+                "tag_name": "v2.1-rc",
+                "version": "2.1-rc"
+            },
+            "2.1": {
+                "addon_id": 1600958376,
+                "asset_id": 1917180362,
+                "asset_name": "v2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/v2.1.zip",
+                "downloads": 0,
+                "id": 681514360,
+                "omeka_version_constraint": "2.1",
+                "tag_name": "v2.1",
+                "version": "2.1"
+            },
+            "3.1": {
+                "addon_id": 1600958376,
+                "asset_id": 3560100478,
+                "asset_name": "v3.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/v3.1.zip",
+                "downloads": 0,
+                "id": 693993295,
+                "omeka_version_constraint": "2.6",
+                "tag_name": "v3.1",
+                "version": "3.1"
+            },
+            "3.1.0.1.1": {
+                "addon_id": 1600958376,
+                "asset_id": 3854066273,
+                "asset_name": "3.1.0.1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/3.1.0.1.1.zip",
+                "downloads": 0,
+                "id": 2578400872,
+                "omeka_version_constraint": "2.6",
+                "tag_name": "3.1.0.1.1",
+                "version": "3.1.0.1.1"
+            },
+            "3.1.1.1.1": {
+                "addon_id": 1600958376,
+                "asset_id": 4072896034,
+                "asset_name": "3.1.1.1.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SimplePages/archive/refs/tags/3.1.1.1.1.zip",
+                "downloads": 0,
+                "id": 2765058008,
+                "omeka_version_constraint": "",
+                "tag_name": "3.1.1.1.1",
+                "version": "3.1.1.1.1"
             }
         }
     },
@@ -20598,6 +23069,114 @@
                 "omeka_version_constraint": "",
                 "tag_name": "v2.1.1",
                 "version": "2.1.1"
+            }
+        }
+    },
+    "Social Bookmarking_Daniel-KM": {
+        "dirname": "SocialBookmarking",
+        "id": 1891440422,
+        "latest_version": "2.3",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-21T08:01:00.589Z",
+        "releases_checked": "2020-08-21T08:01:00.589Z",
+        "repo": "Omeka-plugin-SocialBookmarking",
+        "type": "classic_plugin",
+        "versions": {
+            "0.10-1.0": {
+                "addon_id": 1891440422,
+                "asset_id": 2276450276,
+                "asset_name": "0.10-1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SocialBookmarking/archive/refs/tags/0.10-1.0.zip",
+                "downloads": 0,
+                "id": 2611705475,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "0.10-1.0",
+                "version": "0.10-1.0"
+            },
+            "1.0-1.0": {
+                "addon_id": 1891440422,
+                "asset_id": 3397683515,
+                "asset_name": "1.0-1.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SocialBookmarking/archive/refs/tags/1.0-1.0.zip",
+                "downloads": 0,
+                "id": 3688073081,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.0",
+                "version": "1.0-1.0"
+            },
+            "1.0-1.0.1": {
+                "addon_id": 1891440422,
+                "asset_id": 692199711,
+                "asset_name": "1.0-1.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SocialBookmarking/archive/refs/tags/1.0-1.0.1.zip",
+                "downloads": 0,
+                "id": 2518750214,
+                "omeka_version_constraint": "1.0",
+                "tag_name": "1.0-1.0.1",
+                "version": "1.0-1.0.1"
+            },
+            "2.0": {
+                "addon_id": 1891440422,
+                "asset_id": 1404477803,
+                "asset_name": "v2.0.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SocialBookmarking/archive/refs/tags/v2.0.zip",
+                "downloads": 0,
+                "id": 2832417204,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0",
+                "version": "2.0"
+            },
+            "2.0.1": {
+                "addon_id": 1891440422,
+                "asset_id": 2790018435,
+                "asset_name": "v2.0.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SocialBookmarking/archive/refs/tags/v2.0.1.zip",
+                "downloads": 0,
+                "id": 2591205760,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "v2.0.1",
+                "version": "2.0.1"
+            },
+            "2.1": {
+                "addon_id": 1891440422,
+                "asset_id": 4065327087,
+                "asset_name": "2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SocialBookmarking/archive/refs/tags/2.1.zip",
+                "downloads": 0,
+                "id": 3755241762,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.1",
+                "version": "2.1"
+            },
+            "2.2": {
+                "addon_id": 1891440422,
+                "asset_id": 3052375359,
+                "asset_name": "2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-SocialBookmarking/archive/refs/tags/2.2.zip",
+                "downloads": 0,
+                "id": 1188896920,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.2",
+                "version": "2.2"
+            },
+            "2.3": {
+                "addon_id": 1891440422,
+                "asset_id": 27586688,
+                "asset_name": "Omeka-plugin-SocialBookmarking-HEAD.zip",
+                "created": "",
+                "download_url": "https://gitlab.com/Daniel-KM/Omeka-plugin-SocialBookmarking/-/archive/HEAD/Omeka-plugin-SocialBookmarking-HEAD.zip",
+                "downloads": 0,
+                "id": 836374542,
+                "omeka_version_constraint": "",
+                "tag_name": "2.3",
+                "version": "2.3"
             }
         }
     },
@@ -21827,10 +24406,10 @@
     "TagsPlus": {
         "dirname": "TagsPlus",
         "id": 3925661638,
-        "latest_version": "1.2",
+        "latest_version": "1.3",
         "owner": "DBinaghi",
         "registered": "2026-03-13T18:11:42Z",
-        "releases_checked": "2026-07-26T21:59:07Z",
+        "releases_checked": "2026-11-13T04:37:46Z",
         "repo": "plugin-TagsPlus",
         "type": "classic_plugin",
         "versions": {
@@ -21864,11 +24443,23 @@
                 "asset_name": "TagsPlus.zip",
                 "created": "2026-07-26T21:57:43Z",
                 "download_url": "https://github.com/DBinaghi/plugin-TagsPlus/releases/download/v1.2/TagsPlus.zip",
-                "downloads": 29,
+                "downloads": 37,
                 "id": 1240626797,
-                "omeka_version_constraint": "",
+                "omeka_version_constraint": "2.0",
                 "tag_name": "v1.2",
                 "version": "1.2"
+            },
+            "1.3": {
+                "addon_id": 3925661638,
+                "asset_id": 849129242,
+                "asset_name": "TagsPlus.zip",
+                "created": "2026-11-05T13:45:35Z",
+                "download_url": "https://github.com/DBinaghi/plugin-TagsPlus/releases/download/v1.3/TagsPlus.zip",
+                "downloads": 4,
+                "id": 1056261883,
+                "omeka_version_constraint": "",
+                "tag_name": "v1.3",
+                "version": "1.3"
             }
         }
     },
@@ -23243,10 +25834,10 @@
     "VRA Core": {
         "dirname": "VraCoreElementSet",
         "id": 3819226807,
-        "latest_version": "1.3",
+        "latest_version": "1.3.1",
         "owner": "omeka",
         "registered": "2015-10-24T18:27:38Z",
-        "releases_checked": "2026-10-28T20:12:15Z",
+        "releases_checked": "2026-11-05T02:18:18Z",
         "repo": "plugin-VraCore",
         "type": "classic_plugin",
         "versions": {
@@ -23256,7 +25847,7 @@
                 "asset_name": "VraCore.zip",
                 "created": "2016-01-14T21:53:04Z",
                 "download_url": "https://github.com/omeka/plugin-VraCore/releases/download/v1.0-alpha/VraCore.zip",
-                "downloads": 357,
+                "downloads": 358,
                 "id": 2534249812,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.0-alpha",
@@ -23268,7 +25859,7 @@
                 "asset_name": "VraCore.zip",
                 "created": "2016-03-06T19:33:04Z",
                 "download_url": "https://github.com/omeka/plugin-VraCore/releases/download/v1.1-alpha/VraCore.zip",
-                "downloads": 503,
+                "downloads": 504,
                 "id": 830119648,
                 "omeka_version_constraint": "",
                 "tag_name": "v1.1-alpha",
@@ -23316,11 +25907,23 @@
                 "asset_name": "VraCore-1.3.zip",
                 "created": "2025-09-15T17:08:21Z",
                 "download_url": "https://github.com/omeka/plugin-VraCore/releases/download/v1.3/VraCore-1.3.zip",
-                "downloads": 267,
+                "downloads": 272,
                 "id": 2497624324,
-                "omeka_version_constraint": "",
+                "omeka_version_constraint": "3.2",
                 "tag_name": "v1.3",
                 "version": "1.3"
+            },
+            "1.3.1": {
+                "addon_id": 3819226807,
+                "asset_id": 432802829,
+                "asset_name": "VraCore-1.3.1.zip",
+                "created": "2026-11-05T02:18:13Z",
+                "download_url": "https://github.com/omeka/plugin-VraCore/releases/download/v1.3.1/VraCore-1.3.1.zip",
+                "downloads": 4,
+                "id": 3453042971,
+                "omeka_version_constraint": "",
+                "tag_name": "v1.3.1",
+                "version": "1.3.1"
             }
         }
     },
@@ -23366,6 +25969,54 @@
                 "download_url": "https://github.com/wgcowan/VideoStream/archive/HEAD.zip",
                 "downloads": 0,
                 "id": 2492819976,
+                "omeka_version_constraint": "",
+                "tag_name": "2.3",
+                "version": "2.3"
+            }
+        }
+    },
+    "VideoStream_Daniel-KM": {
+        "dirname": "VideoStream",
+        "id": 3876144711,
+        "latest_version": "2.3",
+        "owner": "Daniel-KM",
+        "registered": "2020-08-22T05:52:24.158Z",
+        "releases_checked": "2020-08-22T05:52:24.158Z",
+        "repo": "Omeka-plugin-VideoStream",
+        "type": "classic_plugin",
+        "versions": {
+            "2.1": {
+                "addon_id": 3876144711,
+                "asset_id": 2829101716,
+                "asset_name": "2.1.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-VideoStream/archive/refs/tags/2.1.zip",
+                "downloads": 0,
+                "id": 1812964431,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.1",
+                "version": "2.1"
+            },
+            "2.2": {
+                "addon_id": 3876144711,
+                "asset_id": 4009807940,
+                "asset_name": "2.2.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-VideoStream/archive/refs/tags/2.2.zip",
+                "downloads": 0,
+                "id": 4110874101,
+                "omeka_version_constraint": "2.0",
+                "tag_name": "2.2",
+                "version": "2.2"
+            },
+            "2.3": {
+                "addon_id": 3876144711,
+                "asset_id": 3529570804,
+                "asset_name": "2.3.zip",
+                "created": "",
+                "download_url": "https://github.com/Daniel-KM/Omeka-plugin-VideoStream/archive/refs/tags/2.3.zip",
+                "downloads": 0,
+                "id": 2181154147,
                 "omeka_version_constraint": "",
                 "tag_name": "2.3",
                 "version": "2.3"
