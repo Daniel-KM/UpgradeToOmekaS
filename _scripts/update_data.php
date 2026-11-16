@@ -381,6 +381,11 @@ class UpdateDataExtensions
     const GRAPHQL_BATCH_SIZE = 50;
 
     /**
+     * Min own commits of a fork without newer version to be listed.
+     */
+    const MIN_FORK_COMMITS = 5;
+
+    /**
      * Max pause in seconds requested by a server on rate limit (http 429).
      */
     const MAX_RETRY_AFTER = 300;
@@ -2025,19 +2030,21 @@ class UpdateDataExtensions
             $forkSource = $addon[$headers['Fork source']] ?? '';
 
             if ($name !== '' && $name === $previousName) {
-                // A fork with own commits is kept, a simple copy is removed.
+                // A fork is kept when it has a newer version or enough own
+                // commits, else it is a simple copy or a minor change.
                 $forkCommits = $forkSource === '' ? '' : (string) ($addon[$headers['Fork commits']] ?? '');
-                if ($forkCommits === '0') {
+                $isNewer = $version !== '' && version_compare($previousVersion, $version, '<');
+                if ($forkCommits !== '' && ($isNewer || (int) $forkCommits >= self::MIN_FORK_COMMITS)) {
+                    ++$updatedForks;
+                    $this->log(sprintf('Duplicate fork kept (%3$s own commits): %1$s (%2$s)', $name, $url, $forkCommits));
+                } elseif ($forkCommits !== '') {
                     ++$duplicates;
-                    $this->log(sprintf('Duplicate fork removed (no own commit): %1$s (%2$s)', $name, $url));
+                    $this->log(sprintf('Duplicate fork removed (%3$s own commits): %1$s (%2$s)', $name, $url, $forkCommits));
                     if ($hasAlternateUrl && $previousKey >= 0) {
                         $this->appendAlternateUrl($addons[$previousKey], $headers, $url);
                     }
                     unset($addons[$key]);
                     continue;
-                } elseif ($forkCommits !== '') {
-                    ++$updatedForks;
-                    $this->log(sprintf('Duplicate fork kept (%3$s own commits): %1$s (%2$s)', $name, $url, $forkCommits));
                 } elseif ($lastUpdate === $previousLastUpdate || $version === $previousVersion) {
                     ++$duplicates;
                     $this->log(sprintf('Duplicate fork removed (identical): %1$s (%2$s)', $name, $url));
