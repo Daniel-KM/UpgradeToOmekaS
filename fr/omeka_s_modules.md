@@ -13,8 +13,9 @@ Cette liste rassemble tous les modules existants pour [Omeka S](https://omeka.or
 
 <div class="container-fluid">
 <div id="entry-list">
-    <div class="row" style="margin-bottom:10px;">
+    <div class="row addon-filters" style="margin-bottom:10px;">
         <input type="text" class="search form-control" placeholder="Filtre" />
+        {% include addon_stats_filter.html %}
     </div>
     <p><em>
     Tapez quelques lettres pour filtrer la liste. Cliquez sur les en-têtes pour trier. Obtenez le <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_s_modules.csv">fichier source en csv</a>, mis à jour une fois par semaine. Les dépôts dérivés ne sont pas affichés, sauf lorsqu’ils ajoutent de nouvelles fonctionnalités.
@@ -29,7 +30,7 @@ Cette liste rassemble tous les modules existants pour [Omeka S](https://omeka.or
                     <th><span class="sort" data-sort="addon-target">Omeka S</span></th>
                     <th><span class="sort" data-sort="addon-tags">Mots-clés</span></th>
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
-                    <th><span class="sort" data-sort="addon-stats-sort" title="Attention : le nombre de téléchargements ne correspond pas à la popularité. En particulier, certaines extensions n’ont pas de version et d’autres ont de nombreuses versions.">Stats</span></th>
+                    {% include addon_stats_header.html %}
                 </tr>
             </thead>
             {% include omeka_s_modules_table_body.md %}

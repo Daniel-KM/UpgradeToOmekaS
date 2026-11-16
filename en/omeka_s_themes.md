@@ -13,8 +13,9 @@ Feel free to add missing themes.
 
 <div class="container-fluid">
 <div id="entry-list">
-    <div class="row" style="margin-bottom:10px;">
+    <div class="row addon-filters" style="margin-bottom:10px;">
         <input type="text" class="search form-control" placeholder="Filter" />
+        {% include addon_stats_filter.html %}
     </div>
     <p><em>
     Type some letters to filter the list. Click on row headers to sort. Get the <a href="https://github.com/Daniel-KM/UpgradeToOmekaS/blob/master/_data/omeka_s_themes.csv">csv source file</a>, updated once a week. Forks are not displayed.
@@ -29,7 +30,7 @@ Feel free to add missing themes.
                     <th><span class="sort" data-sort="addon-target">Omeka S</span></th>
                     <th><span class="sort" data-sort="addon-tags">Tags</span></th>
                     <th><span class="sort" data-sort="addon-description">Description</span></th>
-                    <th><span class="sort" data-sort="addon-stats-sort" title="Warning: The number of downloads doesn’t mean popularity. In particular, some addons have no release and some other ones have many releases.">Stats</span></th>
+                    {% include addon_stats_header.html %}
                 </tr>
             </thead>
             {% include omeka_s_themes_table_body.md %}

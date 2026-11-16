@@ -1,0 +1,52 @@
+{%- if page.lang == 'fr' -%}
+    {%- assign t_label = 'Filtrer les stats' -%}
+    {%- assign t_with = 'avec' -%}
+    {%- assign t_without = 'sans' -%}
+    {%- assign t_downloads = 'Téléchargements' -%}
+    {%- assign t_versions = 'Versions publiées' -%}
+    {%- assign t_tags = 'Tags Git' -%}
+    {%- assign t_stars = 'Étoiles' -%}
+    {%- assign t_watchers = 'Abonnés' -%}
+    {%- assign t_forks = 'Dérivés' -%}
+    {%- assign t_issues = 'Tickets ouverts' -%}
+    {%- assign t_prs = 'Demandes de fusion ouvertes' -%}
+{%- else -%}
+    {%- assign t_label = 'Filter by stats' -%}
+    {%- assign t_with = 'with' -%}
+    {%- assign t_without = 'without' -%}
+    {%- assign t_downloads = 'Downloads' -%}
+    {%- assign t_versions = 'Releases' -%}
+    {%- assign t_tags = 'Git tags' -%}
+    {%- assign t_stars = 'Stars' -%}
+    {%- assign t_watchers = 'Watchers' -%}
+    {%- assign t_forks = 'Forks' -%}
+    {%- assign t_issues = 'Open issues' -%}
+    {%- assign t_prs = 'Open pull requests' -%}
+{%- endif -%}
+<div class="dropdown addon-stats-filter">
+    <button type="button" class="form-select addon-stats-filter-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+        <span class="addon-stats-filter-label">{{ t_label }}</span> <span class="addon-stats-filter-count" hidden></span>
+    </button>
+    <div class="dropdown-menu dropdown-menu-end addon-stats-filter-menu">
+    {%- assign groups = 'downloads:⬇,versions:⊡,tags:#,stars:★,watchers:⊙,forks:⑂,issues:⚠,prs:⑃' | split: ',' -%}
+    {%- for group in groups -%}
+        {%- assign parts = group | split: ':' -%}
+        {%- assign key = parts[0] -%}
+        {%- case key -%}
+            {%- when 'downloads' -%}{%- assign t_group = t_downloads -%}
+            {%- when 'versions' -%}{%- assign t_group = t_versions -%}
+            {%- when 'tags' -%}{%- assign t_group = t_tags -%}
+            {%- when 'stars' -%}{%- assign t_group = t_stars -%}
+            {%- when 'watchers' -%}{%- assign t_group = t_watchers -%}
+            {%- when 'forks' -%}{%- assign t_group = t_forks -%}
+            {%- when 'issues' -%}{%- assign t_group = t_issues -%}
+            {%- else -%}{%- assign t_group = t_prs -%}
+        {%- endcase %}
+        <div class="addon-stats-filter-group" data-stat="addon-stat-{{ key }}">
+            <span class="addon-stats-filter-name">{{ parts[1] }} {{ t_group }}</span>
+            <label><input type="checkbox" class="form-check-input" value="with" checked> {{ t_with }}</label>
+            <label><input type="checkbox" class="form-check-input" value="without" checked> {{ t_without }}</label>
+        </div>
+    {%- endfor %}
+    </div>
+</div>

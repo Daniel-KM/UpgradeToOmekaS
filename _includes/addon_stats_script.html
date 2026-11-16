@@ -1,0 +1,51 @@
+<script type="text/javascript">
+(function () {
+    var container = document.getElementById('entry-list');
+    var filter = container.querySelector('.addon-stats-filter');
+    var header = container.querySelector('.addon-stats-header');
+    if (!filter || !header || typeof entryList === 'undefined') {
+        return;
+    }
+
+    // A row is displayed when the state of each of its stats is checked.
+    var groups = Array.prototype.slice.call(filter.querySelectorAll('.addon-stats-filter-group'));
+    var counter = filter.querySelector('.addon-stats-filter-count');
+    var applyFilter = function () {
+        var states = groups.map(function (group) {
+            return {
+                name: group.getAttribute('data-stat'),
+                with: group.querySelector('input[value="with"]').checked,
+                without: group.querySelector('input[value="without"]').checked
+            };
+        });
+        var count = states.filter(function (state) { return !state.with || !state.without; }).length;
+        counter.textContent = count;
+        counter.hidden = !count;
+        if (!count) {
+            entryList.filter();
+            return;
+        }
+        entryList.filter(function (item) {
+            return states.every(function (state) {
+                return (parseInt(item.values()[state.name], 10) || 0) > 0 ? state.with : state.without;
+            });
+        });
+    };
+    filter.addEventListener('change', applyFilter);
+
+    // Same width as the column of stats.
+    var resize = function () {
+        filter.style.width = header.getBoundingClientRect().width + 'px';
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // The key used to sort the column of stats is chosen in the select.
+    var sortLabel = header.querySelector('.addon-stats-sort');
+    var sortSelect = header.querySelector('.addon-stats-sort-select');
+    sortSelect.addEventListener('change', function () {
+        sortLabel.setAttribute('data-sort', sortSelect.value);
+        entryList.sort(sortSelect.value, { order: 'desc' });
+    });
+})();
+</script>

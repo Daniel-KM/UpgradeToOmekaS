@@ -1,0 +1,38 @@
+{%- if page.lang == 'fr' -%}
+    {%- assign t_title = 'Attention : le nombre de téléchargements ne correspond pas à la popularité. En particulier, certaines extensions n’ont pas de version et d’autres ont de nombreuses versions.' -%}
+    {%- assign t_sort_by = 'Trier les stats par' -%}
+    {%- assign t_downloads = 'Téléchargements' -%}
+    {%- assign t_versions = 'Versions' -%}
+    {%- assign t_tags = 'Tags Git' -%}
+    {%- assign t_stars = 'Étoiles' -%}
+    {%- assign t_watchers = 'Abonnés' -%}
+    {%- assign t_forks = 'Dérivés' -%}
+    {%- assign t_issues = 'Tickets ouverts' -%}
+    {%- assign t_prs = 'Fusions ouvertes' -%}
+{%- else -%}
+    {%- assign t_title = 'Warning: The number of downloads doesn’t mean popularity. In particular, some addons have no release and some other ones have many releases.' -%}
+    {%- assign t_sort_by = 'Sort stats by' -%}
+    {%- assign t_downloads = 'Downloads' -%}
+    {%- assign t_versions = 'Releases' -%}
+    {%- assign t_tags = 'Git tags' -%}
+    {%- assign t_stars = 'Stars' -%}
+    {%- assign t_watchers = 'Watchers' -%}
+    {%- assign t_forks = 'Forks' -%}
+    {%- assign t_issues = 'Open issues' -%}
+    {%- assign t_prs = 'Open PRs' -%}
+{%- endif -%}
+<th class="addon-stats-header">
+    <span class="addon-stats-header-inner">
+        <span class="sort addon-stats-sort" data-sort="addon-stat-downloads" title="{{ t_title }}">Stats</span>
+        <select class="form-select form-select-sm addon-stats-sort-select" aria-label="{{ t_sort_by }}" title="{{ t_sort_by }}">
+            <option value="addon-stat-downloads">{{ t_downloads }}</option>
+            <option value="addon-stat-versions">{{ t_versions }}</option>
+            <option value="addon-stat-tags">{{ t_tags }}</option>
+            <option value="addon-stat-stars">{{ t_stars }}</option>
+            <option value="addon-stat-watchers">{{ t_watchers }}</option>
+            <option value="addon-stat-forks">{{ t_forks }}</option>
+            <option value="addon-stat-issues">{{ t_issues }}</option>
+            <option value="addon-stat-prs">{{ t_prs }}</option>
+        </select>
+    </span>
+</th>

@@ -1,8 +1,9 @@
 <script type="text/javascript">
     var options = {
-        valueNames: ['addon-link', 'addon-status', 'addon-author', 'addon-updated', 'addon-target', 'addon-tags', 'addon-description', 'addon-stats-sort'],
+        valueNames: ['addon-link', 'addon-status', 'addon-author', 'addon-updated', 'addon-target', 'addon-tags', 'addon-description', 'addon-stat-downloads', 'addon-stat-versions', 'addon-stat-tags', 'addon-stat-stars', 'addon-stat-watchers', 'addon-stat-forks', 'addon-stat-issues', 'addon-stat-prs'],
         page: 1000
     };
     var entryList = new List('entry-list', options);
     // entryList.sort('addon-updated', { order: "desc" });
 </script>
+{% include addon_stats_script.html %}
