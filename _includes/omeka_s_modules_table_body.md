@@ -9,6 +9,8 @@
     {%- assign t_issues = 'Tickets ouverts/total' -%}
     {%- assign t_prs = 'Demandes de fusion ouvertes/total' -%}
     {%- assign t_fork = 'Dérivé' -%}
+    {%- assign t_fork_of = 'dérivé de' -%}
+    {%- assign t_own_commits = 'commits propres' -%}
     {%- assign t_archived = 'Archivé' -%}
     {%- assign t_gone = 'Disparu' -%}
 {%- else -%}
@@ -21,6 +23,8 @@
     {%- assign t_issues = 'Issues open/total' -%}
     {%- assign t_prs = 'Pull requests open/total' -%}
     {%- assign t_fork = 'Fork' -%}
+    {%- assign t_fork_of = 'fork of' -%}
+    {%- assign t_own_commits = 'own commits' -%}
     {%- assign t_archived = 'Archived' -%}
     {%- assign t_gone = 'Gone' -%}
 {%- endif -%}
@@ -33,6 +37,10 @@
             {%- if addon['Fork source'] and addon['Fork source'] != '' -%}
                 {%- assign fork_account = addon['Url'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' | split: '/' | first -%}
                 <span class="addon-status">{{ t_fork }} ({{ fork_account }})</span>
+                {%- assign fork_source_path = addon['Fork source'] | remove: 'https://github.com/' | remove: 'https://gitlab.com/' -%}
+                <span class="addon-fork-source">↳ {{ t_fork_of }} <a href="{{ addon['Fork source'] }}">{{ fork_source_path }}</a>
+                {%- if addon['Fork commits'] and addon['Fork commits'] != '' -%}, +{{ addon['Fork commits'] }} {{ t_own_commits }}{%- endif -%}
+                </span>
             {%- endif -%}
             {%- if addon['Status'] and addon['Status'] != '' -%}
                 <span class="addon-status">{%- if addon['Status'] == 'Archived' -%}{{ t_archived }}{%- elsif addon['Status'] == 'Gone' -%}{{ t_gone }}{%- else -%}{{ addon['Status'] }}{%- endif -%}</span>

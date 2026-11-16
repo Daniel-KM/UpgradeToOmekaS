@@ -105,6 +105,7 @@
     .addon-license { font-size: 0.85em; color: #888; }
     .addon-status { display: block; font-size: 0.85em; color: #888; }
     .addon-fork { opacity: 0.8; }
+    .addon-fork-source { display: block; font-size: 0.85em; color: #888; }
     .addon-inactive { opacity: 0.6; }
     .addon-target span { display: block; }
     .addon-omeka-org, .addon-upgradable { font-size: 0.85em; color: #888; }
