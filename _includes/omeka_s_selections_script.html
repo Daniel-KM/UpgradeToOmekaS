@@ -1,9 +1,11 @@
 <script type="text/javascript">
     var options = {
         valueNames: ['addon-name', 'addon-author', 'addon-description', 'addon-updated', 'addon-addons'],
-        page: 1000
+        page: 1000,
+        // The search is managed by search_script.html.
+        searchClass: "list-search-disabled"
     };
     var entryList = new List('entry-list', options);
     // entryList.sort('addon-updated', { order: "desc" });
 </script>
-{% include search_highlight_script.html %}
+{% include search_script.html %}

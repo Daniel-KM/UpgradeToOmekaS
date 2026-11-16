@@ -1,10 +1,12 @@
 <script type="text/javascript">
     var options = {
         valueNames: ['addon-link', 'addon-status', 'addon-author', 'addon-updated', 'addon-omeka-org', 'addon-upgradable', 'addon-target', 'addon-tags', 'addon-description', 'addon-stat-downloads', 'addon-stat-versions', 'addon-stat-tags', 'addon-stat-stars', 'addon-stat-watchers', 'addon-stat-forks', 'addon-stat-issues', 'addon-stat-prs'],
-        page: 1000
+        page: 1000,
+        // The search is managed by search_script.html.
+        searchClass: "list-search-disabled"
     };
     var entryList = new List('entry-list', options);
     entryList.sort('addon-updated', { order: "desc" });
 </script>
 {% include addon_stats_script.html %}
-{% include search_highlight_script.html %}
+{% include search_script.html %}

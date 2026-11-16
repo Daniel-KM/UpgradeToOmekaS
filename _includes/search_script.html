@@ -6,11 +6,6 @@
         return;
     }
 
-    // Searchable columns, without the hidden values used for sort and filter.
-    var columns = entryList.valueNames
-        .filter(function (name) { return typeof name === 'string' && name.indexOf('addon-stat-') !== 0; })
-        .map(function (name) { return '.' + name; })
-        .join(',');
 
     // Same terms as List.js: quoted phrases, then words.
     var terms = function (value) {
@@ -25,6 +20,36 @@
     var escape = function (string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     };
+
+    // List.js escapes some characters of the search string ("-", ".", ",",
+    // "+"…) and searches the escaped string, so "omeka-s" or "3.4" are never
+    // found. So the search uses the string as typed.
+    var valueColumns = entryList.valueNames.filter(function (name) {
+        return typeof name === 'string' && name.indexOf('addon-stat-') !== 0;
+    });
+    var search = function () {
+        var words = terms(input.value);
+        if (!words.length) {
+            entryList.search();
+            return;
+        }
+        entryList.search(input.value, function () {
+            entryList.items.forEach(function (item) {
+                var values = item.values();
+                item.found = words.every(function (word) {
+                    return valueColumns.some(function (column) {
+                        var value = values[column];
+                        return value !== undefined && value !== null
+                            && String(value).toLowerCase().indexOf(word) !== -1;
+                    });
+                });
+            });
+        });
+    };
+    input.addEventListener('input', search);
+
+    // Highlight in the searchable columns only, not in the hidden values.
+    var columns = valueColumns.map(function (name) { return '.' + name; }).join(',');
 
     var highlighted = [];
     var clear = function () {
