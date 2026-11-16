@@ -49,6 +49,11 @@
     .page-link.active {
         font-weight: bold;
     }
+    mark.search-highlight {
+        background-color: #fff5b1;
+        color: inherit;
+        padding: 0;
+    }
     .sort {
         cursor: pointer;
         white-space: nowrap;

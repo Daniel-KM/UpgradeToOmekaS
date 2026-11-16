@@ -1,0 +1,81 @@
+<script type="text/javascript">
+(function () {
+    var container = document.getElementById('entry-list');
+    var input = container ? container.querySelector('.search') : null;
+    if (!input || typeof entryList === 'undefined') {
+        return;
+    }
+
+    // Searchable columns, without the hidden values used for sort and filter.
+    var columns = entryList.valueNames
+        .filter(function (name) { return typeof name === 'string' && name.indexOf('addon-stat-') !== 0; })
+        .map(function (name) { return '.' + name; })
+        .join(',');
+
+    // Same terms as List.js: quoted phrases, then words.
+    var terms = function (value) {
+        var result = [];
+        var string = value.toLowerCase().replace(/"([^"]+)"/g, function (all, phrase) {
+            result.push(phrase);
+            return ' ';
+        });
+        return result.concat(string.trim().split(/\s+/)).filter(Boolean);
+    };
+
+    var escape = function (string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    };
+
+    var highlighted = [];
+    var clear = function () {
+        highlighted.forEach(function (mark) {
+            var parent = mark.parentNode;
+            if (parent) {
+                parent.replaceChild(document.createTextNode(mark.textContent), mark);
+                parent.normalize();
+            }
+        });
+        highlighted = [];
+    };
+
+    var highlight = function () {
+        clear();
+        var words = terms(input.value);
+        if (!words.length) {
+            return;
+        }
+        var regex = new RegExp('(' + words.map(escape).join('|') + ')', 'gi');
+        entryList.visibleItems.forEach(function (item) {
+            item.elm.querySelectorAll(columns).forEach(function (cell) {
+                var walker = document.createTreeWalker(cell, NodeFilter.SHOW_TEXT);
+                var nodes = [];
+                while (walker.nextNode()) {
+                    nodes.push(walker.currentNode);
+                }
+                nodes.forEach(function (node) {
+                    var text = node.nodeValue;
+                    regex.lastIndex = 0;
+                    if (!regex.test(text)) {
+                        return;
+                    }
+                    var fragment = document.createDocumentFragment();
+                    text.split(regex).forEach(function (part, index) {
+                        if (index % 2) {
+                            var mark = document.createElement('mark');
+                            mark.className = 'search-highlight';
+                            mark.textContent = part;
+                            fragment.appendChild(mark);
+                            highlighted.push(mark);
+                        } else if (part) {
+                            fragment.appendChild(document.createTextNode(part));
+                        }
+                    });
+                    node.parentNode.replaceChild(fragment, node);
+                });
+            });
+        });
+    };
+
+    entryList.on('updated', highlight);
+})();
+</script>
