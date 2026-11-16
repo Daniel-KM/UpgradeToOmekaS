@@ -632,6 +632,22 @@ class Addons
         $list = $type
             ? (isset($listAddons[$type]) ? [$type => $listAddons[$type]] : [])
             : $listAddons;
+
+        // The form "owner/Directory" selects the repository of an owner when
+        // several addons have the same directory (original and forks).
+        if (strpos($namespace, '/') !== false) {
+            [$owner, $dir] = explode('/', $namespace, 2);
+            foreach ($list as $addonsForType) {
+                foreach ($addonsForType as $url => $addon) {
+                    $urlOwner = explode('/', trim((string) parse_url($url, PHP_URL_PATH), '/'))[0];
+                    if ($addon['dir'] === $dir && strcasecmp($urlOwner, $owner) === 0) {
+                        return $addon;
+                    }
+                }
+            }
+            return [];
+        }
+
         foreach ($list as $type => $addonsForType) {
             $addonsUrl = array_column($addonsForType, 'url', 'dir');
             if (isset($addonsUrl[$namespace]) && isset($addonsForType[$addonsUrl[$namespace]])) {
