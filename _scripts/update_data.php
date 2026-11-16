@@ -2256,6 +2256,8 @@ class UpdateDataExtensions
     /**
      * Fetch stats from alternate/mirror urls and sum them into the addon row.
      *
+     * Only the mirrors are summed: the alternate urls may be forks too.
+     *
      * @param array &$addon The addon row (modified in place).
      * @param string $alternateUrls Comma-separated mirror urls.
      */
@@ -2263,10 +2265,11 @@ class UpdateDataExtensions
     {
         $headers = $this->headers;
         $statFields = self::STAT_FIELDS;
+        $addonUrl = trim($addon[$headers['Url']] ?? '', '/ ');
 
         foreach (explode(',', $alternateUrls) as $mirrorUrl) {
             $mirrorUrl = trim($mirrorUrl);
-            if (empty($mirrorUrl)) continue;
+            if (empty($mirrorUrl) || !self::isMirrorUrl($addonUrl, $mirrorUrl)) continue;
 
             $server = strtolower(parse_url($mirrorUrl, PHP_URL_HOST));
 
@@ -2744,8 +2747,9 @@ class UpdateDataExtensions
                         return $response->forks_count ?? '';
 
                     case 'watchers':
-                        // GitLab does not provide a watchers/subscribers count.
-                        return '';
+                        // GitLab does not provide a watchers/subscribers count:
+                        // 0 allows to sum the watchers of the mirror.
+                        return 0;
 
                     case 'count tags':
                         return $this->curlCount('https://gitlab.com/api/v4/projects/' . $encodedProject . '/repository/tags?per_page=1');
@@ -3074,8 +3078,8 @@ class UpdateDataExtensions
             return $data[$url];
         }
 
-        // GitLab: read X-Total header.
-        if (!empty($responseHeaders['x-total'])) {
+        // GitLab: read X-Total header (0 is a valid count).
+        if (isset($responseHeaders['x-total']) && is_numeric($responseHeaders['x-total'])) {
             $data[$url] = (int) $responseHeaders['x-total'];
             return $data[$url];
         }
@@ -4172,6 +4176,18 @@ GRAPHQL;
         $host = strtolower((string) parse_url($url, PHP_URL_HOST));
         $isApi = strpos((string) parse_url($url, PHP_URL_PATH), '/api/') === 0;
         return $host . ($isApi ? '/api' : '');
+    }
+
+    /**
+     * Check if a url is a mirror of a repository: same owner on another host.
+     */
+    public static function isMirrorUrl(string $url, string $mirrorUrl): bool
+    {
+        $owner = fn (string $u): string => strtolower(explode('/', trim((string) parse_url($u, PHP_URL_PATH), '/'))[0]);
+        $host = fn (string $u): string => strtolower((string) parse_url($u, PHP_URL_HOST));
+        return $host($url) !== $host($mirrorUrl)
+            && $owner($url) !== ''
+            && $owner($url) === $owner($mirrorUrl);
     }
 
     /**
